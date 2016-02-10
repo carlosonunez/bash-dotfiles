@@ -1,0 +1,29 @@
+# ===================
+# Configures Ansible locally
+# ===================
+export PRJ_DIR=~/source
+export ANSIBLE_DIR=$PRJ_DIR/ansible
+
+# Ansible setup
+echo $PATH | grep -q ansible || {
+    echo "Looks like Ansible isn't configured on this machine. Let's fix that."
+    which ansible  || {
+      [ ! -d $ANSIBLE_DIR/.git ] && \
+        git clone https://github.com/ansible/ansible.git $ANSIBLE_DIR ||
+      . $ANSIBLE_DIR/hacking/env-setup 1>/dev/null
+      pushd $ANSIBLE_DIR && git submodule update --init --recursive && popd
+    }	
+} && {
+  pushd $ANSIBLE_DIR
+  git pull -q
+  popd
+}
+
+# Load RVM
+# =========
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" > /dev/null 2>&1  # Load RVM into a shell session *as a function*
+
+# Set gopath
+# ============
+export GOROOT=$HOME/go
+export PATH=$PATH:$GOROOT/bin

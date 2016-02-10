@@ -1,0 +1,16 @@
+NAMELYOPS_KEY_PATH="$HOME/.ssh/NamelyOps.pem"
+GITHUB_KEY_PATH="$HOME/.ssh/github.id_rsa"
+
+# ===================
+# Starts ssh-agent and loads the NamelyOps key into it.
+# ===================
+# Starts the ssh-agent in the background
+pgrep ssh-agent | while read pid; do kill $pid; done
+eval `ssh-agent -s` > /dev/null
+# Adds my git SSH key to ssh-agent
+ssh-add -l | grep -q $NAMELYOPS_KEY_PATH || \
+  ssh-add $NAMELYOPS_KEY_PATH >/dev/null 2>&1 || \
+  echo "Failed to add NamelyOps key [error code $?]"
+ssh-add -l | grep -q $GITHUB_KEY_PATH || \
+  ssh-add $GITHUB_KEY_PATH >/dev/null 2>&1 || \
+  echo "Failed to add NamelyOps key [error code $?]"
