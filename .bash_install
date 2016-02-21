@@ -1,0 +1,12 @@
+[[ "`uname`" != "Darwin" ]] || {
+apps_to_install="google_chrome,iterm2,shiftit"
+
+echo $apps_to_install | tr ',' '\n' | while read app; do
+    brew cask info $app 1>/dev/null 2>&1 || {
+        echo "Installing application: $app"
+        brew cask install $app
+    }
+done
+} && {
+    echo "brew is not supported for non-OS X platforms."
+}
