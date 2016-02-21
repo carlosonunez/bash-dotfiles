@@ -90,19 +90,18 @@ set_bash_prompt() {
 # ALIASES
 # =================
 alias killmatch='kill_all_matching_pids'
-alias clip='xclip'
-alias ls='ls --color'
+[[ "`uname`" == "Darwin" ]] && {
+    alias clip='pbcopy'
+    alias ls='ls -Gla'
+} || {
+    alias clip='xclip'
+    alias ls='ls --color -la'
+}
 
 # =====================
 # ATTACH TMUX
 # =====================
-which tmux > /dev/null || {
-    [[ "`uname`" == "Darwin" ]] && {
-        brew install tmux
-    } || {
-        echo "Homebrew isn't supported on non-OS X platforms. You'll need to \
-        compile from source."
-    }
+which tmux > /dev/null || brew install tmux
 [ -z $TMUX ] && { tmux attach-session -t 0 || true; }
 
 # ===========================================
