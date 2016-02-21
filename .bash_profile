@@ -96,7 +96,13 @@ alias ls='ls --color'
 # =====================
 # ATTACH TMUX
 # =====================
-which tmux > /dev/null || brew install tmux
+which tmux > /dev/null || {
+    [[ "`uname`" == "Darwin" ]] && {
+        brew install tmux
+    } || {
+        echo "Homebrew isn't supported on non-OS X platforms. You'll need to \
+        compile from source."
+    }
 [ -z $TMUX ] && { tmux attach-session -t 0 || true; }
 
 # ===========================================
