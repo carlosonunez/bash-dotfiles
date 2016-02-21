@@ -1,0 +1,21 @@
+
+set ts=4 sw=4                                                                     
+set bs=2                                                                          
+set nowrap                                                                        
+colorscheme delek                                                                 
+hi ColorColumn ctermbg=darkred                                                    
+hi CursorLine cterm=NONE ctermbg=magenta                                          
+set colorcolumn=80                                                                
+set expandtab                                                                     
+set visualbell t_vb=                                                              
+set wildmode=longest,list,full                                                    
+set wildmenu                                                                      
+set ruler                                                                         
+syntax on                                                                         
+set tw=80                                                                         
+set formatoptions+=t                                                              
+filetype indent plugin on                                                         
+nnoremap <C-n> :bnext<CR>                                                         
+nnoremap <C-p> :bprevious<CR>                                                     
+nnoremap <C-b> :buffers<CR>                                                       
+execute pathogen#infect()
