@@ -19,6 +19,14 @@ echo $PATH | grep -q ansible || {
   popd
 }
 
+# Load vim pathogen
+# =================
+[[ ! -f ~/.vim/autoload/pathogen.vim ]] && {
+  echo "Installing pathogen..."
+  mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+  curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+}
+
 # Load RVM
 # =========
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" > /dev/null 2>&1  # Load RVM into a shell session *as a function*
