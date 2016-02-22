@@ -1,0 +1,21 @@
+# Install Go if needed
+# ====================
+which go 2>&1 >/dev/null || {
+    echo "Go is not installed. Let's fix that."
+    [[ "`uname`" == "Darwin" ]] && { 
+        brew install go --cross-compile-daemon; 
+    } || {
+        sudo apt-get install golang
+    }
+}
+
+# Set GOPATH if unset
+# ===================
+[[ -z $GOPATH ]] && export GOPATH=~/.go
+
+# Setup vim-go
+# =============
+[[ ! -d ~/.vim/bundle/vim-go ]] && {
+    echo "Installing vim-go (a better vim plugin for Golang)"
+    git clone https://github.com/fatih/vim-go.git ~/.vim/bundle/vim-go
+}

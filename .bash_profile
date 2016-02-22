@@ -50,7 +50,7 @@ ALERT=${BWhite}${On_Red} # Bold White on red background
 
 source ~/.bash_functions
 source ~/.bash_extras
-find ~ -type f -name bash_*_specific -maxdepth 1 | while read file; do
+find ~ -type f -name ".bash_*_specific" -maxdepth 1 | while read file; do
     source $file
 done
 
