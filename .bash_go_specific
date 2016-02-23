@@ -9,6 +9,13 @@ which go 2>&1 >/dev/null || {
     }
 }
 
+# Set up the Golang workspace if non-existent
+# ============================================
+[[ ! -d ~/source/go ]] && {
+    mkdir ~/source/go
+    pushd ~/source/go && mkdir bin src pkg && popd
+}
+
 # Set GOPATH if unset
 # ===================
 [[ -z $GOPATH ]] && export GOPATH=~/.go
