@@ -1,3 +1,6 @@
+set undodir=~/.vim/undo//
+set backupdir=~/.vim/backup//
+set directory=~/.vim/swap//
 
 set ts=4 sw=4                                                                     
 set bs=2                                                                          
