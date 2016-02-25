@@ -9,15 +9,3 @@
 # Load RVM
 # =========
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" > /dev/null 2>&1  # Load RVM into a shell session *as a function*
-
-# Set gopath
-# ============
-export GOROOT=$HOME/go
-export PATH=$PATH:$GOROOT/bin
-
-# Setup vim-go
-# =============
-[[ ! -d ~/.vim/bundle/vim-go ]] && {
-    echo "Installing vim-go (a better vim plugin for Golang)"
-    git clone https://github.com/fatih/vim-go.git ~/.vim/bundle/vim-go
-}
