@@ -8,14 +8,14 @@ set nowrap
 colorscheme delek                                                                 
 hi ColorColumn ctermbg=darkred                                                    
 hi CursorLine cterm=NONE ctermbg=magenta                                          
-set colorcolumn=80                                                                
+set colorcolumn=100                                                                
 set expandtab                                                                     
 set visualbell t_vb=                                                              
 set wildmode=longest,list,full                                                    
 set wildmenu                                                                      
 set ruler                                                                         
 syntax on                                                                         
-set tw=80                                                                         
+set tw=0                                                                         
 set formatoptions+=t                                                              
 filetype indent plugin on                                                         
 nnoremap <C-n> :bnext<CR>                                                         
