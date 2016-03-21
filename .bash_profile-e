@@ -49,10 +49,8 @@ ALERT=${BWhite}${On_Red} # Bold White on red background
 # ================================
 
 source ~/.bash_functions
+source ~/.bash_namely_specific
 source ~/.bash_extras
-find ~ -type f -name ".bash_*_specific" -maxdepth 1 -follow | while read file; do
-    source $file
-done
 
 # =================
 # SET PROMPT
@@ -73,6 +71,12 @@ set_bash_prompt() {
   fi
 
   # ===================
+  # Error code
+  # ===================
+  error_code_str=""
+  [[ "$1" != "0" ]] && error_code_str="\[$On_Red\]\[$BWhite\]<<$1>>\[$NC\]"
+
+  # ===================
   # Machine name
   # ===================
   hostname_fmtd="\[$On_Yellow\]\[$BBlack\]localhost\[$NC\]"
@@ -80,11 +84,11 @@ set_bash_prompt() {
     hostname_fmtd="\[$On_Yellow\]\[$BBlack\]$HOSTNAME\[$NC\]"
   fi
   if [ "`git branch >/dev/null 2>/dev/null; echo $?`" -ne "0" ]; then
-    PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
+    PS1="$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
   elif [ `git status --porcelain 2>/dev/null | wc -l | tr -d ' '` -eq 0 ]; then
-    PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\W]\[$NC\]\[$Green\]<<\$(get_git_branch)>>\[$NC\]\[$Yellow\]\$\[$NC\]: "
+    PS1="$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Green\]<<\$(get_git_branch)>>\[$NC\] \[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
   else
-    PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\W]\[$NC\]\[$Red\]<<\$(get_git_branch)>>\[$NC\]\[$Yellow\]\$\[$NC\]: "
+    PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Red\]<<\$(get_git_branch)>>\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
   fi
 }
 
@@ -92,21 +96,16 @@ set_bash_prompt() {
 # ALIASES
 # =================
 alias killmatch='kill_all_matching_pids'
-[[ "`uname`" == "Darwin" ]] && {
-    alias clip='pbcopy'
-    alias ls='ls -Gla'
-} || {
-    alias clip='xclip'
-    alias ls='ls --color -la'
-}
+alias clip='xclip'
+alias ls='ls --color'
 
 # =====================
 # ATTACH TMUX
 # =====================
 which tmux > /dev/null || brew install tmux
-[ -z $TMUX ] && { tmux attach-session -t 0 || true; }
+[ -z $TMUX ] && { tmux attach-session -t `tmux ls | cut -f1 -d ':' | head -n 1` || true; }
 
 # ===========================================
 # Display last error code, when applicable
 # ===========================================
-PROMPT_COMMAND='e=$?; if [ $e -ne 0 ]; then printf "${On_Red}${BWhite}ERROR CODE $e${NC}\n"; fi; set_bash_prompt'
+PROMPT_COMMAND='e=$?; set_bash_prompt $e'
