@@ -2,7 +2,7 @@ set undodir=~/.vim/undo//
 set backupdir=~/.vim/backup//
 set directory=~/.vim/swap//
 
-set ts=4 sw=4                                                                     
+set ts=2 sw=2                                                                     
 set bs=2                                                                          
 set nowrap                                                                        
 colorscheme delek                                                                 
