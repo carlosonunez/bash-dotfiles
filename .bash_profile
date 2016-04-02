@@ -97,7 +97,11 @@ set_bash_prompt() {
 # =================
 alias killmatch='kill_all_matching_pids'
 alias clip='xclip'
-alias ls='ls --color'
+[[ "$(uname)" -eq "Darwin" ]] && {
+  alias ls='ls -G'
+} || {
+  alias ls='ls --color'
+}
 
 # =====================
 # ATTACH TMUX
