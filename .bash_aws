@@ -1,0 +1,26 @@
+reload_security_groups() {
+  region=$(echo $1)
+  [[ -z "$region" ]] && region="us-east-1"
+  ssh_sg=$(aws ec2 describe-security-groups --filter "Name=group-name,Values=default-ssh-access-policy" --query "SecurityGroups[*].GroupId" --output text --region $region)
+  rdp_sg=$(aws ec2 describe-security-groups --filter "Name=group-name,Values=default-rdp-policy" --query "SecurityGroups[*].GroupId" --output text --region $region)
+  [[ -z "$ssh_sg" || -z "$rdp_sg" ]] && {
+    echo "Default SSH or RDP security groups have not been created yet. Create them, then try this again."
+  } || {
+    this_ip="$(curl http://ipinfo.io/ip 2>/dev/null )"
+    last_ssh_ip_granted=$(aws ec2 describe-security-groups --group-id $ssh_sg --query "SecurityGroups[*].IpPermissions[0].IpRanges[0].CidrIp" --output text --region $region | tr "\t" "\n") last_rdp_ip_granted=$(aws ec2 describe-security-groups --group-id $rdp_sg --query "SecurityGroups[*].IpPermissions[0].IpRanges[0].CidrIp[]" --output text --region $region | tr "\t" "\n")
+    for ip in $last_ssh_ip_granted; do
+      aws ec2 revoke-security-group-ingress --group-id $ssh_sg --ip-permissions "IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp=$ip}]" && \
+      sleep 2 && \
+      echo "[ssh] REMOVED: $ip"
+    done
+    aws ec2 authorize-security-group-ingress --group-id $ssh_sg --ip-permissions "IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp=$this_ip/32}]"
+    
+    for ip in $last_rdp_ip_granted; do
+      aws ec2 revoke-security-group-ingress --group-id $rdp_sg --ip-permissions "IpProtocol=tcp,FromPort=3389,ToPort=3389,IpRanges=[{CidrIp=$ip}]" && \
+      sleep 2 && \
+      echo "[rdp] REMOVED: $ip"
+    done
+    aws ec2 authorize-security-group-ingress --group-id $rdp_sg --ip-permissions "IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp=$this_ip/32}]"
+
+  }
+}
