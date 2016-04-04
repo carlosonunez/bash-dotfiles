@@ -31,5 +31,11 @@ reload_security_groups() {
 }
 
 connect_to_dev_box() {
+  instance_state=$(aws ec2 describe-instance --filter "Name=public-dns-name,Values=$linux_box_ip_addr" --query "Reservations[*].Instances[*].State[].[Name]" --output text)
+  [[ "$instance_state" != "running" ]] && {
+    echo "Starting dev box. Hang on a minute."
+    aws ec2 start-instances --instance-id $(aws ec2 describe-instance --filter "Name=public-dns-name,Values=$linux_box_ip_addr" --query "Reservations[*].Instances[*].InstanceId" --output text) && \
+      sleep 60
+  }
   ssh -i $linux_box_dev_key ubuntu@$linux_box_ip_addr
 }
