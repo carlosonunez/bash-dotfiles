@@ -1,12 +1,23 @@
-[[ "`uname`" != "Darwin" ]] || {
-apps_to_install="google_chrome,iterm2,shiftit"
-
-echo $apps_to_install | tr ',' '\n' | while read app; do
-    brew cask info $app 1>/dev/null 2>&1 || {
-        echo "Installing application: $app"
-        brew cask install $app
-    }
-done
-} && {
-    echo "brew is not supported for non-OS X platforms."
+# Install pip if not installed
+# ============================
+which pip > /dev/null || {
+  echo "It looks like pip is not installed. Let's take care of that now. This requires sudo privileges."
+  curl -o https://bootstrap.pypa.io/get-pip.py get-pip.py && \
+    sudo -H python get-pip.py && \
+    rm get-pip.py
 }
+
+# Install a few necessary brew formulae
+# ======================================
+[ "$(uname)" == "Darwin" ] && {
+  builtin=$(echo "htop,tmux,jq,lastpass-cli" | tr "," "\n")
+  casks=$(echo "google-chrome,shiftit,iterm2" | tr "," "\n")
+  for pkg in $builtin; do
+    brew list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && brew install "$pkg" ; }
+  done
+  for pkg in $casks; do
+    echo "Installing: $pkg"
+    brew cask list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && brew install "$pkg" ; }
+  done
+}
+ 
