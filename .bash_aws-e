@@ -20,7 +20,7 @@ reload_security_groups() {
       sleep 2 && \
       echo "[rdp] REMOVED: $ip"
     done
-    aws ec2 authorize-security-group-ingress --group-id $rdp_sg --ip-permissions "IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp=$this_ip/32}]"
+    aws ec2 authorize-security-group-ingress --group-id $rdp_sg --ip-permissions "IpProtocol=tcp,FromPort=3389,ToPort=3389,IpRanges=[{CidrIp=$this_ip/32}]"
 
   }
 }
