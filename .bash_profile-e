@@ -48,9 +48,6 @@ ALERT=${BWhite}${On_Red} # Bold White on red background
 # EXTRAS
 # ================================
 
-source ~/.bash_functions
-source ~/.bash_namely_specific
-source ~/.bash_extras
 
 # =================
 # SET PROMPT
@@ -102,6 +99,19 @@ alias clip='xclip'
 } || {
   alias ls='ls --color'
 }
+
+# Check that homebrew is installed.
+# ==================================
+[ "$(uname)" == "Darwin" ] && {
+  which brew > /dev/null || {
+    echo "Installing homebrew."
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  }
+}
+
+# Load bash submodules
+# ======================
+find . -maxdepth 1 -name ".bash_*" | egrep -v "bash_profile$" |  while read file; do source $file; done
 
 # =====================
 # ATTACH TMUX
