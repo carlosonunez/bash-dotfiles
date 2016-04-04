@@ -1,7 +1,7 @@
 linux_box_ip_addr="ec2-52-87-91-75.compute-1.amazonaws.com"
-linux_box_dev_key="~/.ssh/AWSDevelopmentMachines.pem"
+linux_box_dev_key="$HOME/.ssh/AWSDevelopmentMachines.pem"
 windows_box_ip_addr="ec2-52-87-127-75.compute-1.amazonaws.com"
-windows_box_dev_key="~/.ssh/AWSWindowsMachines.pem"
+windows_box_dev_key="$HOME/.ssh/AWSWindowsMachines.pem"
 
 reload_security_groups() {
   region=$(echo $1)
