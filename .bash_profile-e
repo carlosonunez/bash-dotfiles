@@ -111,7 +111,22 @@ alias clip='xclip'
 
 # Load bash submodules
 # ======================
-find . -maxdepth 1 -name ".bash_*" | egrep -v "bash_profile$" |  while read file; do source $file; done
+find $HOME -maxdepth 1 -name ".bash_*" | egrep -v "bash_(profile|history|sessions)$" |  while read file; do
+  source $file; 
+done
+
+# Can't get this one to load for some reason using the loop above.
+[[ -f $HOME/.bash_functions ]] && source $HOME/.bash_functions
+
+# Load SSH keys into ssh-agent
+# ============================
+killall ssh-agent
+eval $(ssh-agent -s) > /dev/null
+find $HOME/.ssh -type f -maxdepth 1 | while read file; do
+  if [[ "$(cat $file | head -n 1 | grep -q 'BEGIN RSA PRIVATE KEY'; echo $?)" == "0" ]]; then
+    ssh-add $file
+  fi
+done
 
 # =====================
 # ATTACH TMUX

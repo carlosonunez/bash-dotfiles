@@ -16,7 +16,6 @@ which pip > /dev/null || {
     brew list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && brew install "$pkg" ; }
   done
   for pkg in $casks; do
-    echo "Installing: $pkg"
     brew cask list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && brew install "$pkg" ; }
   done
 }
