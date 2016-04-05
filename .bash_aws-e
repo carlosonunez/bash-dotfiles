@@ -1,7 +1,5 @@
 linux_box_ip_addr="ec2-52-87-91-75.compute-1.amazonaws.com"
-linux_box_dev_key="$HOME/.ssh/AWSDevelopmentMachines.pem"
 windows_box_ip_addr="ec2-52-87-127-75.compute-1.amazonaws.com"
-windows_box_dev_key="$HOME/.ssh/AWSWindowsMachines.pem"
 
 reload_security_groups() {
   region=$(echo $1)
@@ -37,7 +35,7 @@ connect_to_dev_box() {
     aws ec2 start-instances --instance-id $(aws ec2 describe-instances --filter "Name=dns-name,Values=$linux_box_ip_addr" --query "Reservations[*].Instances[*].InstanceId" --output text) && \
       sleep 60
   }
-  ssh -i $linux_box_dev_key ubuntu@$linux_box_ip_addr
+  ssh ubuntu@$linux_box_ip_addr
 }
 
 start_windows_box() {
