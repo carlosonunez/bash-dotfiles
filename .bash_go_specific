@@ -1,3 +1,5 @@
+GO_SRC_FOLDER=$HOME/src/go
+
 # Install Go if needed
 # ====================
 which go 2>&1 >/dev/null || {
@@ -12,8 +14,14 @@ which go 2>&1 >/dev/null || {
 # Set up the Golang workspace if non-existent
 # ============================================
 [[ ! -d ~/source/go ]] && {
-    mkdir ~/source/go
-    pushd ~/source/go && mkdir bin src pkg && popd
+    [[ -d $GO_SRC_FOLDER ]] || mkdir $GO_SRC_FOLDER
+    for dir in bin src pkg; do
+      [[ -d $GO_SRC_FOLDER/$dir ]] || {
+        pushd $GO_SRC_FOLDER
+        mkdir $dir
+        popd
+      }
+    done
 }
 
 # Set GOPATH if unset
