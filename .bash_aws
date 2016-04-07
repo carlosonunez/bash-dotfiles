@@ -29,6 +29,7 @@ reload_security_groups() {
 }
 
 connect_to_dev_box() {
+  reload_security_groups
   instance_state=$(aws ec2 describe-instances --filter "Name=dns-name,Values=$linux_box_ip_addr" --query "Reservations[*].Instances[*].State[].[Name]" --output text)
   [[ "$instance_state" != "running" ]] && {
     echo "Starting dev box. Hang on a minute."
@@ -39,6 +40,7 @@ connect_to_dev_box() {
 }
 
 start_windows_box() {
+  reload_security_groups
   instance_state=$(aws ec2 describe-instances --filter "Name=dns-name,Values=$windows_box_ip_addr" --query "Reservations[*].Instances[*].State[].[Name]" --output text)
   [[ "$instance_state" != "running" ]] && {
     echo "Starting dev box. Hang on a minute."
