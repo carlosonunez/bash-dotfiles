@@ -134,6 +134,10 @@ done
 which tmux > /dev/null || brew install tmux
 [ -z $TMUX ] || { tmux attach-session -t `tmux ls | cut -f1 -d ':' | head -n 1` || true; }
 
+# ============
+# vi keybindings
+# ==============
+set -o vi
 # ===========================================
 # Display last error code, when applicable
 # ===========================================
