@@ -94,7 +94,7 @@ set_bash_prompt() {
 # =================
 alias killmatch='kill_all_matching_pids'
 alias clip='xclip'
-[[ "$(uname)" -eq "Darwin" ]] && {
+[[ "$(uname)" == "Darwin" ]] && {
   alias ls='ls -G'
 } || {
   alias ls='ls --color'
