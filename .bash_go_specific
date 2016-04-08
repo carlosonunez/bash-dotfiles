@@ -7,7 +7,7 @@ which go 2>&1 >/dev/null || {
     [[ "`uname`" == "Darwin" ]] && { 
         brew install go --cross-compile-daemon; 
     } || {
-        sudo apt-get install golang
+        sudo apt-get -y install golang
     }
 }
 
