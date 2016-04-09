@@ -11,10 +11,12 @@ kill_all_matching_pids() {
 }
 
 generate_random_string() {
+  length=$1
+  [[ -z $length ]] && length=16
   if [[ "$(uname)" == "Darwin" ]]; then
-    LC_CTYPE=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 32
+    LC_CTYPE=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c $length
   else
-    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 32
+    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c $length
   fi
 }
 
