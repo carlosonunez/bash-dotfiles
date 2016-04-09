@@ -10,6 +10,14 @@ kill_all_matching_pids() {
     pgrep $@ | while read pid; do sudo kill -9 $pid; done
 }
 
+generate_random_string() {
+  if [[ "$(uname)" == "Darwin" ]]; then
+    LC_CTYPE=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 32
+  else
+    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 32
+  fi
+}
+
 generate_password() {
     if [[ $# -ne 2 ]]; then
         echo "generate_password [email_address] [domain_for_account]"
