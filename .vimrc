@@ -21,4 +21,8 @@ filetype indent plugin on
 nnoremap <C-n> :bnext<CR>                                                         
 nnoremap <C-p> :bprevious<CR>                                                     
 nnoremap <C-b> :buffers<CR>                                                       
+nnoremap <C-l> :vertical resize -5
+nnoremap <C-h> :vertical resize +5
+nnoremap <C-t> :resize +5
+nnoremap <C-b> :resize -5
 execute pathogen#infect()
