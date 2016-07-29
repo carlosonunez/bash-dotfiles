@@ -25,4 +25,5 @@ nnoremap <C-l> :vertical resize -5
 nnoremap <C-h> :vertical resize +5
 nnoremap <C-t> :resize +5
 nnoremap <C-b> :resize -5
+set number
 execute pathogen#infect()
