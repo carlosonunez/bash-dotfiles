@@ -111,7 +111,7 @@ alias clip='xclip'
 
 # Load bash submodules
 # ======================
-find $HOME -maxdepth 1 -name ".bash_*" | sort | egrep -v "bash_(profile|history|sessions)$" |  while read file; do
+find $HOME -maxdepth 1 -name ".bash_*" | sort | egrep -v "bash_(profile|custom_profile|history|sessions)$" |  while read file; do
   source $file; 
 done
 
@@ -135,9 +135,10 @@ which tmux > /dev/null || brew install tmux
 [ -z $TMUX ] || { tmux attach-session -t `tmux ls | cut -f1 -d ':' | head -n 1` || true; }
 
 # ============
-# vi keybindings
+# emacs keybindings
 # ==============
-set -o vi
+set -o emacs
+
 # ===========================================
 # Display last error code, when applicable
 # ===========================================
