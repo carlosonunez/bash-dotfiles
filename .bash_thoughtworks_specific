@@ -1,0 +1,7 @@
+# taws(): Run AWS operations from the ThoughtWorks account.
+taws() {
+  args="$@"
+  >&2 echo "*** WARNING ***: This operation is running under the ThoughtWorks account. To use \
+    your normal account, re-run this command with 'aws' instead of 'taws'."
+  aws $args --profile thoughtworks
+}

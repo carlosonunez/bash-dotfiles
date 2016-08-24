@@ -111,7 +111,7 @@ alias clip='xclip'
 
 # Load bash submodules
 # ======================
-find $HOME -maxdepth 1 -name ".bash_*" | egrep -v "bash_(profile|history|sessions)$" |  while read file; do
+find $HOME -maxdepth 1 -name ".bash_*" | sort | egrep -v "bash_(profile|history|sessions)$" |  while read file; do
   source $file; 
 done
 
