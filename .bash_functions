@@ -10,6 +10,26 @@ kill_all_matching_pids() {
     pgrep $@ | while read pid; do sudo kill -9 $pid; done
 }
 
+do_install() {
+    case "$(uname)" in
+	    Darwin)
+		 if [[ "${2}" == "cask" ]]
+		 then
+		      brew cask install "${1}"
+		 else
+		      brew install "${1}"
+		 fi
+		 ;;
+	    Linux)
+		 sudo apt-get install "${1}"
+		 ;;
+
+	    *)
+		 sudo yum install "${1}"
+		 ;;
+     esac
+}
+
 generate_random_string() {
   length=$1
   [[ "$length" == "" ]] && length=16
