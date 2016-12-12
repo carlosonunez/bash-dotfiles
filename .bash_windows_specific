@@ -3,6 +3,6 @@ windows_home_directory="/mnt/c/Users/accou"
 for d in Downloads
 do
   printf "${BYellow}INFO${NC}:\t${d}\n"
-  mkdir -p "~/${d}"
-  ln -s "${windows_home_directory}/${d}" "~/${d}"
+  mkdir -p "$HOME/${d}"
+  ln -s "${windows_home_directory}/${d}" "$HOME/${d}"
 done
