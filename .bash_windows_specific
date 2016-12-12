@@ -1,0 +1,8 @@
+printf "${BYellow}INFO${NC}: Creating symlinks to common Windows directories\n"
+windows_home_directory="/mnt/c/Users/accou"
+for d in Downloads
+do
+  printf "${BYellow}INFO${NC}:\t${d}\n"
+  mkdir -p "~/${d}"
+  ln -s "${windows_home_directory}/${d}" "~/${d}"
+done
