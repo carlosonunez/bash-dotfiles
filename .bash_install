@@ -20,10 +20,10 @@ which aws > /dev/null || {
   builtin=$(echo "htop,tmux,jq,lastpass-cli" | tr "," "\n")
   casks=$(echo "google-chrome,shiftit,iterm2" | tr "," "\n")
   for pkg in $builtin; do
-    brew list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && brew install "$pkg" ; }
+    brew list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && do_install "$pkg" ; }
   done
   for pkg in $casks; do
-    brew cask list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && brew install "Caskroom/cask/$pkg" ; }
+    brew cask list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && do_install "Caskroom/cask/$pkg" ; }
   done
 }
  

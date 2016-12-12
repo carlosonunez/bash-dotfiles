@@ -122,7 +122,7 @@ done
 # ============================
 killall ssh-agent
 eval $(ssh-agent -s) > /dev/null
-find $HOME/.ssh -type f -maxdepth 1 | while read file; do
+find $HOME/.ssh -maxdepth 1 -type f | while read file; do
   if [[ "$(cat $file | head -n 1 | grep -q 'BEGIN RSA PRIVATE KEY'; echo $?)" == "0" ]]; then
     ssh-add $file
   fi
@@ -131,7 +131,7 @@ done
 # =====================
 # ATTACH TMUX
 # =====================
-which tmux > /dev/null || brew install tmux
+which tmux > /dev/null || do_install tmux
 [ -z $TMUX ] || { tmux attach-session -t `tmux ls | cut -f1 -d ':' | head -n 1` || true; }
 
 # ============
