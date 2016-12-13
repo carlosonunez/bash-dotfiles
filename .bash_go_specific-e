@@ -2,13 +2,25 @@ GO_SRC_FOLDER=$HOME/src/go
 
 # Install Go if needed
 # ====================
-which go 2>&1 >/dev/null || {
+LATEST_GOLANG_LINUX_VERSION="go1.6.linux-amd64"
+[[ ! -d /usr/local/go/bin ]] && {
     echo "Go is not installed. Let's fix that."
     [[ "`uname`" == "Darwin" ]] && { 
         brew install go --cross-compile-daemon; 
     } || {
-        sudo apt-get -y install golang
+      printf "${BYellow}INFO:${NC} Installing golang\n"
+      pushd /tmp
+      sudo apt-get update
+      sudo curl -O "https://storage.googleapis.com/golang/${LATEST_GOLANG_LINUX_VERSION}.tar.gz"
+      sudo tar -xvf "${LATEST_GOLANG_LINUX_VERSION}.tar.gz"
+      sudo mv go /usr/local
+      export PATH=$PATH:/usr/local/go/bin 
     }
+
+    go_work_directory="$HOME/src/go"
+    mkdir -p "${go_work_directory}"
+    export GOPATH="${go_work_directory}"
+    for i in src pkg bin; do mkdir -p "${go_work_directory}/${i}"; done
 }
 
 # Set up the Golang workspace if non-existent
