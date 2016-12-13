@@ -1,13 +1,28 @@
-LATEST_RUBY_VERSION="1.9.3p484"
-[[ "$(ruby -v | awk '{ print $2 }')" != "${LATEST_RUBY_VERSION}" ]] && {
-  printf "${BYellow}INFO:${NC} Installing ${BGreen}ruby${NC}"
-  sudo apt-get remove ruby
-  sudo apt-get install ruby
+LATEST_RUBY_VERSION="2.3.1"
+[[ "$(ruby -v 2>/dev/null | awk '{ print $2 }')" != "${LATEST_RUBY_VERSION}" ]] && {
+  printf "${BYellow}INFO:${NC} Installing ${BGreen}ruby${NC}\n"
+  sudo apt-get install git-core curl zlib1g-dev \
+    build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev \
+    sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev \
+    python-software-properties libffi-dev
+  git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+  export PATH="$HOME/.rbenv/bin:$PATH"
+  rbenv init -
+
+  git clone https://github.com/rbenv/ruby-build.git \
+    ~/.rbenv/plugins/ruby-build
+  export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
+
+  rbenv install "${LATEST_RUBY_VERSION}" -v
+  rbenv global "${LATEST_RUBY_VERSION}"
+  printf "${BYellow}INFO:${NC} Installed ${BGreen}ruby${NC} $(ruby -v)\n"
 }
+
+export PATH="$HOME/.rbenv/bin:$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
 
 RUBYGEMS_GITHUB_REPO="https://github.com/rubygems/rubygems.git"
 which gem 2>&1 > /dev/null || {
-  printf "${BYellow}INFO:${NC} Installing ${BGreen}rubygems${NC}"
+  printf "${BYellow}INFO:${NC} Installing ${BGreen}rubygems${NC}\n"
   git clone "${RUBYGEMS_GITHUB_REPO}" /tmp/rubygems
   pushd /tmp/rubygems
   sudo ruby setup.rb
