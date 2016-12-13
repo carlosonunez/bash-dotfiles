@@ -1,0 +1,15 @@
+LATEST_RUBY_VERSION="1.9.3p484"
+[[ "$(ruby -v | awk '{ print $2 }')" != "${LATEST_RUBY_VERSION}" ]] && {
+  printf "${BYellow}INFO:${NC} Installing ${BGreen}ruby${NC}"
+  sudo apt-get remove ruby
+  sudo apt-get install ruby
+}
+
+RUBYGEMS_GITHUB_REPO="https://github.com/rubygems/rubygems.git"
+which gem 2>&1 > /dev/null || {
+  printf "${BYellow}INFO:${NC} Installing ${BGreen}rubygems${NC}"
+  git clone "${RUBYGEMS_GITHUB_REPO}" /tmp/rubygems
+  pushd /tmp/rubygems
+  sudo ruby setup.rb
+  popd
+} 
