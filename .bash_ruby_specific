@@ -1,30 +1,14 @@
-LATEST_RUBY_VERSION="2.3.1"
-[[ "$(ruby -v 2>/dev/null | awk '{ print $2 }')" != "${LATEST_RUBY_VERSION}" ]] && {
+# Always initialize rvm so that ruby is always made available.
+source /usr/local/rvm/scripts/rvm
+
+LATEST_RUBY_VERSION="2.3.0p0"
+DETECTED_RUBY_VERSION=`ruby -v 2>/dev/null | awk '{print $2}'`
+[[ "${DETECTED_RUBY_VERSION}" != "${LATEST_RUBY_VERSION}" ]] && {
+  printf "${BYellow}INFO: Ruby v${LATEST_RUBY_VERSION} required, but v${DETECTED_RUBY_VERSION} is installed.\n"
   printf "${BYellow}INFO:${NC} Installing ${BGreen}ruby${NC}\n"
-  sudo apt-get install git-core curl zlib1g-dev \
-    build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev \
-    sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev \
-    python-software-properties libffi-dev
-  git clone https://github.com/rbenv/rbenv.git ~/.rbenv
-  export PATH="$HOME/.rbenv/bin:$PATH"
-  rbenv init -
-
-  git clone https://github.com/rbenv/ruby-build.git \
-    ~/.rbenv/plugins/ruby-build
-  export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
-
-  rbenv install "${LATEST_RUBY_VERSION}" -v
-  rbenv global "${LATEST_RUBY_VERSION}"
+  gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+  \curl -sSL https://get.rvm.io | sudo bash -s stable --ruby
   printf "${BYellow}INFO:${NC} Installed ${BGreen}ruby${NC} $(ruby -v)\n"
 }
-
-export PATH="$HOME/.rbenv/bin:$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
-
-RUBYGEMS_GITHUB_REPO="https://github.com/rubygems/rubygems.git"
-which gem 2>&1 > /dev/null || {
-  printf "${BYellow}INFO:${NC} Installing ${BGreen}rubygems${NC}\n"
-  git clone "${RUBYGEMS_GITHUB_REPO}" /tmp/rubygems
-  pushd /tmp/rubygems
-  sudo ruby setup.rb
-  popd
-} 
+export GEM_HOME="$HOME/.gems"
+export GEM_PATH="$GEM_HOME:$GEM_PATH"
