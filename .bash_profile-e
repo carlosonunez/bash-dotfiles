@@ -99,6 +99,10 @@ alias clip='xclip'
 } || {
   alias ls='ls --color'
 }
+[[ "$(uname)" == "Linux" ]] && {
+  alias sudo='sudo -i'
+}
+eval "$(hub alias -s)"
 
 # Check that homebrew is installed.
 # ==================================
@@ -112,6 +116,7 @@ alias clip='xclip'
 # Load bash submodules
 # ======================
 find $HOME -maxdepth 1 -name ".bash_*" | sort | egrep -v "bash_(profile|custom_profile|history|sessions)$" |  while read file; do
+  printf "${BYellow}INFO${NC}: Loading ${BGreen}$file${NC}\n"
   source $file; 
 done
 
@@ -143,3 +148,5 @@ set -o emacs
 # Display last error code, when applicable
 # ===========================================
 PROMPT_COMMAND='e=$?; set_bash_prompt $e'
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*

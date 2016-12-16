@@ -14,18 +14,13 @@ LATEST_GOLANG_LINUX_VERSION="go1.6.linux-amd64"
       sudo curl -O "https://storage.googleapis.com/golang/${LATEST_GOLANG_LINUX_VERSION}.tar.gz"
       sudo tar -xvf "${LATEST_GOLANG_LINUX_VERSION}.tar.gz"
       sudo mv go /usr/local
-      export PATH=$PATH:/usr/local/go/bin 
     }
 
-    go_work_directory="$HOME/src/go"
-    mkdir -p "${go_work_directory}"
-    export GOPATH="${go_work_directory}"
-    for i in src pkg bin; do mkdir -p "${go_work_directory}/${i}"; done
 }
 
 # Set up the Golang workspace if non-existent
 # ============================================
-[[ ! -d ~/source/go ]] && {
+[[ ! -d ~/src/go ]] && {
     [[ -d $GO_SRC_FOLDER ]] || mkdir $GO_SRC_FOLDER
     for dir in bin src pkg; do
       [[ -d $GO_SRC_FOLDER/$dir ]] || {
@@ -38,9 +33,12 @@ LATEST_GOLANG_LINUX_VERSION="go1.6.linux-amd64"
 
 # Set GOPATH if unset
 # ===================
-export GOPATH=$HOME/go
-export GOROOT=/usr/local/opt/go/libexec
-export PATH=$PATH:$GOPATH/bin:$GOROOT/bin
+export GOPATH="/usr/local/go"
+export PATH="$PATH:$GOPATH/bin"
+go_work_directory="$HOME/src/go"
+mkdir -p "${go_work_directory}"
+export GOPATH="${go_work_directory}"
+for i in src pkg bin; do mkdir -p "${go_work_directory}/${i}"; done
 
 # Setup vim-go
 # =============
