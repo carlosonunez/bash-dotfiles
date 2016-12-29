@@ -95,9 +95,9 @@ set_bash_prompt() {
 alias killmatch='kill_all_matching_pids'
 alias clip='xclip'
 [[ "$(uname)" == "Darwin" ]] && {
-  alias ls='ls -Glart'
+  alias ls='ls -Glart --group-directories-first'
 } || {
-  alias ls='ls -lart --color'
+  alias ls='ls -lar --color --group-directories-first'
 }
 [[ "$(uname)" == "Linux" ]] && {
   alias sudo='sudo -i'
