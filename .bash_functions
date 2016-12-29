@@ -21,7 +21,7 @@ do_install() {
 		 fi
 		 ;;
 	    Linux)
-		 sudo apt-get install "${1}"
+		 sudo apt-get -y install "${1}"
 		 ;;
 
 	    *)
