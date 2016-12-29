@@ -48,3 +48,22 @@ start_windows_box() {
       sleep 60
   }
 }
+
+create_aws_credential_env_vars() {
+  aws_credentials_file="$HOME/.aws/credentials"
+  export AWS_ACCESS_KEY_ID=""
+  export AWS_SECRET_ACCESS_KEY=""
+  [ -z "${aws_credentials_file}" ] && {
+    printf "${BYellow}WARN${NC}: Your AWS credentials have not been configured yet. Use the \
+'aws configure' tool to fix this, then run 'source .bash_aws' to apply them onto your environment.\n"
+  } || {
+    export AWS_ACCESS_KEY_ID=$(cat "${aws_credentials_file}" | grep 'aws_access_key_id' | cut -f2 -d '=' | tr -d '')
+    export AWS_SECRET_ACCESS_KEY=$(cat "${aws_credentials_file}" | grep 'aws_secret_access_key' | cut -f2 -d '=' | tr -d '')
+    [ -z "${AWS_ACCESS_KEY_ID}" -o -z "${AWS_SECRET_ACCESS_KEY}" ] && {
+      printf "${BYellow}WARN${NC}: One of your AWS credential env vars was not found. Run \
+        'aws configure' in your terminal to fix this."
+    }
+  }
+}
+
+create_aws_credential_env_vars
