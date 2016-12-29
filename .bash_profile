@@ -95,9 +95,9 @@ set_bash_prompt() {
 alias killmatch='kill_all_matching_pids'
 alias clip='xclip'
 [[ "$(uname)" == "Darwin" ]] && {
-  alias ls='ls -G'
+  alias ls='ls -Glart'
 } || {
-  alias ls='ls --color'
+  alias ls='ls -lart --color'
 }
 [[ "$(uname)" == "Linux" ]] && {
   alias sudo='sudo -i'
@@ -137,7 +137,8 @@ done
 # ATTACH TMUX
 # =====================
 which tmux > /dev/null || do_install tmux
-[ -z $TMUX ] || { tmux attach-session -t `tmux ls | cut -f1 -d ':' | head -n 1` || true; }
+[ -z "$TMUX" ]
+tmux ls 2>&1 && { tmux attach-session -t $(tmux ls | cut -f1 -d ':' | head -n 1); } || { tmux ; }
 
 # ============
 # emacs keybindings
