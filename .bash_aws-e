@@ -53,6 +53,7 @@ create_aws_credential_env_vars() {
   aws_credentials_file="$HOME/.aws/credentials"
   export AWS_ACCESS_KEY_ID=""
   export AWS_SECRET_ACCESS_KEY=""
+  export AWS_REGION="$1"
   [ -z "${aws_credentials_file}" ] && {
     printf "${BYellow}WARN${NC}: Your AWS credentials have not been configured yet. Use the \
 'aws configure' tool to fix this, then run 'source .bash_aws' to apply them onto your environment.\n"
@@ -66,4 +67,5 @@ create_aws_credential_env_vars() {
   }
 }
 
-create_aws_credential_env_vars
+default_aws_region='us-east-1'
+create_aws_credential_env_vars "$default_aws_region"
