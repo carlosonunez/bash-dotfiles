@@ -10,6 +10,10 @@ reload_security_groups() {
     echo "Default SSH or RDP security groups have not been created yet. Create them, then try this again."
   } || {
     this_ip="$(curl http://ipinfo.io/ip 2>/dev/null )"
+    [ -z "${this_ip}" ] && {
+      printf "${BRed}ERROR:${NC} Your IP address could not be determined.\n"
+      exit 1
+    }
     last_ssh_ip_granted=$(aws ec2 describe-security-groups --group-id $ssh_sg --query "SecurityGroups[*].IpPermissions[0].IpRanges[0].CidrIp" --output text --region $region | tr "\t" "\n") last_rdp_ip_granted=$(aws ec2 describe-security-groups --group-id $rdp_sg --query "SecurityGroups[*].IpPermissions[0].IpRanges[0].CidrIp[]" --output text --region $region | tr "\t" "\n")
     for ip in $last_ssh_ip_granted; do
       aws ec2 revoke-security-group-ingress --group-id $ssh_sg --ip-permissions "IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp=$ip}]" && \
@@ -17,12 +21,15 @@ reload_security_groups() {
       echo "[ssh] REMOVED: $ip"
     done
     aws ec2 authorize-security-group-ingress --group-id $ssh_sg --ip-permissions "IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp=$this_ip/32}]"
+    echo "[ssh] ADDED: $this_ip"
     
     for ip in $last_rdp_ip_granted; do
       aws ec2 revoke-security-group-ingress --group-id $rdp_sg --ip-permissions "IpProtocol=tcp,FromPort=3389,ToPort=3389,IpRanges=[{CidrIp=$ip}]" && \
       sleep 2 && \
       echo "[rdp] REMOVED: $ip"
     done
+    echo "[ssh] ADDED: $this_ip"
+
     aws ec2 authorize-security-group-ingress --group-id $rdp_sg --ip-permissions "IpProtocol=tcp,FromPort=3389,ToPort=3389,IpRanges=[{CidrIp=$this_ip/32}]"
 
   }
@@ -63,6 +70,8 @@ create_aws_credential_env_vars() {
     [ -z "${AWS_ACCESS_KEY_ID}" -o -z "${AWS_SECRET_ACCESS_KEY}" ] && {
       printf "${BYellow}WARN${NC}: One of your AWS credential env vars was not found. Run \
         'aws configure' in your terminal to fix this."
+    } || {
+      return 0
     }
   }
 }
