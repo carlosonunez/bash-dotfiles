@@ -56,7 +56,7 @@ if (!$packagesToInstall) {
     Write-Error "Could not locate packages to install from source"
     exit 1
 }
-powershellProfile = Get-FileFromRepository "https://raw.githubusercontent.com/carlosonunez/setup/master/windows_powershell_profile.txt"
+$powershellProfile = Get-FileFromRepository "https://raw.githubusercontent.com/carlosonunez/setup/master/windows_powershell_profile.txt"
 if (!$powershellProfile) {
     Write-Error "Could not locate Powershell Profile to write."
     exit 1
