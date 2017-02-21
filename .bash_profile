@@ -114,9 +114,15 @@ alias clip='xclip'
 
 # Load bash submodules
 # ======================
-find $HOME -maxdepth 1 -name ".bash_*" | sort | egrep -v ".swp$" | egrep -v "bash_(profile|custom_profile|history|sessions)$" |  while read file; do
-  printf "${BYellow}INFO${NC}: Loading ${BGreen}$file${NC}\n"
-  source $file; 
+for file in $(find $HOME -maxdepth 1 \
+  -regextype posix-extended \
+  -regex '.*\/.bash.*$' \
+  -not -regex '.*\/.bash_(profile|custom_profile|history)$' \
+  -not -regex '.*.swp$' )
+do
+  printf "${BGreen}INFO${NC}: Loading ${BYellow}$file${NC}"
+  source $file
+  printf "\n"
 done
 
 # Load SSH keys into ssh-agent
