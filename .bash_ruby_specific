@@ -8,6 +8,7 @@ DETECTED_RUBY_VERSION=`ruby -v 2>/dev/null | awk '{print $2}'`
   printf "${BYellow}INFO:${NC} Installing ${BGreen}ruby${NC}\n"
   gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
   \curl -sSL https://get.rvm.io | sudo bash -s stable --ruby
+  source /usr/local/rvm/scripts/rvm
   printf "${BYellow}INFO:${NC} Installed ${BGreen}ruby${NC} $(ruby -v)\n"
 }
 export GEM_HOME="$HOME/.gems"
