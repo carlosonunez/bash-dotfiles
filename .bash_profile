@@ -80,9 +80,9 @@ set_bash_prompt() {
   if [ ! -z "$SSH_CLIENT" ]; then
     hostname_fmtd="\[$On_Yellow\]\[$BBlack\]$HOSTNAME\[$NC\]"
   fi
-  if [ "`git branch >/dev/null 2>/dev/null; echo $?`" -ne "0" ]; then
+  if [ ! -d .git -o "`git branch >/dev/null 2>/dev/null; echo $?`" -ne "0" ]; then
     PS1="$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
-  elif [ `git status --porcelain 2>/dev/null | wc -l | tr -d ' '` -eq 0 ]; then
+  elif [ ! -d .git -o `git status --porcelain 2>/dev/null | wc -l | tr -d ' '` -eq 0 ]; then
     PS1="$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Green\]<<\$(get_git_branch)>>\[$NC\] \[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
   else
     PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Red\]<<\$(get_git_branch)>>\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
@@ -102,7 +102,6 @@ alias clip='xclip'
 [[ "$(uname)" == "Linux" ]] && {
   alias sudo='sudo -i'
 }
-eval "$(hub alias -s)"
 
 # Check that homebrew is installed.
 # ==================================
@@ -115,13 +114,10 @@ eval "$(hub alias -s)"
 
 # Load bash submodules
 # ======================
-find $HOME -maxdepth 1 -name ".bash_*" | sort | egrep -v "bash_(profile|custom_profile|history|sessions)$" |  while read file; do
+find $HOME -maxdepth 1 -name ".bash_*" | sort | egrep -v ".swp$" | egrep -v "bash_(profile|custom_profile|history|sessions)$" |  while read file; do
   printf "${BYellow}INFO${NC}: Loading ${BGreen}$file${NC}\n"
   source $file; 
 done
-
-# Can't get this one to load for some reason using the loop above.
-[[ -f $HOME/.bash_functions ]] && source $HOME/.bash_functions
 
 # Load SSH keys into ssh-agent
 # ============================
@@ -129,12 +125,6 @@ killall ssh-agent
 eval $(ssh-agent -s) > /dev/null
 grep -HR "RSA" $HOME/.ssh | cut -f1 -d: | sort -u | xargs ssh-add {}
 
-# =====================
-# ATTACH TMUX
-# =====================
-which tmux > /dev/null || do_install tmux
-[ -z "$TMUX" ]
-tmux ls 2>&1 && { tmux attach-session -t $(tmux ls | cut -f1 -d ':' | head -n 1); } || { tmux ; }
 
 # ============
 # emacs keybindings
