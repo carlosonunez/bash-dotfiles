@@ -1,0 +1,8 @@
+f.lux
+kitty
+negativescreen
+putty
+putty.portable
+vcredist2010
+vcxsrv
+vim
