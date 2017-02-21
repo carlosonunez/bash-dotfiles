@@ -1,7 +1,7 @@
 # Always initialize rvm so that ruby is always made available.
 source /usr/local/rvm/scripts/rvm
 
-LATEST_RUBY_VERSION="2.3.0p0"
+LATEST_RUBY_VERSION="2.4.0p0"
 DETECTED_RUBY_VERSION=`ruby -v 2>/dev/null | awk '{print $2}'`
 [[ "${DETECTED_RUBY_VERSION}" != "${LATEST_RUBY_VERSION}" ]] && {
   printf "${BYellow}INFO: Ruby v${LATEST_RUBY_VERSION} required, but v${DETECTED_RUBY_VERSION} is installed.\n"
