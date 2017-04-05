@@ -13,3 +13,6 @@ DETECTED_RUBY_VERSION=`ruby -v 2>/dev/null | awk '{print $2}'`
 }
 export GEM_HOME="$HOME/.gems"
 export GEM_PATH="$GEM_HOME:$GEM_PATH"
+
+# Extra vim niceties
+git clone "https://github.com/skwp/vim-rspec.git" $HOME/.vim/bundle/vim-rspec

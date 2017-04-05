@@ -8,7 +8,7 @@ set nowrap
 colorscheme delek                                                                 
 hi ColorColumn ctermbg=darkred                                                    
 hi CursorLine cterm=NONE ctermbg=magenta                                          
-set colorcolumn=100                                                                
+set colorcolumn=80                                                                
 set expandtab                                                                     
 set visualbell t_vb=                                                              
 set wildmode=longest,list,full                                                    
