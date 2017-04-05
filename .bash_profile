@@ -222,7 +222,11 @@ set_bash_prompt() {
   then 
     PS1="$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
   else
-    if [ "$(git status --porcelain 2>/dev/null | wc -l)" -ne "0" ]
+    git_repository_status="$(git status --porcelain)"
+    if [ "$(echo $git_repository_status | grep '??')" != "" ]
+    then
+      PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BRed\]<<\$(get_git_branch)>>*\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
+    elif [ "$git_repository_status" != "" ]
     then
       PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Red\]<<\$(get_git_branch)>>\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
     else
