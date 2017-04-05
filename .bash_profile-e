@@ -1,13 +1,13 @@
-export TERM="xterm-color"
-export CLICOLOR=1
-export LSCOLORS=GxFxCxDxBxegedabagaced
-
 # ==================================================================
 # Most of this was taken from the example .bash_profile on tldp.org.
 # ==================================================================
 # =================
 # COLORS
 # =================
+
+export TERM="xterm-color"
+export CLICOLOR=1
+export LSCOLORS=GxFxCxDxBxegedabagaced
 
 # Normal Colors
 Black='\033[0;30m'        # Black
@@ -136,6 +136,11 @@ grep -HR "RSA" $HOME/.ssh | cut -f1 -d: | sort -u | xargs ssh-add {}
 # emacs keybindings
 # ==============
 set -o emacs
+
+# ===============
+# Set default editor for Git
+# ===============
+export GIT_EDITOR=vim
 
 # ===========================================
 # Display last error code, when applicable
