@@ -102,6 +102,7 @@ alias clip='xclip'
 [[ "$(uname)" == "Linux" ]] && {
   alias sudo='sudo -i'
 }
+alias ccat='pygmentize -g'
 
 # Check that homebrew is installed.
 # ==================================

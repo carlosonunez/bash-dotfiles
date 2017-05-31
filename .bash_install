@@ -15,6 +15,10 @@ which aws > /dev/null || {
   sudo pip install awscli --ignore-installed six
 }
 
+# Install pygments
+# ================
+sudo pip install pygments && sudo apt-get install highlight
+
 # Install a few necessary brew formulae
 # ======================================
 [ "$(uname)" == "Darwin" ] && {
