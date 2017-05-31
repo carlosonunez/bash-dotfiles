@@ -1,23 +1,71 @@
+" Set undo, backup and swap directories so that Vim doesn't leave
+" all sorts of garbage within my working directory.
 set undodir=~/.vim/undo//
 set backupdir=~/.vim/backup//
 set directory=~/.vim/swap//
 
-set ts=2 sw=2                                                                     
-set bs=2                                                                          
+" Highlight extra whitespace in Normal mode.
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+autocmd BufWinLeave * call clearmatches()
+
+" Spacing options.
+" Tabstop: Number of spaces to add to tabs.
+" Backspace: Number of characters to go back by within an indent.
+" Shiftwidth: Number of spaces to add when indenting text in Normal mode.
+set tabstop=2
+set backspace=2
+set shiftwidth=2 
+
+" Nowrap: Don't wrap text unless I say so explicitly.
+" Textwidth: Autowrap at column 0 (disable automatic wrapping).
+set formatoptions+=t                                                              
+set textwidth=0                                                                         
 set nowrap                                                                        
-colorscheme delek                                                                 
+
+" Delek: pretty colorscheme.
+colorscheme delek          
+
+" Set a bar at column 80 so that I can keep my code readable.                                                       
 hi ColorColumn ctermbg=darkred                                                    
 hi CursorLine cterm=NONE ctermbg=magenta                                          
-set colorcolumn=80                                                                
+set colorcolumn=80                                                               
+
+" Expandtab: Use spaces instead of hard tabs. 
 set expandtab                                                                     
+
+" Disable the annoying flashing bell.
 set visualbell t_vb=                                                              
-set wildmode=longest,list,full                                                    
+
+" Enable autocompletion within the wildmenu.
+" See also: https://stackoverflow.com/questions/9511253/how-to-effectively-use-vim-wildmenu
+set wildmode=longest:list,full                                                    
 set wildmenu                                                                      
-set ruler                                                                         
+
+" Enable the column and row ruler at the bottom of the screen.
+set ruler                                                     
+
+" Enable syntax highlighting and filetype-based indenting.                    
+set autoindent
 syntax on                                                                         
-set tw=0                                                                         
-set formatoptions+=t                                                              
 filetype indent plugin on                                                         
+
+" incsearch: Enable incremental searching
+" ignorecase: Case-insensitive searching
+" smartcase: ...unless there is a capital letter
+" nohlsearch: Don't highlight the search result.
+set incsearch
+set ignorecase
+set smartcase
+set nohlsearch
+
+" Enable line numbers.
+set number
+
+" Key remappings.
 nnoremap <C-n> :bnext<CR>                                                         
 nnoremap <C-p> :bprevious<CR>                                                     
 nnoremap <C-b> :buffers<CR>                                                       
@@ -25,5 +73,4 @@ nnoremap <C-l> :vertical resize -5
 nnoremap <C-h> :vertical resize +5
 nnoremap <C-t> :resize +5
 nnoremap <C-b> :resize -5
-set number
 execute pathogen#infect()
