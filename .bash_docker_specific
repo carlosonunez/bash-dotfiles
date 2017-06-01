@@ -16,13 +16,6 @@
   docker run hello-world
 }
 
-[[ ! -f "/usr/local/bin/kubectl" ]] && {
-  printf "Installing ${BGreen}minikube${NC}\n"
-  curl -Lo kubectl http://storage.googleapis.com/kubernetes-release/release/v1.3.0/bin/linux/amd64/kubectl && \
-  chmod +x kubectl && \
-  sudo mv kubectl /usr/local/bin/
-}
-
 [[ ! -f /etc/bash_completion.d/docker ]] && {
   curl -L https://raw.githubusercontent.com/docker/docker/master/contrib/completion/bash/docker > /etc/bash_completion.d/docker
 }
