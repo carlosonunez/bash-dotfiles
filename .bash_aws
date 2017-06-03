@@ -78,3 +78,6 @@ create_aws_credential_env_vars() {
 
 default_aws_region='us-east-1'
 create_aws_credential_env_vars "$default_aws_region"
+
+mkdir -p "$HOME/.loaded"
+touch "$HOME/.loaded/.bash_aws"
