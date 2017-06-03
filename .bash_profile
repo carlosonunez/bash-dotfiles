@@ -5,7 +5,7 @@
 # COLORS
 # =================
 
-export TERM="xterm-color"
+export TERM="xterm256-color"
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
 
