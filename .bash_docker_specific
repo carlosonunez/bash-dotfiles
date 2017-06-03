@@ -22,3 +22,6 @@
   printf "${BYellow}INFO${NC}: Connecting Docker-Windows engine to native Linux session\n"
   export DOCKER_HOST=tcp://0.0.0.0:2375
 }
+
+mkdir -p "$HOME/.loaded"
+touch "$HOME/.loaded/.$(basename $0)"
