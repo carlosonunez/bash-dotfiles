@@ -1,3 +1,16 @@
+# Install python if needed
+# ==========================
+which python > /dev/null || {
+  echo "INFO: Installing Python"
+  if [ "$(uname)" == "Darwin" ]
+  then
+    brew install python python-dev
+  elif [ "$(uname)" == "Linux" -a "$(cat /etc/lsb-release | grep -q Ubuntu ; echo $?)" -eq "0" ]
+  then
+    sudo apt-get install python python-dev
+  fi
+}
+
 # Install pip if not installed
 # ============================
 which pip > /dev/null || {
