@@ -73,4 +73,18 @@ nnoremap <C-l> :vertical resize -5
 nnoremap <C-h> :vertical resize +5
 nnoremap <C-t> :resize +5
 nnoremap <C-b> :resize -5
+
+" Commit on every save if within a Git repository.
+function! AutoGitCommit()
+  call system('git rev-parse --git-dir > /dev/null 2>&1')
+  if v:shell_error
+    return
+  endif
+  let message = input('Enter a commit message for this change: ', '[' . expand('%') . '] ' . $USER . ' | ')
+  call system('git add ' . expand('%:p'))
+  call system('git commit -m ' . shellescape(message, 1))
+endfun
+autocmd BufWritePost * call AutoGitCommit()
+
+" Tim Popify my vim setup!
 execute pathogen#infect()
