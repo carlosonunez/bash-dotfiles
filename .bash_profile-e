@@ -139,9 +139,11 @@ grep -HR "RSA" $HOME/.ssh | cut -f1 -d: | sort -u | xargs ssh-add {}
 set -o emacs
 
 # ===============
-# Set default editor for Git
+# Set default editor for Git and default git options
 # ===============
 export GIT_EDITOR=vim
+git config --global user.name "Carlos Nunez"
+git config --global user.email "dev@carlosnunez.me"
 
 # ===========================================
 # Display last error code, when applicable
