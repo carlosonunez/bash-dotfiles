@@ -5,7 +5,7 @@
 # COLORS
 # =================
 
-export TERM="xterm256-color"
+export TERM="xterm-color"
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
 
@@ -151,3 +151,12 @@ git config --global user.email "dev@carlosnunez.me"
 PROMPT_COMMAND='e=$?; set_bash_prompt $e'
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+# ==================================
+# Start up tmux
+# ==================================
+tmux ls 2>&1 > /dev/null && {
+  tmux attach 0
+} || {
+  tmux
+}
