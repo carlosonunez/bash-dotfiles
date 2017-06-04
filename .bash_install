@@ -45,3 +45,5 @@ sudo pip install pygments && sudo apt-get install highlight
   done
 }
  
+mkdir -p "$HOME/.loaded"
+touch "$HOME/.loaded/.$(basename $0)"
