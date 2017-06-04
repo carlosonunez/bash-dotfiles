@@ -49,4 +49,4 @@ for i in src pkg bin; do mkdir -p "${go_work_directory}/${i}"; done
 
 
 mkdir -p "$HOME/.loaded"
-touch "$HOME/.loaded/.$(basename $0)"
+touch "$HOME/.loaded/.$(basename $BASH_ARGV)"
