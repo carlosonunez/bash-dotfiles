@@ -1,4 +1,3 @@
-set -e
 printf "${BYellow}INFO${NC}: Creating symlinks to common Windows directories\n"
 windows_home_directory="/mnt/c/Users/accou"
 for d in Downloads
