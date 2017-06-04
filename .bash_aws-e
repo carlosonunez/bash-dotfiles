@@ -1,3 +1,4 @@
+set -e
 linux_box_ip_addr="ec2-52-87-91-75.compute-1.amazonaws.com"
 windows_box_ip_addr="ec2-52-87-127-75.compute-1.amazonaws.com"
 
@@ -80,4 +81,4 @@ default_aws_region='us-east-1'
 create_aws_credential_env_vars "$default_aws_region"
 
 mkdir -p "$HOME/.loaded"
-touch "$HOME/.loaded/.bash_aws"
+touch "$HOME/.loaded/$(basename $0)"
