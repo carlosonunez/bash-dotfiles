@@ -1,3 +1,4 @@
+set -e
 # taws(): Run AWS operations from the ThoughtWorks account.
 taws() {
   args="$@"
@@ -5,3 +6,6 @@ taws() {
 your normal account, re-run this command with 'aws' instead of 'taws'.${NC}\n"
   aws $args --profile thoughtworks
 }
+
+mkdir -p "$HOME/.loaded"
+touch "$HOME/.loaded/.$(basename $0)"
