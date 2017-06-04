@@ -16,7 +16,8 @@ export GEM_PATH="$GEM_HOME:$GEM_PATH"
 export PATH="$GEM_HOME/bin:$GEM_PATH:$PATH"
 
 # Extra vim niceties
-git clone "https://github.com/skwp/vim-rspec.git" $HOME/.vim/bundle/vim-rspec
+if [ ! -d "$HOME/.vim/bundle/vim-rspec" ]
+then
+  git clone "https://github.com/skwp/vim-rspec.git" $HOME/.vim/bundle/vim-rspec
+fi
 
-mkdir -p "$HOME/.loaded"
-touch "$HOME/.loaded/$(basename $BASH_ARGV)"
