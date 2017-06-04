@@ -1,4 +1,3 @@
-set -e
 # taws(): Run AWS operations from the ThoughtWorks account.
 taws() {
   args="$@"
