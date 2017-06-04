@@ -6,5 +6,3 @@ your normal account, re-run this command with 'aws' instead of 'taws'.${NC}\n"
   aws $args --profile thoughtworks
 }
 
-mkdir -p "$HOME/.loaded"
-touch "$HOME/.loaded/$(basename $BASH_ARGV)"
