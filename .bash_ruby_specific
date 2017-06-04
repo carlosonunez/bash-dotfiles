@@ -1,4 +1,3 @@
-set -e
 # Always initialize rvm so that ruby is always made available.
 source /usr/local/rvm/scripts/rvm
 
