@@ -134,7 +134,7 @@ done
 # ============================
 killall ssh-agent
 eval $(ssh-agent -s) > /dev/null
-grep -HR "RSA" $HOME/.ssh | cut -f1 -d: | sort -u | xargs ssh-add {}
+grep -HR "RSA" $HOME/.ssh | cut -f1 -d: | sort -u | xargs ssh-add {} \;
 
 
 # ============
@@ -160,7 +160,7 @@ PROMPT_COMMAND='e=$?; set_bash_prompt $e'
 # Start up tmux
 # ==================================
 tmux ls 2>&1 > /dev/null && {
-  tmux attach 0
+  tmux attach -t 0
 } || {
   tmux
 }
