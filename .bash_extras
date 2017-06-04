@@ -20,4 +20,4 @@ echo "undo,backup,swap" | tr ',' "\n" | while read dir; do
 done
 
 mkdir -p "$HOME/.loaded"
-touch "$HOME/.loaded/.$(basename $BASH_ARGV)"
+touch "$HOME/.loaded/$(basename $BASH_ARGV)"
