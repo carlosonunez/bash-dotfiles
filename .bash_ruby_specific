@@ -19,4 +19,4 @@ export PATH="$GEM_HOME/bin:$GEM_PATH:$PATH"
 git clone "https://github.com/skwp/vim-rspec.git" $HOME/.vim/bundle/vim-rspec
 
 mkdir -p "$HOME/.loaded"
-touch "$HOME/.loaded/.$(basename $0)"
+touch "$HOME/.loaded/.$(basename $BASH_ARGV)"
