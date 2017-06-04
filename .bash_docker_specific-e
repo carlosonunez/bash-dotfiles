@@ -1,5 +1,5 @@
-set -e[[
-! -f "/etc/init.d/docker" ]] && {
+set -e
+[[ ! -f "/etc/init.d/docker" ]] && {
   printf "Installing ${BGreen}docker${NC}\n"
   sudo apt-get update
   sudo apt-get -y install apt-transport-https ca-certificates curl
