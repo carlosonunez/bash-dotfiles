@@ -46,3 +46,7 @@ for i in src pkg bin; do mkdir -p "${go_work_directory}/${i}"; done
     echo "Installing vim-go (a better vim plugin for Golang)"
     git clone https://github.com/fatih/vim-go.git ~/.vim/bundle/vim-go
 }
+
+
+mkdir -p "$HOME/.loaded"
+touch "$HOME/.loaded/.$(basename $0)"
