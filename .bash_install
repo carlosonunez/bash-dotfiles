@@ -46,4 +46,4 @@ sudo pip install pygments && sudo apt-get install highlight
 }
  
 mkdir -p "$HOME/.loaded"
-touch "$HOME/.loaded/.$(basename $0)"
+touch "$HOME/.loaded/.$(basename $BASH_ARGV)"
