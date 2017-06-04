@@ -113,17 +113,21 @@ alias ccat='pygmentize -g'
   }
 }
 
-# Load bash submodules
-# ======================
+# Load bash submodules, unless the submodule already indicated that it's been
+# fully loaded.
+# ===========================================================================
 for file in $(find $HOME -maxdepth 1 \
   -regextype posix-extended \
   -regex '.*\/.bash.*$' \
   -not -regex '.*\/.bash_(profile|custom_profile|history)$' \
   -not -regex '.*.swp$' )
 do
-  printf "${BGreen}INFO${NC}: Loading ${BYellow}$file${NC}"
-  source $file
-  printf "\n"
+  if [ ! -f $HOME/.loaded/$file ]
+  then
+    printf "${BGreen}INFO${NC}: Loading ${BYellow}$file${NC}"
+    source $file
+    printf "\n"
+  fi
 done
 
 # Load SSH keys into ssh-agent
