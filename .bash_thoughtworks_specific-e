@@ -7,4 +7,4 @@ your normal account, re-run this command with 'aws' instead of 'taws'.${NC}\n"
 }
 
 mkdir -p "$HOME/.loaded"
-touch "$HOME/.loaded/.$(basename $0)"
+touch "$HOME/.loaded/.$(basename $BASH_ARGV)"
