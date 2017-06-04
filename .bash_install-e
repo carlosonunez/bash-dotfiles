@@ -1,4 +1,3 @@
-set -e
 # Install python if needed
 # ==========================
 which python > /dev/null || {
