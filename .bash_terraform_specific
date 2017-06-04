@@ -1,3 +1,4 @@
+set -e
 TERRAFORM_LOCATION="/usr/local/bin/terraform"
 TERRAFORM_DL_LINK="https://releases.hashicorp.com/terraform/0.8.0/terraform_0.8.0_linux_amd64.zip"
 [[ ! -f "$TERRAFORM_LOCATION" ]] && {
@@ -8,4 +9,7 @@ TERRAFORM_DL_LINK="https://releases.hashicorp.com/terraform/0.8.0/terraform_0.8.
   unzip -q `basename $TERRAFORM_DL_LINK`
   sudo -i mv /tmp/terraform $TERRAFORM_LOCATION
   popd
-}  
+}
+
+mkdir -p "$HOME/.loaded"
+touch "$HOME/.loaded/.$(basename $0)"
