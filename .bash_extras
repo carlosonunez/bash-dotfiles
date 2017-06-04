@@ -1,3 +1,4 @@
+set -e
 # Load vim pathogen
 # =================
 [[ ! -f ~/.vim/autoload/pathogen.vim ]] && {
