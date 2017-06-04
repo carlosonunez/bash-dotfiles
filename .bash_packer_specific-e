@@ -1,4 +1,3 @@
-set -e
 PACKER_LOCATION="/usr/local/bin/packer"
 PACKER_DL_LINK="https://releases.hashicorp.com/packer/0.12.1/packer_0.12.1_linux_amd64.zip"
 [[ ! -f "$PACKER_LOCATION" ]] && {
