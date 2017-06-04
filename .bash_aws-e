@@ -1,4 +1,3 @@
-set -e
 linux_box_ip_addr="ec2-52-87-91-75.compute-1.amazonaws.com"
 windows_box_ip_addr="ec2-52-87-127-75.compute-1.amazonaws.com"
 
