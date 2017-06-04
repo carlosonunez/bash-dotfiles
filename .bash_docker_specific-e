@@ -1,4 +1,3 @@
-set -e
 [[ ! -f "/etc/init.d/docker" ]] && {
   printf "Installing ${BGreen}docker${NC}\n"
   sudo apt-get update
