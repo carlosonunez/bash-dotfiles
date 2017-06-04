@@ -124,7 +124,7 @@ for file in $(find $HOME -maxdepth 1 \
 do
   if [ ! -f $HOME/.loaded/$file ]
   then
-    printf "${BGreen}INFO${NC}: Loading ${BYellow}$file${NC}"
+    printf "${BGreen}INFO${NC}: Loading ${BYellow}$file${NC}\n"
     source $file
     printf "\n"
   fi
