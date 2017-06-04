@@ -122,14 +122,12 @@ for file in $(find $HOME -maxdepth 1 \
   -not -regex '.*\/.bash_(profile|custom_profile|history)$' \
   -not -regex '.*.swp$' )
 do
-  set +x
   if [ ! -f $file ]
   then
     printf "${BGreen}INFO${NC}: Loading ${BYellow}$file${NC}\n"
     source $file
     printf "\n"
   fi
-  set -x
 done
 
 # Load SSH keys into ssh-agent
