@@ -69,7 +69,7 @@ create_aws_credential_env_vars() {
     export AWS_SECRET_ACCESS_KEY=$(cat "${aws_credentials_file}" | grep 'aws_secret_access_key' | cut -f2 -d '=' | tr -d ' ')
     [ -z "${AWS_ACCESS_KEY_ID}" -o -z "${AWS_SECRET_ACCESS_KEY}" ] && {
       printf "${BYellow}WARN${NC}: One of your AWS credential env vars was not found. Run \
-        'aws configure' in your terminal to fix this."
+'aws configure' in your terminal to fix this."
     } || {
       return 0
     }
