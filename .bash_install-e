@@ -30,7 +30,9 @@ which aws > /dev/null || {
 
 # Install pygments
 # ================
-sudo pip install pygments && sudo apt-get install highlight
+which pygmentize > /dev/null || {
+  sudo pip install pygments && sudo apt-get install highlight
+}
 
 # Install a few necessary brew formulae
 # ======================================
@@ -45,5 +47,3 @@ sudo pip install pygments && sudo apt-get install highlight
   done
 }
  
-mkdir -p "$HOME/.loaded"
-touch "$HOME/.loaded/$(basename $BASH_ARGV)"
