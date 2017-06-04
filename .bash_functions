@@ -144,5 +144,3 @@ get_git_branch() {
 }
 
 
-mkdir -p "$HOME/.loaded"
-touch "$HOME/.loaded/$(basename $BASH_ARGV)"
