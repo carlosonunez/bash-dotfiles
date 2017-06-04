@@ -10,5 +10,3 @@ TERRAFORM_DL_LINK="https://releases.hashicorp.com/terraform/0.8.0/terraform_0.8.
   popd
 }
 
-mkdir -p "$HOME/.loaded"
-touch "$HOME/.loaded/$(basename $BASH_ARGV)"
