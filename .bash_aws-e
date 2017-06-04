@@ -79,6 +79,5 @@ create_aws_credential_env_vars() {
 default_aws_region='us-east-1'
 create_aws_credential_env_vars "$default_aws_region"
 
-echo "This file: ${BASH_ARGV}"
 mkdir -p "$HOME/.loaded"
-touch "$HOME/.loaded/$(basename $0)"
+touch "$HOME/.loaded/$(basename $BASH_ARGV)"
