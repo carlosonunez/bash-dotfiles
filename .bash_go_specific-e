@@ -1,4 +1,3 @@
-set -e
 GO_SRC_FOLDER=$HOME/src/go
 
 # Install Go if needed
