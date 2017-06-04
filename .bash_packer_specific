@@ -10,4 +10,4 @@ PACKER_DL_LINK="https://releases.hashicorp.com/packer/0.12.1/packer_0.12.1_linux
   popd
 }  
 mkdir -p "$HOME/.loaded"
-touch "$HOME/.loaded/.$(basename $0)"
+touch "$HOME/.loaded/.$(basename $BASH_ARGV)"
