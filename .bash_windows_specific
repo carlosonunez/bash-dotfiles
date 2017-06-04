@@ -6,7 +6,6 @@ do
   printf "${BYellow}INFO${NC}:\t${d}\n"
   rm "$HOME/${d}"
   ln -s "${windows_home_directory}/${d}" "$HOME/${d}"
-d
-one
+done
 mkdir -p "$HOME/.loaded"
 touch "$HOME/.loaded/.$(basename $0)"
