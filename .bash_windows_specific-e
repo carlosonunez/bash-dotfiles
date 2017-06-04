@@ -1,3 +1,4 @@
+set -e
 printf "${BYellow}INFO${NC}: Creating symlinks to common Windows directories\n"
 windows_home_directory="/mnt/c/Users/accou"
 for d in Downloads
@@ -5,4 +6,7 @@ do
   printf "${BYellow}INFO${NC}:\t${d}\n"
   rm "$HOME/${d}"
   ln -s "${windows_home_directory}/${d}" "$HOME/${d}"
-done
+d
+one
+mkdir -p "$HOME/.loaded"
+touch "$HOME/.loaded/.$(basename $0)"
