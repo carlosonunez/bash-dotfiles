@@ -23,5 +23,3 @@
   export DOCKER_HOST=tcp://0.0.0.0:2375
 }
 
-mkdir -p "$HOME/.loaded"
-touch "$HOME/.loaded/$(basename $BASH_ARGV)"
