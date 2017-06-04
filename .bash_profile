@@ -122,19 +122,18 @@ for file in $(find $HOME -maxdepth 1 \
   -not -regex '.*\/.bash_(profile|custom_profile|history)$' \
   -not -regex '.*.swp$' )
 do
-  if [ ! -f $file ]
-  then
-    printf "${BGreen}INFO${NC}: Loading ${BYellow}$file${NC}\n"
-    source $file
-    printf "\n"
-  fi
+  printf "${BGreen}INFO${NC}: Loading ${BYellow}$file${NC}\n"
+  source $file
+  printf "\n"
 done
 
 # Load SSH keys into ssh-agent
 # ============================
 killall ssh-agent
 eval $(ssh-agent -s) > /dev/null
-grep -HR "RSA" $HOME/.ssh | cut -f1 -d: | sort -u | xargs ssh-add {} \;
+grep -HR "RSA" $HOME/.ssh | cut -f1 -d: | sort -u | while read file; do
+  ssh-add $file
+done
 
 
 # ============
@@ -162,5 +161,5 @@ PROMPT_COMMAND='e=$?; set_bash_prompt $e'
 tmux ls 2>&1 > /dev/null && {
   tmux attach -t 0
 } || {
-  tmux
+  tmux -u
 }
