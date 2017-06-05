@@ -5,6 +5,10 @@
 # COLORS
 # =================
 
+# Enable terminal color support.
+export TERM="xterm-color"
+export CLICOLOR=1
+export LSCOLORS=GxFxCxDxBxegedabagaced
 
 # ===========================================================================
 # Start up tmux before doing anything else.
@@ -22,10 +26,6 @@ then
 # Load .bash_profile once within a tmux pane
 # ============================================
 else
-  export TERM="xterm-color"
-  export CLICOLOR=1
-  export LSCOLORS=GxFxCxDxBxegedabagaced
-
   # Normal Colors
   Black='\033[0;30m'        # Black
   Red='\033[0;31m'          # Red
