@@ -10,18 +10,18 @@
 # Start up tmux before doing anything else.
 # We will only load our profile within a TMUX pane to save on loading time.
 # ===========================================================================
-which tmux || sudo apt-get install -y tmux
-tmux ls 2>&1 > /dev/null && {
+if [ "$TMUX_PANE" == "" ]
+then
+  which tmux || sudo apt-get install -y tmux
+  tmux ls 2>&1 > /dev/null && {
   tmux attach -t 0
-} || {
-  tmux -u
-}
-
+  } || {
+    tmux -u
+  }
 # ============================================
 # Load .bash_profile once within a tmux pane
 # ============================================
-if [ "$TMUX_PANE" -ne "" ]
-then
+else
   export TERM="xterm-color"
   export CLICOLOR=1
   export LSCOLORS=GxFxCxDxBxegedabagaced
