@@ -23,7 +23,6 @@ set shiftwidth=2
 " Nowrap: Don't wrap text unless I say so explicitly.
 " Textwidth: Autowrap at column n (where n is right of the equals sign)
 set formatoptions+=t                                                              
-set textwidth=80                                                                         
 set nowrap                                                                        
 
 " Delek: pretty colorscheme.

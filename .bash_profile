@@ -14,13 +14,14 @@ export LSCOLORS=GxFxCxDxBxegedabagaced
 # Start up tmux before doing anything else.
 # We will only load our profile within a TMUX pane to save on loading time.
 # ===========================================================================
+alias tmux='tmux -u'
 if [ "$TMUX_PANE" == "" ]
 then
   which tmux || sudo apt-get install -y tmux
   tmux ls 2>&1 > /dev/null && {
   tmux attach -t 0
   } || {
-    tmux -u
+    tmux
   }
 # ============================================
 # Load .bash_profile once within a tmux pane
