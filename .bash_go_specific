@@ -2,7 +2,7 @@ GO_SRC_FOLDER=$HOME/src/go
 
 # Install Go if needed
 # ====================
-LATEST_GOLANG_LINUX_VERSION="go1.6.linux-amd64"
+LATEST_GOLANG_LINUX_VERSION="go1.8.linux-amd64"
 [[ ! -d /usr/local/go/bin ]] && {
     echo "Go is not installed. Let's fix that."
     [[ "`uname`" == "Darwin" ]] && { 
