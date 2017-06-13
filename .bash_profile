@@ -107,6 +107,7 @@ else
     fi
   }
 
+<<<<<<< HEAD
   # Normal Colors
   Black='\033[0;30m'        # Black
   Red='\033[0;31m'          # Red
@@ -185,6 +186,51 @@ else
       PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Red\]<<\$(get_git_branch)>>\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
     fi
   }
+=======
+# =================
+# SET PROMPT
+# =================
+set_bash_prompt() {
+  # ==========================================
+  # Check if I'm root or someone else.
+  # ==========================================
+  my_username="carlosnunez"
+  fmtd_username=$my_username
+
+  if [ $USER != $my_username ]; then
+    fmtd_username="\[$On_Purple\]\[$BWhite\]$my_username\[$NC\]"
+  elif [ $EUID -eq 0 ]; then
+    fmtd_username="\[$ALERT\]$my_username\[$NC\]"
+  else
+    fmtd_username="\[$On_Green\]\[$BBlack\]$my_username\[$NC\]"
+  fi
+
+  # ===================
+  # Error code
+  # ===================
+  error_code_str=""
+  [[ "$1" != "0" ]] && error_code_str="\[$On_Red\]\[$BWhite\]<<$1>>\[$NC\]"
+
+  # ===================
+  # Machine name
+  # ===================
+  hostname_fmtd="\[$On_Yellow\]\[$BBlack\]localhost\[$NC\]"
+  if [ ! -z "$SSH_CLIENT" ]; then
+    hostname_fmtd="\[$On_Yellow\]\[$BBlack\]$HOSTNAME\[$NC\]"
+  fi
+  if [ ! -d .git ]
+  then 
+    PS1="$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
+  else
+    if [ "$(git status --porcelain 2>/dev/null | wc -l)" -ne "0" ]
+    then
+      PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Red\]<<\$(get_git_branch)>>\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
+    else
+      PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Green\]<<\$(get_git_branch)>>\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
+    fi
+  fi
+}
+>>>>>>> Accidentally removed condition that detected a branch with no unstaged or uncommitted changes.
 
   # =================
   # ALIASES
