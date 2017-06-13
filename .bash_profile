@@ -10,6 +10,50 @@ export TERM="xterm-color"
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
 
+get_os_type() {
+  case "$(uname)" in
+    "Darwin")
+      echo "Darwin"
+      ;;
+    "Linux")
+      echo "$(lsb_release -is)"
+      ;;
+    *)
+      echo "Unsupported"
+      ;;
+  esac
+}
+
+install_application() {
+  if [ $# -eq 0 ]
+  then
+    printf "${BRed}ERROR${NC}: install_application requires some arguments.\n"
+    return 1
+  fi
+  package_manager_command_to_run=""
+  os_type=$(get_os_type)
+  echo "OS Type: $os_type"
+  case $os_type in
+    "Darwin")
+      package_manager_command_to_run="brew install"
+      ;;
+    "Ubuntu"|"Debian")
+      package_manager_command_to_run="sudo apt-get -y install"
+      ;;
+    "Red Hat"|"Fedora")
+      package_manager_command_to_run="sudo yum -y install"
+      ;;
+    "SuSE")
+      package_manager_command_to_run="sudo zypper install"
+      ;;
+    *)
+      printf "${BRed}ERROR${NC}: OS [$os_type] is unsupported\n"
+      return 1
+      ;;
+  esac
+  eval "$package_manager_command_to_run $@"
+}
+
 # ===========================================================================
 # Start up tmux before doing anything else.
 # We will only load our profile within a TMUX pane to save on loading time.
@@ -17,6 +61,26 @@ export LSCOLORS=GxFxCxDxBxegedabagaced
 alias tmux='tmux -u'
 if [ "$TMUX_PANE" == "" ]
 then
+  if [ "$(which tmux)" == "" ]
+  then
+    if [ "$(uname)" == "Darwin" ]
+    then
+      brew install tmux
+    elif [ "$(uname)" == "Linux" -a \
+      "$(cat /etc/lsb-release | grep -q 'Ubuntu'; echo $?)" -eq "0" ]
+    then
+      sudo apt-get update -yqqu
+      sudo add-apt-repository -yu ppa:pi-rho/dev
+      sudo apt-get update -yqqu
+      sudo apt-get install -yqqu python-software-properties software-properties-common
+      sudo apt-get install -yqq tmux-next=2.3~20160913~bzr3547+20-1ubuntu1~ppa0~ubuntu16.04.1
+      # sudo apt-get install -yqq tmux-next=2.3~20160913~bzr3547+20-1ubuntu1~ppa0~ubuntu15.10.1
+      # sudo apt-get install -yqq tmux-next=2.3~20160913~bzr3547+20-1ubuntu1~ppa0~ubuntu15.04.1
+      # sudo apt-get install -yqq tmux-next=2.3~20160913~bzr3547+20-1ubuntu1~ppa0~ubuntu14.04.1
+      # sudo apt-get install -yqq tmux-next=2.3~20160913~bzr3547+20-1ubuntu1~ppa0~ubuntu12.04.1
+      tmux-next -V
+    fi
+  fi
   which tmux || sudo apt-get install -y tmux
   tmux ls 2>&1 > /dev/null && {
   tmux attach -t 0
