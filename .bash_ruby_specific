@@ -1,23 +1,21 @@
-# Always initialize rvm so that ruby is always made available.
-source /usr/local/rvm/scripts/rvm
-
 LATEST_RUBY_VERSION="2.4.0p0"
+LATEST_RUBY_PACKAGE_NAME="ruby2.4"
 DETECTED_RUBY_VERSION=`ruby -v 2>/dev/null | awk '{print $2}'`
 [[ "${DETECTED_RUBY_VERSION}" != "${LATEST_RUBY_VERSION}" ]] && {
   printf "${BYellow}INFO: Ruby v${LATEST_RUBY_VERSION} required, but v${DETECTED_RUBY_VERSION} is installed.\n"
   printf "${BYellow}INFO:${NC} Installing ${BGreen}ruby${NC}\n"
-  gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-  \curl -sSL https://get.rvm.io | sudo bash -s stable --ruby
-  source /usr/local/rvm/scripts/rvm
+  sudo apt-add-repository ppa:brightbox/ruby-ng
+  sudo apt-get update
+  sudo apt-get install "${LATEST_RUBY_PACKAGE_NAME}" "${LATEST_RUBY_PACKAGE_NAME}-dev"
   printf "${BYellow}INFO:${NC} Installed ${BGreen}ruby${NC} $(ruby -v)\n"
 }
 export GEM_HOME="$HOME/.gems"
 export GEM_PATH="$GEM_HOME:$GEM_PATH"
 export PATH="$GEM_HOME/bin:$GEM_PATH:$PATH"
+which bundle 2>&1 > /dev/null || gem install bundler
 
 # Extra vim niceties
 if [ ! -d "$HOME/.vim/bundle/vim-rspec" ]
 then
   git clone "https://github.com/skwp/vim-rspec.git" $HOME/.vim/bundle/vim-rspec
 fi
-
