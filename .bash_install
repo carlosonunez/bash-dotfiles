@@ -30,9 +30,13 @@ which aws > /dev/null || {
 
 # Install pygments
 # ================
-which pygmentize > /dev/null || {
-  sudo pip install pygments && sudo apt-get install highlight
-}
+if [ "$(get_os_type)" -eq "Ubuntu" -o "$(get_os_type)" -eq "Debian" ]
+then
+  which pygmentize > /dev/null || {
+    sudo pip install pygments
+    sudo apt-get install highlight
+  }
+fi
 
 # Install a few necessary brew formulae
 # ======================================
@@ -40,10 +44,10 @@ which pygmentize > /dev/null || {
   builtin=$(echo "htop,tmux,jq,lastpass-cli" | tr "," "\n")
   casks=$(echo "google-chrome,shiftit,iterm2" | tr "," "\n")
   for pkg in $builtin; do
-    brew list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && do_install "$pkg" ; }
+    brew list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && install_application "$pkg" ; }
   done
   for pkg in $casks; do
-    brew cask list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && do_install "Caskroom/cask/$pkg" ; }
+    brew cask list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && install_application "Caskroom/cask/$pkg" ; }
   done
 }
  
