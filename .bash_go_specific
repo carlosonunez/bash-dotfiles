@@ -4,16 +4,16 @@ GO_SRC_FOLDER=$HOME/src/go
 # ====================
 LATEST_GOLANG_LINUX_VERSION="go1.8.linux-amd64"
 [[ ! -d /usr/local/go/bin ]] && {
-    echo "Go is not installed. Let's fix that."
+  printf "${BYellow}INFO:${NC} Installing golang (sudo required; enter your password when prompted)\n"
     [[ "`uname`" == "Darwin" ]] && { 
-        brew install go --cross-compile-daemon; 
+      brew install go --cross-compile-daemon; 
     } || {
-      printf "${BYellow}INFO:${NC} Installing golang\n"
-      pushd /tmp
-      sudo apt-get update
-      sudo curl -O "https://storage.googleapis.com/golang/${LATEST_GOLANG_LINUX_VERSION}.tar.gz"
-      sudo tar -xvf "${LATEST_GOLANG_LINUX_VERSION}.tar.gz"
-      sudo mv go /usr/local
+      sudo apt-get -y update
+        sudo curl -O "https://storage.googleapis.com/golang/${LATEST_GOLANG_LINUX_VERSION}.tar.gz"
+        printf "${BYellow}INFO:${NC} Extracting go\n"
+        sudo sh -c "[ ! -d /usr/local/go ] && mkdir -p /usr/local/go"
+        sudo tar -xf "${LATEST_GOLANG_LINUX_VERSION}.tar.gz" -C "/usr/local/go"
+        sudo rm -rf "${LATEST_GOLANG_LINUX_VERSION}.tar.gz"
     }
 
 }
@@ -21,14 +21,14 @@ LATEST_GOLANG_LINUX_VERSION="go1.8.linux-amd64"
 # Set up the Golang workspace if non-existent
 # ============================================
 [[ ! -d ~/src/go ]] && {
-    [[ -d $GO_SRC_FOLDER ]] || mkdir $GO_SRC_FOLDER
+  [[ -d $GO_SRC_FOLDER ]] || mkdir $GO_SRC_FOLDER
     for dir in bin src pkg; do
       [[ -d $GO_SRC_FOLDER/$dir ]] || {
         pushd $GO_SRC_FOLDER
-        mkdir $dir
-        popd
+          mkdir $dir
+          popd
       }
-    done
+  done
 }
 
 # Set GOPATH if unset
@@ -43,7 +43,7 @@ for i in src pkg bin; do mkdir -p "${go_work_directory}/${i}"; done
 # Setup vim-go
 # =============
 [[ ! -d ~/.vim/bundle/vim-go ]] && {
-    echo "Installing vim-go (a better vim plugin for Golang)"
+  echo "Installing vim-go (a better vim plugin for Golang)"
     git clone https://github.com/fatih/vim-go.git ~/.vim/bundle/vim-go
 }
 
