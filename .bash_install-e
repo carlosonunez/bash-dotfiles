@@ -30,11 +30,11 @@ which aws > /dev/null || {
 
 # Install pygments
 # ================
-if [ "$(get_os_type)" -eq "Ubuntu" -o "$(get_os_type)" -eq "Debian" ]
+if [ "$(get_os_type)" -ne "Darwin" ]
 then
   which pygmentize > /dev/null || {
     sudo pip install pygments
-    sudo apt-get install highlight
+    install_application "highlight"
   }
 fi
 
