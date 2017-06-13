@@ -63,25 +63,24 @@ if [ "$TMUX_PANE" == "" ]
 then
   if [ "$(which tmux)" == "" ]
   then
-    if [ "$(uname)" == "Darwin" ]
-    then
-      brew install tmux
-    elif [ "$(uname)" == "Linux" -a \
-      "$(cat /etc/lsb-release | grep -q 'Ubuntu'; echo $?)" -eq "0" ]
-    then
-      sudo apt-get update -yqqu
-      sudo add-apt-repository -yu ppa:pi-rho/dev
-      sudo apt-get update -yqqu
-      sudo apt-get install -yqqu python-software-properties software-properties-common
-      sudo apt-get install -yqq tmux-next=2.3~20160913~bzr3547+20-1ubuntu1~ppa0~ubuntu16.04.1
-      # sudo apt-get install -yqq tmux-next=2.3~20160913~bzr3547+20-1ubuntu1~ppa0~ubuntu15.10.1
-      # sudo apt-get install -yqq tmux-next=2.3~20160913~bzr3547+20-1ubuntu1~ppa0~ubuntu15.04.1
-      # sudo apt-get install -yqq tmux-next=2.3~20160913~bzr3547+20-1ubuntu1~ppa0~ubuntu14.04.1
-      # sudo apt-get install -yqq tmux-next=2.3~20160913~bzr3547+20-1ubuntu1~ppa0~ubuntu12.04.1
-      tmux-next -V
-    fi
+    case "$(get_os_type)" in
+      "Darwin")
+        brew install tmux
+        ;;
+      "Ubuntu"|"Debian")
+        sudo apt-get update -yqqu
+        sudo add-apt-repository -yu ppa:pi-rho/dev
+        sudo apt-get update -yqqu
+        sudo apt-get install -yqqu python-software-properties software-properties-common
+        sudo apt-get install -yqq tmux-next=2.3~20160913~bzr3547+20-1ubuntu1~ppa0~ubuntu16.04.1
+        alias tmux=tmux-next
+        ;;
+      *)
+        printf "${BYellow}WARN${NC}: No subroutine written for OS $(get_os_type). \
+Assuming package name of 'tmux'.\n"
+        install_application "tmux"
+    esac
   fi
-  which tmux || sudo apt-get install -y tmux
   tmux ls 2>&1 > /dev/null && {
   tmux attach -t 0
   } || {
