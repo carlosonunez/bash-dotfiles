@@ -5,17 +5,24 @@ GO_SRC_FOLDER=$HOME/src/go
 LATEST_GOLANG_LINUX_VERSION="go1.8.linux-amd64"
 [[ ! -d /usr/local/go/bin ]] && {
   printf "${BYellow}INFO:${NC} Installing golang (sudo required; enter your password when prompted)\n"
-    [[ "`uname`" == "Darwin" ]] && { 
-      brew install go --cross-compile-daemon; 
-    } || {
+  case "$(get_os_type)" in
+    "Darwin")
+      brew install go --cross-compile-daemon
+      ;;
+    "Ubuntu"|"Debian")
       sudo apt-get -y update
-        sudo curl -O "https://storage.googleapis.com/golang/${LATEST_GOLANG_LINUX_VERSION}.tar.gz"
-        printf "${BYellow}INFO:${NC} Extracting go\n"
-        sudo sh -c "[ ! -d /usr/local/go ] && mkdir -p /usr/local/go"
-        sudo tar -xf "${LATEST_GOLANG_LINUX_VERSION}.tar.gz" -C "/usr/local/go"
-        sudo rm -rf "${LATEST_GOLANG_LINUX_VERSION}.tar.gz"
-    }
-
+      sudo curl -O "https://storage.googleapis.com/golang/${LATEST_GOLANG_LINUX_VERSION}.tar.gz"
+      printf "${BYellow}INFO:${NC} Extracting go\n"
+      sudo sh -c "[ ! -d /usr/local/go ] && mkdir -p /usr/local/go"
+      sudo tar -xf "${LATEST_GOLANG_LINUX_VERSION}.tar.gz" -C "/usr/local/go"
+      sudo rm -rf "${LATEST_GOLANG_LINUX_VERSION}.tar.gz"
+      ;;
+    *)
+      printf "${BYellow}INFO: No installation subroutine provided for \
+        OS $(get_os_type). Assuming package 'golang-go'. Your version might be out of date.\n"
+      install_application "golang-go"
+      ;;
+  esac
 }
 
 # Set up the Golang workspace if non-existent
