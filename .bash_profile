@@ -107,7 +107,6 @@ else
     fi
   }
 
-<<<<<<< HEAD
   # Normal Colors
   Black='\033[0;30m'        # Black
   Red='\033[0;31m'          # Red
@@ -186,7 +185,6 @@ else
       PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Red\]<<\$(get_git_branch)>>\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
     fi
   }
-=======
 # =================
 # SET PROMPT
 # =================
@@ -234,7 +232,6 @@ set_bash_prompt() {
     fi
   fi
 }
->>>>>>> Accidentally removed condition that detected a branch with no unstaged or uncommitted changes.
 
   # =================
   # ALIASES
