@@ -1,15 +1,7 @@
 # Install python if needed
 # ==========================
-which python > /dev/null || {
-  echo "INFO: Installing Python"
-  if [ "$(uname)" == "Darwin" ]
-  then
-    brew install python python-dev
-  elif [ "$(uname)" == "Linux" -a "$(cat /etc/lsb-release | grep -q Ubuntu ; echo $?)" -eq "0" ]
-  then
-    sudo apt-get install python python-dev
-  fi
-}
+which python > /dev/null || install_application "python" "python-dev"
+
 
 # Install pip if not installed
 # ============================
@@ -30,7 +22,7 @@ which aws > /dev/null || {
 
 # Install pygments
 # ================
-if [ "$(get_os_type)" -ne "Darwin" ]
+if [ "$(get_os_type)" != "Darwin" ]
 then
   which pygmentize > /dev/null || {
     sudo pip install pygments

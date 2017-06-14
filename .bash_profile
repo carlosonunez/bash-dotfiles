@@ -51,6 +51,7 @@ install_application() {
       return 1
       ;;
   esac
+  printf "${BYellow}INFO${NC}: Running ${BGreen}${package_manager_command_to_run} $@${NC}\n"
   eval "$package_manager_command_to_run $@"
 }
 
@@ -58,7 +59,6 @@ install_application() {
 # Start up tmux before doing anything else.
 # We will only load our profile within a TMUX pane to save on loading time.
 # ===========================================================================
-alias tmux='tmux -u'
 if [ "$TMUX_PANE" == "" ]
 then
   if [ "$(which tmux)" == "" ]
@@ -68,19 +68,21 @@ then
         brew install tmux
         ;;
       "Ubuntu"|"Debian")
-        sudo apt-get update -yqqu
-        sudo add-apt-repository -yu ppa:pi-rho/dev
-        sudo apt-get update -yqqu
-        sudo apt-get install -yqqu python-software-properties software-properties-common
-        sudo apt-get install -yqq tmux-next=2.3~20160913~bzr3547+20-1ubuntu1~ppa0~ubuntu16.04.1
-        alias tmux=tmux-next
+        printf "${BYellow}INFO${NC}: Preparing to install tmux\n"
+        sudo add-apt-repository -y ppa:pi-rho/dev
+        sudo apt-get update
+        install_application  "python-software-properties software-properties-common"
+        install_application  "tmux-next"
+        alias tmux='tmux-next'
         ;;
       *)
         printf "${BYellow}WARN${NC}: No subroutine written for OS $(get_os_type). \
 Assuming package name of 'tmux'.\n"
         install_application "tmux"
+        ;;
     esac
   fi
+  alias tmux='tmux -u'
   tmux ls 2>&1 > /dev/null && {
   tmux attach -t 0
   } || {
