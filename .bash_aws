@@ -77,11 +77,14 @@ create_aws_credential_env_vars() {
 }
 
 create_s3fs_credentials() {
-  printf "${BYellow}INFO${NC}: Creating s3fs credentials file in /etc/passwd-s3fs. \
-sudo required; you might need to enter your password.\n"
-  sudo sh -c "echo ${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY} > /etc/passwd-s3fs"
-  sudo chown $USER:$USER /etc/passwd-s3fs
-  sudo chmod 600 /etc/passwd-s3fs
+  if [ "$(uname -a | grep 'Microsoft' ; echo $?)" == "0" -a ! -f /etc/passwd-s3fs ]
+  then
+    printf "${BYellow}INFO${NC}: Creating s3fs credentials file in /etc/passwd-s3fs. \
+  sudo required; you might need to enter your password.\n"
+    sudo sh -c "echo ${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY} > /etc/passwd-s3fs"
+    sudo chown $USER:$USER /etc/passwd-s3fs
+    sudo chmod 600 /etc/passwd-s3fs
+  fi
 }
 
 default_aws_region='us-east-1'
