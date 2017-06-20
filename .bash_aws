@@ -77,7 +77,7 @@ create_aws_credential_env_vars() {
 }
 
 create_s3fs_credentials() {
-  if [ "$(get_os_type)" == "Ubuntu" -a "$(uname -a | grep Microsoft" == "" ]
+  if [ "$(get_os_type)" == "Ubuntu" -a "$(uname -a | grep Microsoft)" == "" ]
   then
     printf "${BYellow}INFO${NC}: Creating s3fs credentials file in /etc/passwd-s3fs. \
   sudo required; you might need to enter your password.\n"
