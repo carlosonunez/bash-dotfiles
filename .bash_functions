@@ -120,7 +120,7 @@ ec2_help() {
 }
 
 get_git_branch() {
-  git branch | egrep "^\*" | sed 's/* //'  
+  git branch 2>/dev/null | egrep "^\*" | sed 's/* //'  
 }
 
 

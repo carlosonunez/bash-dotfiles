@@ -79,7 +79,11 @@ function! AutoGitCommit()
   if v:shell_error
     return
   endif
-  let message = input('Enter a commit message for this change: ', '[' . expand('%') . '] ' . $USER . ' | ')
+  let jira_issue = system('git branch | egrep "^\* feature/[A-Z_]{1,9}-[0-9]{1,}-.*" | cut -f2 -d "/" | cut -f1-2 -d "-"')
+  if jira_issue == ""
+    let jira_issue = ""
+  endif
+  let message = input('Enter a commit message for this change: ', '[' . expand('%') . '] ' . $USER . ' | ' . jira_issue . '| ')
   call system('git add ' . expand('%:p'))
   call system('git commit -m ' . shellescape(message, 1))
 endfun

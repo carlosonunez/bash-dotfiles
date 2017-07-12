@@ -1,8 +1,9 @@
-[[ ! -f "/etc/init.d/docker" ]] && {
+if [ ! -f /etc/init.d/docker ] && [ ! -f $HOME/.docker_is_installed ]
+then
   printf "Installing ${BGreen}docker${NC}\n"
   case "$(get_os_type)" in
     "Darwin")
-      install_application "docker"
+      install_application "docker docker-machine"
       ;;
     "Ubuntu"|"Debian")
       install_application "apt-transport-https ca-certificates curl"
@@ -19,16 +20,42 @@
       printf "${BRed}ERROR${NC}: You haven't written a Docker installation routine for this OS yet. Do it now!\n"
       return 1
   esac
-  docker run hello-world
-}
+  touch "$HOME/.docker_is_installed"
+fi
 
-[[ ! -f /etc/bash_completion.d/docker ]] && {
-  URL="https://raw.githubusercontent.com/docker/docker/master/contrib/completion/bash/docker "
-  sudo bash -c "curl -L $URL > /etc/bash_completion.d/docker"
-}
-
-[[ "$( cat /proc/version | grep -q 'Microsoft' && echo $? )" -eq "0" ]] && {
+if [ "$(get_os_type)" == "Windows" ]
+then
   printf "${BYellow}INFO${NC}: Connecting Docker-Windows engine to native Linux session\n"
   export DOCKER_HOST=tcp://0.0.0.0:2375
-}
-
+elif [ "$(get_os_type)" == "Darwin" ]
+then
+  # If we're running docker-machine, add the running Docker VM to our no_proxy env. var.
+  if [ "$(which docker-machine)" != "" ]
+  then
+    printf "${BYellow}INFO${NC}: Starting all stopped Docker machines.\n"
+    docker-machine ls \
+      --filter state=stopped \
+      --format '{{.Name}}' | \
+      xargs docker-machine start
+    printf "${BGreen}INFO${NC}: Docker machines started.\n"
+    first_running_docker_vm_name=$( docker-machine ls \
+      --filter state=running \
+      --format "{{.Name}} {{.URL}}" | \
+      head -n 1 | \
+      awk '{print $1}')
+    first_running_docker_vm_url=$( docker-machine ls \
+      --filter state=running \
+      --format "{{.Name}} {{.URL}}" | \
+      head -n 1 | \
+      awk '{print $2}')
+    if [ "$first_running_docker_vm_url" != "" ]
+    then
+      first_running_docker_vm_ip=$( echo "${first_running_docker_vm_url}" | \
+        sed 's/^tcp\:\/\/\(.*\)\:.*/\1/')
+      first_running_docker_vm_certs_path="$HOME/.docker/machine/machines/${first_running_docker_vm_name}"
+      printf "${BYellow}INFO${NC}: Found a docker-machine VM running at $first_running_docker_vm_ip\n"
+      eval $(docker-machine env $first_running_docker_vm_name)
+      export no_proxy="${no_proxy},${first_running_docker_vm_ip}"
+    fi
+  fi
+fi
