@@ -1,8 +1,11 @@
-printf "${BYellow}INFO${NC}: Creating symlinks to common Windows directories\n"
-windows_home_directory="/mnt/c/Users/accou"
-for d in Downloads
-do
-  printf "${BYellow}INFO${NC}:\t${d}\n"
-  rm "$HOME/${d}"
-  ln -s "${windows_home_directory}/${d}" "$HOME/${d}"
-done
+if [ "$(get_os_type)" == "Linux" -a "$(cat /proc/version | grep 'Microsoft')" != "" ]
+then
+  printf "${BYellow}INFO${NC}: Creating symlinks to common Windows directories\n"
+  windows_home_directory="/mnt/c/Users/accou"
+  for d in Downloads
+  do
+    printf "${BYellow}INFO${NC}:\t${d}\n"
+    rm "$HOME/${d}"
+    ln -s "${windows_home_directory}/${d}" "$HOME/${d}"
+  done
+fi

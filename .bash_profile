@@ -4,11 +4,50 @@
 # =================
 # COLORS
 # =================
-
 # Enable terminal color support.
 export TERM="xterm-color"
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
+
+# Normal Colors
+Black='\033[0;30m'        # Black
+Red='\033[0;31m'          # Red
+Green='\033[0;32m'        # Green
+Yellow='\033[0;33m'       # Yellow
+Blue='\033[0;34m'         # Blue
+Purple='\033[0;35m'       # Purple
+Cyan='\033[0;36m'         # Cyan
+White='\033[0;37m'        # White
+
+# Bold
+BBlack='\033[1;30m'       # Black
+BRed='\033[1;31m'         # Red
+BGreen='\033[1;32m'       # Green
+BYellow='\033[1;33m'      # Yellow
+BBlue='\033[1;34m'        # Blue
+BPurple='\033[1;35m'      # Purple
+BCyan='\033[1;36m'        # Cyan
+BWhite='\033[1;37m'       # White
+
+# Background
+On_Black='\033[40m'       # Black
+On_Red='\033[41m'         # Red
+On_Green='\033[42m'       # Green
+On_Yellow='\033[43m'      # Yellow
+On_Blue='\033[44m'        # Blue
+On_Purple='\033[45m'      # Purple
+On_Cyan='\033[46m'        # Cyan
+On_White='\033[47m'       # White
+
+NC="\033[m"               # Color Reset
+ALERT=${BWhite}${On_Red} # Bold White on red background
+
+# Load any company specific bash submodules first.
+for file in $HOME/.bash_company_*
+do
+  printf "${BYellow}INFO${NC}: Loading company submodule ${file}\n"
+  source $file
+done
 
 get_os_type() {
   case "$(uname)" in
@@ -22,6 +61,20 @@ get_os_type() {
       echo "Unsupported"
       ;;
   esac
+}
+
+install_homebrew_if_missing() {
+  if [ "$(get_os_type)" -ne "Darwin" ]
+  then
+    # Check not required for non-Darwin operating systems.
+    return 0
+  fi
+
+  if [ "$(which brew)" -eq "" ]
+  then
+    printf "${BYellow}INFO${NC}: Installing homebrew\n"
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  fi
 }
 
 install_application() {
@@ -92,41 +145,6 @@ Assuming package name of 'tmux'.\n"
 # Load .bash_profile once within a tmux pane
 # ============================================
 else
-  # Normal Colors
-  Black='\033[0;30m'        # Black
-  Red='\033[0;31m'          # Red
-  Green='\033[0;32m'        # Green
-  Yellow='\033[0;33m'       # Yellow
-  Blue='\033[0;34m'         # Blue
-  Purple='\033[0;35m'       # Purple
-  Cyan='\033[0;36m'         # Cyan
-  White='\033[0;37m'        # White
-
-  # Bold
-  BBlack='\033[1;30m'       # Black
-  BRed='\033[1;31m'         # Red
-  BGreen='\033[1;32m'       # Green
-  BYellow='\033[1;33m'      # Yellow
-  BBlue='\033[1;34m'        # Blue
-  BPurple='\033[1;35m'      # Purple
-  BCyan='\033[1;36m'        # Cyan
-  BWhite='\033[1;37m'       # White
-
-  # Background
-  On_Black='\033[40m'       # Black
-  On_Red='\033[41m'         # Red
-  On_Green='\033[42m'       # Green
-  On_Yellow='\033[43m'      # Yellow
-  On_Blue='\033[44m'        # Blue
-  On_Purple='\033[45m'      # Purple
-  On_Cyan='\033[46m'        # Cyan
-  On_White='\033[47m'       # White
-
-  NC="\033[m"               # Color Reset
-
-
-  ALERT=${BWhite}${On_Red} # Bold White on red background
-
   # ================================
   # EXTRAS
   # ================================
@@ -163,12 +181,14 @@ else
     if [ ! -z "$SSH_CLIENT" ]; then
       hostname_fmtd="\[$On_Yellow\]\[$BBlack\]$HOSTNAME\[$NC\]"
     fi
-    if [ ! -d .git -o "`git branch >/dev/null 2>/dev/null; echo $?`" -ne "0" ]; then
+    git_branch="$(get_git_branch)"
+    if [ "${git_branch}" == "" ]
+    then
       PS1="$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
-    elif [ ! -d .git -o `git status --porcelain 2>/dev/null | wc -l | tr -d ' '` -eq 0 ]; then
-      PS1="$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Green\]<<\$(get_git_branch)>>\[$NC\] \[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
+    elif [ `git status --porcelain 2>/dev/null | wc -l | tr -d ' '` -eq 0 ]; then
+      PS1="$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Green\]<<$git_branch>>\[$NC\] \[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
     else
-      PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Red\]<<\$(get_git_branch)>>\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
+      PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Red\]<<$git_branch)>>\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
     fi
   }
 
@@ -281,19 +301,20 @@ set_bash_prompt() {
   if [ ! -z "$SSH_CLIENT" ]; then
     hostname_fmtd="\[$On_Yellow\]\[$BBlack\]$HOSTNAME\[$NC\]"
   fi
-  if [ ! -d .git ]
+  git_repository_status="$(git status --porcelain 2>/dev/null)"
+  git_branch="$(get_git_branch)"
+  if [ "$git_branch" == "" ]
   then 
     PS1="$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
   else
-    git_repository_status="$(git status --porcelain)"
     if [ "$(echo $git_repository_status | grep '??')" != "" ]
     then
-      PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BRed\]<<\$(get_git_branch)>>*\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
+      PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BRed\]<<$git_branch>>*\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
     elif [ "$git_repository_status" != "" ]
     then
-      PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Red\]<<\$(get_git_branch)>>\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
+      PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Red\]<<$git_branch>>\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
     else
-      PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Green\]<<\$(get_git_branch)>>\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
+      PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Green\]<<$git_branch>>\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
     fi
   fi
 }
@@ -304,9 +325,9 @@ set_bash_prompt() {
   alias killmatch='kill_all_matching_pids'
   alias clip='xclip'
   [[ "$(uname)" == "Darwin" ]] && {
-    alias ls='ls -Glart --group-directories-first'
+    alias ls='ls -Glart'
   } || {
-    alias ls='ls -lar --color --group-directories-first'
+    alias ls='ls -lar --color'
   }
   [[ "$(uname)" == "Linux" ]] && {
     alias sudo='sudo -i'
@@ -325,10 +346,10 @@ set_bash_prompt() {
   # Load bash submodules, unless the submodule already indicated that it's been
   # fully loaded.
   # ===========================================================================
+  [ "$(get_os_type)" == "Darwin" ] && alias find='find -E'
   for file in $(find $HOME -maxdepth 1 \
-    -regextype posix-extended \
     -regex '.*\/.bash.*$' \
-    -not -regex '.*\/.bash_(profile|custom_profile|history)$' \
+    -not -regex '.*\/.bash_(company|profile|custom_profile|history)$' \
     -not -regex '.*.swp$' )
   do
     printf "${BGreen}INFO${NC}: Loading ${BYellow}$file${NC}\n"
@@ -355,7 +376,7 @@ set_bash_prompt() {
   # ===============
   export GIT_EDITOR=vim
   git config --global user.name "Carlos Nunez"
-  git config --global user.email "dev@carlosnunez.me"
+  git config --global user.email "carlos.a.nunez@adp.com"
 
   # ===========================================
   # Display last error code, when applicable

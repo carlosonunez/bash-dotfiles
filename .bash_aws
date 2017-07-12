@@ -1,61 +1,3 @@
-linux_box_ip_addr="ec2-52-87-91-75.compute-1.amazonaws.com"
-windows_box_ip_addr="ec2-52-87-127-75.compute-1.amazonaws.com"
-
-reload_security_groups() {
-  region=$(echo $1)
-  [[ -z "$region" ]] && region="us-east-1"
-  ssh_sg=$(aws ec2 describe-security-groups --filter "Name=group-name,Values=default-ssh-access-policy" --query "SecurityGroups[*].GroupId" --output text --region $region)
-  rdp_sg=$(aws ec2 describe-security-groups --filter "Name=group-name,Values=default-rdp-policy" --query "SecurityGroups[*].GroupId" --output text --region $region)
-  [[ -z "$ssh_sg" || -z "$rdp_sg" ]] && {
-    echo "Default SSH or RDP security groups have not been created yet. Create them, then try this again."
-  } || {
-    this_ip="$(curl http://ipinfo.io/ip 2>/dev/null )"
-    [ -z "${this_ip}" ] && {
-      printf "${BRed}ERROR:${NC} Your IP address could not be determined.\n"
-      exit 1
-    }
-    last_ssh_ip_granted=$(aws ec2 describe-security-groups --group-id $ssh_sg --query "SecurityGroups[*].IpPermissions[0].IpRanges[0].CidrIp" --output text --region $region | tr "\t" "\n") last_rdp_ip_granted=$(aws ec2 describe-security-groups --group-id $rdp_sg --query "SecurityGroups[*].IpPermissions[0].IpRanges[0].CidrIp[]" --output text --region $region | tr "\t" "\n")
-    for ip in $last_ssh_ip_granted; do
-      aws ec2 revoke-security-group-ingress --group-id $ssh_sg --ip-permissions "IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp=$ip}]" && \
-      sleep 2 && \
-      echo "[ssh] REMOVED: $ip"
-    done
-    aws ec2 authorize-security-group-ingress --group-id $ssh_sg --ip-permissions "IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp=$this_ip/32}]"
-    echo "[ssh] ADDED: $this_ip"
-    
-    for ip in $last_rdp_ip_granted; do
-      aws ec2 revoke-security-group-ingress --group-id $rdp_sg --ip-permissions "IpProtocol=tcp,FromPort=3389,ToPort=3389,IpRanges=[{CidrIp=$ip}]" && \
-      sleep 2 && \
-      echo "[rdp] REMOVED: $ip"
-    done
-    echo "[ssh] ADDED: $this_ip"
-
-    aws ec2 authorize-security-group-ingress --group-id $rdp_sg --ip-permissions "IpProtocol=tcp,FromPort=3389,ToPort=3389,IpRanges=[{CidrIp=$this_ip/32}]"
-
-  }
-}
-
-connect_to_dev_box() {
-  reload_security_groups
-  instance_state=$(aws ec2 describe-instances --filter "Name=dns-name,Values=$linux_box_ip_addr" --query "Reservations[*].Instances[*].State[].[Name]" --output text)
-  [[ "$instance_state" != "running" ]] && {
-    echo "Starting dev box. Hang on a minute."
-    aws ec2 start-instances --instance-id $(aws ec2 describe-instances --filter "Name=dns-name,Values=$linux_box_ip_addr" --query "Reservations[*].Instances[*].InstanceId" --output text) && \
-      sleep 60
-  }
-  ssh ubuntu@$linux_box_ip_addr
-}
-
-start_windows_box() {
-  reload_security_groups
-  instance_state=$(aws ec2 describe-instances --filter "Name=dns-name,Values=$windows_box_ip_addr" --query "Reservations[*].Instances[*].State[].[Name]" --output text)
-  [[ "$instance_state" != "running" ]] && {
-    echo "Starting dev box. Hang on a minute."
-    aws ec2 start-instances --instance-id $(aws ec2 describe-instances --filter "Name=dns-name,Values=$windows_box_ip_addr" --query "Reservations[*].Instances[*].InstanceId" --output text) && \
-      sleep 60
-  }
-}
-
 create_aws_credential_env_vars() {
   aws_credentials_file="$HOME/.aws/credentials"
   export AWS_ACCESS_KEY_ID=""
@@ -76,17 +18,5 @@ create_aws_credential_env_vars() {
   }
 }
 
-create_s3fs_credentials() {
-  if [ "$(get_os_type)" == "Ubuntu" -a "$(uname -a | grep Microsoft)" == "" ]
-  then
-    printf "${BYellow}INFO${NC}: Creating s3fs credentials file in /etc/passwd-s3fs. \
-  sudo required; you might need to enter your password.\n"
-    sudo sh -c "echo ${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY} > /etc/passwd-s3fs"
-    sudo chown $USER:$USER /etc/passwd-s3fs
-    sudo chmod 600 /etc/passwd-s3fs
-  fi
-}
-
 default_aws_region='us-east-1'
 create_aws_credential_env_vars "$default_aws_region"
-create_s3fs_credentials
