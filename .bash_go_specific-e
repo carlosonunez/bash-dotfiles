@@ -3,7 +3,13 @@ GO_SRC_FOLDER=$HOME/src/go
 # Install Go if needed
 # ====================
 LATEST_GOLANG_LINUX_VERSION="go1.8.linux-amd64"
-[[ ! -f /usr/local/bin/go ]] && {
+if [[ "$(get_os_type)" == "Darwin" ]]
+then
+  go_binary_path="/usr/local/bin/go"
+else
+  go_binary_path="/usr/local/go/bin/go"
+fi
+[[ ! -f $go_binary_path ]] && {
   printf "${BYellow}INFO:${NC} Installing golang (sudo required; enter your password when prompted)\n"
   case "$(get_os_type)" in
     "Darwin")
