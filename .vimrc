@@ -75,17 +75,24 @@ nnoremap <C-b> :resize -5
 
 " Commit on every save if within a Git repository.
 function! AutoGitCommit()
-  call system('git rev-parse --git-dir > /dev/null 2>&1')
-  if v:shell_error
-    return
+  let current_directory_path = getcwd()
+  let directory_path_for_the_current_buffer = expand('%:p:h')
+  if current_directory_path == directory_path_for_the_current_buffer
+    let current_directory_name = expand('%:p:h:t')
+    if current_directory_name != '.git'
+      call system('git rev-parse --git-dir > /dev/null 2>&1')
+      if v:shell_error
+        return
+      endif
+      let jira_issue = system('git branch | egrep "^\* feature/[A-Z_]{1,9}-[0-9]{1,}-.*" | cut -f2 -d "/" | cut -f1-2 -d "-"')
+      if jira_issue == ""
+        let jira_issue = ""
+      endif
+      let message = input('Enter a commit message for this change: ', '[' . expand('%') . '] ' . $USER . ' | ' . jira_issue . '| ')
+      call system('git add ' . expand('%:p'))
+      call system('git commit -m ' . shellescape(message, 1))
+    endif
   endif
-  let jira_issue = system('git branch | egrep "^\* feature/[A-Z_]{1,9}-[0-9]{1,}-.*" | cut -f2 -d "/" | cut -f1-2 -d "-"')
-  if jira_issue == ""
-    let jira_issue = ""
-  endif
-  let message = input('Enter a commit message for this change: ', '[' . expand('%') . '] ' . $USER . ' | ' . jira_issue . '| ')
-  call system('git add ' . expand('%:p'))
-  call system('git commit -m ' . shellescape(message, 1))
 endfun
 autocmd BufWritePost * call AutoGitCommit()
 
