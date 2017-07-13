@@ -43,11 +43,13 @@ NC="\033[m"               # Color Reset
 ALERT=${BWhite}${On_Red} # Bold White on red background
 
 # Load any company specific bash submodules first.
-for file in $HOME/.bash_company_*
-do
-  printf "${BYellow}INFO${NC}: Loading company submodule ${file}\n"
-  source $file
-done
+ls $HOME/.bash_company_* 2>/dev/null && {
+  for file in $HOME/.bash_company_*
+  do
+    printf "${BYellow}INFO${NC}: Loading company submodule ${file}\n"
+    source $file
+  done
+}
 
 get_os_type() {
   case "$(uname)" in
@@ -137,9 +139,9 @@ Assuming package name of 'tmux'.\n"
   fi
   alias tmux='tmux -u'
   tmux ls 2>&1 > /dev/null && {
-  tmux attach -t 0
+  tmux attach -t 0 2>/dev/null
   } || {
-    tmux
+    tmux 2>/dev/null
   }
 # ============================================
 # Load .bash_profile once within a tmux pane
@@ -347,10 +349,10 @@ set_bash_prompt() {
   # fully loaded.
   # ===========================================================================
   [ "$(get_os_type)" == "Darwin" ] && alias find='find -E'
-  for file in $(find $HOME -maxdepth 1 \
-    -regex '.*\/.bash.*$' \
-    -not -regex '.*\/.bash_(company|profile|custom_profile|history)$' \
-    -not -regex '.*.swp$' )
+  for file in $(find $HOME -maxdepth 1 | \
+    egrep '.*\/.bash' | \
+    egrep -v 'bash_(profile|custom_profile|company|history|sessions)' | \
+    egrep -v '.bashrc')
   do
     printf "${BGreen}INFO${NC}: Loading ${BYellow}$file${NC}\n"
     source $file
