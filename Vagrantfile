@@ -1,5 +1,5 @@
 localhost_public_key="ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEArHx9wusMOms+98L8l2o3pVgSROtqOz+AJIq9zeENVZb41nw7RDgxjQpLIRZ0QcOoL0xX5j02QSmAtsM4zh8TbS4SlObh8XnFgr2az1gDvfTwz3ZiqyFartl9rj251oUZNLbY97tkCks0H3NkZpKBetzebje0PFcKFgdPi/CZml1c24oqzMHeN+SyRbZAFzspz0pBWa+sUFKnlESZljbn/+EeMpJ3bzJ9V+vX9OjuIOG1Qprrz4ZhVyyfH4uT3DrrngmsAGcSX5x0jsdoIzSujVPF/yhnUSNOqcR9rKhv3Xg53Q4MDPmjn/ZkCL7HRETI4Ljiw0cSKMXMEDzSKHDQFw== rsa-key-20170529"
-ubuntu.configure("2") do |config|
+Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/xenial64"
   config.vm.hostname = "carlosonunez"
   config.vm.network :private_network, ip: "192.168.0.50"
