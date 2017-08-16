@@ -3,6 +3,12 @@ nonputty_localhost_public_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3lX38I8cJI
 onedrive_path="C:\\Users\\accou\\OneDrive"
 bash_setup_github_repo_url="git@github.carlosnunez.me:carlosonunez/setup.git"
 Vagrant.configure("2") do |config|
+
+  config.ssh.forward_x11 = true
+  config.ssh.keys_only = true
+  config.ssh.private_key_path = "#{onedrive_path}//ssh_keys//localhost"
+  config.ssh.username = 'ubuntu'
+
   config.vm.box = "ubuntu/xenial64"
   config.vm.hostname = "carlosonunez"
   config.vm.network :private_network, ip: "192.168.0.50"
@@ -23,8 +29,4 @@ Vagrant.configure("2") do |config|
   end
   config.vm.provision "shell",
     inline: "mkdir /home/ubuntu/src; git clone #{bash_setup_github_repo_url} /home/ubuntu/src/setup"
-
-  config.ssh.forward_x11 = true
-  config.ssh.keys_only = true
-  config.ssh.private_key_path = "#{onedrive_path}//ssh_keys//localhost"
 end
