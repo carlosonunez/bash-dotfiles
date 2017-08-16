@@ -5,7 +5,7 @@ Vagrant.configure("2") do |config|
   config.vm.network :private_network, ip: "192.168.0.50"
   config.vm.network :forwarded_port, guest: 2376, host: 2376
   config.vm.network :forwarded_port, guest: 5000, host: 5000
-  config.vm.provision "file", source: "C:\\Users\\accou\\OneDrive\\ssh_keys\\*",
+  config.vm.provision "file", source: "C:\\Users\\accou\\OneDrive\\ssh_keys",
     destination: "/home/ubuntu/.ssh"
   config.vm.provision "shell",
     inline: "mv /home/ubuntu/.ssh/ssh_keys/* /home/ubuntu/.ssh"
