@@ -8,6 +8,8 @@ Vagrant.configure("2") do |config|
   config.vm.provision "file", source: "C:\\Users\\accou\\OneDrive\\ssh_keys\\*",
     destination: "/home/ubuntu/.ssh"
   config.vm.provision "shell",
+    inline: "mv /home/ubuntu/.ssh/ssh_keys/* /home/ubuntu/.ssh"
+  config.vm.provision "shell",
     inline: "chmod -R 644 ~/.ssh/*"
   config.vm.provision "shell",
     inline: "echo '#{localhost_public_key}' > /home/ubuntu/.ssh/authorized_keys"
