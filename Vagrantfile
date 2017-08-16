@@ -5,12 +5,12 @@ Vagrant.configure("2") do |config|
   config.vm.network :private_network, ip: "192.168.0.50"
   config.vm.network :forwarded_port, guest: 2376, host: 2376
   config.vm.network :forwarded_port, guest: 5000, host: 5000
-  config.vm.provision "file", source: "C:\\Users\\accou\\OneDrive\\ssh_keys",
+  config.vm.provision "file", source: "C:\\Users\\accou\\OneDrive\\ssh_keys\\*",
     destination: "/home/ubuntu/.ssh"
   config.vm.provision "shell",
     inline: "chmod -R 644 ~/.ssh/*"
   config.vm.provision "shell",
-    inline: "echo '#{localhost_public_key}' > ~/.ssh/authorized_keys"
+    inline: "echo '#{localhost_public_key}' > /home/ubuntu/.ssh/authorized_keys"
   config.ssh.forward_x11 = true
   config.ssh.keys_only = true
 end
