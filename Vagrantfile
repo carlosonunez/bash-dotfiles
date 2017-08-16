@@ -26,5 +26,5 @@ Vagrant.configure("2") do |config|
 
   config.ssh.forward_x11 = true
   config.ssh.keys_only = true
-  config.ssh.private_key_path = "#{onedrive_path}//localhost
+  config.ssh.private_key_path = "#{onedrive_path}//ssh_keys//localhost"
 end
