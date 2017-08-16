@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell",
     inline: "mv /home/ubuntu/.ssh/ssh_keys/* /home/ubuntu/.ssh"
   config.vm.provision "shell",
-    inline: "chmod -R 644 ~/.ssh/*; chmod 600 ~/.ssh/github"
+    inline: "chmod -R 644 /home/ubuntu/.ssh/*; chmod 600 /home/ubuntu/.ssh/github"
   [ localhost_public_key, nonputty_localhost_public_key ].each do |key|
       config.vm.provision "shell",
         inline: "echo '#{key}' > /home/ubuntu/.ssh/authorized_keys"
