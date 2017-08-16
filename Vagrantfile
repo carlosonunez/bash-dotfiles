@@ -3,12 +3,6 @@ nonputty_localhost_public_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3lX38I8cJI
 onedrive_path="C:\\Users\\accou\\OneDrive"
 bash_setup_github_repo_url="git@github.carlosnunez.me:carlosonunez/setup.git"
 Vagrant.configure("2") do |config|
-
-  config.ssh.forward_x11 = true
-  config.ssh.keys_only = true
-  config.ssh.private_key_path = "#{onedrive_path}//ssh_keys//localhost"
-  config.ssh.username = 'ubuntu'
-
   config.vm.box = "ubuntu/xenial64"
   config.vm.hostname = "carlosonunez"
   config.vm.network :private_network, ip: "192.168.0.50"
@@ -20,13 +14,13 @@ Vagrant.configure("2") do |config|
     source: "#{onedrive_path}\\ssh_keys\\config",
     destination: "/home/ubuntu/.ssh"
   config.vm.provision "shell",
-    inline: "mv /home/ubuntu/.ssh/ssh_keys/* /home/ubuntu/.ssh"
-  config.vm.provision "shell",
     inline: "chmod -R 644 /home/ubuntu/.ssh/*; chmod 600 /home/ubuntu/.ssh/github"
   [ localhost_public_key, nonputty_localhost_public_key ].each do |key|
       config.vm.provision "shell",
-        inline: "echo '#{key}' > /home/ubuntu/.ssh/authorized_keys"
+        inline: "echo '#{key}' >> /home/ubuntu/.ssh/authorized_keys"
   end
   config.vm.provision "shell",
-    inline: "mkdir /home/ubuntu/src; git clone #{bash_setup_github_repo_url} /home/ubuntu/src/setup"
+    inline: "sudo -iu ubuntu bash -c 'mkdir /home/ubuntu/src; sudo -u ubuntu git clone #{bash_setup_github_repo_url} /home/ubuntu/src/setup'"
+  config.vm.provision "shell",
+    inline: 'sudo -iu ubuntu  find /home/ubuntu/src/setup -maxdepth 1 -type f -not \( -name .gitignore -o -name .DS_Store \) -name ".*" -exec bash -c "filename=$(echo {} | rev | cut -f1 -d / | rev); ln -s {} $filename" -- {} \;'
 end
