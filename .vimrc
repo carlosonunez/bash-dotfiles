@@ -93,7 +93,8 @@ function! AutoGitCommit()
       else
         let jira_issue = jira_issue . " |"
       endif
-      let message = input('Enter a commit message for this change: ', '[' . expand('%') . '] ' . $USER . ' | ' . jira_issue . ' ')
+      let git_user_email = system('git config --global --get author.email')
+      let message = input('Enter a commit message for this change: ', '[' . expand('%') . '] ' . git_user_email . ' | ' . jira_issue . ' ')
       call system('git add ' . expand('%:p'))
       call system('git commit -m ' . shellescape(message, 1))
     endif
