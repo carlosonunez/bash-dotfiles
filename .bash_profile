@@ -324,6 +324,8 @@ set_bash_prompt() {
   # =================
   # ALIASES
   # =================
+  export EDITOR=vim
+  export GIT_EDITOR=vim
   alias killmatch='kill_all_matching_pids'
   alias clip='xclip'
   [[ "$(uname)" == "Darwin" ]] && {
@@ -378,7 +380,7 @@ set_bash_prompt() {
   # ===============
   export GIT_EDITOR=vim
   git config --global user.name "Carlos Nunez"
-  git config --global user.email "carlos.a.nunez@adp.com"
+  git config --global user.email "dev@carlosnunez.me"
 
   # ===========================================
   # Display last error code, when applicable
