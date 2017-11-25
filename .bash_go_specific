@@ -1,0 +1,58 @@
+# Install Go if needed
+# ====================
+LATEST_GOLANG_LINUX_VERSION="go1.8.3.linux-amd64"
+case "$(get_os_type)" in
+	"Darwin")
+    go_installation_directory="/usr/local/go/bin"
+    ;;
+  "Ubuntu")
+    go_installation_directory="/usr/local/bin"
+    ;;
+  *)
+    echo "ERROR: This OS is not supported." >&2
+    exit 1
+    ;;
+esac
+
+if [[ -d "$go_installation_directory" ]]
+then
+  echo "INFO: Go is already installed (or ${go_installation_directory} already present). \
+Nothing to do."
+  exit 0
+fi
+
+echo "Go is not installed. Let's fix that."
+go_installer_uri="https://storage.googleapis.com/golang/${LATEST_GOLANG_LINUX_VERSION}.tar.gz"
+case "$(get_os_type)" in
+  "Darwin")
+    brew install go --cross-compile-daemon
+    ;;
+  "Ubuntu")
+    sudo curl -o "/tmp/golang.tar.gz" -L "$go_installer_uri"
+    sudo tar -C "/tmp/golang" -xvf "/tmp/golang.tar.gz"
+    sudo mv /tmp/golang/go "$go_installation_directory"
+    ;;
+  *)
+    exit 1
+    ;;
+esac
+
+# Set up the Golang workspace if non-existent
+# ============================================
+echo "INFO: Creating workspace in ${GO_SRC_FOLDER}"
+mkdir -p "${GO_SRC_FOLDER}/{bin,src,pkg}"
+
+# Set GOPATH if unset
+# ===================
+echo "INFO: Exporting paths"
+export GOPATH="${GO_SRC_FOLDER}"
+export GOROOT=/usr/local/opt/go/libexec
+export PATH=$PATH:$GOPATH/bin:$GOROOT/bin
+
+# Setup vim-go
+# =============
+if [[ ! -d ~/.vim/bundle/vim-go ]]
+then
+  echo "Installing vim-go (a better vim plugin for Golang)"
+  git clone https://github.com/fatih/vim-go.git ~/.vim/bundle/vim-go
+fi
