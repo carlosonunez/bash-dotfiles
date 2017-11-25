@@ -1,12 +1,13 @@
 # Install Go if needed
 # ====================
-LATEST_GOLANG_LINUX_VERSION="go1.8.3.linux-amd64"
 case "$(get_os_type)" in
 	"Darwin")
-    go_installation_directory="/usr/local/go/bin"
+    brew install go --cross-compile-daemon
     ;;
   "Ubuntu")
-    go_installation_directory="/usr/local/bin"
+		sudo add-apt-repository ppa:longsleep/golang-backports
+		sudo apt-get update
+		sudo apt-get install golang-go
     ;;
   *)
     echo "ERROR: This OS is not supported." >&2
@@ -14,33 +15,13 @@ case "$(get_os_type)" in
     ;;
 esac
 
-if [[ -d "$go_installation_directory" ]]
-then
-  echo "INFO: Go is already installed (or ${go_installation_directory} already present). \
-Nothing to do."
-  exit 0
-fi
-
-echo "Go is not installed. Let's fix that."
-go_installer_uri="https://storage.googleapis.com/golang/${LATEST_GOLANG_LINUX_VERSION}.tar.gz"
-case "$(get_os_type)" in
-  "Darwin")
-    brew install go --cross-compile-daemon
-    ;;
-  "Ubuntu")
-    sudo curl -o "/tmp/golang.tar.gz" -L "$go_installer_uri"
-    sudo tar -C "/tmp/golang" -xvf "/tmp/golang.tar.gz"
-    sudo mv /tmp/golang/go "$go_installation_directory"
-    ;;
-  *)
-    exit 1
-    ;;
-esac
-
 # Set up the Golang workspace if non-existent
 # ============================================
-echo "INFO: Creating workspace in ${GO_SRC_FOLDER}"
-mkdir -p "${GO_SRC_FOLDER}/{bin,src,pkg}"
+if [ ! -d "${GO_SRC_FOLDER}" ]
+then
+	echo "INFO: Creating workspace in ${GO_SRC_FOLDER}"
+	mkdir -p "${GO_SRC_FOLDER}/{bin,src,pkg}"
+fi
 
 # Set GOPATH if unset
 # ===================
