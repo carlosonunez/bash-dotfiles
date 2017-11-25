@@ -326,6 +326,7 @@ set_bash_prompt() {
   # =================
   export EDITOR=vim
   export GIT_EDITOR=vim
+  alias git='hub'
   alias googler='BROWSER=w3m googler'
   alias killmatch='kill_all_matching_pids'
   alias rtv='BROWSER=w3m rtv --enable-media'
