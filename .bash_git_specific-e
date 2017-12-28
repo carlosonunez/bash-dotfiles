@@ -17,7 +17,7 @@ squash_commits_starting_from() {
   commit_ref="$1"
   if [ "$commit_ref" != "" ]
   then
-    _squash_commits $(_get_number_of_commits_between_refs "HEAD..$commit_ref")
+    _squash_commits $(_get_number_of_commits_between_refs "$commit_ref~1..HEAD")
   fi
 }
 
@@ -45,7 +45,6 @@ _squash_commits() {
   if is_current_directory_tracked_by_git &&
     [ "$number_of_commits_to_squash" != "" ]
   then
-    current_branch="$(get_current_branch_name)"
     git rebase -i "HEAD~$number_of_commits_to_squash"
   fi
 }
