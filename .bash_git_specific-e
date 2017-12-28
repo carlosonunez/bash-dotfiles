@@ -10,7 +10,15 @@ get_current_branch_name() {
 
 get_number_of_commits_ahead_of_origin() {
   current_branch="$(get_current_branch_name)"
-  git log --pretty=oneline "origin/$current_branch..$current_branch" 2>/dev/null | wc -l
+  _get_number_of_commits_between_refs "origin/$current_branch..$current_branch"
+}
+
+squash_commits_starting_from() {
+  commit_ref="$1"
+  if [ "$commit_ref" != "" ]
+  then
+    _squash_commits $(_get_number_of_commits_between_refs "HEAD..$commit_ref")
+  fi
 }
 
 squash_outstanding_commits() {
@@ -42,3 +50,6 @@ _squash_commits() {
   fi
 }
 
+_get_number_of_commits_between_refs() {
+  git log --pretty=oneline "$1" 2>/dev/null | wc -l
+}
