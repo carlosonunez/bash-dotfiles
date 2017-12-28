@@ -1,34 +1,41 @@
 # Install Go if needed
 # ====================
-case "$(get_os_type)" in
-	"Darwin")
-    brew install go --cross-compile-daemon
-    ;;
-  "Ubuntu")
-		sudo add-apt-repository ppa:longsleep/golang-backports
-		sudo apt-get update
-		sudo apt-get install golang-go
-    ;;
-  *)
-    echo "ERROR: This OS is not supported." >&2
-    exit 1
-    ;;
-esac
+if which go > /dev/null
+then
+  echo "Golang already installed. Nothing to do (but set paths)."
+else
+  case "$(get_os_type)" in
+    "Darwin")
+      brew install go --cross-compile-daemon
+      ;;
+    "Ubuntu")
+      sudo add-apt-repository ppa:longsleep/golang-backports
+      sudo apt-get update
+      sudo apt-get install golang-go
+      ;;
+    *)
+      echo "ERROR: This OS is not supported." >&2
+      exit 1
+      ;;
+  esac
+fi
 
 # Set up the Golang workspace if non-existent
 # ============================================
-if [ ! -d "${GO_SRC_FOLDER}" ]
-then
-	echo "INFO: Creating workspace in ${GO_SRC_FOLDER}"
-	mkdir -p "${GO_SRC_FOLDER}/{bin,src,pkg}"
-fi
+GO_SRC_FOLDER="$HOME/src/go"
+for subfolder in bin pkg src
+do
+  if [ ! -d "${GO_SRC_FOLDER}/${subfolder}" ]
+  then
+    mkdir -p "${GO_SRC_FOLDER}/${subfolder}"
+  fi
+done
 
 # Set GOPATH if unset
 # ===================
 echo "INFO: Exporting paths"
 export GOPATH="${GO_SRC_FOLDER}"
-export GOROOT=/usr/local/opt/go/libexec
-export PATH=$PATH:$GOPATH/bin:$GOROOT/bin
+export PATH=$PATH:$GOPATH/bin
 
 # Setup vim-go
 # =============

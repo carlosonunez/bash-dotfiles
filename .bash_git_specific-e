@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+is_current_directory_tracked_by_git() {
+  [ "$(git rev-parse --git-dir 2>/dev/null)" != "" ]
+}
+
+get_current_branch_name() {
+  git rev-parse --abbrev-ref HEAD 2>/dev/null
+}
+
+get_number_of_commits_ahead_of_origin() {
+  current_branch="$(get_current_branch_name)"
+  git log --pretty=oneline "origin/$current_branch..$current_branch" 2>/dev/null | wc -l
+}
+
+squash_outstanding_commits() {
+  _squash_commits "$(get_number_of_commits_ahead_of_origin)"
+}
+
+squash_these_many_commits() {
+  number_of_commits_to_squash="$1"
+  if [ "$number_of_commits_to_squash" != "" ] &&
+    [ "$number_of_commits_to_squash" -gt 0 ]
+  then
+    _squash_commits "$number_of_commits_to_squash"
+    echo "INFO: You might need to force-push this changeset into your remote. \
+To do so, use \`git push -f\`. Note that not every repository will allow you \
+to do this."
+  else
+    echo "ERROR: Please enter the number of commits to squash." >&2
+    exit 1
+  fi
+}
+
+_squash_commits() {
+  number_of_commits_to_squash="$1"
+  if is_current_directory_tracked_by_git &&
+    [ "$number_of_commits_to_squash" != "" ]
+  then
+    current_branch="$(get_current_branch_name)"
+    git rebase -i "HEAD~$number_of_commits_to_squash"
+  fi
+}
+
