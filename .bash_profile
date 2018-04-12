@@ -136,6 +136,8 @@ Assuming package name of 'tmux'.\n"
         install_application "tmux"
         ;;
     esac
+    mkdir -f ~/.tmux.d
+    git clone https://github.com/tmux-plugins/tmux-yank ~/.tmux.d
   fi
   alias tmux='tmux -u'
   tmux ls 2>&1 > /dev/null && {
@@ -392,7 +394,12 @@ set_bash_prompt() {
 
   # Bash completion for Git.
   # ========================
-  [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+  if [ "$(get_os_type)" == "Darwin" ]
+  then
+    [ -f $(brew --prefix)/etc/bash_completion ] && . $(brew --prefix)/etc/bash_completion
+  else
+    [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+  fi
 
 
   [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
