@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+head_of_repo=$(git rev-parse --show-toplevel)
+if "${head_of_repo}/githooks/checks/branch_is_company_specific"
+then
+  >&2 echo "ERROR: This branch is probably company-specific, so we're blocking the push."
+  exit 1
+fi
