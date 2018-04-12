@@ -1,4 +1,4 @@
-LATEST_RUBY_VERSION="2.4.2p198"
+LATEST_RUBY_VERSION="2.5.1p57"
 LATEST_RUBY_PACKAGE_NAME="ruby2.4"
 DETECTED_RUBY_VERSION=`ruby -v 2>/dev/null | awk '{print $2}'`
 [[ "${DETECTED_RUBY_VERSION}" != "${LATEST_RUBY_VERSION}" ]] && {
@@ -9,7 +9,7 @@ DETECTED_RUBY_VERSION=`ruby -v 2>/dev/null | awk '{print $2}'`
     sudo apt-add-repository ppa:brightbox/ruby-ng
     sudo apt-get update
     install_application "${LATEST_RUBY_PACKAGE_NAME}" "${LATEST_RUBY_PACKAGE_NAME}-dev"
-  elif [ "$(get_os_type)" -eq "Darwin" ]
+  elif [ "$(get_os_type)" == "Darwin" ]
   then
     brew install ruby
   else
