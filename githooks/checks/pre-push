@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-if githooks/checks/branch_is_company_specific
-then
-  >&2 echo "ERROR: This branch is probably company-specific, so we're blocking the push."
-  exit 1
-fi
