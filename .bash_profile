@@ -1,6 +1,32 @@
 # ==================================================================
 # Most of this was taken from the example .bash_profile on tldp.org.
 # ==================================================================
+
+# Prerequisites
+# ================
+if [ ! -L "$HOME/.bash_profile" ]
+then
+  echo "ERROR: .bash_profile must be a symlink to your GitHub clone to use this." >&2
+  return 1
+fi
+bash_profile_location=$(readlink "$HOME/.bash_profile")
+bash_profile_repo=$(dirname "$bash_profile_location")
+
+# Ensure that our mandatory hooks are in place.
+# ---------------------------------------------
+if [ ! -d "$bash_profile_repo" ]
+then
+  echo "ERROR: Please install your setup scripts to \
+$bash_profile_location_directory first." >&2
+  return 1
+fi
+
+if [ ! -f "$bash_profile_repo/.git/hooks/pre-push" ]
+then
+  cp "$bash_profile_repo/githooks/pre-push" \
+    "$bash_profile_repo/.git/hooks/pre-push"
+fi
+
 # =================
 # COLORS
 # =================
@@ -152,7 +178,6 @@ else
   # ================================
   # EXTRAS
   # ================================
-
 
   # =================
   # SET PROMPT
