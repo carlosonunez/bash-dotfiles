@@ -11,6 +11,7 @@ then
 fi
 bash_profile_location=$(readlink "$HOME/.bash_profile")
 bash_profile_repo=$(dirname "$bash_profile_location")
+pre_push_hook_location="${bash_profile_repo}/.git/hooks/pre-push"
 
 # Ensure that our mandatory hooks are in place.
 # ---------------------------------------------
@@ -21,10 +22,11 @@ $bash_profile_location_directory first." >&2
   return 1
 fi
 
-if [ ! -f "$bash_profile_repo/.git/hooks/pre-push" ]
+if [ ! -f "$pre_push_hook_location" ]
 then
   cp "$bash_profile_repo/githooks/pre-push" \
-    "$bash_profile_repo/.git/hooks/pre-push"
+    "$pre_push_hook_location"
+  chmod +x "$pre_push_hook_location"
 fi
 
 # =================
