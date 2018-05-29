@@ -1,28 +1,17 @@
-LATEST_RUBY_VERSION="2.5.1p57"
-LATEST_RUBY_PACKAGE_NAME="ruby2.4"
-DETECTED_RUBY_VERSION=`ruby -v 2>/dev/null | awk '{print $2}'`
-[[ "${DETECTED_RUBY_VERSION}" != "${LATEST_RUBY_VERSION}" ]] && {
-  printf "${BYellow}INFO: Ruby v${LATEST_RUBY_VERSION} required, but v${DETECTED_RUBY_VERSION} is installed.\n"
-  printf "${BYellow}INFO:${NC} Installing ${BGreen}ruby${NC}\n"
+if ! which ruby &>/dev/null
+then
+  >&2 echo "INFO: Installing ruby. Hang on."
   if [ "$(get_os_type | egrep -q 'Ubuntu|Debian'; echo $?)" -eq "0" ]
   then
-    sudo apt-add-repository ppa:brightbox/ruby-ng
+    sudo apt-add-repository -y ppa:brightbox/ruby-ng
     sudo apt-get update
-    install_application "${LATEST_RUBY_PACKAGE_NAME}" "${LATEST_RUBY_PACKAGE_NAME}-dev"
-  elif [ "$(get_os_type)" == "Darwin" ]
-  then
-    brew install ruby
-  else
-    printf "${BYellow}INFO${NC}: Installation routine for OS $(get_os_type) \
-not written yet. Assuming package name of 'ruby'."
-    install_application "ruby"
   fi
-  printf "${BYellow}INFO:${NC} Installed ${BGreen}ruby${NC} $(ruby -v)\n"
-}
+  install_application "ruby"
+fi
 export GEM_HOME="$HOME/.gems"
 export GEM_PATH="$GEM_HOME:$GEM_PATH"
 export PATH="$GEM_HOME/bin:$GEM_PATH:$PATH"
-which bundle 2>&1 > /dev/null || gem install bundler
+which bundle &> /dev/null || gem install bundler
 
 # Extra vim niceties
 if [ ! -d "$HOME/.vim/bundle/vim-rspec" ]

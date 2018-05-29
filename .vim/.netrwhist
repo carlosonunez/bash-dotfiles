@@ -1,6 +1,0 @@
-let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =4
-let g:netrw_dirhist_1='/home/cnunez/src/infrastructure/files/jenkins'
-let g:netrw_dirhist_2='/Users/nunezc2/Downloads/DirtyCow-R1_HD-TOOL-V7.1'
-let g:netrw_dirhist_3='/Users/nunezc2/src/lifion/ansible/role.core.datadog/tests'
-let g:netrw_dirhist_4='/home/cnunez/src/code-for-demos/docker-ddc-terraform/modules/aws-vpc-with-bastion-host'
