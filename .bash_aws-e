@@ -1,23 +1,26 @@
-create_aws_credential_env_vars() {
-  aws_credentials_file="$HOME/.aws/credentials"
-  export AWS_ACCESS_KEY_ID=""
-  export AWS_SECRET_ACCESS_KEY=""
-  export AWS_REGION="$1"
-  [ -z "${aws_credentials_file}" ] && {
-    printf "${BYellow}WARN${NC}: Your AWS credentials have not been configured yet. Use the \
-'aws configure' tool to fix this, then run 'source .bash_aws' to apply them onto your environment.\n"
-  } || {
-    export AWS_ACCESS_KEY_ID=$(cat "${aws_credentials_file}" | grep 'aws_access_key_id' | cut -f2 -d '=' | tr -d ' ')
-    export AWS_SECRET_ACCESS_KEY=$(cat "${aws_credentials_file}" | grep 'aws_secret_access_key' | cut -f2 -d '=' | tr -d ' ')
-    [ -z "${AWS_ACCESS_KEY_ID}" -o -z "${AWS_SECRET_ACCESS_KEY}" ] && {
-      printf "${BYellow}WARN${NC}: One of your AWS credential env vars was not found. Run \
-'aws configure' in your terminal to fix this."
-    } || {
-      return 0
-    }
-  }
+get_aws_profile_parameter() {
+  profile="${1?Please provide an AWS profile to configure.}"
+  param="${2?Please provide a parameter to fetch.}"
+  if ! aws configure --profile "$profile" get "$param" 2>/dev/null
+  then
+    >&2 echo "ERROR: Failed to retrieve [$param] for profile [$profile]."
+  fi
 }
 
-default_aws_region='us-east-1'
-create_aws_credential_env_vars "$default_aws_region"
+load_aws_profile() {
+  profile="${1?Please provide an AWS profile to configure.}"
+  export AWS_ACCESS_KEY_ID=$(get_aws_profile_parameter "$profile" "aws_access_key_id") &&
+  export AWS_SECRET_ACCESS_KEY=$(get_aws_profile_parameter "$profile" "aws_secret_access_key") &&
+  export AWS_REGION=$(get_aws_profile_parameter "$profile" "region");
+}
+
+if ! which aws &>/dev/null
+then
+  >&2 echo "INFO: Installing aws-cli. Hang on"
+  sudo pip install awscli --ignore-installed six
+fi
+
+>&2 echo "INFO: Loading AWS environt variables for the default profile."
+>&2 echo "INFO: To change this, run 'load_aws_profile <your_profile>'."
+load_aws_profile "default"
 complete -C '/usr/local/bin/aws_completer' aws

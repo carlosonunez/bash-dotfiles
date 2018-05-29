@@ -5,11 +5,6 @@ which python > /dev/null || install_application "python" "python-dev"
 
 # Install awscli, if necessary.
 # ==============================
-which aws > /dev/null || {
-  echo "awscli isn't installed. Let's take care of that now. (This requires sudo privileges.)"
-  sudo pip install awscli --ignore-installed six
-}
-
 # Install pygments
 # ================
 if [ "$(get_os_type)" != "Darwin" ]

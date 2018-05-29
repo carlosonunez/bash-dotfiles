@@ -1,5 +1,28 @@
 #!/usr/bin/env bash
 GITHUB_SSH_KEY="$HOME/.ssh/github"
+GIT_DEFAULT_AUTHOR="Carlos Nunez"
+GIT_DEFAULT_EMAIL="dev@carlosnunez.me"
+export GIT_EDITOR=vim
+
+try_to_install_hub_if_not_found() {
+  alias git='git'
+  if ! which hub &> /dev/null
+  then
+    case $(get_os_type) in
+      "Darwin"|"Fedora")
+        install_application 'hub' && alias git='hub'
+        ;;
+      "Ubuntu")
+        sudo add-apt-repository ppa:cpick/hub &&
+          sudo apt-get update &&
+          sudo apt-get install hub &&
+          alias git='hub'
+          ;;
+      *)
+        >&2 echo "WARNING: Unable to install 'hub' onto $(get_os_type). Compile it manually."
+    esac
+  fi
+}
 
 refresh_github_ssh_key() {
   if [ "$(ssh-add -l | grep '.github')" == "" ]
@@ -61,3 +84,9 @@ _squash_commits() {
 _get_number_of_commits_between_refs() {
   git log --pretty=oneline "$1" 2>/dev/null | wc -l | tr -d ' '
 }
+
+try_to_install_hub_if_not_found
+export GIT_EDITOR=vim
+git config --global user.name "$GIT_DEFAULT_AUTHOR"
+git config --global user.email "$GIT_DEFAULT_EMAIL"
+
