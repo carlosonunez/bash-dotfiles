@@ -1,16 +1,30 @@
-# Install python if needed
-# ==========================
-which python > /dev/null || install_application "python" "python-dev"
+# Update if we're running Ubuntu
+# ===============================
+if ! which python
+then
+  if [ "$(get_os_type)" == "Ubuntu" ]
+  then
+    sudo apt-get update
+  fi
+  install_application "python" "python-dev"
+fi
 
+# Activate the venv
+# ==================
+if ! pip install --user virtualenv
+then
+  >&2 echo "ERROR: Couldn't install Python virtualenv."
+  exit 1
+fi
+python -m virtualenv env
+source $HOME/env/bin/activate
 
-# Install awscli, if necessary.
-# ==============================
 # Install pygments
 # ================
 if [ "$(get_os_type)" != "Darwin" ]
 then
   which pygmentize > /dev/null || {
-    sudo pip install pygments
+    pip install pygments
     install_application "highlight"
   }
 fi
