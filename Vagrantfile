@@ -1,6 +1,6 @@
-VM_MEMORY = 2048
-VM_CPUS = 2
-VM_NIC_TYPE = "Am79C973"
+vm_memory = 2048
+vm_cpus = 2
+vm_nic_type = "Am79C973"
 ssh_keys_path="C:/Users/accou/OneDrive/ssh_keys"
 bash_setup_github_repo_url="git@github.carlosnunez.me:carlosonunez/setup.git"
 exposed_ports = [ 22, 80, 443, 2376, 5000 ]
@@ -8,10 +8,10 @@ Vagrant.configure("2") do |config|
   config.vm.provider :virtualbox do |provider|
     provider.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     provider.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
-    provider.customize ["modifyvm", :id, "--nictype1", VM_NIC_TYPE]
+    provider.customize ["modifyvm", :id, "--nictype1", vm_nic_type]
     provider.customize ["modifyvm", :id, "--ioapic", "on"]
-    provider.memory = VM_MEMORY
-    provider.cpu = VM_NUM_CPUS
+    provider.memory = vm_memory
+    provider.cpus = vm_cpus
   end
   config.vm.box = "ubuntu/xenial64"
   config.vm.hostname = "carlosonunez"
