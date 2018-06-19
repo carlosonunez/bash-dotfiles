@@ -105,18 +105,7 @@ then
   return 1
 fi
 
-if ! which pip &> /dev/null
-then
-  if ! {
-    >&2 echo "INFO: Installing pip. Hang on." &&
-    curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py &&
-    python /tmp/get-pip.py;
-  }
-  then
-    >&2 echo "ERROR: Couldn't install pip. Install it manually, then try again."
-    return 1
-  fi
-fi
+source "$HOME/.bash_install"
 
 # ============
 # emacs keybindings
