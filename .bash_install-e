@@ -6,7 +6,7 @@ then
   then
     sudo apt-get update
   fi
-  if ! install_application "python" "python-dev"
+  if ! install_application "python"
   then
     >&2 echo "ERROR: Couldn't install Python."
     return 1
@@ -63,7 +63,7 @@ fi
 # ======================================
 [ "$(uname)" == "Darwin" ] && {
   builtin=$(echo "htop,tmux,jq,lastpass-cli" | tr "," "\n")
-  casks=$(echo "google-chrome,shiftit,iterm2" | tr "," "\n")
+  casks=$(echo "google-chrome,shiftit,iterm2,slack" | tr "," "\n")
   for pkg in $builtin; do
     brew list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && install_application "$pkg" ; }
   done
