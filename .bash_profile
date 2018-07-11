@@ -112,36 +112,6 @@ source "$HOME/.bash_install"
 # ==============
 set -o emacs
 
-
-# Don't reload if we're already in a tmux session.
-if [ "$TMUX" != "" ]
-then
-
-  # Load SSH keys into ssh-agent
-  # ============================
-  killall ssh-agent
-  eval $(ssh-agent -s) > /dev/null
-  grep -HR "RSA" $HOME/.ssh | cut -f1 -d: | sort -u | while read file; do
-  ssh-add $file
-  done
-
-  # ===========================================
-  # Display last error code, when applicable
-  # ===========================================
-  PROMPT_COMMAND='e=$?; set_bash_prompt $e'
-
-  # Bash completion for Git.
-  # ========================
-  if [ "$(get_os_type)" == "Darwin" ]
-  then
-    [ -f $(brew --prefix)/etc/bash_completion ] && . $(brew --prefix)/etc/bash_completion
-  else
-    [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
-  fi
-  return 0
-fi
-
-
 # Load any company specific bash submodules first.
 ls $HOME/.bash_company_* 2>/dev/null && {
   for file in $HOME/.bash_company_*
@@ -161,7 +131,7 @@ then
   then
     case "$(get_os_type)" in
       "Darwin")
-        brew install tmux
+        brew install tmux reattach-to-user-namespace
         ;;
       "Ubuntu"|"Debian")
         printf "${BYellow}INFO${NC}: Preparing to install tmux\n"
@@ -183,32 +153,54 @@ Assuming package name of 'tmux'.\n"
     git clone https://github.com/tmux-plugins/tmux-yank ~/.tmux.d
   fi
   alias tmux='tmux -u'
-# ============================================
-# Load .bash_profile once within a tmux pane
-# ============================================
+  # Bash completion for Git.
+  # ========================
+  if [ "$(get_os_type)" == "Darwin" ]
+  then
+    [ -f $(brew --prefix)/etc/bash_completion ] && . $(brew --prefix)/etc/bash_completion
+  else
+    [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+  fi
+  cd $HOME
+  if tmux ls &> /dev/null
+  then
+    tmux attach -t 0 2>/dev/null
+  else
+    tmux
+  fi
+else
+  # Load bash submodules, unless the submodule already indicated that it's been
+  # fully loaded.
+  # ===========================================================================
+  [ "$(get_os_type)" == "Darwin" ] && alias find='find -E'
+  for file in $(find $HOME -maxdepth 1 | \
+    egrep '.*\/.bash' | \
+    egrep -v 'bash_(profile|install|custom_profile|company|history|sessions)' | \
+    egrep -v '.bashrc' | \
+    sort -u)
+  do
+    printf "${BYellow}INFO${NC}: Loading ${BYellow}$file${NC}\n"
+    source $file
+    printf "\n"
+  done
+
+  # Load SSH keys into ssh-agent
+  # ============================
+  killall ssh-agent
+  eval $(ssh-agent -s) > /dev/null
+  grep -HR "RSA" $HOME/.ssh | cut -f1 -d: | sort -u | while read file; do
+  ssh-add $file
+  done
+
+  [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+  # ===========================================
+  # Display last error code, when applicable
+  # ===========================================
+  PROMPT_COMMAND='e=$?; set_bash_prompt $e'
 fi
 
-# Load bash submodules, unless the submodule already indicated that it's been
-# fully loaded.
-# ===========================================================================
-[ "$(get_os_type)" == "Darwin" ] && alias find='find -E'
-for file in $(find $HOME -maxdepth 1 | \
-  egrep '.*\/.bash' | \
-  egrep -v 'bash_(profile|custom_profile|company|history|sessions)' | \
-  egrep -v '.bashrc' | \
-  sort -u)
-do
-  printf "${BGreen}INFO${NC}: Loading ${BYellow}$file${NC}\n"
-  source $file
-  printf "\n"
-done
-
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-
-cd $HOME
-if tmux ls &> /dev/null
-then
-  tmux attach -t 0 2>/dev/null
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+. $(brew --prefix)/etc/bash_completion
 else
-  tmux
+  brew install bash-completion
 fi

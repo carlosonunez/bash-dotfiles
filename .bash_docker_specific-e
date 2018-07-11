@@ -3,7 +3,8 @@ then
   printf "Installing ${BGreen}docker${NC}\n"
   case "$(get_os_type)" in
     "Darwin")
-      install_application "docker docker-for-mac"
+      brew install docker
+      brew cask install docker
       ;;
     "Ubuntu"|"Debian")
       if grep -q 'Microsoft' /etc/lsb_release
@@ -28,7 +29,7 @@ then
   esac
 fi
 
-if ! $(id | grep -q "docker")
+if [ "$(get_os_type)" != "Darwin" ] && ! $(id | grep -q "docker")
 then
   printf "${BYellow}INFO${NC}: Adding your user to the 'docker' group. Password might be needed. \
   Log out then back in to apply these changes.\n"

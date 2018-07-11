@@ -1,6 +1,6 @@
 # Update if we're running Ubuntu
 # ===============================
-if ! which python
+if ! which python python3 >/dev/null
 then
   if [ "$(get_os_type)" == "Ubuntu" ]
   then
@@ -13,12 +13,17 @@ then
   fi
 fi
 
+# Ensure that user-installed binaries are in our path.
+# =====================================================
+PYTHON2_LOCAL_DIR=$(echo $(python -c "import site; print(site.USER_BASE)")/bin)
+PYTHON3_LOCAL_DIR=$(echo $(python3 -c "import site; print(site.USER_BASE)")/bin)
+
 # Install pip
 # ===========
-if ! which pip &> /dev/null
+if ! which pip3 &> /dev/null
 then
   if ! {
-    >&2 echo "INFO: Installing pip. Hang on." &&
+    >&2 echo "INFO: Installing pip3. Hang on." &&
     curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py &&
     sudo python /tmp/get-pip.py;
   }
@@ -30,14 +35,17 @@ fi
 
 # Activate the venv
 # ==================
-if ! which virtualenv &>/dev/null
+if [ ! -f "$PYTHON3_LOCAL_DIR/virtualenv" ]
 then
-  if ! pip install --user virtualenv
+  if ! pip3 install --user virtualenv
   then
     >&2 echo "ERROR: Couldn't install Python virtualenv."
     return 1
   fi
-  python -m $HOME/.local/bin/virtualenv env
+fi
+if [ ! -d "$HOME/env/bin" ]
+then
+  $PYTHON3_LOCAL_DIR/virtualenv env
 fi
 source $HOME/env/bin/activate
 
@@ -46,7 +54,7 @@ source $HOME/env/bin/activate
 if [ "$(get_os_type)" != "Darwin" ]
 then
   which pygmentize > /dev/null || {
-    pip install pygments
+    pip3 install pygments
     install_application "highlight"
   }
 fi
@@ -63,4 +71,3 @@ fi
     brew cask list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && install_application "Caskroom/cask/$pkg" ; }
   done
 }
- 

@@ -17,7 +17,7 @@ load_aws_profile() {
 if ! which aws &>/dev/null
 then
   >&2 echo "INFO: Installing aws-cli. Hang on"
-  pip install awscli --ignore-installed six
+  pip3 install awscli --ignore-installed six
 fi
 
 >&2 echo "INFO: Loading AWS environt variables for the default profile."
