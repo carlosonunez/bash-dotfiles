@@ -131,7 +131,14 @@ then
   then
     case "$(get_os_type)" in
       "Darwin")
-        brew install tmux reattach-to-user-namespace
+        if ! {
+          brew install tmux reattach-to-user-namespace;
+          git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm;
+        }
+        then
+          >&2 echo "ERROR: Failed to install tmux."
+          exit 1
+        fi
         ;;
       "Ubuntu"|"Debian")
         printf "${BYellow}INFO${NC}: Preparing to install tmux\n"
