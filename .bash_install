@@ -1,21 +1,35 @@
-# Update if we're running Ubuntu
-# ===============================
+PYTHON_VERSION=3.6.5
+VIRTUAL_ENV_NAME=carlosnunez
+export PYENV_ROOT=/usr/local/var/pyenv
+
+# Install Python and set it to the version
+# specified above unless we've set it to latest
+# ===============================================
 if ! which python python3 >/dev/null
 then
   if [ "$(get_os_type)" == "Ubuntu" ]
   then
     sudo apt-get update
   fi
-  if ! install_application "python"
+  if ! {
+    install_application "python";
+    install_application "pyenv";
+  }
   then
     >&2 echo "ERROR: Couldn't install Python."
     return 1
   fi
 fi
 
+if [ "$PYTHON_VERSION" != "latest" ] && \
+  [ ! -d "$PYENV_ROOT/versions/$PYTHON_VERSION" ]
+then
+  echo "INFO: Installing Python version $PYTHON_VERSION"
+  pyenv install "$PYTHON_VERSION"
+fi
+
 # Ensure that user-installed binaries are in our path.
 # =====================================================
-PYTHON2_LOCAL_DIR=$(echo $(python -c "import site; print(site.USER_BASE)")/bin)
 PYTHON3_LOCAL_DIR=$(echo $(python3 -c "import site; print(site.USER_BASE)")/bin)
 
 # Install pip
@@ -43,11 +57,16 @@ then
     return 1
   fi
 fi
-if [ ! -d "$HOME/env/bin" ]
+if [ ! -d "$HOME/$VIRTUAL_ENV_NAME/bin" ]
 then
-  $PYTHON3_LOCAL_DIR/virtualenv env
+  if [ "$PYTHON_VERSION" != "latest" ]
+  then
+    $PYTHON3_LOCAL_DIR/virtualenv -p "$PYENV_ROOT/versions/$PYTHON_VERSION/bin/python" "$VIRTUAL_ENV_NAME"
+  else
+    $PYTHON3_LOCAL_DIR/virtualenv "$VIRTUAL_ENV_NAME"
+  fi
 fi
-source $HOME/env/bin/activate
+source $HOME/$VIRTUAL_ENV_NAME/bin/activate
 
 # Install pygments
 # ================
@@ -61,13 +80,36 @@ fi
 
 # Install a few necessary brew formulae
 # ======================================
+installed_applications=$(brew list --full-name; brew cask list --full-name 2>/dev/null)
+installed_pips=$(pip freeze)
 [ "$(uname)" == "Darwin" ] && {
-  builtin=$(echo "htop,tmux,jq,lastpass-cli,rtv,googler" | tr "," "\n")
+  builtin=$(echo "htop,tmux,jq,lastpass-cli,xquartz,feh,w3m" | tr "," "\n")
   casks=$(echo "google-chrome,shiftit,iterm2,slack" | tr "," "\n")
+  pips=$(echo "rtv,googler" | tr "," "\n")
   for pkg in $builtin; do
-    brew list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && install_application "$pkg" ; }
+    if ! $(echo "$installed_applications" | grep -q "$pkg")
+    then
+      echo "INFO: Installing: $pkg"
+      install_application "$pkg"
+    fi
   done
   for pkg in $casks; do
-    brew cask list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && install_application "Caskroom/cask/$pkg" ; }
+    if ! $(echo "$installed_applications" | grep -q "$pkg")
+    then
+      echo "INFO: Installing: $pkg"
+      install_application "Caskroom/cask/$pkg"
+    fi
+  done
+  for pkg in $pips
+  do
+    if ! which "$pkg" &>/dev/null
+    then
+      echo "INFO: Installing: $pkg"
+      pip3 install "$pkg"
+    fi
   done
 }
+
+# Export a few handy exports
+# ==========================
+alias googler='googler --url-handler w3m'
