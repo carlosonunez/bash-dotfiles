@@ -1,9 +1,7 @@
 # Install Go if needed
 # ====================
-if which go &> /dev/null
+if !  which go &> /dev/null
 then
-  echo "Golang already installed. Nothing to do (but set paths)."
-else
   case "$(get_os_type)" in
     "Darwin")
       brew install go --cross-compile-daemon
