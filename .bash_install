@@ -62,7 +62,7 @@ fi
 # Install a few necessary brew formulae
 # ======================================
 [ "$(uname)" == "Darwin" ] && {
-  builtin=$(echo "htop,tmux,jq,lastpass-cli" | tr "," "\n")
+  builtin=$(echo "htop,tmux,jq,lastpass-cli,rtv,googler" | tr "," "\n")
   casks=$(echo "google-chrome,shiftit,iterm2,slack" | tr "," "\n")
   for pkg in $builtin; do
     brew list "$pkg" 2>&1 > /dev/null || { echo "Installing: $pkg" && install_application "$pkg" ; }
