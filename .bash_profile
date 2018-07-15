@@ -93,12 +93,6 @@ On_White='\033[47m'       # White
 NC="\033[m"               # Color Reset
 ALERT=${BWhite}${On_Red} # Bold White on red background
 
-if ! sudo -n true &>/dev/null
-then
-  >&2 echo "INFO: You'll need sudo for some parts of this setup process. Enter your password, if prompted."
-  sudo echo 'Sudo has been configured! Carry on.'
-fi
-
 if [ ! -L "$HOME/.bash_profile" ]
 then
   echo "ERROR: .bash_profile must be a symlink to your GitHub clone to use this." >&2

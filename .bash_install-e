@@ -35,7 +35,7 @@ fi
 
 # Activate the venv
 # ==================
-if [ ! -f "$PYTHON3_LOCAL_DIR/virtualenv" ]
+if [ -z "$VIRTUAL_ENV" ] && [ ! -f "$PYTHON3_LOCAL_DIR/virtualenv" ]
 then
   if ! pip3 install --user virtualenv
   then

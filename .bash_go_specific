@@ -31,7 +31,6 @@ done
 
 # Set GOPATH if unset
 # ===================
-echo "INFO: Exporting paths"
 export GOPATH="${GO_SRC_FOLDER}"
 export PATH=$PATH:$GOPATH/bin
 
