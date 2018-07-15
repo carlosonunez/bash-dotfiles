@@ -1,4 +1,6 @@
-if [ "$(get_os_type)" == "Linux" -a "$(cat /proc/version | grep 'Microsoft')" != "" ]
+if [ "$(get_os_type)" == "Linux" ] && \
+  [ -f /proc/version ] && \
+  [ "$(cat /proc/version | grep "Microsoft")" != "" ]
 then
   printf "${BYellow}INFO${NC}: Creating symlinks to common Windows directories\n"
   windows_home_directory="/mnt/c/Users/accou"
