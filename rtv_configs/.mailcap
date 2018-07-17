@@ -25,17 +25,17 @@
 # feh --scale-down --auto-zoom is a simple and effective image viewer
 # Note that rtv returns a list of urls for imgur albums, so we don't put quotes
 # around the `%s`
-image/x-imgur-album; feh -g 1600x1200 --scale-down --auto-zoom %s; test=test -n "$DISPLAY"
+image/x-imgur-album; feh --scale-down --auto-zoom %s; test=test -n "$DISPLAY"
 image/gif; mpv '%s' --autofit 1600x1200 --loop=inf; test=test -n "$DISPLAY"
-image/*; feh --scale-down --auto-zoom -g 640x480 '%s'; test=test -n "$DISPLAY"
+image/*; feh --scale-down --auto-zoom '%s'; test=test -n "$DISPLAY"
 
 # Youtube videos are assigned a custom mime-type, which can be streamed with
 # vlc or youtube-dl.
-video/x-youtube; vlc '%s' --width 640 --height 480; test=test -n "$DISPLAY"
+video/x-youtube; vlc '%s' --width 1600 --height 1200; test=test -n "$DISPLAY"
 video/x-youtube; mpv --ytdl-format=bestvideo+bestaudio/best '%s' --autofit 640x480; test=test -n "$DISPLAY"
 
 # Mpv is a simple and effective video streamer
-video/*; mpv '%s' --autofit 640x480 --loop=inf; test=test -n "$DISPLAY"
+video/*; mpv '%s' --autofit 70% --loop=inf; test=test -n "$DISPLAY"
 
 ###############################################################################
 # Commands below this point will attempt to display media directly in the
