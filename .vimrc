@@ -73,34 +73,6 @@ nnoremap <C-h> :vertical resize +5
 nnoremap <C-t> :resize +5
 nnoremap <C-b> :resize -5
 
-" Commit on every save if within a Git repository.
-function! AutoGitCommit()
-  let current_directory_path = getcwd()
-  let directory_path_for_the_current_buffer = expand('%:p:h')
-  let matching_subdirectories_found = 
-        \system('echo ' . directory_path_for_the_current_buffer
-        \. ' | grep ' . current_directory_path)
-  if matching_subdirectories_found != ""
-    let current_directory_name = expand('%:p:h:t')
-    if current_directory_name != '.git'
-      call system('git rev-parse --git-dir > /dev/null 2>&1')
-      if v:shell_error
-        return
-      endif
-      let jira_issue = system('git branch | egrep "^\* feature/[A-Z_]{1,9}-[0-9]{1,}-.*" | cut -f2 -d "/" | cut -f1-2 -d "-"')
-      if jira_issue == ""
-        let jira_issue = ""
-      else
-        let jira_issue = jira_issue . " |"
-      endif
-      let git_user_email = system('git config --global --get author.email')
-      let message = input('Enter a commit message for this change: ', '[' . expand('%') . '] ' . git_user_email . ' | ' . jira_issue . ' ')
-      call system('git add ' . expand('%:p'))
-      call system('git commit -m ' . shellescape(message, 1))
-    endif
-  endif
-endfun
-autocmd BufWritePost * call AutoGitCommit()
 
 " Tim Popify my vim setup!
 execute pathogen#infect()
