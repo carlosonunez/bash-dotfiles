@@ -20,7 +20,7 @@ then
   pip3 install awscli --ignore-installed six
 fi
 
->&2 echo "INFO: Loading AWS environt variables for the default profile."
+>&2 echo "INFO: Loading AWS environment variables for the default profile."
 >&2 echo "INFO: To change this, run 'load_aws_profile <your_profile>'."
 load_aws_profile "default"
 complete -C '/usr/local/bin/aws_completer' aws
