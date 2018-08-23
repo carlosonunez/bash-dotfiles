@@ -1,3 +1,4 @@
 *.swp
 *.swo
 .vim
+.bash_1password_specific
