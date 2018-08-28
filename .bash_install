@@ -84,7 +84,7 @@ installed_applications=$(brew list --full-name; brew cask list --full-name 2>/de
 installed_pips=$(pip freeze)
 [ "$(uname)" == "Darwin" ] && {
   builtin=$(echo "htop,tmux,jq,lastpass-cli,xquartz,feh,w3m" | tr "," "\n")
-  casks=$(echo "google-chrome,shiftit,iterm2,slack" | tr "," "\n")
+  casks=$(echo "google-chrome,shiftit,iterm2,slack,1password,authy" | tr "," "\n")
   pips=$(echo "rtv,googler" | tr "," "\n")
   for pkg in $builtin; do
     if ! $(echo "$installed_applications" | grep -q "$pkg")
