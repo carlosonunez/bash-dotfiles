@@ -32,33 +32,6 @@ generate_password() {
   echo "Password: $password. It has been copied into your clipboard."
 }
 
-extract_from_lpass_note() {
-  print_usage() {
-    printf "usage: extract_from_lpass_note [note_name] [search_term]\n"
-  }
-
-  if [[ $# -ne 2 ]]; then
-    printf "${BRed}Error: Two arguments required, note name and field name.\n${NC}"
-    print_usage
-    return
-  fi
-  which lpass 2>/dev/null 1>/dev/null || {
-  printf "${BRed}Error: LastPass isn't installed. Run this to do so: 'brew install lastpass-cli'.${NC}\n"
-  print_usage
-  return 1
-}
-
-[[ -f ~/.lpass/session_privatekey ]] || {
-printf "${BRed}Error: You're not logged into LastPass.${NC}\n"
-return 1
-    }
-    note_name=$1
-    predicate=$2
-    lpass show "$note_name" | \
-      egrep "$predicate\:" | \
-      sed "s/^$predicate\: \(.*\)$/\1/" 
-
-  }
   ec2() {
     if [[ $# -eq 0 ]]; then
       printf "${BRed}Error: Commands required.${NC}\n"
@@ -67,7 +40,7 @@ return 1
 
     export JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null)
     [[ -z $JAVA_HOME ]] && {
-    printf "${BRed}Error: Java JDK is not installed. Click 'More info' to install.\n${NC}"
+      printf "${BRed}Error: Java JDK is not installed. Click 'More info' to install.\n${NC}"
     /usr/libexec/java_home --request
     return 1
   }
