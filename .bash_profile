@@ -2,9 +2,10 @@
 # ALIASES
 # =================
 export EDITOR=vim
-alias googler='BROWSER=w3m googler'
+export BROWSER='w3m -cookie'
+alias googler='googler'
 alias killmatch='kill_all_matching_pids'
-alias rtv='BROWSER=w3m rtv --enable-media'
+alias rtv='rtv --enable-media'
 alias clip='xclip'
 [[ "$(uname)" == "Darwin" ]] && {
   alias ls='ls -Glart'
