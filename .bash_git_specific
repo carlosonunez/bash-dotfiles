@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 GITHUB_SSH_KEY="$HOME/.ssh/github"
 GIT_DEFAULT_AUTHOR="Carlos Nunez"
-GIT_DEFAULT_EMAIL="dev@carlosnunez.me"
 export GIT_EDITOR=vim
 
 try_to_install_hub_if_not_found() {
@@ -88,5 +87,4 @@ _get_number_of_commits_between_refs() {
 try_to_install_hub_if_not_found
 export GIT_EDITOR=vim
 git config --global user.name "$GIT_DEFAULT_AUTHOR"
-git config --global user.email "$GIT_DEFAULT_EMAIL"
 
