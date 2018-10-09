@@ -2,6 +2,17 @@ PYTHON_VERSION=3.6.5
 VIRTUAL_ENV_NAME=carlosnunez
 export PYENV_ROOT=/usr/local/var/pyenv
 
+# We need to install OS headers if running in OS X Mojave
+# =======================================================
+if uname | grep -Eq "^Darwin$" && \
+  defaults read loginwindow SystemVersionStampAsString | grep -Eq "^10.14" && \
+  ! pkgutil --pkgs | grep -Eq "com.apple.pkg.macOS_SDK_headers_for_macOS_10.14"
+then
+  >&2 echo "INFO: OS X Mojave detected. Installing OS headers \
+as required by pyenv"
+  sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
+fi
+
 # Install Python and set it to the version
 # specified above unless we've set it to latest
 # ===============================================
@@ -83,8 +94,8 @@ fi
 installed_applications=$(brew list --full-name; brew cask list --full-name 2>/dev/null)
 installed_pips=$(pip freeze)
 [ "$(uname)" == "Darwin" ] && {
-  builtin=$(echo "htop,tmux,jq,lastpass-cli,xquartz,feh,w3m" | tr "," "\n")
-  casks=$(echo "firefox,shiftit,iterm2,slack,1password,authy" | tr "," "\n")
+  builtin=$(echo "htop,tmux,jq,feh,w3m,reattach-to-user-namespace" | tr "," "\n")
+  casks=$(echo "firefox,shiftit,iterm2,slack,1password,authy,xquartz" | tr "," "\n")
   pips=$(echo "rtv,googler" | tr "," "\n")
   for pkg in $builtin; do
     if ! $(echo "$installed_applications" | grep -q "$pkg")
@@ -104,7 +115,6 @@ installed_pips=$(pip freeze)
   do
     if ! which "$pkg" &>/dev/null
     then
-      echo "INFO: Installing: $pkg"
       pip3 install "$pkg"
     fi
   done
