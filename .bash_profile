@@ -122,6 +122,7 @@ ls $HOME/.bash_company_* 2>/dev/null && {
 # Start up tmux before doing anything else.
 # We will only load our profile within a TMUX pane to save on loading time.
 # ===========================================================================
+>&2 echo 'hello'
 if [ "$TMUX_PANE" == "" ]
 then
   if [ "$(which tmux)" == "" ]
