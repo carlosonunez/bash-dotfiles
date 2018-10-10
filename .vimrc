@@ -17,6 +17,7 @@ autocmd BufWinLeave * call clearmatches()
 " Backspace: Number of characters to go back by within an indent.
 " Shiftwidth: Number of spaces to add when indenting text in Normal mode.
 set tabstop=2
+set expandtab
 set backspace=2
 set shiftwidth=2 
 
