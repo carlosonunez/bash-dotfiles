@@ -94,9 +94,10 @@ fi
 installed_applications=$(brew list --full-name; brew cask list --full-name 2>/dev/null)
 installed_pips=$(pip freeze)
 [ "$(uname)" == "Darwin" ] && {
-  builtin=$(echo "htop,tmux,jq,feh,w3m,reattach-to-user-namespace" | tr "," "\n")
-  casks=$(echo "firefox,shiftit,iterm2,slack,1password,authy,xquartz" | tr "," "\n")
+  builtin=$(echo "htop,tmux,jq,feh,w3m,reattach-to-user-namespace,tree,mas" | tr "," "\n")
+  casks=$(echo "firefox,shiftit,iterm2,slack,1password,authy,xquartz," | tr "," "\n")
   pips=$(echo "rtv,googler" | tr "," "\n")
+  mas_apps=$(echo "spark,shush" | tr "," "\n")
   for pkg in $builtin; do
     if ! $(echo "$installed_applications" | grep -q "$pkg")
     then
@@ -116,6 +117,13 @@ installed_pips=$(pip freeze)
     if ! which "$pkg" &>/dev/null
     then
       pip3 install "$pkg"
+    fi
+  done
+  for pkg in $mas_apps
+  do
+    if ! mas list | grep -q "$pkg"
+    then
+      mas lucky "$pkg"
     fi
   done
 }
