@@ -91,7 +91,11 @@ fi
 
 # Install a few necessary brew formulae
 # ======================================
-installed_applications=$(brew list --full-name; brew cask list --full-name 2>/dev/null)
+installed_applications=$(brew list --full-name; \
+  brew cask list --full-name 2>/dev/null; \
+  find '/Applications' -maxdepth 1 \
+    -name *.app \
+    -exec sh -c 'basename {} | sed "s#\.app##" | tr "[:upper:]" "[:lower:]"' \;)
 installed_pips=$(pip freeze)
 [ "$(uname)" == "Darwin" ] && {
   builtin=$(echo "htop,tmux,jq,feh,w3m,reattach-to-user-namespace,tree,mas" | tr "," "\n")
@@ -109,7 +113,7 @@ installed_pips=$(pip freeze)
     if ! $(echo "$installed_applications" | grep -q "$pkg")
     then
       echo "INFO: Installing: $pkg"
-      install_application "Caskroom/cask/$pkg"
+      brew cask install "$pkg"
     fi
   done
   for pkg in $pips
