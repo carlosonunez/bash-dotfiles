@@ -2,6 +2,10 @@ PYTHON_VERSION=3.6.5
 VIRTUAL_ENV_NAME=carlosnunez
 export PYENV_ROOT=/usr/local/var/pyenv
 
+install_contexts_prefs() {
+  cp ~/src/setup/com.contextsformac.Contexts.plist ~/Library/Preferences
+}
+
 # We need to install OS headers if running in OS X Mojave
 # =======================================================
 if uname | grep -Eq "^Darwin$" && \
@@ -98,8 +102,8 @@ installed_applications=$(brew list --full-name; \
     -exec sh -c 'basename {} | sed "s#\.app##" | tr "[:upper:]" "[:lower:]"' \;)
 installed_pips=$(pip freeze)
 [ "$(uname)" == "Darwin" ] && {
-  builtin=$(echo "htop,tmux,jq,feh,w3m,reattach-to-user-namespace,tree,mas" | tr "," "\n")
-  casks=$(echo "firefox,shiftit,iterm2,slack,1password,authy,xquartz," | tr "," "\n")
+  builtin=$(echo "htop,tmux,jq,feh,w3m,reattach-to-user-namespace,tree,mas,alfred" | tr "," "\n")
+  casks=$(echo "firefox,shiftit,iterm2,slack,1password,authy,xquartz,contexts," | tr "," "\n")
   pips=$(echo "rtv,googler" | tr "," "\n")
   mas_apps=$(echo "spark,shush" | tr "," "\n")
   for pkg in $builtin; do
@@ -130,6 +134,7 @@ installed_pips=$(pip freeze)
       mas lucky "$pkg"
     fi
   done
+  install_contexts_prefs
 }
 
 # Export a few handy exports
