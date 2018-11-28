@@ -130,7 +130,7 @@ then
     case "$(get_os_type)" in
       "Darwin")
         if ! {
-          brew install tmux reattach-to-user-namespace;
+          brew install tmux reattach-to-user-namespace && \
           git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm;
         }
         then
