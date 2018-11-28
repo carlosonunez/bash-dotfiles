@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [ ! -f "$HOME/.ssh/authy" ]
+then
+  >&2 echo "WARN: Your Authy API key seems to be missing. \
+Copy it into $HOME/.ssh/authy if you would like to do things with Authy."
+else
+  export AUTHY_KEY="$(cat ~/.ssh/authy)"
+fi
+
+alias authy='docker run --env AUTHY_KEY carlosnunez/authy-cli-docker:latest'
