@@ -3,6 +3,7 @@
 # =================
 export EDITOR=vim
 export BROWSER='w3m -cookie'
+export RTV_BROWSER='w3m -cookie'
 alias googler='googler'
 alias killmatch='kill_all_matching_pids'
 alias rtv='rtv --enable-media'
@@ -122,7 +123,6 @@ ls $HOME/.bash_company_* 2>/dev/null && {
 # Start up tmux before doing anything else.
 # We will only load our profile within a TMUX pane to save on loading time.
 # ===========================================================================
->&2 echo 'hello'
 if [ "$TMUX_PANE" == "" ]
 then
   if [ "$(which tmux)" == "" ]
