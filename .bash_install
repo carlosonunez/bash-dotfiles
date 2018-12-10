@@ -1,3 +1,4 @@
+#/usr/bin/env bash
 PYTHON_VERSION=3.6.5
 VIRTUAL_ENV_NAME=carlosnunez
 export PYENV_ROOT=/usr/local/var/pyenv
@@ -12,9 +13,22 @@ if uname | grep -Eq "^Darwin$" && \
   defaults read loginwindow SystemVersionStampAsString | grep -Eq "^10.14" && \
   ! pkgutil --pkgs | grep -Eq "com.apple.pkg.macOS_SDK_headers_for_macOS_10.14"
 then
-  >&2 echo "INFO: OS X Mojave detected. Installing OS headers \
+  if [ ! -d "/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk" ]
+  then
+    if [ ! -f "$HOME/Downloads/macOS_SDK_headers_for_macOS_10.14.pkg" ]
+    then
+      >&2 echo "hello"
+      >&2 echo "WARN: You are on Mojave. pyenv might not work without SDK headers. \
+You can download them from developer.apple.com. \
+Look for 'macOS_SDK_headers_for_macOS_10.14.pkg.'"
+    else
+      >&2 echo "INFO: OS X Mojave detected. Installing OS headers \
 as required by pyenv"
-  sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
+      sudo installer \
+        -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg \
+        -target /
+    fi
+  fi
 fi
 
 # Install Python and set it to the version

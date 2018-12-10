@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 pushd () {
   command pushd "$@" > /dev/null
 }
@@ -160,40 +161,24 @@ install_application() {
 # SET PROMPT
 # =================
 set_bash_prompt() {
-  # ==========================================
-  # Check if I'm root or someone else.
-  # ==========================================
-  my_username="carlosnunez"
-  fmtd_username=$my_username
-
-  if [ $USER != $my_username ]; then
-    fmtd_username="\[$On_Purple\]\[$BWhite\]$my_username\[$NC\]"
-  elif [ $EUID -eq 0 ]; then
-    fmtd_username="\[$ALERT\]$my_username\[$NC\]"
-  else
-    fmtd_username="\[$On_Green\]\[$BBlack\]$my_username\[$NC\]"
-  fi
-
-  # ===================
-  # Error code
-  # ===================
   error_code_str=""
-  [[ "$1" != "0" ]] && error_code_str="\[$On_Red\]\[$BWhite\]<<$1>>\[$NC\]"
-
-  # ===================
-  # Machine name
-  # ===================
-  hostname_fmtd="\[$On_Yellow\]\[$BBlack\]localhost\[$NC\]"
-  if [ ! -z "$SSH_CLIENT" ]; then
-    hostname_fmtd="\[$On_Yellow\]\[$BBlack\]$HOSTNAME\[$NC\]"
+  account_type_indicator="\$"
+  if [ "$(id -u)" -eq 0 ]
+  then
+    account_type_indicator="\#"
+  fi
+  if [[ "$1" != "0" ]]
+  then
+    error_code_str="\[$On_Red\]\[$BWhite\]<<$1>>\[$NC\]"
   fi
   git_branch="$(get_git_branch)"
-  if [ "${git_branch}" == "" ]
+  if ! $(git rev-parse --is-inside-work-tree 2>/dev/null)
   then
-    PS1="$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
-  elif [ `git status --porcelain 2>/dev/null | wc -l | tr -d ' '` -eq 0 ]; then
-    PS1="$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Green\]<<$git_branch>>\[$NC\] \[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
+    PS1="$error_code_str\[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
+  elif ! $(git diff-index --quiet HEAD)
+  then
+    PS1="$error_code_str\[$Red\]<<$git_branch>>\[$NC\] \[$BCyan\]\W]\[$NC\]\[$Yellow\]$account_type_indicator\[$NC\]: "
   else
-    PS1="\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$Red\]<<$git_branch>>\[$NC\] \[$BCyan\]\W]\[$NC\] \[$Yellow\]\$\[$NC\]: "
+    PS1="$error_code_str\[$Green\]<<$git_branch>>\[$NC\] \[$BCyan\]\W]\[$NC\]\[$Yellow\]$account_type_indicator\[$NC\]: "
   fi
 }
