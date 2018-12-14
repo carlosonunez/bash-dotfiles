@@ -1,5 +1,7 @@
 set encoding=utf8
 let g:airline_powerline_fonts = 1
+let g:airline_theme = 'atomic'
+set t_Co=256
 
 " Set undo, backup and swap directories so that Vim doesn't leave
 " all sorts of garbage within my working directory.
