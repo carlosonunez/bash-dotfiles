@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+VIM_BUNDLE_REPOS=$(cat <<GITHUB_URLS
+vim-airline/vim-airline
+vim-airline/vim-airline-themes
+scrooloose/nerdtree
+ryanoasis/vim-devicons
+Xuyuanp/nerdtree-git-plugin
+GITHUB_URLS
+)
+
+for bundle_repo in $VIM_BUNDLE_REPOS
+do
+  mkdir -p ~/.vim/bundle
+  2>/dev/null git clone "https://github.com/$bundle_repo" "$HOME/.vim/bundle/$(basename "$bundle_repo")"
+done

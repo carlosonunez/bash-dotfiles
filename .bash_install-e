@@ -107,6 +107,11 @@ then
   }
 fi
 
+# Install NERD fonts and icons
+# =============================
+brew tap caskroom/fonts && brew cask install font-dejavusansmono-nerd-font
+
+
 # Install a few necessary brew formulae
 # ======================================
 installed_applications=$(brew list --full-name; \
@@ -116,8 +121,8 @@ installed_applications=$(brew list --full-name; \
     -exec sh -c 'basename {} | sed "s#\.app##" | tr "[:upper:]" "[:lower:]"' \;)
 installed_pips=$(pip freeze)
 [ "$(uname)" == "Darwin" ] && {
-  builtin=$(echo "htop,tmux,jq,feh,w3m,reattach-to-user-namespace,tree,mas,alfred,googler" | tr "," "\n")
-  casks=$(echo "firefox,shiftit,iterm2,slack,1password,authy,xquartz,contexts,rtv" | tr "," "\n")
+  builtin=$(echo "htop,tmux,jq,feh,w3m,reattach-to-user-namespace,tree,mas,rtv,googler" | tr "," "\n")
+  casks=$(echo "firefox,shiftit,iterm2,slack,1password,authy,xquartz,contexts,alfred" | tr "," "\n")
   mas_apps=$(echo "spark,shush" | tr "," "\n")
   for pkg in $builtin; do
     if ! $(echo "$installed_applications" | grep -q "$pkg")

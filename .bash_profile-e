@@ -4,6 +4,7 @@
 export EDITOR=vim
 export BROWSER='w3m -cookie'
 export RTV_BROWSER='w3m -cookie'
+export HOMEBREW_NO_AUTO_UPDATE=1
 alias googler='googler'
 alias killmatch='kill_all_matching_pids'
 alias rtv='rtv --enable-media'
