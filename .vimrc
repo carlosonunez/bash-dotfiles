@@ -79,18 +79,5 @@ nnoremap <C-h> :vertical resize +5
 nnoremap <C-t> :resize +5
 nnoremap <C-b> :resize -5
 
-" NERDtree  things
-
-" Automatically start it if no files were opened.
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-
-" Automatically start it upon opening a directory.
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
-
-" Toggle the NERDtree
-map <C-n> :NERDTreeToggle<CR>
-
 " Tim Popify my vim setup!
 execute pathogen#infect()
