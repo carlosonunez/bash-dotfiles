@@ -109,7 +109,10 @@ fi
 
 # Install NERD fonts and icons
 # =============================
-brew tap caskroom/fonts && brew cask install font-dejavusansmono-nerd-font
+if ! brew cask list font-dejavusansmono-nerd-font &>/dev/null
+then
+  brew tap caskroom/fonts && brew cask install font-dejavusansmono-nerd-font
+fi
 
 
 # Install a few necessary brew formulae
