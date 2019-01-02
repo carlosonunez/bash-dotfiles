@@ -9,12 +9,7 @@ alias googler='googler'
 alias killmatch='kill_all_matching_pids'
 alias rtv='rtv --enable-media'
 alias clip='xclip'
-[[ "$(uname)" == "Darwin" ]] && {
-  alias ls='ls -Glart'
-} || {
-  alias ls='ls -lar --color'
-}
-alias ccat='pygmentize -g'
+alias ls='ls --color -la'
 
 # Check that homebrew is installed.
 # ==================================
