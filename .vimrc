@@ -70,6 +70,10 @@ set nohlsearch
 " Enable line numbers.
 set number
 
+" NERDtree things.
+let mapleader = ","
+nmap <leader>t :NERDTreeToggle<cr>
+
 " Key remappings.
 nnoremap <C-n> :bnext<CR>                                                         
 nnoremap <C-p> :bprevious<CR>                                                     
