@@ -4,6 +4,12 @@ GIT_DEFAULT_AUTHOR="Carlos Nunez"
 GIT_DEFAULT_EMAIL="carlosonunez@noreply.github.com"
 export GIT_EDITOR=vim
 
+create_new_git_branch() {
+  branch_name="${1?Please provide a Git branch to create.}"
+  upstream="${2:-origin}"
+  git checkout -b "$branch_name" && git push -u "$upstream" "$branch_name"
+}
+
 try_to_install_hub_if_not_found() {
   alias git='git'
   if ! which hub &> /dev/null
