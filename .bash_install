@@ -124,7 +124,7 @@ installed_applications=$(brew list --full-name; \
     -exec sh -c 'basename {} | sed "s#\.app##" | tr "[:upper:]" "[:lower:]"' \;)
 installed_pips=$(pip freeze)
 [ "$(uname)" == "Darwin" ] && {
-  builtin=$(echo "gnu-sed,htop,tmux,jq,feh,w3m,reattach-to-user-namespace,tree,mas,rtv,googler,docker-compose-completion" | tr "," "\n")
+  builtin=$(echo "gnu-sed,htop,tmux,jq,feh,w3m,reattach-to-user-namespace,tree,mas,rtv,googler,docker-compose-completion,shellcheck" | tr "," "\n")
   casks=$(echo "firefox,shiftit,iterm2,slack,1password,authy,xquartz,contexts,alfred" | tr "," "\n")
   mas_apps=$(echo "spark,shush" | tr "," "\n")
   for pkg in $builtin; do
