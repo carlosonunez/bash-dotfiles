@@ -6,11 +6,18 @@ vim-airline/vim-airline-themes
 scrooloose/nerdtree
 ryanoasis/vim-devicons
 Xuyuanp/nerdtree-git-plugin
+pangloss/vim-javascript
+othree/javascript-libraries-syntax.vim
+claco/jasmine.vim
+vim-syntastic/syntastic.git
 GITHUB_URLS
 )
 
 for bundle_repo in $VIM_BUNDLE_REPOS
 do
-  mkdir -p ~/.vim/bundle
-  2>/dev/null git clone "https://github.com/$bundle_repo" "$HOME/.vim/bundle/$(basename "$bundle_repo")"
+  if [ ! -f ~/.vim/bundle ]
+  then
+    mkdir -p ~/.vim/bundle
+  fi
+  git clone "https://github.com/$bundle_repo" "$HOME/.vim/bundle/$(basename "$bundle_repo")"
 done

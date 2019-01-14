@@ -83,5 +83,17 @@ nnoremap <C-h> :vertical resize +5
 nnoremap <C-t> :resize +5
 nnoremap <C-b> :resize -5
 
+" JavaScript stuff
+let g:javascript_plugin_jsdoc = 1
+let g:javascript_plugin_ngdoc = 1
+let g:used_javascript_libs = 'jquery,angularjs,angularui,react,jasmine,chai'
+
+" Syntastic Stuff; just the defaults
+let g:syntastic_sh_checkers = ["shellcheck"]
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
 " Tim Popify my vim setup!
 execute pathogen#infect()
