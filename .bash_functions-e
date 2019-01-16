@@ -160,6 +160,21 @@ install_application() {
   eval "$package_manager_command_to_run $@"
 }
 
+get_next_thing_to_do() {
+  todo_dir="${1?Please provide a todo.sh-compatible directory.}"
+  is_sensitive="${2:-false}"
+  next_up_to_do="$(head -1 "${todo_dir}/todo.txt" 2>/dev/null)"
+  if [ ! -z "$next_up_to_do" ]
+  then
+    if [ "$is_sensitive" == "true" ]
+    then
+      printf "\[$BRed\][$next_up_to_do]\[$NC\]"
+    else
+      printf "\[$BYellow\][$next_up_to_do]\[$NC\]"
+    fi
+  fi
+}
+
 # =================
 # SET PROMPT
 # =================
@@ -175,13 +190,18 @@ set_bash_prompt() {
     error_code_str="\[$On_Red\]\[$BWhite\]<<$1>>\[$NC\]"
   fi
   git_branch="$(get_git_branch)"
+  next_up_to_dos="$(get_next_thing_to_do "$TODO_DIR") $(get_next_thing_to_do "$CLIENT_TODO_DIR" "true")"
+  if [ "$next_up_to_dos" != " " ]
+  then
+    next_up_to_dos="${next_up_to_dos}\n"
+  fi
   if ! $(git rev-parse --is-inside-work-tree 2>/dev/null)
   then
-    PS1="$error_code_str\[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
   elif ! $(git diff-index --quiet HEAD)
   then
-    PS1="$error_code_str\[$Red\]<<$git_branch>>\[$NC\] \[$BCyan\]\W]\[$NC\]\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$Red\]<<$git_branch>>\[$NC\] \[$BCyan\]\W]\[$NC\]\[$Yellow\]$account_type_indicator\[$NC\]: "
   else
-    PS1="$error_code_str\[$Green\]<<$git_branch>>\[$NC\] \[$BCyan\]\W]\[$NC\]\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$Green\]<<$git_branch>>\[$NC\] \[$BCyan\]\W]\[$NC\]\[$Yellow\]$account_type_indicator\[$NC\]: "
   fi
 }

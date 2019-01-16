@@ -20,7 +20,7 @@ try_to_install_hub_if_not_found() {
       "Ubuntu")
         sudo add-apt-repository ppa:cpick/hub &&
           sudo apt-get update &&
-          sudo apt-get install hub &&
+          sudo apt-get install hub
           ;;
       *)
         >&2 echo "WARNING: Unable to install 'hub' onto $(get_os_type). Compile it manually."
