@@ -1,0 +1,1 @@
++better_code @lint Ensure all scripts adhere to shellcheck.
