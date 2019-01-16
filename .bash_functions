@@ -162,16 +162,21 @@ install_application() {
 
 get_next_thing_to_do() {
   todo_dir="${1?Please provide a todo.sh-compatible directory.}"
-  is_sensitive="${2:-false}"
+  color_code="${2:-false}"
   next_up_to_do="$(head -1 "${todo_dir}/todo.txt" 2>/dev/null)"
   if [ ! -z "$next_up_to_do" ]
   then
-    if [ "$is_sensitive" == "true" ]
-    then
-      printf "\[$BRed\][$next_up_to_do]\[$NC\]"
-    else
-      printf "\[$BYellow\][$next_up_to_do]\[$NC\]"
-    fi
+    case "$color_code" in
+      sensitive)
+        printf "\[$BRed\][$next_up_to_do]\[$NC\]"
+        ;;
+      project)
+        printf "\[$BBlue\][$next_up_to_do]\[$NC\]"
+        ;;
+      *)
+        printf "\[$BYellow\][$next_up_to_do]\[$NC\]"
+        ;;
+    esac
   fi
 }
 
@@ -190,10 +195,13 @@ set_bash_prompt() {
     error_code_str="\[$On_Red\]\[$BWhite\]<<$1>>\[$NC\]"
   fi
   git_branch="$(get_git_branch)"
-  next_up_to_dos="$(get_next_thing_to_do "$TODO_DIR") $(get_next_thing_to_do "$CLIENT_TODO_DIR" "true")"
-  if [ "$next_up_to_dos" != " " ]
+  next_up_to_dos="$(get_next_thing_to_do "$TODO_DIR" "personal")\
+$(get_next_thing_to_do "$CLIENT_TODO_DIR" "sensitive")\
+$(get_next_thing_to_do "$PROJECT_SPECIFIC_TODO_DIR" "project")"
+  >&2 echo "DEBUG: Next up: $next_up_to_dos"
+  if [ ! -z "$next_up_to_dos" ]
   then
-    next_up_to_dos="${next_up_to_dos}\n"
+    next_up_to_dos="$(printf "${next_up_to_dos}"  | sed 's/\]\[/] [/')\n"
   fi
   if ! $(git rev-parse --is-inside-work-tree 2>/dev/null)
   then
