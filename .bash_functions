@@ -166,15 +166,16 @@ get_next_thing_to_do() {
   next_up_to_do="$(head -1 "${todo_dir}/todo.txt" 2>/dev/null)"
   if [ ! -z "$next_up_to_do" ]
   then
+    number_of_next_ups=$(wc -l ${todo_dir}/todo.txt | awk '{print $1}' )
     case "$color_code" in
       sensitive)
-        printf "\[$BRed\][$next_up_to_do]\[$NC\]"
+        printf "\[$BRed\][$next_up_to_do (1/$number_of_next_ups)]\[$NC\]"
         ;;
       project)
-        printf "\[$BBlue\][$next_up_to_do]\[$NC\]"
+        printf "\[$BBlue\][$next_up_to_do (1/$number_of_next_ups)]\[$NC\]"
         ;;
       *)
-        printf "\[$BYellow\][$next_up_to_do]\[$NC\]"
+        printf "\[$BYellow\][$next_up_to_do (1/$number_of_next_ups)]\[$NC\]"
         ;;
     esac
   fi
