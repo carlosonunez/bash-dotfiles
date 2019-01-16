@@ -197,11 +197,10 @@ set_bash_prompt() {
   git_branch="$(get_git_branch)"
   next_up_to_dos="$(get_next_thing_to_do "$TODO_DIR" "personal")\
 $(get_next_thing_to_do "$CLIENT_TODO_DIR" "sensitive")\
-$(get_next_thing_to_do "$PROJECT_SPECIFIC_TODO_DIR" "project")"
-  >&2 echo "DEBUG: Next up: $next_up_to_dos"
+$(get_next_thing_to_do "$PWD/.todos" "project")"
   if [ ! -z "$next_up_to_dos" ]
   then
-    next_up_to_dos="$(printf "${next_up_to_dos}"  | sed 's/\]\[/] [/')\n"
+    next_up_to_dos="$(printf "${next_up_to_dos}")\n"
   fi
   if ! $(git rev-parse --is-inside-work-tree 2>/dev/null)
   then
