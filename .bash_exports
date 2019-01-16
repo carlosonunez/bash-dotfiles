@@ -3,4 +3,5 @@ export EDITOR=vim
 export BROWSER='w3m -cookie'
 export HOMEBREW_NO_AUTO_UPDATE=1
 export TODO_DIR=$HOME/src/todos/personal
-export CLIENT_TODO_DIR=$HOME/src/todos/client
+export CLIENT_TODO_DIR=$HOME/src/todos/clients
+export CLIENT_NAME=tda
