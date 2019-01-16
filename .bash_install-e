@@ -40,6 +40,13 @@ install_contexts_prefs() {
   cp ~/src/setup/com.contextsformac.Contexts.plist ~/Library/Preferences
 }
 
+configure_todos() {
+  if ! test -d $HOME/src/todos
+  then
+    git clone git@github.carlosnunez.me:carlosonunez/todos.git $HOME/src/todos
+  fi
+}
+
 # We need to install OS headers if running in OS X Mojave
 # =======================================================
 if uname | grep -Eq "^Darwin$" && \
@@ -179,6 +186,7 @@ installed_pips=$(pip freeze)
     fi
   done
   install_contexts_prefs
+  configure_todos
 }
 
 # Export a few handy exports

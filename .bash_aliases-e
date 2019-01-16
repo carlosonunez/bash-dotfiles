@@ -9,13 +9,27 @@ if ! which todo.sh &>/dev/null
 then
   >&2 printf "${BYellow}WARN${NC}: todo.sh is not installed. Install it to keep track of stuff\!\n"
 else
-  alias todo=todo.sh
-  alias t="todo.sh -d $TODO_DIR/.todo.cfg a"
-  alias tl="todo.sh -d $TODO_DIR/.todo.cfg ls"
-  alias tdone="todo.sh -d $TODO_DIR/.todo.cfg do"
-  alias ct="todo.sh -d $CLIENT_TODO_DIR/.todo.cfg a"
-  alias ctl="todo.sh -d $CLIENT_TODO_DIR/.todo.cfg ls"
-  alias ctdone="todo.sh -d $CLIENT_TODO_DIR/.todo.cfg do"
+  alias todo="todo.sh -d $TODO_DIR/.todo.cfg"
+  alias t="todo a"
+  alias tl="todo ls"
+  alias tdone="todo do"
+  if test -z "$CLIENT_NAME"
+  then
+    >&2 printf "${BYellow}WARN${NC}: \$CLIENT_NAME is not defined. \
+Do so in .bash_exports to track client-specific to-dos."
+  else
+    alias ctodo="todo.sh -d $CLIENT_TODO_DIR/.todo.cfg"
+    alias ct="ctodo a"
+    alias ctl="ctodo ls"
+    alias ctdone="ctodo do"
+  fi
+  if ! test -z "$(2>/dev/null git rev-parse --show-toplevel)"
+  then
+    alias ptodo="todo.sh -d $PROJECT_SPECIFIC_TODO_DIR/.todo.cfg"
+    alias pt="ptodo a"
+    alias ptl="ptodo ls"
+    alias ptdone="ptodo do"
+  fi
 fi
 
 if ! which dc &>/dev/null
