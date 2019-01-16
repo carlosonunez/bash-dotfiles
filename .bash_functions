@@ -169,13 +169,13 @@ get_next_thing_to_do() {
     number_of_next_ups=$(wc -l ${todo_dir}/todo.txt | awk '{print $1}' )
     case "$color_code" in
       sensitive)
-        printf "\[$BRed\][$next_up_to_do (1/$number_of_next_ups)]\[$NC\]"
+        printf "\[$BRed\][$next_up_to_do (1/$number_of_next_ups)]\[$NC\]\n "
         ;;
       project)
-        printf "\[$BBlue\][$next_up_to_do (1/$number_of_next_ups)]\[$NC\]"
+        printf "\[$BBlue\][$next_up_to_do (1/$number_of_next_ups)]\[$NC\]\n "
         ;;
       *)
-        printf "\[$BYellow\][$next_up_to_do (1/$number_of_next_ups)]\[$NC\]"
+        printf "\[$BYellow\][$next_up_to_do (1/$number_of_next_ups)]\[$NC\]\n "
         ;;
     esac
   fi
@@ -201,7 +201,8 @@ $(get_next_thing_to_do "$CLIENT_TODO_DIR" "sensitive")\
 $(get_next_thing_to_do "$PWD/.todos" "project")"
   if [ ! -z "$next_up_to_dos" ]
   then
-    next_up_to_dos="$(printf "${next_up_to_dos}")\n"
+    next_up_to_dos="$(printf "${next_up_to_dos}" | \
+      sed "s/^ //g")\n"
   fi
   if ! $(git rev-parse --is-inside-work-tree 2>/dev/null)
   then
