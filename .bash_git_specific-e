@@ -11,18 +11,16 @@ create_new_git_branch() {
 }
 
 try_to_install_hub_if_not_found() {
-  alias git='git'
   if ! which hub &> /dev/null
   then
     case $(get_os_type) in
       "Darwin"|"Fedora")
-        install_application 'hub' && alias git='hub'
+        install_application 'hub'
         ;;
       "Ubuntu")
         sudo add-apt-repository ppa:cpick/hub &&
           sudo apt-get update &&
           sudo apt-get install hub &&
-          alias git='hub'
           ;;
       *)
         >&2 echo "WARNING: Unable to install 'hub' onto $(get_os_type). Compile it manually."

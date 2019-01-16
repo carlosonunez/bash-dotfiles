@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-alias dc=docker-compose
-
 if ! which docker &>/dev/null
 then
   printf "Installing ${BGreen}docker${NC}\n"

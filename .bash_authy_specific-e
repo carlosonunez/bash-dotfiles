@@ -7,5 +7,3 @@ Copy it into $HOME/.ssh/authy if you would like to do things with Authy."
 else
   export AUTHY_KEY="$(cat ~/.ssh/authy)"
 fi
-
-alias authy='docker run --env AUTHY_KEY carlosnunez/authy-cli-docker:latest'

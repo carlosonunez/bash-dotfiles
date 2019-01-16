@@ -1,7 +1,40 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 PYTHON_VERSION=3.6.5
 VIRTUAL_ENV_NAME=carlosnunez
 export PYENV_ROOT=/usr/local/var/pyenv
+HOMEBREW_BUILTINS=$(cat <<-APPS
+todo-txt
+gnu-sed
+htop
+tmux
+jq
+feh
+w3m
+reattach-to-user-namespace
+tree
+mas
+rtv
+googler
+docker-compose-completion
+APPS
+)
+HOMEBREW_CASKS=$(cat <<-APPS
+firefox
+shiftit
+iterm2
+slack
+1password
+authy
+xquartz
+contexts
+alfred
+APPS
+)
+APPLE_STORE_APPS=$(cat <<-APPS
+spark
+shush
+APPS
+)
 
 install_contexts_prefs() {
   cp ~/src/setup/com.contextsformac.Contexts.plist ~/Library/Preferences
@@ -124,24 +157,21 @@ installed_applications=$(brew list --full-name; \
     -exec sh -c 'basename {} | sed "s#\.app##" | tr "[:upper:]" "[:lower:]"' \;)
 installed_pips=$(pip freeze)
 [ "$(uname)" == "Darwin" ] && {
-  builtin=$(echo "gnu-sed,htop,tmux,jq,feh,w3m,reattach-to-user-namespace,tree,mas,rtv,googler,docker-compose-completion" | tr "," "\n")
-  casks=$(echo "firefox,shiftit,iterm2,slack,1password,authy,xquartz,contexts,alfred" | tr "," "\n")
-  mas_apps=$(echo "spark,shush" | tr "," "\n")
-  for pkg in $builtin; do
+  for pkg in $HOMEBREW_BUILTINS; do
     if ! $(echo "$installed_applications" | grep -q "$pkg")
     then
       echo "INFO: Installing: $pkg"
       install_application "$pkg"
     fi
   done
-  for pkg in $casks; do
+  for pkg in $HOMEBREW_CASKS; do
     if ! $(echo "$installed_applications" | grep -q "$pkg")
     then
       echo "INFO: Installing: $pkg"
       brew cask install "$pkg"
     fi
   done
-  for pkg in $mas_apps
+  for pkg in $APPLE_STORE_APPS
   do
     if ! mas list | grep -q "$pkg"
     then
@@ -153,4 +183,3 @@ installed_pips=$(pip freeze)
 
 # Export a few handy exports
 # ==========================
-alias googler='googler --url-handler w3m'

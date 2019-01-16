@@ -1,16 +1,4 @@
-# =================
-# ALIASES
-# =================
-export EDITOR=vim
-export BROWSER='w3m -cookie'
-export RTV_BROWSER='w3m -cookie'
-export HOMEBREW_NO_AUTO_UPDATE=1
-alias googler='googler'
-alias killmatch='kill_all_matching_pids'
-alias rtv='rtv --enable-media'
-alias clip='xclip'
-alias ls='ls --color -la'
-
+#!/usr/bin/env bash
 # Check that homebrew is installed.
 # ==================================
 [ "$(uname)" == "Darwin" ] && {
@@ -140,7 +128,6 @@ then
         sudo apt-get update
         install_application  "python-software-properties software-properties-common"
         install_application  "tmux-next"
-        alias tmux='tmux-next'
         ;;
       *)
         printf "${BYellow}WARN${NC}: No subroutine written for OS $(get_os_type). \
@@ -153,7 +140,6 @@ Assuming package name of 'tmux'.\n"
   then
     git clone https://github.com/tmux-plugins/tmux-yank ~/.tmux.d
   fi
-  alias tmux='tmux -u'
   # Bash completion for Git.
   # ========================
   if [ "$(get_os_type)" == "Darwin" ]
@@ -173,7 +159,6 @@ else
   # Load bash submodules, unless the submodule already indicated that it's been
   # fully loaded.
   # ===========================================================================
-  [ "$(get_os_type)" == "Darwin" ] && alias find='find -E'
   for file in $(find $HOME -maxdepth 1 | \
     egrep '.*\/.bash' | \
     egrep -v 'bash_(profile|install|custom_profile|company|history|sessions)' | \
