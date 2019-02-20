@@ -10,6 +10,15 @@ pangloss/vim-javascript
 othree/javascript-libraries-syntax.vim
 claco/jasmine.vim
 vim-syntastic/syntastic.git
+PProvost/vim-ps1
+tpope/vim-classpath
+vim-scripts/groovy.vim
+plasticboy/vim-markdown
+martinda/Jenkinsfile-vim-syntax
+zivyangll/git-blame.vim
+flazz/vim-colorschemes
+romainl/vim-cool
+tpope/vim-fugitive.git
 GITHUB_URLS
 )
 

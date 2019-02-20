@@ -1,4 +1,8 @@
+" Tim Popify my vim setup!
+execute pathogen#infect()
+
 set encoding=utf8
+let mapleader = ","
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'atomic'
 set t_Co=256
@@ -17,6 +21,9 @@ autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 
+" Reload our .vimrc easily
+nnoremap <leader>r :source $HOME/.vimrc<CR>
+
 " Spacing options.
 " Tabstop: Number of spaces to add to tabs.
 " Backspace: Number of characters to go back by within an indent.
@@ -24,60 +31,75 @@ autocmd BufWinLeave * call clearmatches()
 set tabstop=2
 set expandtab
 set backspace=2
-set shiftwidth=2 
+set shiftwidth=2
 
 " Nowrap: Don't wrap text unless I say so explicitly.
 " Textwidth: Autowrap at column n (where n is right of the equals sign)
-set formatoptions+=t                                                              
-set nowrap                                                                        
+set formatoptions+=t
+set nowrap
+set textwidth=100
 
 " Delek: pretty colorscheme.
-colorscheme delek          
+colorscheme seti
 
-" Set a bar at column 80 so that I can keep my code readable.                                                       
-hi ColorColumn ctermbg=darkred                                                    
-hi CursorLine cterm=NONE ctermbg=magenta                                          
-set colorcolumn=80                                                               
+" Enable the cursorline and cursorcolumn.
+set cursorline
+set cursorcolumn
+au ColorScheme * hi CursorColumn ctermbg=233
+au ColorScheme * hi CursorLine ctermbg=235
+nnoremap <leader>l :set cursorline! cursorcolumn!<CR>
 
-" Expandtab: Use spaces instead of hard tabs. 
-set expandtab                                                                     
+" Override highlight color
+au ColorScheme * hi Visual ctermbg=blue
+
+" Highlight search options
+set hlsearch
+au ColorScheme * hi Search ctermbg=167 ctermfg=235
+
+" vim-cool shows the number of search results on the bottom.
+let g:CoolTotalMatches = 1
+
+" Set a bar at column 80 so that I can keep my code readable.
+au ColorScheme * hi ColorColumn ctermbg=240
+let &colorcolumn="80,".join(range(100,999),",")
+
+" Expandtab: Use spaces instead of hard tabs.
+set expandtab
 
 " Disable the annoying flashing bell.
-set visualbell t_vb=                                                              
+set visualbell t_vb=
 
 " Enable autocompletion within the wildmenu.
 " See also: https://stackoverflow.com/questions/9511253/how-to-effectively-use-vim-wildmenu
-set wildmode=longest:list,full                                                    
-set wildmenu                                                                      
+set wildmode=longest:list,full
+set wildmenu
 
 " Enable the column and row ruler at the bottom of the screen.
-set ruler                                                     
+set ruler
 
-" Enable syntax highlighting and filetype-based indenting.                    
+" Enable syntax highlighting and filetype-based indenting.
 set autoindent
-syntax on                                                                         
-filetype indent plugin on                                                         
+syntax on
+filetype indent plugin on
 
 " incsearch: Enable incremental searching
 " ignorecase: Case-insensitive searching
 " smartcase: ...unless there is a capital letter
-" nohlsearch: Don't highlight the search result.
 set incsearch
 set ignorecase
 set smartcase
-set nohlsearch
 
 " Enable line numbers.
 set number
+nnoremap <leader>n :set number!<cr>
 
 " NERDtree things.
-let mapleader = ","
 nmap <leader>t :NERDTreeToggle<cr>
 
 " Key remappings.
-nnoremap <C-n> :bnext<CR>                                                         
-nnoremap <C-p> :bprevious<CR>                                                     
-nnoremap <C-b> :buffers<CR>                                                       
+nnoremap <C-n> :bnext<CR>
+nnoremap <C-p> :bprevious<CR>
+nnoremap <C-b> :buffers<CR>
 nnoremap <C-l> :vertical resize -5
 nnoremap <C-h> :vertical resize +5
 nnoremap <C-t> :resize +5
@@ -96,5 +118,19 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 nnoremap <leader>c :SyntasticReset<CR>
 
-" Tim Popify my vim setup!
-execute pathogen#infect()
+" Fugitive keybindings.
+
+" Git status window.
+nnoremap <C-g>s :Gstatus<CR>
+
+" Interactive Git blame.
+nnoremap <C-g>b :Gblame<CR>
+
+" Push changes up.
+nnoremap <C-g>p :Gpush<CR>
+
+" Pull recent changes.
+nnoremap <C-g>l :Gpull<CR>
+
+" Do an interactive diff against the last staged bit of code.
+nnoremap <C-g>d :Gdiff<CR>
