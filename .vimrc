@@ -105,6 +105,27 @@ nnoremap <C-h> :vertical resize +5
 nnoremap <C-t> :resize +5
 nnoremap <C-b> :resize -5
 
+" Markdown options
+let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_toc_autofit = 1
+let g:vim_markdown_frontmatter = 1
+let g:vim_markdown_toml_frontmatter = 1
+let g:vim_markdown_json_frontmatter = 1
+let g:vim_markdown_strikethrough = 1
+let g:vim_markdown_no_extensions_in_markdown = 1
+let g:vim_markdown_fenced_languages = [
+  \'csharp=cs',
+  \'viml=vim',
+  \'bash=sh',
+  \'ini=dosini',
+  \'go=golang',
+  \'ruby=ruby',
+  \'javascript=javascript',
+  \'yaml=yaml',
+  \'toml=toml',
+  \'json=json'
+\]
+
 " JavaScript stuff
 let g:javascript_plugin_jsdoc = 1
 let g:javascript_plugin_ngdoc = 1
