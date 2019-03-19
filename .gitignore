@@ -1,5 +1,5 @@
 *.swp
 *.swo
-.vim
+.vim/
 .bash_1password_specific
 .client_todos/

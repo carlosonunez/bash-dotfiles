@@ -44,7 +44,7 @@ fi
 # COLORS
 # =================
 # Enable terminal color support.
-export TERM="xterm-color"
+export TERM="xterm-256color"
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
 
@@ -161,7 +161,7 @@ else
   # ===========================================================================
   for file in $(find $HOME -maxdepth 1 | \
     egrep '.*\/.bash' | \
-    egrep -v 'bash_(profile|install|custom_profile|company|history|sessions)' | \
+    egrep -v 'bash_(aliases|exports|profile|install|custom_profile|company|history|sessions)' | \
     egrep -v '.bashrc' | \
     sort -u)
   do
@@ -169,6 +169,13 @@ else
     source $file
     printf "\n"
   done
+  for file in aliases exports
+  do
+    printf "${BYellow}INFO${NC}: Loading ${BYellow}$file${NC}\n"
+    source $HOME/.bash_$file
+    printf "\n"
+  done
+
 
   # Load SSH keys into ssh-agent
   # ============================
