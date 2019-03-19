@@ -5,6 +5,7 @@ vim-airline/vim-airline
 vim-airline/vim-airline-themes
 scrooloose/nerdtree
 ryanoasis/vim-devicons
+cespare/vim-toml
 Xuyuanp/nerdtree-git-plugin
 pangloss/vim-javascript
 othree/javascript-libraries-syntax.vim
@@ -19,6 +20,8 @@ zivyangll/git-blame.vim
 flazz/vim-colorschemes
 romainl/vim-cool
 tpope/vim-fugitive.git
+markcornick/vim-bats
+rhysd/unite-redpen.vim
 GITHUB_URLS
 )
 

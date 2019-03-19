@@ -7,7 +7,20 @@ check_for_git_repository() {
   fi
 }
 
-alias authy='docker run --env AUTHY_KEY carlosnunez/authy-cli-docker:latest'
+run_travis() {
+  docker run --rm \
+    --interactive \
+    --tty \
+    --volume $PWD:/app \
+    --volume $HOME/.travis:/root/.travis \
+    --workdir /app \
+    skandyla/travis-cli \
+    $@
+}
+
+alias xq='docker run --rm -i carlosnunez/xq'
+alias travis=run_travis
+alias authy='docker run --rm --env AUTHY_KEY carlosnunez/authy-cli-docker:latest'
 alias git='git'
 alias git='hub'
 alias googler='googler --url-handler w3m'
@@ -39,13 +52,7 @@ source this file again.\n"
   fi
 fi
 
-if ! which dc &>/dev/null
-then
-  alias dc=docker-compose
-else
-  >&2 printf "${BYellow}WARN${NC}: dc is already installed; use 'compose' to use docker-compose.\n"
-  alias compose=docker-compose
-fi
+alias dc=docker-compose
 
 if which hub &>/dev/null
 then

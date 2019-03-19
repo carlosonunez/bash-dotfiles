@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+check_for_internet_access() {
+  test "$(curl -s --connect-timeout 3 http://nil.carlosnunez.me)" == "i love socks"
+}
+
 PYTHON_VERSION=3.6.5
 VIRTUAL_ENV_NAME=carlosnunez
 export PYENV_ROOT=/usr/local/var/pyenv
@@ -178,13 +183,19 @@ installed_pips=$(pip freeze)
       brew cask install "$pkg"
     fi
   done
-  for pkg in $APPLE_STORE_APPS
-  do
-    if ! mas list | grep -q "$pkg"
-    then
-      mas lucky "$pkg"
-    fi
-  done
+  if ! check_for_internet_access
+  then
+    >&2 echo "WARN: No internet access available. If you wish to install these \
+Apple Store apps, connect to the internet and run 'source \$HOME/.bash_install'."
+  else
+    for pkg in $APPLE_STORE_APPS
+    do
+      if ! mas list | grep -q "$pkg"
+      then
+        mas lucky "$pkg"
+      fi
+    done
+  fi
   install_contexts_prefs
   configure_todos
 }
