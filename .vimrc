@@ -24,6 +24,18 @@ autocmd BufWinLeave * call clearmatches()
 " Reload our .vimrc easily
 nnoremap <leader>r :source $HOME/.vimrc<CR>
 
+" Autoformatting options
+let g:autoformat_autoindent = 0
+let g:autoformat_retab = 0
+let g:autoformat_remove_trailing_spaces = 0
+nnoremap <leader>f :Autoformat<CR>
+
+" Language specific autoformatting options
+let g:formatter_yapf_style = 'pep8' "Python
+
+" Reformat upon saving
+au BufWrite * :Autoformat
+
 " Spacing options.
 " Tabstop: Number of spaces to add to tabs.
 " Backspace: Number of characters to go back by within an indent.
