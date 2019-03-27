@@ -21,7 +21,8 @@ flazz/vim-colorschemes
 romainl/vim-cool
 tpope/vim-fugitive.git
 markcornick/vim-bats
-rhysd/unite-redpen.vim
+thoughtbot/vim-rspec
+Chiel92/vim-autoformat
 GITHUB_URLS
 )
 
@@ -31,5 +32,8 @@ do
   then
     mkdir -p ~/.vim/bundle
   fi
-  git clone "https://github.com/$bundle_repo" "$HOME/.vim/bundle/$(basename "$bundle_repo")"
+  if [ ! -d "$HOME/.vim/bundle/$(basename $bundle_repo)" ]
+  then
+    git clone "https://github.com/$bundle_repo" "$HOME/.vim/bundle/$(basename "$bundle_repo")"
+  fi
 done
