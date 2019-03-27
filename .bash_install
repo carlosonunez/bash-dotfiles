@@ -50,6 +50,10 @@ install_contexts_prefs() {
   cp ~/src/setup/com.contextsformac.Contexts.plist ~/Library/Preferences
 }
 
+install_shiftit_prefs() {
+  defaults import org.shiftitapp.ShiftIt $HOME/src/setup/shiftit.plist
+}
+
 configure_todos() {
   if ! test -d $HOME/src/todos
   then
@@ -130,7 +134,7 @@ fi
 # ==================
 if [ -z "$VIRTUAL_ENV" ] && [ ! -f "$PYTHON3_LOCAL_DIR/virtualenv" ]
 then
-  if ! pip3 install --user virtualenv
+  if ! pip3 --trusted-host pypi.org install --user virtualenv
   then
     >&2 echo "ERROR: Couldn't install Python virtualenv."
     return 1
@@ -209,6 +213,7 @@ Apple Store apps, connect to the internet and run 'source \$HOME/.bash_install'.
       fi
     done
   fi
+  install_shiftit_prefs
   install_contexts_prefs
   configure_todos
 }
