@@ -23,7 +23,7 @@ alias travis=run_travis
 alias authy='docker run --rm --env AUTHY_KEY carlosnunez/authy-cli-docker:latest'
 alias git='git'
 alias git='hub'
-alias googler='googler --url-handler w3m'
+alias googler='googler -n 5 --url-handler ~/.googler/url_handler.sh'
 alias killmatch='kill_all_matching_pids'
 alias rtv='RTV_BROWSER=w3m rtv --enable-media'
 alias find='find -E'

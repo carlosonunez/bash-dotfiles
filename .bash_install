@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 check_for_internet_access() {
-  test "$(curl -s --connect-timeout 3 http://nil.carlosnunez.me)" == "i love socks"
+  test "$(curl -s --connect-timeout 3 http://nil.carlosnunez.me)" == "success"
 }
 
 PYTHON_VERSION=3.6.5

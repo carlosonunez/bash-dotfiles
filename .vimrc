@@ -7,6 +7,19 @@ let g:airline_powerline_fonts = 1
 let g:airline_theme = 'atomic'
 set t_Co=256
 
+" vim-easy-align!
+nmap ga <Plug>(EasyAlign)
+
+" Enable auto-save
+let g:auto_save = 1
+
+
+" Helpful shell commands
+nnoremap <leader>dc :!docker-compose up -d 
+nnoremap <leader>dd :!docker-compose down<CR>
+nnoremap <leader>dr :!docker-compose restart 
+nnoremap <leader>y :!cat % \| pbcopy<CR>
+
 " Set undo, backup and swap directories so that Vim doesn't leave
 " all sorts of garbage within my working directory.
 set undodir=~/.vim/undo//
@@ -23,6 +36,9 @@ autocmd BufWinLeave * call clearmatches()
 
 " Reload our .vimrc easily
 nnoremap <leader>r :source $HOME/.vimrc<CR>
+
+" Easy save
+nnoremap <leader>s :w<CR>
 
 " Autoformatting options
 let g:autoformat_autoindent = 0
@@ -106,7 +122,7 @@ set number
 nnoremap <leader>n :set number!<cr>
 
 " NERDtree things.
-nmap <leader>t :NERDTreeToggle<cr>
+nmap <leader>ft :NERDTreeToggle<cr>
 
 " Key remappings.
 nnoremap <C-n> :bnext<CR>
