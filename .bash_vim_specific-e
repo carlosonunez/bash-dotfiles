@@ -23,6 +23,9 @@ tpope/vim-fugitive.git
 markcornick/vim-bats
 thoughtbot/vim-rspec
 Chiel92/vim-autoformat
+junegunn/vim-easy-align
+dhruvasagar/vim-table-mode
+907th/vim-auto-save
 GITHUB_URLS
 )
 

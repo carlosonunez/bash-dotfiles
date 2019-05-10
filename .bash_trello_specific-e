@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+export_trello_board() {
+  list_to_export="${1?Please provide a list to export.}"
+  if ! test -f "$HOME/Downloads/board.json"
+  then
+    >&2 echo "ERROR: board.json not found. Download the board to export from first."
+    exit 1
+  fi
+  jq_query=$(cat <<-QUERY
+["Item", "Status", "Target Date (if applicable)"], \
+["-----","---------","----------------------------"], \
+(.lists as \$l | \
+.cards[] | .idList as \$list_id | \
+{ \
+  name: .name, \
+  due: (if .badges.due then .badges.due else "none" end), \
+  list: (\$l[] | \
+    select(.id == \$list_id) | \
+    .name) \
+} | \
+select(.list == "$list_to_export") | \
+[.name, .list, .due]) | \
+@csv
+QUERY
+)
+  jq -r "$jq_query" $HOME/Downloads/board.json | \
+    column -s, -t | \
+    tr -d '"'
+} 
