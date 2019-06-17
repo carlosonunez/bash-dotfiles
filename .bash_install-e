@@ -4,7 +4,7 @@ check_for_internet_access() {
   test "$(curl -s --connect-timeout 3 http://nil.carlosnunez.me)" == "success"
 }
 
-PYTHON_VERSION=3.6.5
+PYTHON_VERSION=3.7.3
 VIRTUAL_ENV_NAME=carlosnunez
 export PYENV_ROOT=/usr/local/var/pyenv
 PIPS_TO_INSTALL=$(cat <<-APPS
@@ -29,7 +29,7 @@ docker-compose-completion
 APPS
 )
 HOMEBREW_CASKS=$(cat <<-APPS
-firefox
+google-chrome
 shiftit
 iterm2
 slack
@@ -104,12 +104,6 @@ then
   fi
 fi
 
-if [ "$PYTHON_VERSION" != "latest" ] && \
-  [ ! -d "$PYENV_ROOT/versions/$PYTHON_VERSION" ]
-then
-  echo "INFO: Installing Python version $PYTHON_VERSION"
-  pyenv install "$PYTHON_VERSION"
-fi
 
 # Ensure that user-installed binaries are in our path.
 # =====================================================
@@ -176,13 +170,13 @@ installed_applications=$(brew list --full-name; \
   find '/Applications' -maxdepth 1 \
     -name *.app \
     -exec sh -c 'basename {} | sed "s#\.app##" | tr "[:upper:]" "[:lower:]"' \;)
-installed_pips=$(pip freeze)
+installed_pips=$(pip3 freeze)
 for pkg in $PIPS_TO_INSTALL
 do
   if ! $(echo "$installed_pips" | grep -q "$pkg")
   then
     echo "INFO: Installing Python package: $pkg"
-    pip install "$pkg"
+    pip3 install "$pkg"
   fi
 done
 [ "$(uname)" == "Darwin" ] && {

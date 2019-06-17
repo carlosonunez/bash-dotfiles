@@ -18,6 +18,8 @@ run_travis() {
     $@
 }
 
+alias phone='scrcpy --bit-rate 2M'
+alias phone_slow='scrcpy --bit-rate 1M'
 alias xq='docker run --rm -i carlosnunez/xq'
 alias travis=run_travis
 alias authy='docker run --rm --env AUTHY_KEY carlosnunez/authy-cli-docker:latest'

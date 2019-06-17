@@ -14,6 +14,21 @@ do
 done
 }
 
+create_symlinks_for_directories() {
+  for directory in 'scripts'
+  do
+    destination_for_directory=$(echo "$found_directory" | \
+      sed "s#${DEFAULT_SETUP_DIRECTORY}#$HOME#")
+    if [ ! -L "$destination_for_directory" ] || \
+      [ ! -f "$destination_for_directory" ]
+    then
+      /usr/bin/env ln -s "$found_directory" "$destination_for_directory"
+    else
+      >&2 echo "INFO: Symlink already exists: $destination_for_directory"
+    fi
+  done
+}
+
 create_symlinks_for_config_files() {
 for managed_file in '.bash_' '.tmux' '.vim'
 do
@@ -76,6 +91,7 @@ copy_aws_keys_from_onedrive() {
 if {
   check_for_required_directories &&
   create_symlinks_for_config_files &&
+  create_symlinks_for_directories &&
   create_vim_directories &&
   copy_ssh_keys_from_onedrive &&
   copy_aws_keys_from_onedrive;
