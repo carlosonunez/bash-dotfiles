@@ -1,17 +1,9 @@
 #!/usr/bin/env bash
 
 check_for_internet_access() {
-  test "$(curl -s --connect-timeout 3 http://nil.carlosnunez.me)" == "success"
+  test "$(curl -s --connect-timeout 3 http://nil.carlosnunez.me)" == "i love socks."
 }
 
-PYTHON_VERSION=3.7.3
-VIRTUAL_ENV_NAME=carlosnunez
-export PYENV_ROOT=/usr/local/var/pyenv
-PIPS_TO_INSTALL=$(cat <<-APPS
-awscli
-yapf
-APPS
-)
 HOMEBREW_BUILTINS=$(cat <<-APPS
 todo-txt
 gnu-sed
@@ -61,100 +53,6 @@ configure_todos() {
   fi
 }
 
-# We need to install OS headers if running in OS X Mojave
-# =======================================================
-if uname | grep -Eq "^Darwin$" && \
-  defaults read loginwindow SystemVersionStampAsString | grep -Eq "^10.14" && \
-  ! pkgutil --pkgs | grep -Eq "com.apple.pkg.macOS_SDK_headers_for_macOS_10.14"
-then
-  if [ ! -d "/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk" ]
-  then
-    if [ ! -f "$HOME/Downloads/macOS_SDK_headers_for_macOS_10.14.pkg" ]
-    then
-      >&2 echo "hello"
-      >&2 echo "WARN: You are on Mojave. pyenv might not work without SDK headers. \
-You can download them from developer.apple.com. \
-Look for 'macOS_SDK_headers_for_macOS_10.14.pkg.'"
-    else
-      >&2 echo "INFO: OS X Mojave detected. Installing OS headers \
-as required by pyenv"
-      sudo installer \
-        -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg \
-        -target /
-    fi
-  fi
-fi
-
-# Install Python and set it to the version
-# specified above unless we've set it to latest
-# ===============================================
-if ! which python python3 >/dev/null
-then
-  if [ "$(get_os_type)" == "Ubuntu" ]
-  then
-    sudo apt-get update
-  fi
-  if ! {
-    install_application "python";
-    install_application "pyenv";
-  }
-  then
-    >&2 echo "ERROR: Couldn't install Python."
-    return 1
-  fi
-fi
-
-
-# Ensure that user-installed binaries are in our path.
-# =====================================================
-PYTHON3_LOCAL_DIR=$(echo $(python3 -c "import site; print(site.USER_BASE)")/bin)
-
-# Install pip
-# ===========
-if ! which pip3 &> /dev/null
-then
-  if ! {
-    >&2 echo "INFO: Installing pip3. Hang on." &&
-    curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py &&
-    sudo python /tmp/get-pip.py;
-  }
-  then
-    >&2 echo "ERROR: Couldn't install pip. Install it manually, then try again."
-    return 1
-  fi
-fi
-
-# Activate the venv
-# ==================
-if [ -z "$VIRTUAL_ENV" ] && [ ! -f "$PYTHON3_LOCAL_DIR/virtualenv" ]
-then
-  if ! pip3 --trusted-host pypi.org install --user virtualenv
-  then
-    >&2 echo "ERROR: Couldn't install Python virtualenv."
-    return 1
-  fi
-fi
-if [ ! -d "$HOME/$VIRTUAL_ENV_NAME/bin" ]
-then
-  if [ "$PYTHON_VERSION" != "latest" ]
-  then
-    $PYTHON3_LOCAL_DIR/virtualenv -p "$PYENV_ROOT/versions/$PYTHON_VERSION/bin/python" "$VIRTUAL_ENV_NAME"
-  else
-    $PYTHON3_LOCAL_DIR/virtualenv "$VIRTUAL_ENV_NAME"
-  fi
-fi
-source $HOME/$VIRTUAL_ENV_NAME/bin/activate
-
-# Install pygments
-# ================
-if [ "$(get_os_type)" != "Darwin" ]
-then
-  which pygmentize > /dev/null || {
-    pip3 install pygments
-    install_application "highlight"
-  }
-fi
-
 # Install NERD fonts and icons
 # =============================
 if ! brew cask list font-dejavusansmono-nerd-font &>/dev/null
@@ -169,16 +67,8 @@ installed_applications=$(brew list --full-name; \
   brew cask list --full-name 2>/dev/null; \
   find '/Applications' -maxdepth 1 \
     -name *.app \
-    -exec sh -c 'basename {} | sed "s#\.app##" | tr "[:upper:]" "[:lower:]"' \;)
+    -exec sh -c 'basename "{}" | sed "s#\.app##" | tr "[:upper:]" "[:lower:]"' \;)
 installed_pips=$(pip3 freeze)
-for pkg in $PIPS_TO_INSTALL
-do
-  if ! $(echo "$installed_pips" | grep -q "$pkg")
-  then
-    echo "INFO: Installing Python package: $pkg"
-    pip3 install "$pkg"
-  fi
-done
 [ "$(uname)" == "Darwin" ] && {
   for pkg in $HOMEBREW_BUILTINS; do
     if ! $(echo "$installed_applications" | grep -q "$pkg")
@@ -201,7 +91,7 @@ Apple Store apps, connect to the internet and run 'source \$HOME/.bash_install'.
   else
     for pkg in $APPLE_STORE_APPS
     do
-      if ! mas list | grep -q "$pkg"
+      if ! mas list | tr '[:upper:]' '[:lower:]' | grep -q "$pkg"
       then
         mas lucky "$pkg"
       fi
