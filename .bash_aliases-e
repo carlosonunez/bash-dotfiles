@@ -18,8 +18,43 @@ run_travis() {
     $@
 }
 
-alias phone='scrcpy --bit-rate 2M'
-alias phone_slow='scrcpy --bit-rate 1M'
+connect_to_phone() {
+  # adb always lists phones connected over serial/USB before those
+  # connected over the network.
+  # pick the first entry in the list if that's the case, or 
+  # attempt to connect to the phone over the network otherwise.
+  connected_phone=$(adb devices | \
+    grep -v 'no devices found' | \
+    head -2 | \
+    tail -1 | \
+    awk '{print $1}'
+  )
+  if test -z "$connected_phone"
+  then
+    if ! $(/Sy*/L*/Priv*/Apple8*/V*/C*/R*/airport -I | grep -q "Carlos's Pixel")
+    then
+      >&2 cat <<-ERROR_MESSAGE
+Please connect to your phone's Wi-Fi hotspot first.
+Ensure that it is named "Carlos's Pixel"
+ERROR_MESSAGE
+      return 1
+    else
+      phone_hotspot_gateway="$(netstat -f inet -nr | \
+        grep default | \
+        awk '{print $2}' | \
+        tr -d ' ')"
+      adb connect "${phone_hotspot_gateway}:5555"
+    fi
+    &>/dev/null scrcpy --bit-rate "${1:-1M}" &
+  else
+    &>/dev/null scrcpy --bit-rate "${1:-8M}" -s "$connected_phone" &
+  fi
+}
+
+alias gybp='$HOME/bin/gyb/personal/gyb'
+alias gybw='$HOME/bin/gyb/work/gyb'
+alias phone='connect_to_phone'
+alias phone_slow='connect_to_phone 1M'
 alias xq='docker run --rm -i carlosnunez/xq'
 alias travis=run_travis
 alias authy='docker run --rm --env AUTHY_KEY carlosnunez/authy-cli-docker:latest'
@@ -47,7 +82,7 @@ else
 Do so in .bash_exports to track client-specific to-dos, then \
 source this file again.\n"
   else
-    alias ctodo="todo.sh -d $CLIENT_TODO_DIR/.todo.cfg"
+    alias ctodo="todo.sh -d $CLIENT_TODO_DIR/$CLIENT_NAME/.todo.cfg"
     alias ct="ctodo a"
     alias ctl="ctodo ls"
     alias ctdone="ctodo do"
