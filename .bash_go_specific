@@ -4,7 +4,7 @@ if !  which go &> /dev/null
 then
   case "$(get_os_type)" in
     "Darwin")
-      brew install go --cross-compile-daemon
+      brew install go
       ;;
     "Ubuntu")
       sudo add-apt-repository ppa:longsleep/golang-backports
