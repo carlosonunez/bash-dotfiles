@@ -7,6 +7,18 @@ popd () {
   command popd "$@" > /dev/null
 }
 
+run_speed_test() {
+  test_file_size="${1:-100MB}"
+  valid_test_file_sizes="^(100mb|1gb|10gb)$"
+  if ! grep -q --extended-regexp --ignore-case "$valid_test_file_sizes" < <(echo "$test_file_size")
+  then
+    >&2 echo "ERROR: Please provide a file size that matches '$valid_test_file_sizes'."
+    return 1
+  fi
+  >&2 echo "Test started using $test_file_size of data; type CTRL-C to stop."
+  curl -o /dev/null "https://speed.hetzner.de/${test_file_size}.bin"
+}
+
 kill_all_matching_pids() {
   pgrep $@ | while read pid; do sudo kill -9 $pid; done
 }
