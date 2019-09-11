@@ -197,3 +197,5 @@ if [ -f $(brew --prefix)/etc/bash_completion ]; then
 else
   brew install bash-completion
 fi
+
+export PATH=/Users/carlos/.gems/bin:/Users/carlos/.gems::/usr/local/opt/coreutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Users/carlos/src/go/bin:/Users/carlos/bin/gyb
