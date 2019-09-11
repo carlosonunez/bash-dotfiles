@@ -26,6 +26,7 @@ Chiel92/vim-autoformat
 junegunn/vim-easy-align
 dhruvasagar/vim-table-mode
 907th/vim-auto-save
+yuratomo/w3m.vim
 GITHUB_URLS
 )
 
