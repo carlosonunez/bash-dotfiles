@@ -35,6 +35,7 @@ APPS
 APPLE_STORE_APPS=$(cat <<-APPS
 spark
 shush
+nordvpn
 APPS
 )
 
