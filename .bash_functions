@@ -216,13 +216,21 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
     next_up_to_dos="$(printf "${next_up_to_dos}" | \
       sed "s/^ //g")\n"
   fi
+  if [ $EUID -eq 0 ]; then
+    fmtd_username="\[$ALERT\]$USER\[$NC\]"
+  else
+    fmtd_username="\[$BGreen\]$USER\[$NC\]"
+  fi
+
+  hostname_name=$(echo "$HOSTNAME" | sed 's/.local$//')
+  hostname_fmtd="\[$BBlue\]$hostname_name\[$NC\]"
   if ! $(git rev-parse --is-inside-work-tree 2>/dev/null)
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\]\W]\[$NC\]\[$Yellow\]\$\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\w]\[$NC\]\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   elif ! $(git diff-index --quiet HEAD)
   then
-    PS1="${next_up_to_dos}$error_code_str\[$Red\]<<$git_branch>>\[$NC\] \[$BCyan\]\W]\[$NC\]\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\w]\[$NC\] \[$Red\]($git_branch)\[$NC\] \n\[$Yellow\]$account_type_indicator\[$NC\]: "
   else
-    PS1="${next_up_to_dos}$error_code_str\[$Green\]<<$git_branch>>\[$NC\] \[$BCyan\]\W]\[$NC\]\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\w]\[$NC\] \[$Green\]($git_branch)\[$NC\] \n\[$Yellow\]$account_type_indicator\[$NC\]: "
   fi
 }
