@@ -18,6 +18,7 @@ mas
 rtv
 googler
 docker-compose-completion
+imagemagick
 APPS
 )
 HOMEBREW_CASKS=$(cat <<-APPS
