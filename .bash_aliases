@@ -60,9 +60,9 @@ alias travis=run_travis
 alias authy='docker run --rm --env AUTHY_KEY carlosnunez/authy-cli-docker:latest'
 alias git='git'
 alias git='hub'
-alias googler='googler -n 5 --url-handler ~/.googler/url_handler.sh'
+alias googler='googler -n 5 --url-handler w3m'
 alias killmatch='kill_all_matching_pids'
-alias rtv='RTV_BROWSER=w3m rtv --enable-media'
+alias rtv='BROWSER=w3m DISPLAY=:0 rtv --enable-media'
 alias find='find -E'
 if ! which todo.sh &>/dev/null
 then
