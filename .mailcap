@@ -31,7 +31,7 @@ image/*; feh --draw-exif --scale-down -g 640x480 '%s'; test=test -n "$DISPLAY"
 
 # Youtube videos are assigned a custom mime-type, which can be streamed with
 # vlc or youtube-dl.
-video/x-youtube; vlc '%s' --width 640 --height 480; test=test -n "$DISPLAY"
+#video/x-youtube; vlc '%s' --width 640 --height 480; test=test -n "$DISPLAY"
 video/x-youtube; mpv --ytdl-format=bestvideo+bestaudio/best '%s' --autofit 640x480; test=test -n "$DISPLAY"
 
 # Mpv is a simple and effective video streamer
@@ -56,10 +56,10 @@ image/x-imgur-album; echo
 # 256 color images using half-width unicode characters
 # Much higher quality that img2txt, but must be built from source
 # https://github.com/rossy/img2xterm
-image/*; curl -s '%s' | convert -resize 80x80 - jpg:/tmp/rtv.jpg && img2xterm /tmp/rtv.jpg; needsterminal; copiousoutput
+#image/*; curl -s '%s' | convert -resize 80x80 - jpg:/tmp/rtv.jpg && img2xterm /tmp/rtv.jpg; needsterminal; copiousoutput
 
 # Display images in classic ascii using img2txt and lib-caca
-image/*; curl -s '%s' | convert - jpg:/tmp/rtv.jpg && img2txt -f utf8 /tmp/rtv.jpg; needsterminal; copiousoutput
+#image/*; curl -s '%s' | convert - jpg:/tmp/rtv.jpg && img2txt -f utf8 /tmp/rtv.jpg; needsterminal; copiousoutput
 
 # Full motion videos - requires a framebuffer to view
 video/x-youtube; mpv -vo drm -quiet '%s'; needsterminal
