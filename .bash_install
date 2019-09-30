@@ -40,6 +40,10 @@ nordvpn
 APPS
 )
 
+copy_personalized_chrome_apps() {
+  cp -r $HOME/src/setup/Google\ Chrome *.app /Applications
+}
+
 install_contexts_prefs() {
   cp ~/src/setup/com.contextsformac.Contexts.plist ~/Library/Preferences
 }
