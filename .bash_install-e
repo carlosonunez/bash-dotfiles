@@ -19,6 +19,7 @@ rtv
 googler
 docker-compose-completion
 imagemagick
+scrcpy
 APPS
 )
 HOMEBREW_CASKS=$(cat <<-APPS
@@ -31,6 +32,7 @@ authy
 xquartz
 contexts
 alfred
+android-platform-tools
 APPS
 )
 APPLE_STORE_APPS=$(cat <<-APPS
