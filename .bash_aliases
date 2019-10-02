@@ -51,8 +51,14 @@ ERROR_MESSAGE
   fi
 }
 
-alias gybp='$HOME/bin/gyb/personal/gyb'
-alias gybw='$HOME/bin/gyb/work/gyb'
+run_gyb() {
+  email_address=$1
+  LOCAL_FOLDER=/Users/cn/.gyb/$email_address \
+    CREDENTIALS_FOLDER=/Users/cn/.gyb/$email_address_credentials \
+    docker-compose -f $HOME/src/gyb/docker-compose.yml \
+    run --rm gyb --email $email_address $@
+}
+
 alias phone='connect_to_phone'
 alias phone_slow='connect_to_phone 1M'
 alias xq='docker run --rm -i carlosnunez/xq'
@@ -64,6 +70,8 @@ alias googler='googler -n 5 --url-handler w3m'
 alias killmatch='kill_all_matching_pids'
 alias rtv='BROWSER=w3m DISPLAY=:0 rtv --enable-media'
 alias find='find -E'
+alias gybp='run_gyb '
+alias gybw='run_gyb '
 if ! which todo.sh &>/dev/null
 then
   >&2 printf "${BYellow}WARN${NC}: todo.sh is not installed. Install it to keep track of stuff\!\n"
