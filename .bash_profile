@@ -199,3 +199,5 @@ else
 fi
 
 export PATH=/Users/carlos/.gems/bin:/Users/carlos/.gems::/usr/local/opt/coreutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Users/carlos/src/go/bin:/Users/carlos/bin/gyb
+
+export PATH=/Users/carlos/.gems/bin:/Users/carlos/.gems::/usr/local/opt/coreutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Users/carlos/src/go/bin:/Users/carlos/bin/gyb:/Users/cn/bin/gyb
