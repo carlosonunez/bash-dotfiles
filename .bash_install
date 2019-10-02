@@ -26,7 +26,6 @@ HOMEBREW_CASKS=$(cat <<-APPS
 google-chrome
 shiftit
 iterm2
-slack
 1password
 authy
 xquartz
@@ -41,9 +40,57 @@ shush
 nordvpn
 APPS
 )
+ETC_HOSTS_EXCLUSIONS=$(cat <<-EXCLUSIONS
+web\.whatsapp\.com
+twitter\.com
+t\.co
+www\.t\.co
+.*\.twimg\.com
+www\.linkedin\.com
+linkedin\.com
+api\.twitter\.com
+.*reddit\.com
+amp-reddit-com\.cdn\.ampproject\.org
+www\.redditstatic\.com
+EXCLUSIONS
+)
+
+modify_etc_hosts() {
+  index=0
+  for exclusion in $ETC_HOSTS_EXCLUSIONS
+  do
+    exclusion_pretty_print="$(echo "$exclusion" | sed 's/\\././g')"
+    pattern="^0.0.0.0 $exclusion$"
+    if grep -Eq "$pattern" /etc/hosts
+    then
+      message="INFO: Removing from /etc/hosts - $exclusion_pretty_print"
+      if test "$index" -eq 0
+      then
+        message="${message} (you might need to enter your password)"
+      fi
+      >&2 echo "$message"
+      sudo gsed -i "/$pattern/d" /etc/hosts
+      index=$((index+1))
+    fi
+  done
+}
+
+make_etc_hosts_adfree() {
+  if ! grep -q 'StevenBlack' /etc/hosts
+  then
+    >&2 echo "INFO: Updating /etc/hosts with ad-free extensions"
+    sudo curl -o /etc/hosts -L http://sbc.io/hosts/alternates/fakenews-social/hosts
+  fi
+}
 
 copy_personalized_chrome_apps() {
-  cp -r $HOME/src/setup/Google\ Chrome *.app /Applications
+  for app in Personal Work
+  do
+    if ! test -d "/Applications/Google Chrome ${app}.app"
+    then
+      cp -r "$HOME/src/Google Chrome ${app}.app" /Applications
+    fi
+  done
 }
 
 install_contexts_prefs() {
@@ -74,7 +121,7 @@ fi
 installed_applications=$(brew list --full-name; \
   brew cask list --full-name 2>/dev/null; \
   find '/Applications' -maxdepth 1 \
-    -name *.app \
+    -name "*.app" \
     -exec sh -c 'basename "{}" | sed "s#\.app##" | tr "[:upper:]" "[:lower:]"' \;)
 installed_pips=$(pip3 freeze)
 [ "$(uname)" == "Darwin" ] && {
@@ -108,6 +155,9 @@ Apple Store apps, connect to the internet and run 'source \$HOME/.bash_install'.
   install_shiftit_prefs
   install_contexts_prefs
   configure_todos
+  copy_personalized_chrome_apps
+  make_etc_hosts_adfree
+  modify_etc_hosts
 }
 
 # Export a few handy exports
