@@ -4,5 +4,13 @@
 <dict>
 	<key>application</key>
 	<integer>1</integer>
+	<key>custom</key>
+	<string>on alfred_script(q)
+	tell application "Terminal"
+        if not (exists window 1) then reopen
+        activate
+		do script q in window 1
+	end tell
+end alfred_script</string>
 </dict>
 </plist>
