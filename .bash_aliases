@@ -53,10 +53,13 @@ ERROR_MESSAGE
 
 run_gyb() {
   email_address=$1
-  LOCAL_FOLDER=/Users/cn/.gyb/$email_address \
-    CREDENTIALS_FOLDER=/Users/cn/.gyb/$email_address_credentials \
-    docker-compose -f $HOME/src/gyb/docker-compose.yml \
-    run --rm gyb --email $email_address $@
+  if ! test -d "$HOME/src/gyb"
+  then
+    >&2 echo "INFO: Fetching Dockerized Got-Your-Back..."
+    mkdir -p "$HOME/src/gyb" && \
+      git clone https://github.com/carlosonunez/gyb "$HOME/src/gyb"
+  fi
+  $HOME/src/gyb/gyb.sh $email_address ${@:2}
 }
 
 alias phone='connect_to_phone'
