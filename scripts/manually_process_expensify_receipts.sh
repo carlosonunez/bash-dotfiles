@@ -1,4 +1,35 @@
 #!/usr/bin/env bash
+usage() {
+  cat <<-USAGE_DOC
+$(basename $0)
+Converts receipts in EML format to PDF for submitting to Expensify.
+
+This script takes no options.
+
+NOTES
+
+- You will need to place your EML files in this directory: $HOME/emails
+- You will also need Docker for this to work.
+USAGE_DOC
+}
+
+get_script_version() {
+  version=$(GIT_DIR=$HOME/src/setup/.git git log -1 HEAD --format=%h)
+  echo "version: $version"
+}
+
+if [ "$1" == "--help" ] || [ "$1" == '-h' ]
+then
+  usage
+  exit 0
+fi
+
+if [ "$1" == "--version" ] || [ "$1" == '-v' ]
+then
+  get_script_version
+  exit 0
+fi
+
 EMAILS_DIRECTORY="${EMAILS_DIRECTORY:-$HOME/emails}"
 MHONARC_FILE_PATH="${MHONARC_FILE_PATH:-$HOME/src/setup/mhonarc.rc}"
 if ! (test -d "$EMAILS_DIRECTORY" ||  test -f "$MHONARC_FILE_PATH")
