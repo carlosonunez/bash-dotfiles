@@ -52,6 +52,8 @@ api\.twitter\.com
 .*reddit\.com
 amp-reddit-com\.cdn\.ampproject\.org
 www\.redditstatic\.com
+i\.reddit\.com
+i\.redd\.it
 EXCLUSIONS
 )
 
