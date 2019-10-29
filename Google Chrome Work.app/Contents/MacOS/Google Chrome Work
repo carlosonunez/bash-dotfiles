@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-mkdir -p $HOME/.chrome/work
-/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
---user-data-dir=$HOME/.chrome/work &

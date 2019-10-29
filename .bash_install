@@ -54,6 +54,8 @@ amp-reddit-com\.cdn\.ampproject\.org
 www\.redditstatic\.com
 i\.reddit\.com
 i\.redd\.it
+mmg\.whatsapp\.net
+reddit\.map\.fastly\.net
 EXCLUSIONS
 )
 
@@ -120,12 +122,18 @@ fi
 
 # Install a few necessary brew formulae
 # ======================================
+if ! check_for_internet_access
+then
+  >&2 echo "WARN: Internet access is not available. We will not attempt to install
+or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
+  exit 0
+fi
+
 installed_applications=$(brew list --full-name; \
   brew cask list --full-name 2>/dev/null; \
   find '/Applications' -maxdepth 1 \
     -name "*.app" \
     -exec sh -c 'basename "{}" | sed "s#\.app##" | tr "[:upper:]" "[:lower:]"' \;)
-installed_pips=$(pip3 freeze)
 [ "$(uname)" == "Darwin" ] && {
   for pkg in $HOMEBREW_BUILTINS; do
     if ! $(echo "$installed_applications" | grep -q "$pkg")
@@ -141,19 +149,14 @@ installed_pips=$(pip3 freeze)
       brew cask install "$pkg"
     fi
   done
-  if ! check_for_internet_access
-  then
-    >&2 echo "WARN: No internet access available. If you wish to install these \
-Apple Store apps, connect to the internet and run 'source \$HOME/.bash_install'."
-  else
-    for pkg in $APPLE_STORE_APPS
-    do
-      if ! mas list | tr '[:upper:]' '[:lower:]' | grep -q "$pkg"
-      then
-        mas lucky "$pkg"
-      fi
-    done
-  fi
+  for pkg in $APPLE_STORE_APPS
+  do
+    if ! mas list | tr '[:upper:]' '[:lower:]' | grep -q "$pkg"
+    then
+      mas lucky "$pkg"
+    fi
+  done
+
   install_shiftit_prefs
   install_contexts_prefs
   configure_todos

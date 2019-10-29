@@ -1,4 +1,16 @@
 #!/usr/bin/env bash
+set -x
+export TMUX_SESSION_NAME='tmux_session'
+
+# Starts a new tmux session with my usual window configuration.
+start_tmux() {
+  tmux new-session -d -s "$TMUX_SESSION_NAME" && \
+    tmux new-window -t "$TMUX_SESSION_NAME:1" -n "reddit" && \
+    tmux select-window -t "$TMUX_SESSION_NAME:0" && \
+    tmux split-window -v && \
+    tmux select-pane -t 0 && \
+    tmux attach-session -t "$TMUX_SESSION_NAME"
+}
 # Check that homebrew is installed.
 # ==================================
 [ "$(uname)" == "Darwin" ] && {
@@ -7,7 +19,7 @@
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" && \
       brew install coreutils
   };
-  export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+  export PATH="/usr/local/opt/coreutils/libexec/gnubin:/usr/local/bin:$PATH"
 }
 
 # =================
@@ -107,7 +119,7 @@ ls $HOME/.bash_company_* 2>/dev/null && {
 # Start up tmux before doing anything else.
 # We will only load our profile within a TMUX pane to save on loading time.
 # ===========================================================================
-if [ "$TMUX_PANE" == "" ]
+if test -z "$TMUX"
 then
   if [ "$(which tmux)" == "" ]
   then
@@ -153,7 +165,7 @@ Assuming package name of 'tmux'.\n"
   then
     tmux attach -t 0 2>/dev/null
   else
-    tmux
+    start_tmux
   fi
 else
   # Load bash submodules, unless the submodule already indicated that it's been

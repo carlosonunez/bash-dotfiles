@@ -71,10 +71,10 @@ alias git='git'
 alias git='hub'
 alias googler='googler -n 5 --url-handler w3m'
 alias killmatch='kill_all_matching_pids'
-alias rtv='BROWSER=w3m DISPLAY=:0 rtv --enable-media'
+alias rtv='RTV_BROWSER=w3m DISPLAY=:0 rtv --enable-media'
 alias find='find -E'
-alias gybp='run_gyb '
-alias gybw='run_gyb '
+alias gybp='run_gyb  ${@:1}'
+alias gybw='run_gyb  ${@:1}'
 if ! which todo.sh &>/dev/null
 then
   >&2 printf "${BYellow}WARN${NC}: todo.sh is not installed. Install it to keep track of stuff\!\n"
