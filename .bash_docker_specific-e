@@ -36,3 +36,18 @@ then
   Log out then back in to apply these changes.\n"
   sudo usermod -aG docker $USER
 fi
+
+if $(file $(which docker-compose) | grep -q "Mach-O")
+then
+  if ! test -f ~/bin/docker-compose
+  then
+    >&2 printf "${BRed}ERROR${NC}: Python version of Docker Compose not found. \
+You might experience performance issues while using Compose."
+    exit 0
+  fi
+  printf "${BYellow}INFO${NC}: Subbing compiled Compose binary with Python version (password \
+might be required)\n"
+  dc_location=$(which docker-compose)
+  sudo rm -f "$dc_location"
+  sudo cp ~/bin/docker-compose "$dc_location"
+fi

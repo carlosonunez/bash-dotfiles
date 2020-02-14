@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -x
 export TMUX_SESSION_NAME='tmux_session'
 
 # Starts a new tmux session with my usual window configuration.
@@ -163,7 +162,7 @@ Assuming package name of 'tmux'.\n"
   cd $HOME
   if tmux ls &> /dev/null
   then
-    tmux attach -t 0 2>/dev/null
+    tmux attach -t "$TMUX_SESSION_NAME" 2>/dev/null
   else
     start_tmux
   fi

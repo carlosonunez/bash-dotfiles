@@ -1,5 +1,5 @@
 AWSCLI_DOCKER_IMAGE=anigeo/awscli
-alias aws="docker run --rm -v $HOME/.aws:/root/.aws $AWSCLI_DOCKER_IMAGE"
+alias aws="docker run --rm -v $PWD:/app -v $HOME/.aws:/root/.aws $AWSCLI_DOCKER_IMAGE"
 
 get_aws_profile_parameter() {
   profile="${1?Please provide an AWS profile to configure.}"

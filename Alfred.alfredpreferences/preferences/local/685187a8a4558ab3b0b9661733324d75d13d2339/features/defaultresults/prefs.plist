@@ -5,11 +5,11 @@
 	<key>scope</key>
 	<array>
 		<string>/Applications</string>
-		<string>/Applications/Utilities</string>
 		<string>/Applications/Xcode.app/Contents/Applications</string>
 		<string>/Developer/Applications</string>
 		<string>/Library/PreferencePanes</string>
 		<string>/opt/homebrew-cask/Caskroom</string>
+		<string>/System/Applications</string>
 		<string>/System/Library/CoreServices/Applications</string>
 		<string>/System/Library/PreferencePanes</string>
 		<string>/usr/local/Cellar</string>
