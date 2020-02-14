@@ -1,3 +1,5 @@
+PHONE_WIFI_NETWORKS_REGEX="atoi|Carlos's Pixel|sandy"
+
 check_for_git_repository() {
   which git &>/dev/null || return 1
   if ! 2>/dev/null git rev-parse --show-toplevel
@@ -31,7 +33,10 @@ connect_to_phone() {
   )
   if test -z "$connected_phone"
   then
-    if ! $(/Sy*/L*/Priv*/Apple8*/V*/C*/R*/airport -I | grep -q "Carlos's Pixel")
+    if ! $(/Sy*/L*/Priv*/Apple8*/V*/C*/R*/airport -I | \
+      grep -E ' SSID:' | \
+      sed 's/^.*SSID: //' | \
+      grep -Eq "^$PHONE_WIFI_NETWORKS_REGEX$")
     then
       >&2 cat <<-ERROR_MESSAGE
 Please connect to your phone's Wi-Fi hotspot first.

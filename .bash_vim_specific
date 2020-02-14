@@ -1,32 +1,34 @@
 #!/usr/bin/env bash
 
 VIM_BUNDLE_REPOS=$(cat <<GITHUB_URLS
+907th/vim-auto-save
+Chiel92/vim-autoformat
+PProvost/vim-ps1
+Xuyuanp/nerdtree-git-plugin
+cespare/vim-toml
+chaquotay/ftl-vim-syntax
+claco/jasmine.vim
+dhruvasagar/vim-table-mode
+flazz/vim-colorschemes
+junegunn/vim-easy-align
+leafgarland/typescript-vim
+markcornick/vim-bats
+martinda/Jenkinsfile-vim-syntax
+othree/javascript-libraries-syntax.vim
+pangloss/vim-javascript
+plasticboy/vim-markdown
+romainl/vim-cool
+ryanoasis/vim-devicons
+scrooloose/nerdtree
+thoughtbot/vim-rspec
+tpope/vim-classpath
+tpope/vim-fugitive.git
 vim-airline/vim-airline
 vim-airline/vim-airline-themes
-scrooloose/nerdtree
-ryanoasis/vim-devicons
-cespare/vim-toml
-Xuyuanp/nerdtree-git-plugin
-pangloss/vim-javascript
-othree/javascript-libraries-syntax.vim
-claco/jasmine.vim
-vim-syntastic/syntastic.git
-PProvost/vim-ps1
-tpope/vim-classpath
 vim-scripts/groovy.vim
-plasticboy/vim-markdown
-martinda/Jenkinsfile-vim-syntax
-zivyangll/git-blame.vim
-flazz/vim-colorschemes
-romainl/vim-cool
-tpope/vim-fugitive.git
-markcornick/vim-bats
-thoughtbot/vim-rspec
-Chiel92/vim-autoformat
-junegunn/vim-easy-align
-dhruvasagar/vim-table-mode
-907th/vim-auto-save
+vim-syntastic/syntastic.git
 yuratomo/w3m.vim
+zivyangll/git-blame.vim
 GITHUB_URLS
 )
 

@@ -1,0 +1,3 @@
+new-window -n "code"
+new-window -n "shell"
+new-window -n "bs"

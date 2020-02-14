@@ -7,6 +7,23 @@ popd () {
   command popd "$@" > /dev/null
 }
 
+review_wifi_networks() {
+  while read -u 3 network
+    do
+      printf "Are you sure you want to remove '$network'? [yes|NO]: "
+      read -s choice
+      if [ "$(echo $choice | tr '[:upper:]' '[:lower:]')" == "yes" ]
+      then
+        &>/dev/null sudo networksetup -removepreferredwirelessnetwork en0 "$network" && \
+          printf "...removed!\n"
+      else
+        printf "...okay.\n"
+      fi
+    done 3< <(networksetup -listpreferredwirelessnetworks en0 | \
+        tr -d '\t' | \
+        grep -v "Preferred networks on en0:")
+}
+
 run_speed_test() {
   test_file_size="${1:-100MB}"
   valid_test_file_sizes="^(100mb|1gb|10gb)$"

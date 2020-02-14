@@ -185,3 +185,8 @@ nnoremap <C-g>l :Gpull<CR>
 
 " Do an interactive diff against the last staged bit of code.
 nnoremap <C-g>d :Gdiff<CR>
+
+" Ruby convenience functions
+" Add a breakpoint
+nnoremap <leader>d orequire 'pry'; binding.pry<Esc> 
+nnoremap <leader>ud :%g/require 'pry'; binding.pry/d<CR>
