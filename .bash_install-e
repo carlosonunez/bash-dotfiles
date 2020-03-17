@@ -20,6 +20,7 @@ googler
 docker-compose-completion
 imagemagick
 scrcpy
+nightowl
 APPS
 )
 HOMEBREW_CASKS=$(cat <<-APPS
