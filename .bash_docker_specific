@@ -43,7 +43,7 @@ then
   then
     >&2 printf "${BRed}ERROR${NC}: Python version of Docker Compose not found. \
 You might experience performance issues while using Compose."
-    exit 0
+    return 0
   fi
   printf "${BYellow}INFO${NC}: Subbing compiled Compose binary with Python version (password \
 might be required)\n"
