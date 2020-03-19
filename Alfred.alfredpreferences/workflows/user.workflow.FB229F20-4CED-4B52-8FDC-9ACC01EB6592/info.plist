@@ -560,7 +560,7 @@ then
   exit 1
 fi
 
-ls -t $HOME/src/my-work-journal/*.md | grep -v "README.md" | awk '{print $NF}' | xargs -I {} sh -c "cat {} | pbcopy"</string>
+ls -t $HOME/src/my-work-journal/*.md | grep -v "README.md" | awk '{print $NF}' | head -1 | xargs -I {} sh -c "cat {} | pbcopy"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
