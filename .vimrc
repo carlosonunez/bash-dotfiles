@@ -163,13 +163,16 @@ let g:used_javascript_libs = 'jquery,angularjs,angularui,react,jasmine,chai'
 
 " Syntastic Stuff; just the defaults
 let g:syntastic_sh_checkers = ["shellcheck"]
-let g:syntastic_python_checkers = ["pylint -E"]
+let g:syntastic_python_checkers = ["pylint", "-E"]
 let g:syntastic_ruby_checkers = ["rubocop"]
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 nnoremap <leader>c :SyntasticReset<CR>
+
+" Shortcuts for running a Dockerized Python linter
+nmap <leader>pdl :let g:syntastic_python_pylint_exe = 'docker-compose run --rm lint'<CR>
 
 " Fugitive keybindings.
 
