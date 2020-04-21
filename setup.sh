@@ -79,6 +79,12 @@ copy_from_onedrive_if_within_lxss_for_windows() {
   fi
 }
 
+create_symlinks_for_rtv() {
+  mkdir -p ~/.config/rtv &&
+    ln -s "${DEFAULT_SETUP_DIRECTORY}/rtv_configs/rtv.cfg" ~/.config/rtv/rtv.cfg &&
+    ln -s "${DEFAULT_SETUP_DIRECTORY}/rtv_configs/.mailcap" ~/.mailcap
+}
+
 copy_ssh_keys_from_onedrive() {
   copy_from_onedrive_if_within_lxss_for_windows "ssh_keys" "$HOME/.ssh"
   grep -rlH 'RSA' $HOME/.ssh | xargs chmod 600
@@ -92,6 +98,7 @@ if {
   check_for_required_directories &&
   create_symlinks_for_config_files &&
   create_symlinks_for_directories &&
+  create_symlinks_for_rtv &&
   create_vim_directories &&
   copy_ssh_keys_from_onedrive &&
   copy_aws_keys_from_onedrive;
