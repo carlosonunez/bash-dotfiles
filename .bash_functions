@@ -129,6 +129,23 @@ get_git_branch() {
   fi
 }
 
+summarize_commits_ahead_and_behind_of_origin() {
+  status=$(git rev-list --left-right --count origin/$(get_git_branch)..$(get_git_branch) | \
+    tr '\t' ',')
+  behind_origin=$(echo "$status" | cut -f1 -d ',')
+  ahead_of_origin=$(echo "$status" | cut -f2 -d ',')
+  if [ "$behind_origin" != '0' ]
+  then
+    printf "\[${BRed}\][!!]\[${NC}\]"
+  fi
+
+  if [ "$ahead_of_origin" != '0' ]
+  then
+    printf "\[${BGreen}\][!!]\[${NC}\]"
+  fi
+}
+
+
 
 get_os_type() {
   case "$(uname)" in
@@ -239,15 +256,23 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
     fmtd_username="\[$BGreen\]$USER\[$NC\]"
   fi
 
+  if ! test -z "$VIRTUAL_ENV"
+  then
+    python_version=$(python -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')
+    virtualenv="\[$BGreen\][${python_version}-$VIRTUAL_ENV]\[$NC\]"
+  else
+    virtualenv=""
+  fi
+
   hostname_name=$(echo "$HOSTNAME" | sed 's/.local$//')
   hostname_fmtd="\[$BBlue\]$hostname_name\[$NC\]"
   if ! $(git rev-parse --is-inside-work-tree 2>/dev/null)
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\w]\[$NC\]\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\w]\[$NC\]$virtualenv\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   elif ! $(git diff-index --quiet HEAD)
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\w]\[$NC\] \[$Red\]($git_branch)\[$NC\] \n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\w]\[$NC\] \[$Red\]($git_branch)\[$NC\] $virtualenv $(summarize_commits_ahead_and_behind_of_origin) \n\[$Yellow\]$account_type_indicator\[$NC\]: "
   else
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\w]\[$NC\] \[$Green\]($git_branch)\[$NC\] \n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]\w]\[$NC\] \[$Green\]($git_branch)\[$NC\] $(summarize_commits_ahead_and_behind_of_origin) \n\[$Yellow\]$account_type_indicator\[$NC\]: "
   fi
 }
