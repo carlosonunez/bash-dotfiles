@@ -21,6 +21,8 @@ docker-compose-completion
 imagemagick
 scrcpy
 nightowl
+git
+bash-completion
 APPS
 )
 HOMEBREW_CASKS=$(cat <<-APPS
@@ -59,16 +61,27 @@ reddit\.map\.fastly\.net
 media\.licdn\.com
 mmg-fna\.whatsapp\.net
 analytics\.google\.com
+static\.licdn\.com
+www\.licdn\.com
 EXCLUSIONS
+)
+ETC_HOSTS_INCLUSIONS=$(cat <<-ETC_HOSTS_INCLUSIONS
+ads\.linkedin\.com
+ETC_HOSTS_INCLUSIONS
 )
 
 modify_etc_hosts() {
   index=0
+  inclusions=$(echo "$ETC_HOSTS_INCLUSIONS" | tr '\n' '|' | head -c -1)
   for exclusion in $ETC_HOSTS_EXCLUSIONS
   do
     exclusion_pretty_print="$(echo "$exclusion" | sed 's/\\././g')"
     pattern="^0.0.0.0 $exclusion$"
-    if grep -Eq "$pattern" /etc/hosts
+    if echo "$pattern" | grep -Eq "$inclusions"
+    then
+      message="INFO: Leaving in /etc/hosts - $exclusion_pretty_print"
+      continue
+    elif grep -Eq "$pattern" /etc/hosts
     then
       message="INFO: Removing from /etc/hosts - $exclusion_pretty_print"
       if test "$index" -eq 0
