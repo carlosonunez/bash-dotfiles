@@ -1,0 +1,3 @@
+GCP_DOCKER_IMAGE=google/cloud-sdk:alpine
+alias gcloud="docker run --rm -i -v $PWD:/app -v $HOME/.config/gcloud:/root/.config/gcloud $GCP_DOCKER_IMAGE gcloud"
+alias gsutil="docker run --rm -i -v $PWD:/app -v $HOME/.config/gcloud:/root/.config/gcloud $GCP_DOCKER_IMAGE gsutil"
