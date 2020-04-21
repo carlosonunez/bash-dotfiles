@@ -7,10 +7,12 @@ PProvost/vim-ps1
 Xuyuanp/nerdtree-git-plugin
 cespare/vim-toml
 chaquotay/ftl-vim-syntax
+chr4/nginx.vim
 claco/jasmine.vim
 dhruvasagar/vim-table-mode
 flazz/vim-colorschemes
 junegunn/vim-easy-align
+junegunn/vim-emoji
 leafgarland/typescript-vim
 markcornick/vim-bats
 martinda/Jenkinsfile-vim-syntax
