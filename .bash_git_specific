@@ -4,6 +4,12 @@ GIT_DEFAULT_AUTHOR="Carlos Nunez"
 GIT_DEFAULT_EMAIL="carlosonunez@noreply.github.com"
 export GIT_EDITOR=vim
 
+view_unpushed_commits_across_branches() {
+  # Thanks, StackOverflow!
+  # https://stackoverflow.com/a/20499690/314212
+  git for-each-ref --format="%(refname:short) %(upstream:track)" refs/heads
+}
+
 update_origin_url() {
    gsed -i 's/github.com/github.carlosnunez.me/' .git/config
 }
