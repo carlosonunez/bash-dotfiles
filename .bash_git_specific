@@ -11,7 +11,17 @@ view_unpushed_commits_across_branches() {
 }
 
 update_origin_url() {
-   gsed -i 's/github.com/github.carlosnunez.me/' .git/config
+  if grep -q 'url = http.*github.com' .git/config
+  then
+    # match repos cloned by http
+    gsed -i 's/http.*github.com\//git@github.carlosnunez.me:/' .git/config
+  elif grep -q 'url = git@github.com' .git/config
+  then
+    # match repos cloned by ssh
+    gsed -i 's/git@github.com/git@github.carlosunez.me/' .git/config
+  else
+    >&2 echo "ERROR: Unsupported clone scheme detected."
+  fi
 }
 
 create_new_git_branch() {
