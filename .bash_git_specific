@@ -14,7 +14,7 @@ update_origin_url() {
   if grep -q 'url = http.*github.com' .git/config
   then
     # match repos cloned by http
-    gsed -i 's/http.*github.com\//git@github.carlosnunez.me:/' .git/config
+    gsed -i 's/url = http.*github.com\//url = git@github.carlosnunez.me:/' .git/config
   elif grep -q 'url = git@github.com' .git/config
   then
     # match repos cloned by ssh
