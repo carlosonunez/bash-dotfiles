@@ -8,7 +8,9 @@ let g:airline_theme = 'atomic'
 set t_Co=256
 
 " vim-easy-align!
-nmap ga <Plug>(EasyAlign)
+au FileType markdown vmap <leader><Bslash> :EasyAlign*<Bar><Enter>
+let g:table_mode_insert_column_after_map = 1
+let g:table_mode_relign_map = 1
 
 " Enable auto-save
 let g:auto_save = 1
@@ -66,6 +68,11 @@ set shiftwidth=2
 set formatoptions+=t
 set nowrap
 set textwidth=100
+
+" Except for Markdown, which needs to have no textwidth to prevent reflow issues,
+" specifically within tables.
+au FileType markdown set textwidth=500
+au Filetype gitcommit set textwidth=150
 
 " Delek: pretty colorscheme.
 colorscheme seti
