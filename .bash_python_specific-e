@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 VENV_PATH=$HOME/.home_env
 
-if ! which python3
+if ! which python3 &>/dev/null
 then
   install_application python3
 fi
 
-if ! which pip3
+if ! which pip3 &>/dev/null
 then
   curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py
 fi
@@ -22,3 +22,14 @@ then
 fi
 
 source "$VENV_PATH/bin/activate"
+
+pips=$(cat <<-PIP
+yapf
+googler
+PIP
+)
+
+for pip in $pips
+do
+  which "$pip" &>/dev/null || pip install "$pip"
+done
