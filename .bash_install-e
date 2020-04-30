@@ -5,6 +5,7 @@ check_for_internet_access() {
 }
 
 HOMEBREW_BUILTINS=$(cat <<-APPS
+vim
 todo-txt
 gnu-sed
 htop
