@@ -13,8 +13,17 @@ let g:table_mode_insert_column_after_map = 1
 let g:table_mode_relign_map = 1
 
 " Enable auto-save
+set updatetime=2000 " Increase update time so that I can make quick edits.
 let g:auto_save = 1
+let g:auto_save_events = [ "CursorHold" ]
 
+" Disable auto save for some files while I work out why auto_save_events
+" isn't working how I want.
+au FileType python let b:auto_save = 0
+au FileType ruby let b:auto_save = 0
+
+" Set Python path within Vim so that our linter works
+let $PYTHONPATH = "."
 
 " Helpful shell commands
 nnoremap <leader>dc :!docker-compose up -d 
@@ -179,7 +188,7 @@ let g:syntastic_check_on_wq = 0
 nnoremap <leader>c :SyntasticReset<CR>
 
 " Shortcuts for running a Dockerized Python linter
-nmap <leader>pdl :let g:syntastic_python_pylint_exe = 'docker-compose run --rm lint'<CR>
+nmap <leader>pdl :let g:syntastic_python_pylint_exe = 'pylint -E'<CR>
 
 " Fugitive keybindings.
 
