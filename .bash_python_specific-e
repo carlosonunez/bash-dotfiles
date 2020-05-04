@@ -24,7 +24,7 @@ fi
 source "$VENV_PATH/bin/activate"
 
 pips=$(cat <<-PIP
-yapf
+black
 googler
 PIP
 )
