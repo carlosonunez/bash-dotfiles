@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
+DOCKER_MACHINE_NAME_TO_USE=docker
 if ! which docker &>/dev/null
 then
   printf "Installing ${BGreen}docker${NC}\n"
   case "$(get_os_type)" in
     "Darwin")
-      brew install docker
-      brew cask install docker
+      brew cask install docker-toolbox
+      brew install docker-credential-helper
       ;;
     "Ubuntu"|"Debian")
       if grep -q 'Microsoft' /etc/lsb_release
@@ -28,6 +29,20 @@ then
       printf "${BRed}ERROR${NC}: You haven't written a Docker installation routine for this OS yet. Do it now!\n"
       return 1
   esac
+fi
+
+if test "$DOCKER_MACHINE_NAME" != "$DOCKER_MACHINE_NAME_TO_USE"
+then
+  >&2 echo "INFO: Creating and starting a new Docker machine." &&
+  docker-machine create --driver virtualbox "$DOCKER_MACHINE_NAME_TO_USE"; \
+  eval $(docker-machine env "$DOCKER_MACHINE_NAME_TO_USE") &&
+  docker-machine start "$DOCKER_MACHINE_NAME_TO_USE"
+fi
+
+# Always ensure that we are using OS X keychain for Docker
+if [ "$(get_os_type)" == "Darwin" ]
+then
+  /usr/bin/sed -i "" 's/desktop/osxkeychain/' "$HOME/.docker/config.json"
 fi
 
 if [ "$(get_os_type)" != "Darwin" ] && ! $(id | grep -q "docker")
