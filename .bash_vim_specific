@@ -2,6 +2,7 @@
 
 VIM_BUNDLE_REPOS=$(cat <<GITHUB_URLS
 907th/vim-auto-save
+AndrewRadev/linediff.vim
 Chiel92/vim-autoformat
 PProvost/vim-ps1
 Xuyuanp/nerdtree-git-plugin
