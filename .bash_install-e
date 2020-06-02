@@ -65,6 +65,7 @@ mmg-fna\.whatsapp\.net
 analytics\.google\.com
 static\.licdn\.com
 www\.licdn\.com
+dynatrace\.com
 EXCLUSIONS
 )
 ETC_HOSTS_INCLUSIONS=$(cat <<-ETC_HOSTS_INCLUSIONS
