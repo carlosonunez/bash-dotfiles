@@ -207,10 +207,11 @@ nnoremap <C-g>l :Gpull<CR>
 " Do an interactive diff against the last staged bit of code.
 nnoremap <C-g>d :Gdiff<CR>
 
-" Ruby convenience functions
+" Debugging convenience functions
 " Add a breakpoint
-nnoremap <leader>d orequire 'pry'; binding.pry<Esc> 
-nnoremap <leader>ud :%g/require 'pry'; binding.pry/d<CR>
+au FileType ruby nmap <leader>d orequire 'pry'; binding.pry # vim breakpoint<Esc> 
+au FileType python nmap <leader>d oimport pdb; pdb.set_trace() # vim breakpoint<Esc>
+nnoremap <leader>ud :%g/# vim breakpoint/d<CR>
 
 " Stop bugging me
 let g:go_version_warning = 0
