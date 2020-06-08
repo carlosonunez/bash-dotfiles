@@ -35,6 +35,7 @@ xquartz
 contexts
 alfred
 android-platform-tools
+google-chrome
 APPS
 )
 APPLE_STORE_APPS=$(cat <<-APPS
