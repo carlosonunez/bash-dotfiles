@@ -1,14 +1,133 @@
 #!/usr/bin/env bash
 export TMUX_SESSION_NAME='tmux_session'
 
+set_path() {
+  path=$(cat <<-DIRECTORIES
+/Users/$USER/.gems/bin
+/Users/$USER/.gems
+/usr/local/opt/coreutils/libexec/gnubin
+/usr/local/bin
+/usr/bin
+/bin
+/usr/sbin
+/sbin
+/opt/X11/bin
+/Users/$USER/src/go/bin
+/Users/$USER/bin/gyb
+DIRECTORIES
+)
+  export PATH=$(echo "$path" | tr '\n' ':' | sed 's/.$//')
+}
+
+configure_bash_session() {
+  # Load bash submodules, unless the submodule already indicated that it's been
+  # fully loaded.
+  # ===========================================================================
+  for file in $(find $HOME -maxdepth 1 | \
+    egrep '.*\/.bash' | \
+    egrep -v 'bash_(aliases|exports|profile|install|custom_profile|company|history|sessions)' | \
+    egrep -v '.bashrc' | \
+    sort -u)
+  do
+    printf "${BYellow}INFO${NC}: Loading ${BYellow}$file${NC}\n"
+    source $file
+    printf "\n"
+  done
+  for file in aliases exports
+  do
+    printf "${BYellow}INFO${NC}: Loading ${BYellow}$file${NC}\n"
+    source $HOME/.bash_$file
+    printf "\n"
+  done
+}
+
+add_keys_to_ssh_agent() {
+  killall ssh-agent
+  eval $(ssh-agent -s) > /dev/null
+  grep -HR "RSA" $HOME/.ssh | cut -f1 -d: | sort -u | xargs ssh-add
+}
+
+# Installs tmux
+install_tmux_and_tpm() {
+  install_tmux() {
+    case "$(get_os_type)" in
+      "Darwin")
+        brew install tmux
+        ;;
+      "Ubuntu"|"Debian")
+        sudo add-apt-repository -y ppa:pi-rho/dev sudo apt-get update
+        install_application tmux python-software-properties software-properties-common tmux-next
+        ;;
+      *)
+        >&2 echo "INFO: tmux not supported by this operating system."
+        return 0
+        ;;
+    esac
+  }
+  install_tpm() {
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm;
+  }
+  install_tmux_yank() {
+    if [ ! -d "$HOME/.tmux.d" ]
+    then
+      git clone https://github.com/tmux-plugins/tmux-yank ~/.tmux.d
+    fi
+  }
+  install_tmux && install_tpm && install_tmux_yank
+}
+
+install_bash_completion() {
+  if [ "$(get_os_type)" == "Darwin" ]
+  then
+    [ -f $(brew --prefix)/etc/bash_completion ] && . $(brew --prefix)/etc/bash_completion
+  else
+    [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+  fi
+}
+
+# Is tmux installed?
+tmux_is_installed() {
+  test "$(which tmux &>/dev/null)" != ""
+}
+
+# Are we in an SSH session?
+in_ssh_session() {
+  ! test -z "$SSH_CLIENT"
+}
+
+# Are we in a TMUX shell already?
+in_tmux_sesion() {
+  ! test -z "$TMUX_SESSION_NAME"
+}
+
+# Is tmux supported by this OS?
+tmux_is_supported() {
+  os=$(get_os_type)
+  case "$os" in
+    Darwin|Ubuntu|Debian)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+
 # Starts a new tmux session with my usual window configuration.
 start_tmux() {
-  tmux new-session -d -s "$TMUX_SESSION_NAME" && \
-    tmux new-window -t "$TMUX_SESSION_NAME:1" -n "reddit" && \
-    tmux select-window -t "$TMUX_SESSION_NAME:0" && \
-    tmux split-window -v && \
-    tmux select-pane -t 0 && \
-    tmux attach-session -t "$TMUX_SESSION_NAME"
+  cd $HOME
+  if tmux ls &> /dev/null
+  then
+    tmux attach -t "$TMUX_SESSION_NAME" 2>/dev/null
+  else
+    tmux new-session -d -s "$TMUX_SESSION_NAME" && \
+      tmux new-window -t "$TMUX_SESSION_NAME:1" -n "reddit" && \
+      tmux select-window -t "$TMUX_SESSION_NAME:0" && \
+      tmux split-window -v && \
+      tmux select-pane -t 0 && \
+      tmux attach-session -t "$TMUX_SESSION_NAME"
+  fi
 }
 # Check that homebrew is installed.
 # ==================================
@@ -114,101 +233,23 @@ ls $HOME/.bash_company_* 2>/dev/null && {
   done
 }
 
-# ===========================================================================
-# Start up tmux before doing anything else.
-# We will only load our profile within a TMUX pane to save on loading time.
-# ===========================================================================
-if test -z "$TMUX"
+if tmux_is_supported && ! in_tmux_sesion && ! in_ssh_session
 then
-  if [ "$(which tmux)" == "" ]
+  if ! tmux_is_installed
   then
-    case "$(get_os_type)" in
-      "Darwin")
-        if ! {
-          brew install tmux reattach-to-user-namespace && \
-          git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm;
-        }
-        then
-          >&2 echo "ERROR: Failed to install tmux."
-          exit 1
-        fi
-        ;;
-      "Ubuntu"|"Debian")
-        printf "${BYellow}INFO${NC}: Preparing to install tmux\n"
-        sudo add-apt-repository -y ppa:pi-rho/dev
-        sudo apt-get update
-        install_application  "python-software-properties software-properties-common"
-        install_application  "tmux-next"
-        ;;
-      *)
-        printf "${BYellow}WARN${NC}: No subroutine written for OS $(get_os_type). \
-Assuming package name of 'tmux'.\n"
-        install_application "tmux"
-        ;;
-    esac
+    if ! install_tmux
+    then
+      >&2 echo "ERROR: Failed to install tmux."
+      exit 1
+    fi
   fi
-  if [ ! -d "$HOME/.tmux.d" ]
-  then
-    git clone https://github.com/tmux-plugins/tmux-yank ~/.tmux.d
-  fi
-  # Bash completion for Git.
-  # ========================
-  if [ "$(get_os_type)" == "Darwin" ]
-  then
-    [ -f $(brew --prefix)/etc/bash_completion ] && . $(brew --prefix)/etc/bash_completion
-  else
-    [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
-  fi
-  cd $HOME
-  if tmux ls &> /dev/null
-  then
-    tmux attach -t "$TMUX_SESSION_NAME" 2>/dev/null
-  else
-    start_tmux
-  fi
+  start_tmux
 else
-  # Load bash submodules, unless the submodule already indicated that it's been
-  # fully loaded.
-  # ===========================================================================
-  for file in $(find $HOME -maxdepth 1 | \
-    egrep '.*\/.bash' | \
-    egrep -v 'bash_(aliases|exports|profile|install|custom_profile|company|history|sessions)' | \
-    egrep -v '.bashrc' | \
-    sort -u)
-  do
-    printf "${BYellow}INFO${NC}: Loading ${BYellow}$file${NC}\n"
-    source $file
-    printf "\n"
-  done
-  for file in aliases exports
-  do
-    printf "${BYellow}INFO${NC}: Loading ${BYellow}$file${NC}\n"
-    source $HOME/.bash_$file
-    printf "\n"
-  done
+  set_path &&
+    install_bash_completion &&
+    configure_bash_session &&
+    add_keys_to_ssh_agent
 
-
-  # Load SSH keys into ssh-agent
-  # ============================
-  killall ssh-agent
-  eval $(ssh-agent -s) > /dev/null
-  grep -HR "RSA" $HOME/.ssh | cut -f1 -d: | sort -u | while read file; do
-  ssh-add $file
-  done
-
-  [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-  # ===========================================
-  # Display last error code, when applicable
-  # ===========================================
   PROMPT_COMMAND='e=$?; set_bash_prompt $e'
 fi
 
-if [ -f $(brew --prefix)/etc/bash_completion ]; then
-. $(brew --prefix)/etc/bash_completion
-else
-  brew install bash-completion
-fi
-
-export PATH=/Users/carlos/.gems/bin:/Users/carlos/.gems::/usr/local/opt/coreutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Users/carlos/src/go/bin:/Users/carlos/bin/gyb
-
-export PATH=/Users/carlos/.gems/bin:/Users/carlos/.gems::/usr/local/opt/coreutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Users/carlos/src/go/bin:/Users/carlos/bin/gyb:/Users/cn/bin/gyb
