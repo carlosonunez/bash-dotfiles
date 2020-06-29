@@ -1,0 +1,45 @@
+# Is tmux installed?
+tmux_is_installed() {
+  test "$(which tmux &>/dev/null)" != ""
+}
+
+# Are we in an SSH session?
+in_ssh_session() {
+  ! test -z "$SSH_CLIENT"
+}
+
+# Are we in a TMUX shell already?
+in_tmux_sesion() {
+  ! test -z "$TMUX_SESSION_NAME"
+}
+
+# Is tmux supported by this OS?
+tmux_is_supported() {
+  os=$(get_os_type)
+  case "$os" in
+    Darwin|Ubuntu|Debian)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+
+# Starts a new tmux session with my usual window configuration.
+start_tmux() {
+  cd $HOME
+  if tmux ls &> /dev/null
+  then
+    tmux attach -t "$TMUX_SESSION_NAME" 2>/dev/null
+  else
+    tmux new-session -d -s "$TMUX_SESSION_NAME" && \
+      tmux new-window -t "$TMUX_SESSION_NAME:1" -n "reddit" && \
+      tmux select-window -t "$TMUX_SESSION_NAME:0" && \
+      tmux split-window -v && \
+      tmux select-pane -t 0 && \
+      tmux attach-session -t "$TMUX_SESSION_NAME"
+  fi
+}
+
