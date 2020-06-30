@@ -1,3 +1,4 @@
+# vim: set ft=sh:
 # Is tmux installed?
 tmux_is_installed() {
   &>/dev/null which tmux
@@ -28,17 +29,27 @@ tmux_is_supported() {
 
 # Starts a new tmux session with my usual window configuration.
 start_tmux() {
-  cd $HOME
-  if tmux ls &> /dev/null
-  then
-    tmux attach -t "$TMUX_SESSION_NAME" 2>/dev/null
-  else
+  start_tmux_with_single_window() {
+    tmux new-session -d -s "$TMUX_SESSION_NAME" && \
+      tmux new-window -t "$TMUX_SESSION_NAME:1" -n "reddit" && \
+      tmux select-window -t "$TMUX_SESSION_NAME:0" && \
+      tmux attach-session -t "$TMUX_SESSION_NAME"
+  }
+  start_tmux_with_multiple_windows() {
     tmux new-session -d -s "$TMUX_SESSION_NAME" && \
       tmux new-window -t "$TMUX_SESSION_NAME:1" -n "reddit" && \
       tmux select-window -t "$TMUX_SESSION_NAME:0" && \
       tmux split-window -v && \
       tmux select-pane -t 0 && \
       tmux attach-session -t "$TMUX_SESSION_NAME"
+  }
+
+  cd $HOME
+  if tmux ls &> /dev/null
+  then
+    tmux attach -t "$TMUX_SESSION_NAME" 2>/dev/null
+  else
+    in_ssh_session && start_tmux_with_single_window || start_tmux_with_multiple_windows
   fi
 }
 
