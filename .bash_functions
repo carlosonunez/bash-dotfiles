@@ -24,7 +24,10 @@ configure_machine() {
 
 configure_client_or_company_specific_settings() {
   # Load any company specific bash submodules first.
-  for file in $(find $HOME -type -l -name ".bash_company_*" -maxdepth 1)
+  # Note that these MUST be hardlinks and not symlinks.
+  # This assumption was made under the basis that I wouldn't want to commit
+  # these changes since they will differ from client to client.
+  for file in $(find $HOME -type f -name ".bash_company_*" -maxdepth 1)
   do
     printf "${BYellow}INFO${NC}: Loading company submodule ${file}\n"
     source $file
