@@ -55,7 +55,7 @@ configure_bash_session() {
 add_keys_to_ssh_agent() {
   killall ssh-agent
   eval $(ssh-agent -s) > /dev/null
-  grep -HR "RSA" $HOME/.ssh | cut -f1 -d: | sort -u | xargs ssh-add
+  grep -ElR "BEGIN (RSA|OPENSSH)" $HOME/.ssh | sort -u | xargs ssh-add
 }
 
 
