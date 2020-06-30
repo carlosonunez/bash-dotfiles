@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+export TERM="xterm-256color"
+export CLICOLOR=1
+export LSCOLORS=GxFxCxDxBxegedabagaced
 export PAGER=most
 export EDITOR=vim
 export BROWSER='w3m -cookie'
@@ -6,3 +9,7 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 export TODO_DIR=$HOME/src/todos/personal
 export CLIENT_TODO_DIR=$HOME/src/todos/client
 export PROJECT_SPECIFIC_TODO_DIR=$HOME/src/todos/projects
+export BASH_PROFILE_LOCATION=$(readlink "$HOME/.bash_profile")
+export TMUX_SESSION_NAME='tmux_session'
+export BASH_PROFILE_REPO=$(dirname "$BASH_PROFILE_LOCATION")
+export GIT_EDITOR=vim

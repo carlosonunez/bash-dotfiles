@@ -7,6 +7,67 @@ popd () {
   command popd "$@" > /dev/null
 }
 
+
+configure_machine() {
+  install_homebrew_if_on_mac() {
+    if test "$(get_os_type)" == "Darwin" && ! which brew &>/dev/null
+    then
+      echo "Installing homebrew and GNU coreutils"
+      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" && \
+        brew install coreutils
+    fi
+  }
+
+  install_homebrew_if_on_mac && source "$HOME/.bash_install"
+}
+
+
+configure_client_or_company_specific_settings() {
+  # Load any company specific bash submodules first.
+  for file in $(find $HOME -type -l -name ".bash_company_*" -maxdepth 1)
+  do
+    printf "${BYellow}INFO${NC}: Loading company submodule ${file}\n"
+    source $file
+  done
+}
+
+configure_bash_session() {
+  source_file() {
+    printf "${BYellow}INFO${NC}: Loading ${BYellow}$1${NC}\n"
+    source $1
+    printf "\n"
+  }
+  excludes_re='bash_(aliases|exports|profile|install|custom_profile|company|history|sessions)'
+  for file in $(find $HOME -type l -maxdepth 1 -name "*.bash_*" | \
+    egrep -v "$excludes_re" | \
+    sort -u)
+  do
+    source_file "$file"
+  done
+  # Aliases and exports need to come last to prevent it breaking configuration
+  # happening in other files.
+  for file in aliases exports
+  do
+    source_file "$HOME/.bash_$file"
+  done
+}
+
+add_keys_to_ssh_agent() {
+  killall ssh-agent
+  eval $(ssh-agent -s) > /dev/null
+  grep -HR "RSA" $HOME/.ssh | cut -f1 -d: | sort -u | xargs ssh-add
+}
+
+
+install_bash_completion() {
+  if [ "$(get_os_type)" == "Darwin" ]
+  then
+    [ -f $(brew --prefix)/etc/bash_completion ] && . $(brew --prefix)/etc/bash_completion
+  else
+    [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+  fi
+}
+
 review_wifi_networks() {
   while read -u 3 network
     do

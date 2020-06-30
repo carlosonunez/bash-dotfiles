@@ -8,13 +8,4 @@ then
   fi
   install_application "ruby"
 fi
-export GEM_HOME="$HOME/.gems"
-export GEM_PATH="$GEM_HOME:$GEM_PATH"
-export PATH="$GEM_HOME/bin:$GEM_PATH:$PATH"
 which bundle &> /dev/null || gem install bundler
-
-# Extra vim niceties
-if [ ! -d "$HOME/.vim/bundle/vim-rspec" ]
-then
-  git clone "https://github.com/skwp/vim-rspec.git" $HOME/.vim/bundle/vim-rspec
-fi

@@ -11,7 +11,7 @@ then
   curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py
 fi
 
-if ! &>/dev/null python3 -m venv
+if ! &>/dev/null python3 -m venv -h
 then
   pip3 install virtualenv
 fi

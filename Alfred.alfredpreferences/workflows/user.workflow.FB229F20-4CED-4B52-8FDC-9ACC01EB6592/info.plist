@@ -8,11 +8,112 @@
 	<string>Productivity</string>
 	<key>connections</key>
 	<dict>
+		<key>02C506B9-4E1F-46CA-B070-6CB3DA51CED8</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0A032495-6A09-4277-B3D8-C142A35D3CFC</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>05D9F2C7-0610-43A7-97A6-4A00D35080BA</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>E6FC87A7-97FA-48A4-8F25-4F593DD6E1A9</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>0A032495-6A09-4277-B3D8-C142A35D3CFC</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8C472382-4A84-4E6C-8451-44FD316F1C62</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>0BEE2A6F-9E06-40F1-8A84-98D6C84B2E57</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>1493C040-DCDF-4F27-8F61-04F746C74D15</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>6CB95CC2-7CAC-4264-9986-5193517B01B5</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>0C4684FD-84A8-4FF1-83D8-EC3DE2A4A713</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>43198993-1749-4F5B-8BF6-4B4BDE1B6916</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>1493C040-DCDF-4F27-8F61-04F746C74D15</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C88E19C0-6876-44EE-AFB7-053FDC4D9014</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>26A5F77D-681A-4FF4-B8CD-D870EAD0C931</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>5C2E4D08-2381-4B94-8F31-37E04242F324</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>2DA085BB-7DE7-469A-9A85-0C47AFC75DF9</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>BE007A48-7F7B-44AD-AC44-88F20DE5FBCF</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -83,6 +184,55 @@
 				<false/>
 			</dict>
 		</array>
+		<key>43198993-1749-4F5B-8BF6-4B4BDE1B6916</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>26A5F77D-681A-4FF4-B8CD-D870EAD0C931</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>C11F5D1C-AB90-4361-A5DF-C474CD50C6B2</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>43467140-863C-428E-8DF1-1DBDA4E4EC27</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>76CC0A98-9693-454E-95AC-6063B8484D35</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>4D85A469-2B2D-4A67-A469-A73517BEA019</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C542EC25-26B4-4ADB-AF4F-AFFA07114E0E</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>50471C1C-2524-40ED-95CD-43BC2A9874E9</key>
 		<array>
 			<dict>
@@ -101,6 +251,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>E846DD18-9255-4F1E-AD9A-32553B216B64</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>60B2FC70-3451-4D6B-AC69-7CC2AD2F8FA4</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0BEE2A6F-9E06-40F1-8A84-98D6C84B2E57</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -145,11 +308,86 @@
 				<false/>
 			</dict>
 		</array>
+		<key>6CB95CC2-7CAC-4264-9986-5193517B01B5</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>58407D6C-AF37-4471-B75D-B87DC72600AC</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>76CC0A98-9693-454E-95AC-6063B8484D35</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>B416513F-DAEE-4C90-8CE6-918FBDBD73CF</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>4D85A469-2B2D-4A67-A469-A73517BEA019</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>81434409-3F53-41B4-AD28-B0742CF5CA14</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>FA35E507-98E7-4B72-A12B-F5DE6F6AD0F5</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>8C472382-4A84-4E6C-8451-44FD316F1C62</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>60B2FC70-3451-4D6B-AC69-7CC2AD2F8FA4</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>8C8CC30B-E5B4-41CF-9D0A-81047551B74B</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>6664255C-1FD3-4F36-8A56-E57A39E0EB1F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>8F131A86-E4BE-4B2A-B2E1-49FD541E9973</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C7E3C51F-EADB-43B3-BB23-9F7280841960</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -171,11 +409,86 @@
 				<false/>
 			</dict>
 		</array>
+		<key>A73CE281-93D9-4A74-A917-D705447E9E06</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>B3DCF883-E4F6-4DFF-8DCF-4E5C3600DD76</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>B3DCF883-E4F6-4DFF-8DCF-4E5C3600DD76</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>81434409-3F53-41B4-AD28-B0742CF5CA14</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>2DA085BB-7DE7-469A-9A85-0C47AFC75DF9</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>B416513F-DAEE-4C90-8CE6-918FBDBD73CF</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>58650051-96AC-474E-A4F8-0F3CD09583AF</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>C11F5D1C-AB90-4361-A5DF-C474CD50C6B2</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>255FB9EA-F4B7-4B2B-9D67-55CD8D9358F0</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>C6633C84-9567-4B97-85C2-3FEF49D177FD</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>1423ED4B-73D8-40F6-B9A3-4E40E5E86CF0</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>C7E3C51F-EADB-43B3-BB23-9F7280841960</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0C4684FD-84A8-4FF1-83D8-EC3DE2A4A713</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -197,6 +510,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>F3ED3716-5BDB-4AE4-B4FC-CD16AC736B1C</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8F131A86-E4BE-4B2A-B2E1-49FD541E9973</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 	</dict>
 	<key>createdby</key>
 	<string>Carlos Nunez</string>
@@ -208,27 +534,6 @@
 	<string>Work journal entries</string>
 	<key>objects</key>
 	<array>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
-				<integer>0</integer>
-				<key>keyword</key>
-				<string>entry</string>
-				<key>subtext</key>
-				<string>Adds a new entry into my work journal.</string>
-				<key>text</key>
-				<string>Add to work journal</string>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>3E554F3A-9D95-4D8B-9797-FDE6FDA14DCD</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -281,6 +586,27 @@ fi</string>
 			<string>alfred.workflow.output.notification</string>
 			<key>uid</key>
 			<string>1C1BF596-B61A-4728-A51E-50042111019A</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>entry</string>
+				<key>subtext</key>
+				<string>Adds a new entry into my work journal.</string>
+				<key>text</key>
+				<string>Add to work journal</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>3E554F3A-9D95-4D8B-9797-FDE6FDA14DCD</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -351,29 +677,6 @@ fi</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>while [ ! -f /tmp/journal_entry ]; do sleep 0.5; done</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>8C8CC30B-E5B4-41CF-9D0A-81047551B74B</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
 				<string>test -f /tmp/journal_entry &amp;&amp; rm -f /tmp/journal_entry</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
@@ -392,23 +695,46 @@ fi</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argumenttype</key>
-				<integer>2</integer>
-				<key>keyword</key>
-				<string>long_entry</string>
-				<key>subtext</key>
-				<string>Adds a longer entry into my work journal.</string>
-				<key>text</key>
-				<string>Add to work journal</string>
-				<key>withspace</key>
+				<key>lastpathcomponent</key>
 				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>Your entry has been added to {var:directory}.</string>
+				<key>title</key>
+				<string>Journal entry added</string>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
+			<string>alfred.workflow.output.notification</string>
 			<key>uid</key>
-			<string>521CF30A-2D0C-4E33-BED4-D3B4FBFB66CE</string>
+			<string>E6FC87A7-97FA-48A4-8F25-4F593DD6E1A9</string>
 			<key>version</key>
 			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>while [ ! -f /tmp/journal_entry ]; do sleep 0.5; done</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>8C8CC30B-E5B4-41CF-9D0A-81047551B74B</string>
+			<key>version</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -469,21 +795,21 @@ fi</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<false/>
-				<key>removeextension</key>
-				<false/>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>long_entry</string>
+				<key>subtext</key>
+				<string>Adds a longer entry into my work journal.</string>
 				<key>text</key>
-				<string>Your entry has been added to {var:directory}.</string>
-				<key>title</key>
-				<string>Journal entry added</string>
+				<string>Add to work journal</string>
+				<key>withspace</key>
+				<false/>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
+			<string>alfred.workflow.input.keyword</string>
 			<key>uid</key>
-			<string>E6FC87A7-97FA-48A4-8F25-4F593DD6E1A9</string>
+			<string>521CF30A-2D0C-4E33-BED4-D3B4FBFB66CE</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -549,6 +875,703 @@ fi</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>brag</string>
+				<key>subtext</key>
+				<string>Adds bragging rights to the brag book.</string>
+				<key>text</key>
+				<string>Brag, ya filthy animal</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>A73CE281-93D9-4A74-A917-D705447E9E06</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>Your brag has been added to {var:directory}.</string>
+				<key>title</key>
+				<string>Brag posted</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>FA35E507-98E7-4B72-A12B-F5DE6F6AD0F5</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>if ! test -d $HOME/src/my-work-journal
+then
+  echo "{\"alfredworkflow\":{\"variables\":{\"error\": \"$HOME/src/my-work-journal not found. Please clone the work journal from https://github.com/carlosonunez/my-work-journal.\"}}}"
+  exit 0
+fi
+
+if ! output=$(&gt;&amp;1 $HOME/src/my-work-journal/brag_about_it $*)
+then
+  echo "{\"alfredworkflow\":{\"variables\":{\"error\": \"$output\"}}}"
+else
+  echo "{\"alfredworkflow\":{\"variables\":{\"directory\": \"$output\"}}}"
+fi</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>B3DCF883-E4F6-4DFF-8DCF-4E5C3600DD76</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputstring</key>
+				<string>{var:error}</string>
+				<key>matchcasesensitive</key>
+				<true/>
+				<key>matchmode</key>
+				<integer>0</integer>
+				<key>matchstring</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.filter</string>
+			<key>uid</key>
+			<string>81434409-3F53-41B4-AD28-B0742CF5CA14</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>Something went wrong: {var:error}</string>
+				<key>title</key>
+				<string>Brag not posted :(</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>BE007A48-7F7B-44AD-AC44-88F20DE5FBCF</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputstring</key>
+				<string>{var:error}</string>
+				<key>matchcasesensitive</key>
+				<true/>
+				<key>matchmode</key>
+				<integer>1</integer>
+				<key>matchstring</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.filter</string>
+			<key>uid</key>
+			<string>2DA085BB-7DE7-469A-9A85-0C47AFC75DF9</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>Your brag has been added to {var:directory}.</string>
+				<key>title</key>
+				<string>Brag posted!</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>5C2E4D08-2381-4B94-8F31-37E04242F324</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>while [ ! -f /tmp/brag_entry ]; do sleep 0.5; done</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>0C4684FD-84A8-4FF1-83D8-EC3DE2A4A713</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>vim -u NONE /tmp/brag_entry &amp;&amp; exit 0</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.terminalcommand</string>
+			<key>uid</key>
+			<string>C7E3C51F-EADB-43B3-BB23-9F7280841960</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>long_brag</string>
+				<key>subtext</key>
+				<string>Adds a long entry into our brag book.</string>
+				<key>text</key>
+				<string>Time to be vain</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>F3ED3716-5BDB-4AE4-B4FC-CD16AC736B1C</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>if ! test -d $HOME/src/my-work-journal
+then
+  echo "ERROR: $HOME/src/my-work-journal not found. Please clone the work journal first from https://github.com/carlosonunez/my-work-journal."
+  exit 1
+fi
+if ! test -f /tmp/brag_entry || ! test -s /tmp/brag_entry
+then
+  echo '{"alfredworkflow":{"variables":{"error":"Please provide a journal entry."}}}'
+  exit 1
+fi
+if ! output=$($HOME/src/my-work-journal/brag_about_it &lt;&lt;ENTRY
+$(cat /tmp/brag_entry)
+ENTRY)
+then
+  exit 1
+else
+  echo "{\"alfredworkflow\":{\"variables\":{\"directory\": \"$output\"}}}"
+  rm /tmp/brag_entry
+fi</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>43198993-1749-4F5B-8BF6-4B4BDE1B6916</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>test -f /tmp/brag_entry &amp;&amp; rm -f /tmp/brag_entry</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>8F131A86-E4BE-4B2A-B2E1-49FD541E9973</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputstring</key>
+				<string>{var:error}</string>
+				<key>matchcasesensitive</key>
+				<true/>
+				<key>matchmode</key>
+				<integer>0</integer>
+				<key>matchstring</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.filter</string>
+			<key>uid</key>
+			<string>26A5F77D-681A-4FF4-B8CD-D870EAD0C931</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>Something went wrong: {var:error}</string>
+				<key>title</key>
+				<string>Brag not added :(</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>255FB9EA-F4B7-4B2B-9D67-55CD8D9358F0</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputstring</key>
+				<string>{var:error}</string>
+				<key>matchcasesensitive</key>
+				<true/>
+				<key>matchmode</key>
+				<integer>1</integer>
+				<key>matchstring</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.filter</string>
+			<key>uid</key>
+			<string>C11F5D1C-AB90-4361-A5DF-C474CD50C6B2</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>if ! test -d $HOME/src/my-work-journal
+then
+  echo "{\"alfredworkflow\":{\"variables\":{\"error\": \"$HOME/src/my-work-journal not found. Please clone the work journal from https://github.com/carlosonunez/my-work-journal.\"}}}"
+  exit 0
+fi
+
+if ! output=$(&gt;&amp;1 $HOME/src/my-work-journal/add_reflection $*)
+then
+  echo "{\"alfredworkflow\":{\"variables\":{\"error\": \"$output\"}}}"
+else
+  echo "{\"alfredworkflow\":{\"variables\":{\"directory\": \"$output\"}}}"
+fi</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>76CC0A98-9693-454E-95AC-6063B8484D35</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>reflection</string>
+				<key>subtext</key>
+				<string>Adds a reflection into the reflections book.</string>
+				<key>text</key>
+				<string>Add a learning or reflection</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>43467140-863C-428E-8DF1-1DBDA4E4EC27</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>Your reflection has been added to {var:directory}.</string>
+				<key>title</key>
+				<string>Reflection posted</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>58650051-96AC-474E-A4F8-0F3CD09583AF</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputstring</key>
+				<string>{var:error}</string>
+				<key>matchcasesensitive</key>
+				<true/>
+				<key>matchmode</key>
+				<integer>0</integer>
+				<key>matchstring</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.filter</string>
+			<key>uid</key>
+			<string>B416513F-DAEE-4C90-8CE6-918FBDBD73CF</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>Something went wrong: {var:error}</string>
+				<key>title</key>
+				<string>Reflection not posted :(</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>C542EC25-26B4-4ADB-AF4F-AFFA07114E0E</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputstring</key>
+				<string>{var:error}</string>
+				<key>matchcasesensitive</key>
+				<true/>
+				<key>matchmode</key>
+				<integer>1</integer>
+				<key>matchstring</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.filter</string>
+			<key>uid</key>
+			<string>4D85A469-2B2D-4A67-A469-A73517BEA019</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>while [ ! -f /tmp/reflection_entry ]; do sleep 0.5; done</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>60B2FC70-3451-4D6B-AC69-7CC2AD2F8FA4</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>if ! test -d $HOME/src/my-work-journal
+then
+  echo "ERROR: $HOME/src/my-work-journal not found. Please clone the work journal first from https://github.com/carlosonunez/my-work-journal."
+  exit 1
+fi
+if ! test -f /tmp/reflection_entry || ! test -s /tmp/reflection_entry
+then
+  echo '{"alfredworkflow":{"variables":{"error":"Please provide a journal entry."}}}'
+  exit 1
+fi
+if ! output=$($HOME/src/my-work-journal/add_reflection &lt;&lt;ENTRY
+$(cat /tmp/reflection_entry)
+ENTRY)
+then
+  exit 1
+else
+  echo "{\"alfredworkflow\":{\"variables\":{\"directory\": \"$output\"}}}"
+  rm /tmp/reflection_entry
+fi</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>0BEE2A6F-9E06-40F1-8A84-98D6C84B2E57</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>test -f /tmp/reflection_entry &amp;&amp; rm -f /tmp/reflection_entry</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>0A032495-6A09-4277-B3D8-C142A35D3CFC</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>vim -u NONE /tmp/reflection_entry &amp;&amp; exit 0</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.terminalcommand</string>
+			<key>uid</key>
+			<string>8C472382-4A84-4E6C-8451-44FD316F1C62</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>Your reflection has been added to {var:directory}.</string>
+				<key>title</key>
+				<string>Reflection posted!</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>C88E19C0-6876-44EE-AFB7-053FDC4D9014</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>long_reflection</string>
+				<key>subtext</key>
+				<string>Adds a long entry into our reflection book.</string>
+				<key>text</key>
+				<string>Adds a long reflection</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>02C506B9-4E1F-46CA-B070-6CB3DA51CED8</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputstring</key>
+				<string>{var:error}</string>
+				<key>matchcasesensitive</key>
+				<true/>
+				<key>matchmode</key>
+				<integer>0</integer>
+				<key>matchstring</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.filter</string>
+			<key>uid</key>
+			<string>1493C040-DCDF-4F27-8F61-04F746C74D15</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>Something went wrong: {var:error}</string>
+				<key>title</key>
+				<string>Reflection not added :(</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>58407D6C-AF37-4471-B75D-B87DC72600AC</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputstring</key>
+				<string>{var:error}</string>
+				<key>matchcasesensitive</key>
+				<true/>
+				<key>matchmode</key>
+				<integer>1</integer>
+				<key>matchstring</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.filter</string>
+			<key>uid</key>
+			<string>6CB95CC2-7CAC-4264-9986-5193517B01B5</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>copy_todays_entry</string>
+				<key>subtext</key>
+				<string>This can be useful for things like timesheets, Git commits, etc.</string>
+				<key>text</key>
+				<string>Copy today's journal entry</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>A04B314C-D88B-441F-A43E-28D9703E5087</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -596,27 +1619,6 @@ ls -t $HOME/src/my-work-journal/*.md | grep -v "README.md" | awk '{print $NF}' |
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
-				<integer>2</integer>
-				<key>keyword</key>
-				<string>copy_todays_entry</string>
-				<key>subtext</key>
-				<string>This can be useful for things like timesheets, Git commits, etc.</string>
-				<key>text</key>
-				<string>Copy today's journal entry</string>
-				<key>withspace</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>A04B314C-D88B-441F-A43E-28D9703E5087</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
 	</array>
 	<key>readme</key>
 	<string>Keywords are one of Alfred's most commonly used and most useful ways of launching actions. Set a keyword and connect it to the action(s) you want to perform.
@@ -624,12 +1626,44 @@ ls -t $HOME/src/my-work-journal/*.md | grep -v "README.md" | awk '{print $NF}' |
 Type your keyword into Alfred, followed by your input text if needed, and you'll be on your way to boosting your productivity!</string>
 	<key>uidata</key>
 	<dict>
+		<key>02C506B9-4E1F-46CA-B070-6CB3DA51CED8</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>note</key>
+			<string>1. Add a keyword object by right-clicking the canvas and choosing Inputs &gt; Keyword. Set the keyword and title to show it in Alfred's results.</string>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>1600</integer>
+		</dict>
 		<key>05D9F2C7-0610-43A7-97A6-4A00D35080BA</key>
 		<dict>
 			<key>xpos</key>
 			<integer>940</integer>
 			<key>ypos</key>
 			<integer>400</integer>
+		</dict>
+		<key>0A032495-6A09-4277-B3D8-C142A35D3CFC</key>
+		<dict>
+			<key>xpos</key>
+			<integer>220</integer>
+			<key>ypos</key>
+			<integer>1600</integer>
+		</dict>
+		<key>0BEE2A6F-9E06-40F1-8A84-98D6C84B2E57</key>
+		<dict>
+			<key>xpos</key>
+			<integer>710</integer>
+			<key>ypos</key>
+			<integer>1600</integer>
+		</dict>
+		<key>0C4684FD-84A8-4FF1-83D8-EC3DE2A4A713</key>
+		<dict>
+			<key>xpos</key>
+			<integer>520</integer>
+			<key>ypos</key>
+			<integer>950</integer>
 		</dict>
 		<key>1423ED4B-73D8-40F6-B9A3-4E40E5E86CF0</key>
 		<dict>
@@ -638,7 +1672,14 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 			<key>xpos</key>
 			<integer>380</integer>
 			<key>ypos</key>
-			<integer>640</integer>
+			<integer>1910</integer>
+		</dict>
+		<key>1493C040-DCDF-4F27-8F61-04F746C74D15</key>
+		<dict>
+			<key>xpos</key>
+			<integer>940</integer>
+			<key>ypos</key>
+			<integer>1630</integer>
 		</dict>
 		<key>1C1BF596-B61A-4728-A51E-50042111019A</key>
 		<dict>
@@ -646,6 +1687,27 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 			<integer>560</integer>
 			<key>ypos</key>
 			<integer>50</integer>
+		</dict>
+		<key>255FB9EA-F4B7-4B2B-9D67-55CD8D9358F0</key>
+		<dict>
+			<key>xpos</key>
+			<integer>1060</integer>
+			<key>ypos</key>
+			<integer>1070</integer>
+		</dict>
+		<key>26A5F77D-681A-4FF4-B8CD-D870EAD0C931</key>
+		<dict>
+			<key>xpos</key>
+			<integer>940</integer>
+			<key>ypos</key>
+			<integer>980</integer>
+		</dict>
+		<key>2DA085BB-7DE7-469A-9A85-0C47AFC75DF9</key>
+		<dict>
+			<key>xpos</key>
+			<integer>440</integer>
+			<key>ypos</key>
+			<integer>780</integer>
 		</dict>
 		<key>35BBD622-0C4E-4346-88C6-D0354321BFBA</key>
 		<dict>
@@ -679,6 +1741,31 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 			<key>ypos</key>
 			<integer>370</integer>
 		</dict>
+		<key>43198993-1749-4F5B-8BF6-4B4BDE1B6916</key>
+		<dict>
+			<key>xpos</key>
+			<integer>710</integer>
+			<key>ypos</key>
+			<integer>950</integer>
+		</dict>
+		<key>43467140-863C-428E-8DF1-1DBDA4E4EC27</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>note</key>
+			<string>1. Add a keyword object by right-clicking the canvas and choosing Inputs &gt; Keyword. Set the keyword and title to show it in Alfred's results.</string>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>1280</integer>
+		</dict>
+		<key>4D85A469-2B2D-4A67-A469-A73517BEA019</key>
+		<dict>
+			<key>xpos</key>
+			<integer>440</integer>
+			<key>ypos</key>
+			<integer>1430</integer>
+		</dict>
 		<key>50471C1C-2524-40ED-95CD-43BC2A9874E9</key>
 		<dict>
 			<key>xpos</key>
@@ -697,6 +1784,34 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 			<key>ypos</key>
 			<integer>370</integer>
 		</dict>
+		<key>58407D6C-AF37-4471-B75D-B87DC72600AC</key>
+		<dict>
+			<key>xpos</key>
+			<integer>1060</integer>
+			<key>ypos</key>
+			<integer>1720</integer>
+		</dict>
+		<key>58650051-96AC-474E-A4F8-0F3CD09583AF</key>
+		<dict>
+			<key>xpos</key>
+			<integer>560</integer>
+			<key>ypos</key>
+			<integer>1280</integer>
+		</dict>
+		<key>5C2E4D08-2381-4B94-8F31-37E04242F324</key>
+		<dict>
+			<key>xpos</key>
+			<integer>1060</integer>
+			<key>ypos</key>
+			<integer>950</integer>
+		</dict>
+		<key>60B2FC70-3451-4D6B-AC69-7CC2AD2F8FA4</key>
+		<dict>
+			<key>xpos</key>
+			<integer>520</integer>
+			<key>ypos</key>
+			<integer>1600</integer>
+		</dict>
 		<key>6664255C-1FD3-4F36-8A56-E57A39E0EB1F</key>
 		<dict>
 			<key>xpos</key>
@@ -711,12 +1826,47 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 			<key>ypos</key>
 			<integer>80</integer>
 		</dict>
+		<key>6CB95CC2-7CAC-4264-9986-5193517B01B5</key>
+		<dict>
+			<key>xpos</key>
+			<integer>940</integer>
+			<key>ypos</key>
+			<integer>1750</integer>
+		</dict>
+		<key>76CC0A98-9693-454E-95AC-6063B8484D35</key>
+		<dict>
+			<key>xpos</key>
+			<integer>220</integer>
+			<key>ypos</key>
+			<integer>1280</integer>
+		</dict>
+		<key>81434409-3F53-41B4-AD28-B0742CF5CA14</key>
+		<dict>
+			<key>xpos</key>
+			<integer>440</integer>
+			<key>ypos</key>
+			<integer>660</integer>
+		</dict>
+		<key>8C472382-4A84-4E6C-8451-44FD316F1C62</key>
+		<dict>
+			<key>xpos</key>
+			<integer>370</integer>
+			<key>ypos</key>
+			<integer>1600</integer>
+		</dict>
 		<key>8C8CC30B-E5B4-41CF-9D0A-81047551B74B</key>
 		<dict>
 			<key>xpos</key>
 			<integer>520</integer>
 			<key>ypos</key>
 			<integer>370</integer>
+		</dict>
+		<key>8F131A86-E4BE-4B2A-B2E1-49FD541E9973</key>
+		<dict>
+			<key>xpos</key>
+			<integer>220</integer>
+			<key>ypos</key>
+			<integer>950</integer>
 		</dict>
 		<key>A04B314C-D88B-441F-A43E-28D9703E5087</key>
 		<dict>
@@ -725,7 +1875,53 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 			<key>xpos</key>
 			<integer>50</integer>
 			<key>ypos</key>
-			<integer>640</integer>
+			<integer>1910</integer>
+		</dict>
+		<key>A73CE281-93D9-4A74-A917-D705447E9E06</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>note</key>
+			<string>1. Add a keyword object by right-clicking the canvas and choosing Inputs &gt; Keyword. Set the keyword and title to show it in Alfred's results.</string>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>630</integer>
+		</dict>
+		<key>B3DCF883-E4F6-4DFF-8DCF-4E5C3600DD76</key>
+		<dict>
+			<key>xpos</key>
+			<integer>220</integer>
+			<key>ypos</key>
+			<integer>630</integer>
+		</dict>
+		<key>B416513F-DAEE-4C90-8CE6-918FBDBD73CF</key>
+		<dict>
+			<key>xpos</key>
+			<integer>440</integer>
+			<key>ypos</key>
+			<integer>1310</integer>
+		</dict>
+		<key>BE007A48-7F7B-44AD-AC44-88F20DE5FBCF</key>
+		<dict>
+			<key>xpos</key>
+			<integer>560</integer>
+			<key>ypos</key>
+			<integer>750</integer>
+		</dict>
+		<key>C11F5D1C-AB90-4361-A5DF-C474CD50C6B2</key>
+		<dict>
+			<key>xpos</key>
+			<integer>940</integer>
+			<key>ypos</key>
+			<integer>1100</integer>
+		</dict>
+		<key>C542EC25-26B4-4ADB-AF4F-AFFA07114E0E</key>
+		<dict>
+			<key>xpos</key>
+			<integer>560</integer>
+			<key>ypos</key>
+			<integer>1400</integer>
 		</dict>
 		<key>C6633C84-9567-4B97-85C2-3FEF49D177FD</key>
 		<dict>
@@ -734,7 +1930,21 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 			<key>xpos</key>
 			<integer>220</integer>
 			<key>ypos</key>
-			<integer>640</integer>
+			<integer>1910</integer>
+		</dict>
+		<key>C7E3C51F-EADB-43B3-BB23-9F7280841960</key>
+		<dict>
+			<key>xpos</key>
+			<integer>370</integer>
+			<key>ypos</key>
+			<integer>950</integer>
+		</dict>
+		<key>C88E19C0-6876-44EE-AFB7-053FDC4D9014</key>
+		<dict>
+			<key>xpos</key>
+			<integer>1060</integer>
+			<key>ypos</key>
+			<integer>1600</integer>
 		</dict>
 		<key>E6FC87A7-97FA-48A4-8F25-4F593DD6E1A9</key>
 		<dict>
@@ -757,12 +1967,30 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 			<key>ypos</key>
 			<integer>170</integer>
 		</dict>
+		<key>F3ED3716-5BDB-4AE4-B4FC-CD16AC736B1C</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>4</integer>
+			<key>note</key>
+			<string>1. Add a keyword object by right-clicking the canvas and choosing Inputs &gt; Keyword. Set the keyword and title to show it in Alfred's results.</string>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>950</integer>
+		</dict>
 		<key>FA148A76-FDC3-4651-9962-A61310FBB8B1</key>
 		<dict>
 			<key>xpos</key>
 			<integer>1060</integer>
 			<key>ypos</key>
 			<integer>490</integer>
+		</dict>
+		<key>FA35E507-98E7-4B72-A12B-F5DE6F6AD0F5</key>
+		<dict>
+			<key>xpos</key>
+			<integer>560</integer>
+			<key>ypos</key>
+			<integer>630</integer>
 		</dict>
 	</dict>
 	<key>version</key>

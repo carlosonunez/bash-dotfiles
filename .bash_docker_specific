@@ -3,32 +3,24 @@ DOCKER_MACHINE_NAME_TO_USE=docker
 if ! which docker &>/dev/null
 then
   printf "Installing ${BGreen}docker${NC}\n"
-  case "$(get_os_type)" in
-    "Darwin")
-      brew cask install docker-toolbox
-      brew install docker-credential-helper
-      ;;
-    "Ubuntu"|"Debian")
-      if grep -q 'Microsoft' /etc/lsb_release
-      then
-        printf "${BYellow}INFO${NC}: Connecting Docker-Windows engine to native Linux session\n"
-        export DOCKER_HOST=tcp://0.0.0.0:2375
-      else
-        install_application "apt-transport-https ca-certificates curl"
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-        sudo add-apt-repository \
-           "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-           $(lsb_release -cs) \
-           stable"
-        sudo apt-get update
-        install_application "linux-image-extra-$(uname -r) linux-image-extra-virtual"
-        install_application "docker-ce"
-      fi
-      ;;
-    *)
-      printf "${BRed}ERROR${NC}: You haven't written a Docker installation routine for this OS yet. Do it now!\n"
-      return 1
-  esac
+  if test "$(get_os_type)" != "Darwin"
+  then
+    if grep -q 'Microsoft' /etc/lsb_release
+    then
+      printf "${BYellow}INFO${NC}: Connecting Docker-Windows engine to native Linux session\n"
+      export DOCKER_HOST=tcp://0.0.0.0:2375
+    else
+      install_application "apt-transport-https ca-certificates curl"
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+      sudo add-apt-repository \
+         "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+         $(lsb_release -cs) \
+         stable"
+      sudo apt-get update
+      install_application "linux-image-extra-$(uname -r) linux-image-extra-virtual"
+      install_application "docker-ce"
+    fi
+  fi
 fi
 
 if test "$DOCKER_MACHINE_NAME" != "$DOCKER_MACHINE_NAME_TO_USE"
