@@ -14,6 +14,10 @@ in_tmux_session() {
   ! test -z "$TMUX"
 }
 
+tmux_is_disabled() {
+  test -z "$DISABLE_TMUX"
+}
+
 # Is tmux supported by this OS?
 tmux_is_supported() {
   os=$(get_os_type)
