@@ -75,7 +75,7 @@ set_path &&
   source_tmux_stuff &&
   source_functions
 
-if tmux_is_supported && ! in_tmux_session
+if tmux_is_supported && ! in_tmux_session && ! tmux_is_disabled
 then
   if ! tmux_is_installed
   then
@@ -89,6 +89,7 @@ then
 else
   PROMPT_COMMAND='e=$?; set_bash_prompt $e'
     install_bash_completion &&
+    configure_client_or_company_specific_settings &&
     configure_bash_session &&
     configure_machine &&
     add_keys_to_ssh_agent
