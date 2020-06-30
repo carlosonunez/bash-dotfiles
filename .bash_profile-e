@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 source ~/.bash_colors
-export TMUX_SESSION_NAME='tmux_session'
-export BASH_PROFILE_LOCATION=$(readlink "$HOME/.bash_profile")
-export BASH_PROFILE_REPO=$(dirname "$BASH_PROFILE_LOCATION")
+source ~/.bash_exports
 ensure_bash_profile_is_symlinked() {
   if [ ! -L "$HOME/.bash_profile" ]
   then
@@ -17,6 +15,24 @@ source_functions() {
     >&2 echo "ERROR: Failed to load Bash functions. Ensure that they are in your repo."
     return 1
   fi
+}
+
+set_path() {
+  path=$(cat <<-DIRECTORIES
+/Users/$USER/.gems
+/Users/$USER/.gems/bin
+/usr/local/opt/coreutils/libexec/gnubin
+/usr/local/bin
+/usr/bin
+/bin
+/usr/sbin
+/sbin
+/opt/X11/bin
+/Users/$USER/src/go/bin
+/Users/$USER/bin/gyb
+DIRECTORIES
+)
+  export PATH=$(echo "$path" | tr '\n' ':' | sed 's/.$//')
 }
 
 source_tmux_stuff() {
@@ -52,30 +68,29 @@ set_terminal_keybinding() {
   set -o emacs
 }
 
-set_terminal_keybinding &&
+set_path &&
+  set_terminal_keybinding &&
   ensure_setup_directory_is_present &&
   ensure_bash_profile_is_symlinked &&
   source_tmux_stuff &&
   source_functions
 
-if tmux_is_supported && ! in_tmux_sesion && ! in_ssh_session
+if tmux_is_supported && ! in_tmux_session
 then
   if ! tmux_is_installed
   then
-    if ! install_tmux
+    if ! install_tmux_and_tpm
     then
       >&2 echo "ERROR: Failed to install tmux."
-      exit 1
+      return 1
     fi
   fi
   start_tmux
 else
-  set_path &&
+  PROMPT_COMMAND='e=$?; set_bash_prompt $e'
     install_bash_completion &&
     configure_bash_session &&
     configure_machine &&
     add_keys_to_ssh_agent
-
-  PROMPT_COMMAND='e=$?; set_bash_prompt $e'
 fi
 

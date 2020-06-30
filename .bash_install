@@ -1,46 +1,44 @@
 #!/usr/bin/env bash
-
-check_for_internet_access() {
-  test "$(curl -s --connect-timeout 3 http://nil.carlosnunez.me)" == "i love socks."
-}
-
 HOMEBREW_BUILTINS=$(cat <<-APPS
-vim
-todo-txt
-gnu-sed
-htop
-tmux
-jq
-feh
-w3m
-reattach-to-user-namespace
-tree
-mas
-rtv
-googler
-docker-compose-completion
-imagemagick
-scrcpy
-nightowl
-git
 bash-completion
+docker-compose-completion
+docker-credential-helper
+feh
+git
+gnu-sed
+googler
+htop
+imagemagick
+jq
+mas
+reattach-to-user-namespace
+rtv
+ruby
+scrcpy
+tmux
+todo-txt
+tree
+vim
+w3m
 APPS
 )
 HOMEBREW_CASKS=$(cat <<-APPS
-shiftit
-iterm2
 1password
-authy
-xquartz
-contexts
 alfred
 android-platform-tools
+authy
+contexts
+docker-toolbox
 firefox
+iterm2
+nightowl
+shiftit
+xquartz
 APPS
 )
-APPLE_STORE_APPS=$(cat <<-APPS
-spark
-shush
+APPLE_APP_STORE_APPS=$(cat <<-APPS
+Spark
+Shush
 APPS
 )
 ETC_HOSTS_EXCLUSIONS=$(cat <<-EXCLUSIONS
@@ -73,6 +71,48 @@ ETC_HOSTS_INCLUSIONS=$(cat <<-ETC_HOSTS_INCLUSIONS
 ads\.linkedin\.com
 ETC_HOSTS_INCLUSIONS
 )
+
+check_for_internet_access() {
+  test "$(curl -s --connect-timeout 3 http://nil.carlosnunez.me)" == "i love socks."
+}
+
+get_homebrew_builtins() { brew list --full-name | tr '\t' '\n'; }
+get_homebrew_casks() { brew cask list --full-name; }
+get_app_store_apps() { mas list | sed -E 's/^[0-9]+ (.*) \(.*$/\1/'; }
+
+install_if_missing() {
+  app_to_find="$1"
+  installed_apps="$2"
+  install_command="$3"
+  apps="${@:4}"
+  for app in $apps
+  do
+    if ! $(echo "$installed_apps" | grep -q "$app")
+    then
+      printf "${BYellow}INFO${NC}: Installing app: ${BGreen}$app${NC}\n"
+      eval "$install_command $app"
+    fi
+  done
+}
+
+install_homebrew_builtins() {
+  install_if_missing "$pkg" "$(get_homebrew_builtins)" "brew install" $HOMEBREW_BUILTINS
+}
+
+install_homebrew_casks() {
+  install_if_missing "$pkg" "$(get_homebrew_casks)" "brew cask install" $HOMEBREW_CASKS
+}
+
+install_app_store_apps() {
+  if &>/dev/null mas account
+  then
+    install_if_missing "$pkg" "$(get_app_store_apps)" "mas lucky" $APPLE_APP_STORE_APPS
+  else
+    formatted_apps=$(echo "$APPLE_APP_STORE_APPS" | tr '\n' ' ')
+    >&2 printf "${BCyan}WARNING${NC}: You are not signed in to the App Store. \
+Sign in to install these apps: $formatted_apps\n"
+  fi
+}
 
 modify_etc_hosts() {
   index=0
@@ -139,40 +179,20 @@ or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
   return 0
 fi
 
-installed_applications=$(brew list --full-name; \
-  brew cask list --full-name 2>/dev/null; \
-  find '/Applications' -maxdepth 1 \
-    -name "*.app" \
-    -exec sh -c 'basename "{}" | sed "s#\.app##" | tr "[:upper:]" "[:lower:]"' \;)
-[ "$(uname)" == "Darwin" ] && {
-  for pkg in $HOMEBREW_BUILTINS; do
-    if ! $(echo "$installed_applications" | grep -q "$pkg")
-    then
-      echo "INFO: Installing: $pkg"
-      install_application "$pkg"
-    fi
-  done
-  for pkg in $HOMEBREW_CASKS; do
-    if ! $(echo "$installed_applications" | grep -q "$pkg")
-    then
-      echo "INFO: Installing: $pkg"
-      brew cask install "$pkg"
-    fi
-  done
-  for pkg in $APPLE_STORE_APPS
-  do
-    if ! mas list | tr '[:upper:]' '[:lower:]' | grep -q "$pkg"
-    then
-      mas lucky "$pkg"
-    fi
-  done
+case "$(get_os_type)" in
+  Darwin)
+    install_homebrew_builtins &&
+    install_homebrew_casks &&
+    install_app_store_apps &&
+    install_shiftit_prefs &&
+    install_contexts_prefs
+        ;;
+  *)
+    >&2 echo "WARNING: Routines for non-Mac operating systems haven't been written yet."
+    >&2 echo "WARNING: See '$HOME/.bash_install' for a list of applications to install."
+    ;;
+esac
 
-  install_shiftit_prefs
-  install_contexts_prefs
-  configure_todos
-  make_etc_hosts_adfree
-  modify_etc_hosts
-}
-
-# Export a few handy exports
-# ==========================
+configure_todos
+make_etc_hosts_adfree
+modify_etc_hosts

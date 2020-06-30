@@ -1,6 +1,9 @@
 " Tim Popify my vim setup!
 execute pathogen#infect()
 
+" Set modeline so that we can autoformat files based on top-file comments.
+set modeline
+
 set encoding=utf8
 let mapleader = ","
 let g:airline_powerline_fonts = 1

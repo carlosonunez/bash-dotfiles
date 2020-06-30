@@ -2,7 +2,23 @@
 GITHUB_SSH_KEY="$HOME/.ssh/github"
 GIT_DEFAULT_AUTHOR="Carlos Nunez"
 GIT_DEFAULT_EMAIL="carlosonunez@noreply.github.com"
-export GIT_EDITOR=vim
+
+set_git_author() {
+  if ! test -z "$WORK_GIT_AUTHOR" && ! test -z "$WORK_GIT_EMAIL"
+  then
+    author="$WORK_GIT_AUTHOR"
+    email="$WORK_GIT_EMAIL"
+  elif ! test -z "$CLIENT_GIT_AUTHOR" && ! test -z "$CLIENT_GIT_EMAIL"
+  then
+    author="$CLIENT_GIT_AUTHOR"
+    email="$CLIENT_GIT_EMAIL"
+  else
+    author="$GIT_DEFAULT_AUTHOR"
+    email="$GIT_DEFAULT_EMAIL"
+  fi
+  git config --global user.name "$author"
+  git config --global user.email "$email"
+}
 
 view_unpushed_commits_across_branches() {
   # Thanks, StackOverflow!
@@ -110,6 +126,4 @@ _get_number_of_commits_between_refs() {
 }
 
 try_to_install_hub_if_not_found
-export GIT_EDITOR=vim
-git config --global user.name "$GIT_DEFAULT_AUTHOR"
-git config --global user.email "$GIT_DEFAULT_EMAIL"
+set_git_author
