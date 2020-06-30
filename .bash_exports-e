@@ -2,7 +2,7 @@
 export TERM="xterm-256color"
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
-export PAGER=most
+export PAGER=less
 export EDITOR=vim
 export BROWSER='w3m -cookie'
 export HOMEBREW_NO_AUTO_UPDATE=1
