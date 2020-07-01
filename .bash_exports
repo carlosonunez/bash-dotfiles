@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # See ~/.bash_azure for Azure-related exports.
+# See ~/.bash_aws for AWS-related exports.
 export TERM="xterm-256color"
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
