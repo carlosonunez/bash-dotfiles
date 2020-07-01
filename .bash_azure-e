@@ -1,0 +1,70 @@
+# vi: set ft=sh:
+AZURE_DIRECTORY=$HOME/.azure
+AZURE_CONFIG_FILE=$AZURE_DIRECTORY/config
+AZURE_SP_TENANT_FILE=$HOME/.ssh/azure_tenant
+AZURE_SP_CERT_FILE=$HOME/.ssh/azure_sp_cert
+AZURE_SP_URL_FILE=$HOME/.ssh/azure_sp_url
+
+_check_file() {
+  file="$1"
+  error_msg="$2"
+  if ! test -f "$1"
+  then
+    >&2 printf "${BRed}ERROR${NC}: $2\n"
+    return 1
+  fi
+}
+
+verify_sp_url_file_is_present() {
+  _check_file "$AZURE_SP_URL_FILE" "Please create a file at $AZURE_SP_URL_FILE \
+and append your service principal's URL to it."
+}
+
+verify_sp_cert_is_present() {
+   _check_file "$AZURE_SP_CERT_FILE" "Service principal cert not found at \
+$AZURE_SP_CERT_FILE. Please create one and bind it to the \
+service principal at $AZURE_SP_URL_FILE"
+}
+
+verify_sp_tenant_file_is_present() {
+  _check_file "$AZURE_SP_TENANT_FILE" "Tenant file not found at \
+$AZURE_SP_TENANT_FILE."
+}
+
+create_az_login_alias() {
+  alias az_login="az login --service-principal \
+-u '$(cat $AZURE_SP_URL_FILE)' \
+-p '$AZURE_SP_CERT_FILE' \
+-t '$(cat $AZURE_SP_TENANT_FILE)'"
+  >&2 printf "${BGreen}INFO${NC}: Azure has been set up. Run 'az_login' to login.\n"
+}
+
+
+create_config_folder_if_not_present() {
+  mkdir -p "$AZURE_DIRECTORY"
+}
+
+write_azure_config() {
+  if ! test -f "$AZURE_CONFIG_FILE"
+  then
+    cat >"$AZURE_CONFIG_FILE" <<-INI
+# This is generated automatically by your Bash profile.
+# See $0 for more information.
+[core]
+output = json
+disable_confirm_prompt = true
+collect_telemetry = false
+only_show_errors = true
+no_color = false
+
+[logging]
+enable_log_file = false
+INI
+  fi
+}
+
+verify_sp_url_file_is_present &&
+  verify_sp_cert_is_present &&
+  verify_sp_tenant_file_is_present &&
+  write_azure_config &&
+  create_az_login_alias
