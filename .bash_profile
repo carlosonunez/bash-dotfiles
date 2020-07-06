@@ -86,6 +86,9 @@ then
     fi
   fi
   start_tmux
+elif tmux_session_is_present
+then
+  join_tmux_session
 else
   PROMPT_COMMAND='e=$?; set_bash_prompt $e'
     install_bash_completion &&
