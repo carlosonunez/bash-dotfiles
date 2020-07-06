@@ -15,7 +15,7 @@ in_tmux_session() {
 }
 
 tmux_is_disabled() {
-  test -z "$DISABLE_TMUX"
+  ! test -z "$DISABLE_TMUX"
 }
 
 # Is tmux supported by this OS?
