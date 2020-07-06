@@ -31,6 +31,14 @@ tmux_is_supported() {
   esac
 }
 
+tmux_session_is_present() {
+  test "$(tmux ls 2>/dev/null | wc -l)" -gt "0"
+}
+
+join_tmux_session() {
+  tmux a -t 0
+}
+
 # Starts a new tmux session with my usual window configuration.
 start_tmux() {
   start_tmux_with_single_window() {
