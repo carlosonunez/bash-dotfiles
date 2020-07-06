@@ -86,7 +86,7 @@ then
     fi
   fi
   start_tmux
-elif tmux_session_is_present
+elif tmux_session_is_present && ! in_tmux_session
 then
   join_tmux_session
 else
