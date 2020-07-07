@@ -5,6 +5,8 @@ then
   case "$(get_os_type)" in
     "Darwin")
       brew install go
+      brew install golangci/tap/golangci-lint
+      brew upgrade golangci/tap/golangci-lint
       ;;
     "Ubuntu")
       sudo add-apt-repository ppa:longsleep/golang-backports
