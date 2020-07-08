@@ -67,6 +67,7 @@ run_gyb() {
   $HOME/src/gyb/gyb.sh $email_address ${@:2}
 }
 
+alias w3m="w3m -cookie"
 alias phone='connect_to_phone'
 alias phone_slow='connect_to_phone 1M'
 alias xq='docker run --rm -i carlosnunez/xq'
