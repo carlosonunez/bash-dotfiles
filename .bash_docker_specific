@@ -26,7 +26,7 @@ fi
 if test "$DOCKER_MACHINE_NAME" != "$DOCKER_MACHINE_NAME_TO_USE"
 then
   >&2 echo "INFO: Creating and starting a new Docker machine." &&
-  docker-machine create --driver virtualbox "$DOCKER_MACHINE_NAME_TO_USE"; \
+  docker-machine create --engine-insecure-registry "10.0.2.2:5000" --driver virtualbox "$DOCKER_MACHINE_NAME_TO_USE"; \
   eval $(docker-machine env "$DOCKER_MACHINE_NAME_TO_USE") &&
   docker-machine start "$DOCKER_MACHINE_NAME_TO_USE"
 fi
