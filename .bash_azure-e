@@ -2,9 +2,8 @@
 AZURE_DIRECTORY=$HOME/.azure
 AZURE_CONFIG_FILE=$AZURE_DIRECTORY/config
 AZURE_SP_TENANT_FILE=$HOME/.ssh/azure_tenant
-AZURE_SP_CERT_FILE=$HOME/.ssh/azure_sp_cert
-AZURE_SP_URL_FILE=$HOME/.ssh/azure_sp_url
-
+AZURE_SP_PASSWORD_FILE=$HOME/.ssh/azure_sp_password
+AZURE_SP_USERNAME_FILE=$HOME/.ssh/azure_sp_username
 _check_file() {
   file="$1"
   error_msg="$2"
@@ -16,14 +15,14 @@ _check_file() {
 }
 
 verify_sp_url_file_is_present() {
-  _check_file "$AZURE_SP_URL_FILE" "Please create a file at $AZURE_SP_URL_FILE \
+  _check_file "$AZURE_SP_USERNAME_FILE" "Please create a file at $AZURE_SP_USERNAME_FILE \
 and append your service principal's URL to it."
 }
 
 verify_sp_cert_is_present() {
-   _check_file "$AZURE_SP_CERT_FILE" "Service principal cert not found at \
-$AZURE_SP_CERT_FILE. Please create one and bind it to the \
-service principal at $AZURE_SP_URL_FILE"
+   _check_file "$AZURE_SP_PASSWORD_FILE" "Service principal cert not found at \
+$AZURE_SP_PASSWORD_FILE. Please create one and bind it to the \
+service principal at $AZURE_SP_USERNAME_FILE"
 }
 
 verify_sp_tenant_file_is_present() {
@@ -33,10 +32,16 @@ $AZURE_SP_TENANT_FILE."
 
 create_az_login_alias() {
   alias az_login="az login --service-principal \
--u '$(cat $AZURE_SP_URL_FILE)' \
--p '$AZURE_SP_CERT_FILE' \
+-u '$(cat $AZURE_SP_USERNAME_FILE)' \
+-p '$(cat $AZURE_SP_PASSWORD_FILE)' \
 -t '$(cat $AZURE_SP_TENANT_FILE)'"
   >&2 printf "${BGreen}INFO${NC}: Azure has been set up. Run 'az_login' to login.\n"
+}
+
+export_az_creds_to_shell() {
+  export AZURE_CLIENT_ID=$(cat $AZURE_SP_USERNAME_FILE)
+  export AZURE_CLIENT_PASSWORD=$(cat $AZURE_SP_PASSWORD_FILE)
+  export AZURE_TENANT=$(cat $AZURE_SP_TENANT_FILE)
 }
 
 
@@ -67,4 +72,5 @@ verify_sp_url_file_is_present &&
   verify_sp_cert_is_present &&
   verify_sp_tenant_file_is_present &&
   write_azure_config &&
-  create_az_login_alias
+  create_az_login_alias &&
+  export_az_creds_to_shell
