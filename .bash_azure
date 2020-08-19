@@ -42,6 +42,19 @@ export_az_creds_to_shell() {
   export AZURE_CLIENT_ID=$(cat $AZURE_SP_USERNAME_FILE)
   export AZURE_CLIENT_PASSWORD=$(cat $AZURE_SP_PASSWORD_FILE)
   export AZURE_TENANT=$(cat $AZURE_SP_TENANT_FILE)
+  export ARM_CLIENT_ID=$(cat $AZURE_SP_USERNAME_FILE)
+  export ARM_CLIENT_PASSWORD=$(cat $AZURE_SP_PASSWORD_FILE)
+  export ARM_TENANT=$(cat $AZURE_SP_TENANT_FILE)
+}
+
+get_new_azure_rest_api_token() {
+  access_token=$(curl -Ls -X POST \
+    -d "grant_type=client_credentials&client_id=$AZURE_CLIENT_ID&\
+client_secret=$AZURE_CLIENT_PASSWORD&\
+resource=https%3A%2F%2Fmanagement.azure.com%2F" \
+https://login.microsoftonline.com/$AZURE_TENANT/oauth2/token | \
+  jq -r .access_token) 
+  export AZURE_REST_API_TOKEN=$access_token
 }
 
 
@@ -73,4 +86,5 @@ verify_sp_url_file_is_present &&
   verify_sp_tenant_file_is_present &&
   write_azure_config &&
   create_az_login_alias &&
+  get_new_azure_rest_api_token &&
   export_az_creds_to_shell
