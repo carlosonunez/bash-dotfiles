@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-DOCKER_MACHINE_NAME_TO_USE=docker
 if ! which docker &>/dev/null
 then
   printf "Installing ${BGreen}docker${NC}\n"
@@ -21,20 +20,6 @@ then
       install_application "docker-ce"
     fi
   fi
-fi
-
-if test "$DOCKER_MACHINE_NAME" != "$DOCKER_MACHINE_NAME_TO_USE"
-then
-  >&2 echo "INFO: Creating and starting a new Docker machine." &&
-  docker-machine create --engine-insecure-registry "10.0.2.2:5000" --driver virtualbox "$DOCKER_MACHINE_NAME_TO_USE"; \
-  eval $(docker-machine env "$DOCKER_MACHINE_NAME_TO_USE") &&
-  docker-machine start "$DOCKER_MACHINE_NAME_TO_USE"
-fi
-
-# Always ensure that we are using OS X keychain for Docker
-if [ "$(get_os_type)" == "Darwin" ]
-then
-  /usr/bin/sed -i "" 's/desktop/osxkeychain/' "$HOME/.docker/config.json"
 fi
 
 if [ "$(get_os_type)" != "Darwin" ] && ! $(id | grep -q "docker")
