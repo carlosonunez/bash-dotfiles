@@ -30,12 +30,12 @@ alfred
 android-platform-tools
 authy
 contexts
-docker-toolbox
 firefox
 iterm2
 nightowl
 shiftit
 xquartz
+docker
 APPS
 )
 APPLE_APP_STORE_APPS=$(cat <<-APPS
