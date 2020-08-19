@@ -117,7 +117,7 @@ _squash_commits() {
   if is_current_directory_tracked_by_git &&
     [ "$number_of_commits_to_squash" != "" ]
   then
-    git rebase -i "HEAD~$number_of_commits_to_squash"
+    git rebase --allow-empty -i "HEAD~$number_of_commits_to_squash"
   fi
 }
 
