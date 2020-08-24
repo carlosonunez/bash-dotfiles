@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+export LC_CTYPE="en_US.UTF8"
+export LANG="en_US.UTF8"
 source ~/.bash_colors
 source ~/.bash_exports
 ensure_bash_profile_is_symlinked() {
