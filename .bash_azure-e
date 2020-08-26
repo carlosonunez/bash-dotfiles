@@ -4,6 +4,9 @@ AZURE_CONFIG_FILE=$AZURE_DIRECTORY/config
 AZURE_SP_TENANT_FILE=$HOME/.ssh/azure_tenant
 AZURE_SP_PASSWORD_FILE=$HOME/.ssh/azure_sp_password
 AZURE_SP_USERNAME_FILE=$HOME/.ssh/azure_sp_username
+
+alias az_vpn="HTTPS_PROXY=localhost:8888 HTTP_PROXY=localhost:8888 az"
+
 _check_file() {
   file="$1"
   error_msg="$2"
