@@ -70,7 +70,7 @@ install_tmux_and_tpm() {
   install_tmux() {
     case "$(get_os_type)" in
       "Darwin")
-        brew install tmux
+        brew install tmux bash-completion reattach-to-user-namespace
         ;;
       "Ubuntu"|"Debian")
         sudo add-apt-repository -y ppa:pi-rho/dev sudo apt-get update
