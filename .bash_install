@@ -6,6 +6,7 @@ bash-completion
 docker-compose-completion
 docker-credential-helper
 feh
+gh
 git
 gnu-sed
 googler
