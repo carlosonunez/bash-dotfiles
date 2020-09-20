@@ -27,6 +27,7 @@ APPS
 )
 HOMEBREW_CASKS=$(cat <<-APPS
 1password
+1password-cli
 alfred
 android-platform-tools
 authy
@@ -165,6 +166,82 @@ configure_todos() {
   fi
 }
 
+generate_and_save_onepass_token() {
+  account_email="$1"
+  verify_that_we_are_on_a_mac() {
+    if ! test "$(get_os_type)" == "Darwin"
+    then
+      >&2 echo "WARNING: 1Password CLI is not supported on $(get_os_type) yet."
+      return 0
+    fi
+  }
+
+  sign_in() {
+    email="$1"
+    if ! test -z "$email"
+    then
+      export OP_SESSION_my=$(op signin my -r $email)
+    else
+      export OP_SESSION_my=$(op signin my -r)
+    fi
+  }
+
+  save_op_token_to_keychain() {
+    >&2 echo "INFO: Saving 1Password token to your Keychain. Enter your system \
+password if prompted."
+    security add-generic-password -a "$USER" \
+      -s "1password_cli_token"  \
+      -w "$OP_SESSION_my" \
+      -U
+  }
+
+  verify_that_we_are_on_a_mac
+  sign_in "$account_email" && save_op_token_to_keychain
+}
+
+configure_1password_cli() {
+  verify_that_we_are_on_a_mac() {
+    if ! test "$(get_os_type)" == "Darwin"
+    then
+      >&2 echo "WARNING: 1Password CLI is not supported on $(get_os_type) yet."
+      return 0
+    fi
+  }
+
+  onepass_has_not_been_run_before() {
+    ! test -f "$HOME/.op/config"
+  }
+
+  run_first_time_setup() {
+    read -p "INFO: It looks like the 1Password CLI hasn't been set up on this \
+system before. Enter your 1Password email address to configure it now: " onepass_email
+    generate_and_save_onepass_token "$onepass_email"
+  }
+
+  is_onepass_token_valid() {
+    token="$1"
+    op confirm --all --session "$token" &>/dev/null
+  }
+
+  get_onepass_token() {
+    security find-generic-password -a "$USER" -s "1password_cli_token" -w
+  }
+
+  verify_that_we_are_on_a_mac
+  if onepass_has_not_been_run_before
+  then
+    run_first_time_setup
+  else
+    token=$(get_onepass_token)
+    if ! is_onepass_token_valid "$token"
+    then
+      generate_and_save_onepass_token
+    else
+      export OP_SESSION_my=$token
+    fi
+  fi
+}
+
 # Install NERD fonts and icons
 # =============================
 if ! brew cask list font-dejavu-sans-mono-nerd-font &>/dev/null
@@ -199,3 +276,4 @@ esac
 configure_todos
 make_etc_hosts_adfree
 modify_etc_hosts
+configure_1password_cli
