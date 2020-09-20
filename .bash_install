@@ -81,7 +81,7 @@ check_for_internet_access() {
 }
 
 get_homebrew_builtins() { brew list --full-name | tr '\t' '\n'; }
-get_homebrew_casks() { brew cask list --full-name; }
+get_homebrew_casks() { brew list --cask --full-name; }
 get_app_store_apps() { mas list | sed -E 's/^[0-9]+ (.*) \(.*$/\1/'; }
 
 install_if_missing() {
@@ -199,6 +199,35 @@ password if prompted."
   sign_in "$account_email" && save_op_token_to_keychain
 }
 
+get_ssh_and_aws_keys_from_onepassword() {
+  ensure_ssh_folder_not_present() {
+    ! test -d "$HOME/.ssh"
+  }
+
+  download_keys() {
+    op get document "SSH and AWS Keys" \
+      --vault "Carlos's Personal Vault" >> $HOME/Downloads/keys.zip
+  }
+
+  unzip_keys() {
+    unzip -d $HOME/.ssh "$HOME/Downloads/keys.zip"
+  }
+
+  permission_keys() {
+    grep -Elr "BEGIN (OPENSSH|RSA)" $HOME/.ssh | xargs chmod 600
+  }
+
+  remove_downloaded_keys() {
+    rm "$HOME/Downloads/keys.zip"
+  }
+
+  if ensure_ssh_folder_not_present
+  then
+    >&2 echo "INFO: Downloading and configuring SSH and cloud keys."
+    download_keys && unzip_keys && permission_keys && remove_downloaded_keys
+  fi
+}
+
 configure_1password_cli() {
   verify_that_we_are_on_a_mac() {
     if ! test "$(get_os_type)" == "Darwin"
@@ -277,3 +306,4 @@ configure_todos
 make_etc_hosts_adfree
 modify_etc_hosts
 configure_1password_cli
+get_ssh_and_aws_keys_from_onepassword
