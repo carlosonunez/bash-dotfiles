@@ -229,6 +229,43 @@ get_ssh_and_aws_keys_from_onepassword() {
   fi
 }
 
+get_firefox_multi_account_containers_from_onepassword() {
+  ensure_regexes_not_present() {
+    ! test -d "$HOME/.ssh/firefox_mac_regexes"
+  }
+
+  download_regexes() {
+    op get item "Firefox Multi-Account Container Configuration" \
+      --vault "Carlos's Personal Vault" >> $HOME/.ssh/firefox_mac_regexes
+  }
+
+  install_regexes() {
+    >&2 echo "INFO: Run this command to copy your Firefox Multi-Account Containers settings. \
+Click on 'Containerise' then click the pencil and paste: \
+'cat ~/.ssh/firefox_mac_regexes | pbcopy'"
+  }
+
+  if ensure_regexes_not_present
+  then
+    >&2 echo "INFO: Downloading and configuring Firefox Multi-Account Containers."
+    download_regexes && install_regexes
+  fi
+}
+
+update_firefox_multi_account_containers_into_onepassword() {
+  prompt_for_containers() {
+    >&2 echo "INFO: Add your containers below; press CTRL-d when finished."
+    cat
+  }
+  configure_1password_cli
+  containers_string=$(prompt_for_containers)
+  if ! test -z "$containers_string"
+  then
+    >&2 echo "INFO: Updating 1Password."
+    op edit item 'Firefox Multi-Account Container Configuration' notesPlain="$containers_string"
+  fi
+}
+
 configure_1password_cli() {
   verify_that_we_are_on_a_mac() {
     if ! test "$(get_os_type)" == "Darwin"
@@ -308,3 +345,4 @@ make_etc_hosts_adfree
 modify_etc_hosts
 configure_1password_cli
 get_ssh_and_aws_keys_from_onepassword
+get_firefox_multi_account_containers_from_onepassword
