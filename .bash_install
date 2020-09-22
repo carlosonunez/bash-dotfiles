@@ -230,20 +230,25 @@ get_ssh_and_aws_keys_from_onepassword() {
   fi
 }
 
+get_local_firefox_multi_account_containers() {
+  cat "$HOME/.ssh/firefox_mac_regexes" | pbcopy
+}
+
 get_firefox_multi_account_containers_from_onepassword() {
   ensure_regexes_not_present() {
-    ! test -d "$HOME/.ssh/firefox_mac_regexes"
+    ! test -f "$HOME/.ssh/firefox_mac_regexes"
   }
 
   download_regexes() {
     op get item "Firefox Multi-Account Container Configuration" \
-      --vault "Carlos's Personal Vault" >> $HOME/.ssh/firefox_mac_regexes
+      --vault "Carlos's Personal Vault" \
+      --fields notesPlain >> $HOME/.ssh/firefox_mac_regexes
   }
 
   install_regexes() {
     >&2 echo "INFO: Run this command to copy your Firefox Multi-Account Containers settings. \
 Click on 'Containerise' then click the pencil and paste: \
-'cat ~/.ssh/firefox_mac_regexes | pbcopy'"
+'get_local_firefox_multi_account_containers'"
   }
 
   if ensure_regexes_not_present
