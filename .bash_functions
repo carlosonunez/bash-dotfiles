@@ -18,7 +18,7 @@ get_azure_login_status() {
     )
     if ! test -z "$logged_in_user_guids"
     then
-      printf "${BRed}[Active Azure logins: $logged_in_user_guids]\n${NC}"
+      printf "${BRed}[Active Azure logins: $logged_in_user_guids]${NC}"
     fi
   fi
 }
@@ -72,13 +72,55 @@ configure_bash_session() {
 }
 
 add_keys_to_ssh_agent() {
-  # Prevent `ssh-askpass not found` errors.
-  old_display=$DISPLAY
-  unset DISPLAY
-  killall ssh-agent
-  eval $(ssh-agent -s) > /dev/null
-  grep -ElR "BEGIN (RSA|OPENSSH)" $HOME/.ssh | sort -u | xargs ssh-add
-  export DISPLAY=$old_display
+  SSH_AGENT_ENV_FILE="$HOME/.ssh/agent_env"
+  apply_ssh_askpass_hack() {
+    export OLD_DISPLAY=$DISPLAY
+    unset DISPLAY
+  }
+
+  unapply_ssh_askpass_hack() {
+    export DISPLAY=$OLD_DISPLAY
+    unset OLD_DISPLAY
+  }
+
+  is_ssh_agent_running() {
+    pgrep -q ssh-agent
+  }
+
+  delete_stale_ssh_agent_env() {
+    test -f "$SSH_AGENT_ENV_FILE" && rm -f "$SSH_AGENT_ENV_FILE" || true
+  }
+
+  start_ssh_agent() {
+    ssh-agent -s > "$SSH_AGENT_ENV_FILE"
+    chmod 600 "$SSH_AGENT_ENV_FILE"
+  }
+
+  add_ssh_agent_to_environment() {
+    unset SSH_AGENT_PID
+    unset SSH_AUTH_SOCK
+    eval $(cat $SSH_AGENT_ENV_FILE)
+  }
+
+  add_keys() {
+    grep -ElR "BEGIN (RSA|OPENSSH)" $HOME/.ssh | sort -u | xargs ssh-add
+  }
+
+  if ! is_ssh_agent_running
+  then
+    delete_stale_ssh_agent_env &&
+      apply_ssh_askpass_hack &&
+      start_ssh_agent &&
+      add_ssh_agent_to_environment &&
+      add_keys &&
+      unapply_ssh_askpass_hack
+  else
+    add_ssh_agent_to_environment
+  fi
+}
+
+restart_ssh_agent() {
+  killall ssh-agent && add_keys_to_ssh_agent
 }
 
 
@@ -370,14 +412,14 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
   hostname_fmtd="\[$BBlue\]$hostname_name\[$NC\]"
   if ! $(2>/dev/null git rev-parse --is-inside-work-tree 2>/dev/null)
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]$virtualenv\n$(get_azure_login_status)\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]$virtualenv\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   elif [ "$(2>/dev/null git --no-pager branch --list)" == "" ]
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\](NO BRANCH?)\[$NC\] $virtualenv \n$(get_azure_login_status)\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\](NO BRANCH?)\[$NC\] $virtualenv \n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   elif ! $(2>/dev/null git diff-index --quiet HEAD)
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] $virtualenv $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_azure_login_status)\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] $virtualenv $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   else
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Green\]($git_branch)\[$NC\] $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_azure_login_status)\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Green\]($git_branch)\[$NC\] $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   fi
 }
