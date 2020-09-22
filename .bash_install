@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+INSTALL_LOCK_FILE="$HOME/.bash_install_lock"
 HOMEBREW_BUILTINS=$(cat <<-APPS
 awscli
 azure-cli
@@ -309,40 +310,61 @@ system before. Enter your 1Password email address to configure it now: " onepass
   fi
 }
 
-# Install NERD fonts and icons
-# =============================
-if ! brew cask list font-dejavu-sans-mono-nerd-font &>/dev/null
+install_lock_open() {
+  ! test -f "$INSTALL_LOCK_FILE"
+}
+
+lock_install() {
+  touch "$INSTALL_LOCK_FILE"
+}
+
+unlock_install() {
+  rm -f "$INSTALL_LOCK_FILE"
+}
+
+if ! install_lock_open
 then
-  brew tap homebrew/cask-fonts && brew cask install font-dejavu-sans-mono-nerd-font
+  >&2 echo "ERROR: An installation is in progress in another window or pane."
+else
+  lock_install
+
+  # Install NERD fonts and icons
+  # =============================
+  if ! brew cask list font-dejavu-sans-mono-nerd-font &>/dev/null
+  then
+    brew tap homebrew/cask-fonts && brew cask install font-dejavu-sans-mono-nerd-font
+  fi
+
+
+  # Install a few necessary brew formulae
+  # ======================================
+  if ! check_for_internet_access
+  then
+    >&2 echo "WARN: Internet access is not available. We will not attempt to install
+  or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
+    return 0
+  fi
+
+  case "$(get_os_type)" in
+    Darwin)
+      install_homebrew_builtins &&
+      install_homebrew_casks &&
+      install_app_store_apps &&
+      install_shiftit_prefs &&
+      install_contexts_prefs
+          ;;
+    *)
+      >&2 echo "WARNING: Routines for non-Mac operating systems haven't been written yet."
+      >&2 echo "WARNING: See '$HOME/.bash_install' for a list of applications to install."
+      ;;
+  esac
+
+  configure_todos
+  make_etc_hosts_adfree
+  modify_etc_hosts
+  configure_1password_cli
+  get_ssh_and_aws_keys_from_onepassword
+  get_firefox_multi_account_containers_from_onepassword
+
+  unlock_install
 fi
-
-
-# Install a few necessary brew formulae
-# ======================================
-if ! check_for_internet_access
-then
-  >&2 echo "WARN: Internet access is not available. We will not attempt to install
-or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
-  return 0
-fi
-
-case "$(get_os_type)" in
-  Darwin)
-    install_homebrew_builtins &&
-    install_homebrew_casks &&
-    install_app_store_apps &&
-    install_shiftit_prefs &&
-    install_contexts_prefs
-        ;;
-  *)
-    >&2 echo "WARNING: Routines for non-Mac operating systems haven't been written yet."
-    >&2 echo "WARNING: See '$HOME/.bash_install' for a list of applications to install."
-    ;;
-esac
-
-configure_todos
-make_etc_hosts_adfree
-modify_etc_hosts
-configure_1password_cli
-get_ssh_and_aws_keys_from_onepassword
-get_firefox_multi_account_containers_from_onepassword
