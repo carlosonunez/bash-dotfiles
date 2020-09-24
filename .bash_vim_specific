@@ -12,6 +12,7 @@ chr4/nginx.vim
 claco/jasmine.vim
 dhruvasagar/vim-table-mode
 flazz/vim-colorschemes
+hashivim/vim-terraform
 junegunn/vim-easy-align
 junegunn/vim-emoji
 leafgarland/typescript-vim
