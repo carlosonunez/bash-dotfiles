@@ -14,37 +14,18 @@ do
 done
 }
 
-create_symlinks_for_directories() {
-  for directory in 'scripts'
-  do
-    destination_for_directory=$(echo "$found_directory" | \
-      sed "s#${DEFAULT_SETUP_DIRECTORY}#$HOME#")
-    if [ ! -L "$destination_for_directory" ] || \
-      [ ! -f "$destination_for_directory" ]
-    then
-      /usr/bin/env ln -s "$found_directory" "$destination_for_directory"
-    else
-      >&2 echo "INFO: Symlink already exists: $destination_for_directory"
-    fi
-  done
-}
-
 create_symlinks_for_config_files() {
-for managed_file in '.bash_' '.tmux' '.vim'
-do
-  find "${DEFAULT_SETUP_DIRECTORY}"/"${managed_file}"* -maxdepth 0 | \
-    while read found_config_file
-    do
-      destination_for_config_file=$(echo "$found_config_file" | \
-          sed "s#${DEFAULT_SETUP_DIRECTORY}#$HOME#")
-      if [ ! -L "$destination_for_config_file" ] || \
-        [ ! -f "$destination_for_config_file" ]
-      then
-        /usr/bin/env ln -s "$found_config_file" "$destination_for_config_file"
-      else
-        >&2 echo "INFO: Symlink already exists: $destination_for_config_file"
-      fi
-    done
+  all_bash_files=$(find $(dirname $0) -maxdepth 1 -type f -name ".bash_*" -exec basename {} \;)
+  for managed_file in $all_bash_files '.tmux' '.vim'
+  do
+    symlink_path="${HOME}/$managed_file"
+    target_path="${DEFAULT_SETUP_DIRECTORY}/$managed_file"
+    if test -L "$symlink_path"
+    then
+      >&2 echo "INFO: Symlink exists: $symlink_path"
+    else
+      /usr/bin/env ln -s "$target_path" "$symlink_path" || true
+    fi
   done
 }
 
@@ -65,7 +46,7 @@ create_vim_directories() {
 copy_from_onedrive_if_within_lxss_for_windows() {
   dir_to_copy_from="${1?Please provide a source directory.}"
   dir_to_copy_to="${2?Please provide the directory to copy to.}"
-  if cat /proc/version | grep -q 'Microsoft'
+  if test -f "/proc/version" && (cat /proc/version | grep -q 'Microsoft')
   then
     cmd.exe /c 'echo %USERNAME%' > /tmp/windows_username
     windows_username=$(cat -v '/tmp/windows_username' | tr -d '^M')
@@ -79,10 +60,10 @@ copy_from_onedrive_if_within_lxss_for_windows() {
   fi
 }
 
-create_symlinks_for_rtv() {
-  mkdir -p ~/.config/rtv &&
-    ln -s "${DEFAULT_SETUP_DIRECTORY}/rtv_configs/rtv.cfg" ~/.config/rtv/rtv.cfg &&
-    ln -s "${DEFAULT_SETUP_DIRECTORY}/rtv_configs/.mailcap" ~/.mailcap
+create_symlinks_for_tuir() {
+  mkdir -p ~/.config/tuir &&
+    ln -s "${DEFAULT_SETUP_DIRECTORY}/tuir_configs/tuir.cfg" ~/.config/tuir/tuir.cfg || true &&
+    ln -s "${DEFAULT_SETUP_DIRECTORY}/tuir_configs/.mailcap" ~/.mailcap || true
 }
 
 copy_ssh_keys_from_onedrive() {
@@ -97,8 +78,7 @@ copy_aws_keys_from_onedrive() {
 if {
   check_for_required_directories &&
   create_symlinks_for_config_files &&
-  create_symlinks_for_directories &&
-  create_symlinks_for_rtv &&
+  create_symlinks_for_tuir &&
   create_vim_directories &&
   copy_ssh_keys_from_onedrive &&
   copy_aws_keys_from_onedrive;
