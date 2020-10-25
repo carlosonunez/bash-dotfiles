@@ -9,3 +9,9 @@ then
   install_application "ruby"
 fi
 which bundle &> /dev/null || gem install bundler
+
+if ! which rvm &>/dev/null
+then
+  >&2 echo "INFO: Installing RVM; please hang on."
+  \curl -sSL https://get.rvm.io | bash -s stable --ruby
+fi
