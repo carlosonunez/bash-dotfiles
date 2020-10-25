@@ -327,7 +327,10 @@ unlock_install() {
 }
 
 install_reddit_cli() {
-  pip install tuir
+  if ! tuir --version &>/dev/null
+  then
+    pip install tuir
+  fi
 }
 
 if ! install_lock_open
