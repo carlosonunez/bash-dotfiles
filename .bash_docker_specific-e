@@ -35,11 +35,23 @@ then
   then
     >&2 printf "${BRed}ERROR${NC}: Python version of Docker Compose not found. \
 You might experience performance issues while using Compose."
-    return 0
+  else
+    printf "${BYellow}INFO${NC}: Subbing compiled Compose binary with Python version (password \
+  might be required)\n"
+    dc_location=$(which docker-compose)
+    sudo rm -f "$dc_location"
+    sudo cp ~/bin/docker-compose "$dc_location"
   fi
-  printf "${BYellow}INFO${NC}: Subbing compiled Compose binary with Python version (password \
-might be required)\n"
-  dc_location=$(which docker-compose)
-  sudo rm -f "$dc_location"
-  sudo cp ~/bin/docker-compose "$dc_location"
+fi
+
+if ! test -f $(brew --prefix)/etc/bash_completion.d/docker-compose
+then
+  sudo curl -L https://raw.githubusercontent.com/docker/compose/1.27.4/contrib/completion/bash/docker-compose \
+    -o $(brew --prefix)/etc/bash_completion.d/docker-compose
+fi
+
+if ! test -f $(brew --prefix)/etc/bash_completion.d/docker
+then
+  sudo curl -L https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker \
+    -o $(brew --prefix)/etc/bash_completion.d/docker.sh
 fi
