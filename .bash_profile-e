@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-export LC_CTYPE="en_US.UTF8"
-export LANG="en_US.UTF8"
+export LC_ALL="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
+export LANG="en_US.UTF-8"
 source ~/.bash_colors
 source ~/.bash_exports
 ensure_bash_profile_is_symlinked() {
@@ -100,3 +101,5 @@ else
     add_keys_to_ssh_agent
 fi
 
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
