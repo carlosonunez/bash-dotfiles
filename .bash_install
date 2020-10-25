@@ -16,7 +16,6 @@ imagemagick
 jq
 mas
 reattach-to-user-namespace
-rtv
 ruby
 scrcpy
 tmux
@@ -327,6 +326,10 @@ unlock_install() {
   rm -f "$INSTALL_LOCK_FILE"
 }
 
+install_reddit_cli() {
+  pip install tuir
+}
+
 if ! install_lock_open
 then
   >&2 echo "ERROR: An installation is in progress in another window or pane."
@@ -364,6 +367,7 @@ else
       ;;
   esac
 
+  install_reddit_cli
   configure_todos
   make_etc_hosts_adfree
   modify_etc_hosts
