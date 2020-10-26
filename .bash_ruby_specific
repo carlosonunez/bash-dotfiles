@@ -12,6 +12,15 @@ which bundle &> /dev/null || gem install bundler
 
 if ! rvm --version &>/dev/null
 then
-  >&2 echo "INFO: Installing RVM; please hang on."
-  \curl -sSL https://get.rvm.io | bash -s stable --ruby
+  # Prevent RVM from installing if multiple tmux panes are open
+  random_wait_time=$(bc -l <<< "scale=4 ; ${RANDOM}/32767")
+  sleep $random_wait_time
+  if ! test -f "/tmp/rvm_lock_file"
+  then
+    touch "/tmp/rvm_lock_file"
+    >&2 echo "INFO: Installing RVM; please hang on."
+    \curl -sSL https://get.rvm.io | bash -s stable --ruby
+  else
+    >&2 echo "WARNING: Another installation of RVM is already in progress."
+  fi
 fi
