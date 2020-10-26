@@ -371,6 +371,14 @@ get_cwd() {
   fi
 }
 
+update_dotfiles() {
+  pushd $HOME/src/setup
+  test -z "$(git status --porcelain)" || git stash
+  git pull --rebase
+  test -z "$(git stash list)" || git stash pop
+  popd
+}
+
 # =================
 # SET PROMPT
 # =================
