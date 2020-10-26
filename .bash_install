@@ -336,7 +336,8 @@ install_reddit_cli() {
 
 if ! install_lock_open
 then
-  >&2 echo "ERROR: An installation is in progress in another window or pane."
+  >&2 echo "ERROR: .bash_install is installing apps in another window or pane. \
+Skipping to post-install."
 else
   lock_install
 
@@ -370,14 +371,13 @@ else
       >&2 echo "WARNING: See '$HOME/.bash_install' for a list of applications to install."
       ;;
   esac
-
-  install_reddit_cli
-  configure_todos
-  make_etc_hosts_adfree
-  modify_etc_hosts
   configure_1password_cli
   get_ssh_and_aws_keys_from_onepassword
   get_firefox_multi_account_containers_from_onepassword
-
   unlock_install
 fi
+
+install_reddit_cli
+configure_todos
+make_etc_hosts_adfree
+modify_etc_hosts
