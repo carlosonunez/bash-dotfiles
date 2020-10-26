@@ -315,7 +315,8 @@ system before. Enter your 1Password email address to configure it now: " onepass
 }
 
 install_lock_open() {
-  ! test -f "$INSTALL_LOCK_FILE"
+  random_wait_time=$(bc -l <<< "scale=4 ; ${RANDOM}/32767")
+  sleep $random_wait_time && ! test -f "$INSTALL_LOCK_FILE"
 }
 
 lock_install() {
@@ -341,7 +342,7 @@ else
 
   # Install NERD fonts and icons
   # =============================
-  if ! brew cask list font-dejavu-sans-mono-nerd-font &>/dev/null
+  if ! brew list --cask font-dejavu-sans-mono-nerd-font &>/dev/null
   then
     brew tap homebrew/cask-fonts && brew cask install font-dejavu-sans-mono-nerd-font
   fi
