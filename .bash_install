@@ -343,7 +343,7 @@ else
 
   # Install NERD fonts and icons
   # =============================
-  if ! brew list --cask font-dejavu-sans-mono-nerd-font &>/dev/null
+  if ! brew list --cask font-dejavusansmono-nerd-font &>/dev/null
   then
     brew tap homebrew/cask-fonts && brew cask install font-dejavu-sans-mono-nerd-font
   fi
