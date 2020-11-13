@@ -1,4 +1,27 @@
 #!/usr/bin/env bash
+DOCKER_CHECK_SENTINEL_FILE=/tmp/docker_installation_in_progress
+
+docker_check_mutex_lock() {
+  touch "$DOCKER_CHECK_SENTINEL_FILE"
+}
+
+docker_check_mutex_unlock() {
+  rm -f "$DOCKER_CHECK_SENTINEL_FILE"
+}
+
+installation_is_locked() {
+  random_wait_time=$(bc -l <<< "scale=4 ; ${RANDOM}/32767")
+  sleep "$random_wait_time" && test -e "$DOCKER_CHECK_SENTINEL_FILE"
+}
+
+if installation_is_locked
+then
+  >&2 printf "${BGreen}INFO:${NC} Docker installation is in progress in another window."
+  return 0
+fi
+
+docker_check_mutex_lock
+
 if ! which docker &>/dev/null
 then
   printf "Installing ${BGreen}docker${NC}\n"
@@ -29,7 +52,7 @@ then
   sudo usermod -aG docker $USER
 fi
 
-if $(file $(which docker-compose) | grep -q "Mach-O")
+if ! $(file $(which docker-compose) | grep -q "Mach-O")
 then
   if ! test -f ~/bin/docker-compose
   then
@@ -44,14 +67,16 @@ You might experience performance issues while using Compose."
   fi
 fi
 
-if ! test -f $(brew --prefix)/etc/bash_completion.d/docker-compose
+if ! test -e $(brew --prefix)/etc/bash_completion.d/docker-compose
 then
   sudo curl -L https://raw.githubusercontent.com/docker/compose/1.27.4/contrib/completion/bash/docker-compose \
     -o $(brew --prefix)/etc/bash_completion.d/docker-compose
 fi
 
-if ! test -f $(brew --prefix)/etc/bash_completion.d/docker
+if ! test -e $(brew --prefix)/etc/bash_completion.d/docker
 then
   sudo curl -L https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker \
     -o $(brew --prefix)/etc/bash_completion.d/docker.sh
 fi
+
+docker_check_mutex_unlock
