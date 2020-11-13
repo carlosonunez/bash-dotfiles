@@ -316,7 +316,7 @@ system before. Enter your 1Password email address to configure it now: " onepass
 
 install_lock_open() {
   random_wait_time=$(bc -l <<< "scale=4 ; ${RANDOM}/32767")
-  sleep $random_wait_time && ! test -f "$INSTALL_LOCK_FILE"
+  sleep $random_wait_time && ! test -e "$INSTALL_LOCK_FILE"
 }
 
 lock_install() {
@@ -355,6 +355,7 @@ else
   then
     >&2 echo "WARN: Internet access is not available. We will not attempt to install
   or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
+    unlock_install
     return 0
   fi
 
