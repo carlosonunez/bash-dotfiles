@@ -85,8 +85,8 @@ check_for_internet_access() {
   test "$(curl -s --connect-timeout 3 http://nil.carlosnunez.me)" == "i love socks."
 }
 
-get_homebrew_builtins() { brew list --full-name | tr '\t' '\n'; }
-get_homebrew_casks() { brew list --cask --full-name; }
+get_homebrew_builtins() { brew list --formula | tr '\t' '\n'; }
+get_homebrew_casks() { brew list --cask | tr '\t' '\n'; }
 get_app_store_apps() { mas list | sed -E 's/^[0-9]+ (.*) \(.*$/\1/'; }
 
 install_if_missing() {
