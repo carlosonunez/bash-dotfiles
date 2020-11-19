@@ -349,9 +349,10 @@ tap_caskroom_fonts() {
 
 if ! install_lock_open
 then
-  >&2 echo "ERROR: .bash_install is installing apps in another window or pane. \
-Skipping to post-install."
+  >&2 printf "${BRed}ERROR${NC}: .bash_install is installing apps in another window or pane. \
+Skipping to post-install.\n"
 else
+  >&2 printf "${BGreen}INFO${NC}: Checking and/or updating software. This might take a few minutes.\n"
   lock_install
   tap_caskroom_fonts
 
@@ -384,6 +385,7 @@ else
   unlock_install
 fi
 
+>&2 printf "${BGreen}INFO${NC}: Configuring system; please wait.\n"
 install_reddit_cli
 configure_todos
 make_etc_hosts_adfree
