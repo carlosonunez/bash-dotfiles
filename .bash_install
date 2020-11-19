@@ -23,8 +23,6 @@ todo-txt
 tree
 vim
 w3m
-vagrant
-virtualbox
 APPS
 )
 HOMEBREW_CASKS=$(cat <<-APPS
@@ -41,6 +39,8 @@ nightowl
 shiftit
 xquartz
 docker
+vagrant
+virtualbox
 APPS
 )
 APPLE_APP_STORE_APPS=$(cat <<-APPS
