@@ -34,6 +34,7 @@ vim-syntastic/syntastic.git
 yuratomo/w3m.vim
 zivyangll/git-blame.vim
 will133/vim-dirdiff
+rlue/vim-fold-rspec
 GITHUB_URLS
 )
 
