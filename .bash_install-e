@@ -33,6 +33,7 @@ android-platform-tools
 authy
 contexts
 firefox
+font-dejavu-sans-mono-nerd-font
 keyboardcleantool
 iterm2
 nightowl
@@ -336,20 +337,20 @@ install_reddit_cli() {
   fi
 }
 
+tap_caskroom_fonts() {
+  if ! brew tap | grep -q "homebrew/cask-fonts"
+  then
+    brew tap homebrew/cask-fonts
+  fi
+}
+
 if ! install_lock_open
 then
   >&2 echo "ERROR: .bash_install is installing apps in another window or pane. \
 Skipping to post-install."
 else
   lock_install
-
-  # Install NERD fonts and icons
-  # =============================
-  if ! brew list --cask font-dejavusansmono-nerd-font &>/dev/null
-  then
-    brew tap homebrew/cask-fonts && brew cask install font-dejavu-sans-mono-nerd-font
-  fi
-
+  tap_caskroom_fonts
 
   # Install a few necessary brew formulae
   # ======================================
