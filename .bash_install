@@ -42,6 +42,7 @@ xquartz
 docker
 vagrant
 virtualbox
+vlc
 APPS
 )
 APPLE_APP_STORE_APPS=$(cat <<-APPS
