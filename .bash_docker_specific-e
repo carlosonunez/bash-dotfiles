@@ -73,7 +73,11 @@ then
     -o $(brew --prefix)/etc/bash_completion.d/docker-compose
 fi
 
+<<<<<<< HEAD
 if ! test -e $(brew --prefix)/etc/bash_completion.d/docker
+=======
+if ! test -f $(brew --prefix)/etc/bash_completion.d/docker.sh
+>>>>>>> 4f710d2... Add fixes
 then
   sudo curl -L https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker \
     -o $(brew --prefix)/etc/bash_completion.d/docker.sh

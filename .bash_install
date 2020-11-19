@@ -23,6 +23,8 @@ todo-txt
 tree
 vim
 w3m
+vagrant
+virtualbox
 APPS
 )
 HOMEBREW_CASKS=$(cat <<-APPS
