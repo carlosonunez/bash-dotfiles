@@ -35,6 +35,7 @@ yuratomo/w3m.vim
 zivyangll/git-blame.vim
 will133/vim-dirdiff
 rlue/vim-fold-rspec
+fatih/vim-go
 GITHUB_URLS
 )
 
