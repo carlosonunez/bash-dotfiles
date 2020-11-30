@@ -51,7 +51,8 @@ Shush
 APPS
 )
 ETC_HOSTS_EXCLUSIONS=$(cat <<-EXCLUSIONS
-web\.whatsapp\.com
+.*\.whatsapp\.com
+.*\.whatsapp\.net
 twitter\.com
 t\.co
 www\.t\.co
