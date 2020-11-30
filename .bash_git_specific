@@ -34,7 +34,7 @@ update_origin_url() {
   elif grep -q 'url = git@github.com' .git/config
   then
     # match repos cloned by ssh
-    gsed -i 's/git@github.com/git@github.carlosunez.me/' .git/config
+    gsed -i 's/git@github.com/git@github.carlosnunez.me/' .git/config
   else
     >&2 echo "ERROR: Unsupported clone scheme detected."
   fi
