@@ -25,6 +25,7 @@ set_path() {
 /Users/$USER/.gems
 /Users/$USER/.gems/bin
 /usr/local/opt/coreutils/libexec/gnubin
+/usr/local/opt/make/libexec/gnubin
 /usr/local/bin
 /usr/bin
 /bin
