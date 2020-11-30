@@ -184,6 +184,7 @@ let g:used_javascript_libs = 'jquery,angularjs,angularui,react,jasmine,chai'
 let g:syntastic_sh_checkers = ["shellcheck"]
 let g:syntastic_python_checkers = ["pylint", "-E"]
 let g:syntastic_ruby_checkers = ["rubocop"]
+let g:syntastic_go_checkers = [ 'go', 'golint', 'errcheck' ]
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1

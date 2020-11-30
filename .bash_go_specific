@@ -35,12 +35,3 @@ done
 # ===================
 export GOPATH="${GO_SRC_FOLDER}"
 export PATH=$PATH:$GOPATH/bin
-
-# Setup vim-go
-# =============
-if [[ ! -d ~/.vim/bundle/vim-go ]]
-then
-  echo "Installing vim-go (a better vim plugin for Golang)"
-  git clone https://github.com/fatih/vim-go.git ~/.vim/bundle/vim-go
-fi
-set +x
