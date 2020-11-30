@@ -15,6 +15,7 @@ htop
 imagemagick
 jq
 mas
+make
 reattach-to-user-namespace
 ruby
 scrcpy
