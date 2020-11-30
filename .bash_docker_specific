@@ -52,19 +52,15 @@ then
   sudo usermod -aG docker $USER
 fi
 
-if ! $(file $(which docker-compose) | grep -q "Mach-O")
+if $(file $(which docker-compose) | grep -q "Mach-O")
 then
-  if ! test -f ~/bin/docker-compose
+  if test -z "$VIRTUAL_ENV"
   then
-    >&2 printf "${BRed}ERROR${NC}: Python version of Docker Compose not found. \
-You might experience performance issues while using Compose."
-  else
-    printf "${BYellow}INFO${NC}: Subbing compiled Compose binary with Python version (password \
-  might be required)\n"
-    dc_location=$(which docker-compose)
-    sudo rm -f "$dc_location"
-    sudo cp ~/bin/docker-compose "$dc_location"
+    >&2 echo "ERROR: Can't install Docker Compose; install virtualenv first."
+    return 1
   fi
+  >&2 echo "INFO: Subbing compiled Docker Compose with Python version"
+  pip install docker-compose
 fi
 
 if ! test -e $(brew --prefix)/etc/bash_completion.d/docker-compose
