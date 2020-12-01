@@ -3,6 +3,13 @@
 DEFAULT_CONFIGURATION_DIRECTORY="$HOME/src"
 DEFAULT_SETUP_DIRECTORY="${DEFAULT_CONFIGURATION_DIRECTORY}/setup"
 
+install_homebrew() {
+  if ! which brew &>/dev/null
+  then
+    "$(dirname $0)/install_homebrew.sh"
+  fi
+}
+
 check_for_required_directories() {
 for required_directory in "$DEFAULT_CONFIGURATION_DIRECTORY" "$DEFAULT_SETUP_DIRECTORY"
 do
@@ -16,7 +23,7 @@ done
 
 create_symlinks_for_config_files() {
   all_bash_files=$(find $(dirname $0) -maxdepth 1 -type f -name ".bash_*" -exec basename {} \;)
-  for managed_file in $all_bash_files '.tmux' '.vim'
+  for managed_file in $all_bash_files '.vim' '.tmux.conf' '.vimrc'
   do
     symlink_path="${HOME}/$managed_file"
     target_path="${DEFAULT_SETUP_DIRECTORY}/$managed_file"
@@ -76,6 +83,7 @@ copy_aws_keys_from_onedrive() {
 }
 
 if {
+  install_homebrew &&
   check_for_required_directories &&
   create_symlinks_for_config_files &&
   create_symlinks_for_tuir &&
