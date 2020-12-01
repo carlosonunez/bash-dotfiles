@@ -322,6 +322,35 @@ system before. Enter your 1Password email address to configure it now: " onepass
   fi
 }
 
+_get_1pass_password() {
+  key_name="${1:-1password_password}"
+  key_type="${2:-password}"
+  if test "$CHANGE_1PASS_PASSWORD" != "true"
+  then
+    password="$(security find-generic-password -a "$USER" -s "$key_name" -w 2>/dev/null)"
+    if ! test -z "$password"
+    then
+      printf "$password" | pbcopy
+      >&2 echo "INFO: Your 1Password $key_type has been copied into your keyboard."
+      return 0
+    fi
+  fi
+  read -s -p "Saving your 1Password $key_type locally to your Mac. Enter it here: " password
+  security add-generic-password -a "$USER" \
+    -s "$key_name" \
+    -w "$password" \
+    -U
+  CHANGE_1PASS_PASSWORD=false _get_1pass_password "$1" "$2"
+}
+
+get_1pass_password() {
+  _get_1pass_password "1password_password" "password"
+}
+
+get_1pass_secret_key() {
+  _get_1pass_password "1password_sk" "secret key"
+}
+
 install_lock_open() {
   random_wait_time=$(bc -l <<< "scale=4 ; ${RANDOM}/32767")
   sleep $random_wait_time && ! test -e "$INSTALL_LOCK_FILE"
