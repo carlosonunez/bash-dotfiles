@@ -275,7 +275,7 @@ update_firefox_multi_account_containers_into_onepassword() {
   if ! test -z "$containers_string"
   then
     >&2 echo "INFO: Updating 1Password."
-    op edit item 'Firefox Multi-Account Container Configuration' notesPlain="$containers_string"
+    op edit item --vault "$ONEPASSWORD_VAULT" 'Firefox Multi-Account Container Configuration' notesPlain="$containers_string"
   fi
 }
 
