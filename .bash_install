@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+trap "rm -f $INSTALL_LOCK_FILE" INT
+
 ONEPASSWORD_VAULT="${ONEPASSWORD_VAULT:-"Carlos's Personal Vault"}"
 INSTALL_LOCK_FILE="$HOME/.bash_install_lock"
 HOMEBREW_BUILTINS=$(cat <<-APPS
@@ -107,11 +109,19 @@ install_if_missing() {
 }
 
 install_homebrew_builtins() {
-  install_if_missing "$pkg" "$(get_homebrew_builtins)" "brew install" $HOMEBREW_BUILTINS
+  # TECH NOTE: There isn't an option to hide warnings because the Homebrew
+  # developers don't think that it's necessary, which is sad.
+  # https://github.com/Homebrew/brew/issues/2351
+  2>&1 brew install $(echo "$HOMEBREW_BUILTINS" | tr '\n' ' ') | \
+    grep --line-buffered --color=always -Ev "(already installed|brew reinstall)"
 }
 
 install_homebrew_casks() {
-  install_if_missing "$pkg" "$(get_homebrew_casks)" "brew cask install" $HOMEBREW_CASKS
+  # TECH NOTE: There isn't an option to hide warnings because the Homebrew
+  # developers don't think that it's necessary, which is sad.
+  # https://github.com/Homebrew/brew/issues/2351
+  2>&1 brew cask install --quiet $(echo "$HOMEBREW_CASKS" | tr '\n' ' ') | \
+    grep --line-buffered --color=always -Ev "(already installed|brew reinstall|re-install|^$)"
 }
 
 install_app_store_apps() {
@@ -196,10 +206,12 @@ generate_and_save_onepass_token() {
   save_op_token_to_keychain() {
     >&2 echo "INFO: Saving 1Password token to your Keychain. Enter your system \
 password if prompted."
+    set -x
     security add-generic-password -a "$USER" \
       -s "1password_cli_token"  \
       -w "$OP_SESSION_my" \
       -U
+    set +x
   }
 
   verify_that_we_are_on_a_mac
@@ -300,7 +312,7 @@ system before. Enter your 1Password email address to configure it now: " onepass
 
   is_onepass_token_valid() {
     token="$1"
-    op confirm --all --session "$token" &>/dev/null
+    op list vaults --session "$token" &>/dev/null
   }
 
   get_onepass_token() {
@@ -351,13 +363,36 @@ get_1pass_secret_key() {
   _get_1pass_password "1password_sk" "secret key"
 }
 
-install_lock_open() {
+installation_is_locked() {
   random_wait_time=$(bc -l <<< "scale=4 ; ${RANDOM}/32767")
-  sleep $random_wait_time && ! test -e "$INSTALL_LOCK_FILE"
+  sleep $random_wait_time && test -e "$INSTALL_LOCK_FILE"
+}
+
+remove_dead_install_locks() {
+  bash_processes_holding_lock() {
+    ps -ef | grep bash | grep -q "$(get_bash_process_holding_lock)"
+  }
+  if installation_is_locked
+  then
+    if ! bash_processes_holding_lock
+    then
+      unlock_install
+    fi
+  fi
+}
+
+get_bash_process_holding_lock() {
+  cat "$INSTALL_LOCK_FILE"
+}
+
+get_tmux_windowpane_holding_lock() {
+  tmux list-panes -a -F "#{pane_pid} #{window_name}:#{window_id}-#{pane_id}" | \
+    grep "$(get_bash_process_holding_lock)" | \
+    cut -f2 -d ' '
 }
 
 lock_install() {
-  touch "$INSTALL_LOCK_FILE"
+  printf $$ > "$INSTALL_LOCK_FILE"
 }
 
 unlock_install() {
@@ -378,10 +413,12 @@ tap_caskroom_fonts() {
   fi
 }
 
-if ! install_lock_open
+remove_dead_install_locks
+if installation_is_locked
 then
-  >&2 printf "${BRed}ERROR${NC}: .bash_install is installing apps in another window or pane. \
-Skipping to post-install.\n"
+  >&2 echo -e "${BRed}ERROR${NC}: .bash_install is installing apps in \
+tmux window-pane $(get_tmux_windowpane_holding_lock). \
+Skipping to post-install."
 else
   >&2 printf "${BGreen}INFO${NC}: Checking and/or updating software. This might take a few minutes.\n"
   lock_install
