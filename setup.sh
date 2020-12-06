@@ -3,6 +3,16 @@
 DEFAULT_CONFIGURATION_DIRECTORY="$HOME/src"
 DEFAULT_SETUP_DIRECTORY="${DEFAULT_CONFIGURATION_DIRECTORY}/setup"
 
+clone_dotfiles() {
+  if test -d "$DEFAULT_SETUP_DIRECTORY"
+  then
+    >&2 echo "ERROR: Setup directory already exists at $DEFAULT_SETUP_DIRECTORY. Add \
+OVERWRITE=true to the beginning of this command to fix that."
+    return 1
+  fi
+  git clone https://github.com/carlosonunez/bash-dotfiles $DEFAULT_SETUP_DIRECTORY
+}
+
 install_homebrew() {
   if ! which brew &>/dev/null
   then
@@ -83,6 +93,7 @@ copy_aws_keys_from_onedrive() {
 }
 
 if {
+  clone_dotfiles &&
   install_homebrew &&
   check_for_required_directories &&
   create_symlinks_for_config_files &&
