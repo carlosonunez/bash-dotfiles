@@ -13,6 +13,14 @@ OVERWRITE=true to the beginning of this command to fix that."
   git clone https://github.com/carlosonunez/bash-dotfiles $DEFAULT_SETUP_DIRECTORY
 }
 
+set_context() {
+  pushd $DEFAULT_SETUP_DIRECTORY
+}
+
+leave_context() {
+  popd
+}
+
 install_homebrew() {
   if ! which brew &>/dev/null
   then
@@ -60,47 +68,21 @@ create_vim_directories() {
   done
 }
 
-copy_from_onedrive_if_within_lxss_for_windows() {
-  dir_to_copy_from="${1?Please provide a source directory.}"
-  dir_to_copy_to="${2?Please provide the directory to copy to.}"
-  if test -f "/proc/version" && (cat /proc/version | grep -q 'Microsoft')
-  then
-    cmd.exe /c 'echo %USERNAME%' > /tmp/windows_username
-    windows_username=$(cat -v '/tmp/windows_username' | tr -d '^M')
-    windows_onedrive_directory="/mnt/c/Users/${windows_username}/OneDrive"
-    if [ -d "$windows_onedrive_directory" ]
-    then
-      >&2 echo "INFO: Copying from $dir_to_copy_from within OneDrive to $dir_to_copy_to"
-      mkdir -p "$dir_to_copy_to" 2>/dev/null
-      cp -v "${windows_onedrive_directory}/${dir_to_copy_from}"/* "$dir_to_copy_to"
-    fi
-  fi
-}
-
 create_symlinks_for_tuir() {
   mkdir -p ~/.config/tuir &&
     ln -s "${DEFAULT_SETUP_DIRECTORY}/tuir_configs/tuir.cfg" ~/.config/tuir/tuir.cfg || true &&
     ln -s "${DEFAULT_SETUP_DIRECTORY}/tuir_configs/.mailcap" ~/.mailcap || true
 }
 
-copy_ssh_keys_from_onedrive() {
-  copy_from_onedrive_if_within_lxss_for_windows "ssh_keys" "$HOME/.ssh"
-  grep -rlH 'RSA' $HOME/.ssh | xargs chmod 600
-}
-
-copy_aws_keys_from_onedrive() {
-  copy_from_onedrive_if_within_lxss_for_windows "aws_keys" "$HOME/.aws"
-}
-
 if {
   clone_dotfiles &&
+  set_context &&
   install_homebrew &&
   check_for_required_directories &&
   create_symlinks_for_config_files &&
   create_symlinks_for_tuir &&
   create_vim_directories &&
-  copy_ssh_keys_from_onedrive &&
-  copy_aws_keys_from_onedrive;
+  leave_context
 }
 then
   tell_user_what_to_do_next
