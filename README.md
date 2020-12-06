@@ -5,4 +5,4 @@ since 2012!
 
 Want to use them? Run this:
 
-`curl -fsSL https://raw.githubusercontent.com/carlosonunez/bash-dotfiles/HEAD/setup.sh | bash`
+`curl -fsSL https://raw.githubusercontent.com/carlosonunez/bash-dotfiles/master/setup.sh | bash`
