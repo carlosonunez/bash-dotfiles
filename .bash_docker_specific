@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 DOCKER_CHECK_SENTINEL_FILE=/tmp/docker_installation_in_progress
+trap "rm -rf $DOCKER_CHECK_SENTINEL_FILE" INT EXIT
 
 docker_check_mutex_lock() {
-  touch "$DOCKER_CHECK_SENTINEL_FILE"
+  printf $$ >> "$DOCKER_CHECK_SENTINEL_FILE"
 }
 
 docker_check_mutex_unlock() {
@@ -14,6 +15,24 @@ installation_is_locked() {
   sleep "$random_wait_time" && test -e "$DOCKER_CHECK_SENTINEL_FILE"
 }
 
+get_bash_process_holding_lock() {
+  cat "$DOCKER_CHECK_SENTINEL_FILE"
+}
+
+remove_dead_install_locks() {
+  bash_processes_holding_lock() {
+    ps -ef | grep bash | grep -q "$(get_bash_process_holding_lock)"
+  }
+  if installation_is_locked
+  then
+    if ! bash_processes_holding_lock
+    then
+      unlock_install
+    fi
+  fi
+}
+
+remove_dead_install_locks
 if installation_is_locked
 then
   >&2 printf "${BGreen}INFO:${NC} Docker installation is in progress in another window."

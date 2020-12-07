@@ -4,6 +4,20 @@ tmux_is_installed() {
   &>/dev/null which tmux
 }
 
+add_additional_tmux_windows() {
+  set -x
+  if ! test -z "$ADDITIONAL_TMUX_WINDOWS_CSV"
+  then
+    idx=2
+    printf "$ADDITIONAL_TMUX_WINDOWS_CSV" | \
+      tr ',' '\n' | \
+      while read -r window
+      do tmux new-window -t "$TMUX_SESSION_NAME:1" -n "$window" && idx=$((idx+1))
+      done
+  fi
+  set +x
+}
+
 # Are we in an SSH session?
 in_ssh_session() {
   ! test -z "$SSH_CLIENT"
@@ -44,6 +58,7 @@ start_tmux() {
   start_tmux_with_single_window() {
     tmux new-session -d -s "$TMUX_SESSION_NAME" && \
       tmux new-window -t "$TMUX_SESSION_NAME:1" -n "reddit" && \
+      add_additional_tmux_windows && \
       tmux select-window -t "$TMUX_SESSION_NAME:0" && \
       tmux attach-session -t "$TMUX_SESSION_NAME"
   }

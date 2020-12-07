@@ -92,6 +92,7 @@ then
   start_tmux
 elif tmux_session_is_present && ! in_tmux_session
 then
+  configure_client_or_company_specific_settings &&
   join_tmux_session
 else
   PROMPT_COMMAND='e=$?; set_bash_prompt $e'
