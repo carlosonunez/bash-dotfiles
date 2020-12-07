@@ -45,7 +45,7 @@ configure_client_or_company_specific_settings() {
   # these changes since they will differ from client to client.
   for file in $(find $HOME -type f -name ".bash_company_*" -maxdepth 1)
   do
-    printf "${BYellow}INFO${NC}: Loading company submodule ${file}\n"
+    printf "${BYellow}INFO${NC}: Loading company submodule ${BYellow}${file}${NC}\n"
     source $file
   done
 }
