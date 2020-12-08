@@ -183,41 +183,6 @@ configure_todos() {
   fi
 }
 
-generate_and_save_onepass_token() {
-  account_email="$1"
-  verify_that_we_are_on_a_mac() {
-    if ! test "$(get_os_type)" == "Darwin"
-    then
-      >&2 echo "WARNING: 1Password CLI is not supported on $(get_os_type) yet."
-      return 0
-    fi
-  }
-
-  sign_in() {
-    email="$1"
-    if ! test -z "$email"
-    then
-      export OP_SESSION_my=$(op signin my -r $email)
-    else
-      export OP_SESSION_my=$(op signin my -r)
-    fi
-  }
-
-  save_op_token_to_keychain() {
-    >&2 echo "INFO: Saving 1Password token to your Keychain. Enter your system \
-password if prompted."
-    set -x
-    security add-generic-password -a "$USER" \
-      -s "1password_cli_token"  \
-      -w "$OP_SESSION_my" \
-      -U
-    set +x
-  }
-
-  verify_that_we_are_on_a_mac
-  sign_in "$account_email" && save_op_token_to_keychain
-}
-
 get_ssh_and_aws_keys_from_onepassword() {
   ssh_folder_not_present_or_empty() {
     # TECH NOTE: executing `find` against an empty directory will only
@@ -289,78 +254,6 @@ update_firefox_multi_account_containers_into_onepassword() {
     >&2 echo "INFO: Updating 1Password."
     op edit item --vault "$ONEPASSWORD_VAULT" 'Firefox Multi-Account Container Configuration' notesPlain="$containers_string"
   fi
-}
-
-configure_1password_cli() {
-  verify_that_we_are_on_a_mac() {
-    if ! test "$(get_os_type)" == "Darwin"
-    then
-      >&2 echo "WARNING: 1Password CLI is not supported on $(get_os_type) yet."
-      return 0
-    fi
-  }
-
-  onepass_has_not_been_run_before() {
-    ! test -d "$HOME/.config/op"
-  }
-
-  run_first_time_setup() {
-    read -p "INFO: It looks like the 1Password CLI hasn't been set up on this \
-system before. Enter your 1Password email address to configure it now: " onepass_email
-    generate_and_save_onepass_token "$onepass_email"
-  }
-
-  is_onepass_token_valid() {
-    token="$1"
-    op list vaults --session "$token" &>/dev/null
-  }
-
-  get_onepass_token() {
-    security find-generic-password -a "$USER" -s "1password_cli_token" -w
-  }
-
-  verify_that_we_are_on_a_mac
-  if onepass_has_not_been_run_before
-  then
-    run_first_time_setup
-  else
-    token=$(get_onepass_token)
-    if ! is_onepass_token_valid "$token"
-    then
-      generate_and_save_onepass_token
-    else
-      export OP_SESSION_my=$token
-    fi
-  fi
-}
-
-_get_1pass_password() {
-  key_name="${1:-1password_password}"
-  key_type="${2:-password}"
-  if test "$CHANGE_1PASS_PASSWORD" != "true"
-  then
-    password="$(security find-generic-password -a "$USER" -s "$key_name" -w 2>/dev/null)"
-    if ! test -z "$password"
-    then
-      printf "$password" | pbcopy
-      >&2 echo "INFO: Your 1Password $key_type has been copied into your keyboard."
-      return 0
-    fi
-  fi
-  read -s -p "Saving your 1Password $key_type locally to your Mac. Enter it here: " password
-  security add-generic-password -a "$USER" \
-    -s "$key_name" \
-    -w "$password" \
-    -U
-  CHANGE_1PASS_PASSWORD=false _get_1pass_password "$1" "$2"
-}
-
-get_1pass_password() {
-  _get_1pass_password "1password_password" "password"
-}
-
-get_1pass_secret_key() {
-  _get_1pass_password "1password_sk" "secret key"
 }
 
 installation_is_locked() {
