@@ -24,7 +24,10 @@ set_context() {
 }
 
 leave_context() {
-  popd
+  if test "${#DIRSTACK[@]}" -gt 1
+  then
+    popd
+  fi
 }
 
 install_homebrew() {
