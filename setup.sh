@@ -76,6 +76,11 @@ create_symlinks_for_tuir() {
     ln -s "${DEFAULT_SETUP_DIRECTORY}/tuir_configs/.mailcap" ~/.mailcap || true
 }
 
+create_symlinks_for_w3m() {
+  mkdir -p ~/.w3m &&
+    ln -s "${DEFAULT_SETUP_DIRECTORY}/w3m.config" ~/.w3m/config || true
+}
+
 if {
   clone_dotfiles &&
   set_context &&
@@ -84,6 +89,7 @@ if {
   create_symlinks_for_config_files &&
   create_symlinks_for_tuir &&
   create_vim_directories &&
+  create_symlinks_for_w3m &&
   leave_context
 }
 then
