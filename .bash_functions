@@ -431,3 +431,8 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
     PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Green\]($git_branch)\[$NC\] $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   fi
 }
+
+preview_markdown() {
+  >&2 printf "${BGreen}INFO${NC}: Visit http://localhost:6419 to view your stuff.\n"
+  docker run -it --rm -v $PWD:/data -p 6419:3080 thomsch98/markserv
+}
