@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 GITHUB_SSH_KEY="$HOME/.ssh/github"
-GIT_DEFAULT_AUTHOR="Carlos Nunez"
-GIT_DEFAULT_EMAIL="carlosonunez@noreply.github.com"
+GIT_DEFAULT_AUTHOR="${GIT_DEFAULT_AUTHOR:-Carlos Nunez}"
+GIT_DEFAULT_EMAIL="${GIT_DEFAULT_EMAIL:-carlosonunez@noreply.github.com}"
 
 set_git_author() {
   if ! test -z "$WORK_GIT_AUTHOR" && ! test -z "$WORK_GIT_EMAIL"
