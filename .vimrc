@@ -141,7 +141,8 @@ set number
 nnoremap <leader>n :set number!<cr>
 
 " NERDtree things.
-nmap <leader>ft :NERDTreeToggle<cr>
+nmap <leader>t :NERDTreeToggle<cr>
+nmap <leader>f :NERDTreeFind<cr>
 
 " Key remappings.
 nnoremap <C-n> :bnext<CR>
