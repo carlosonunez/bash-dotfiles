@@ -4,15 +4,19 @@ trap 'leave_context' INT EXIT
 
 DEFAULT_CONFIGURATION_DIRECTORY="$HOME/src"
 DEFAULT_SETUP_DIRECTORY="${DEFAULT_CONFIGURATION_DIRECTORY}/setup"
+FORCE="${FORCE:-false}"
 
 clone_dotfiles() {
-  if test -d "$DEFAULT_SETUP_DIRECTORY"
+  if test -d "$DEFAULT_SETUP_DIRECTORY" && test "$FORCE" != "true"
   then
     >&2 echo "ERROR: Setup directory already exists at $DEFAULT_SETUP_DIRECTORY. Delete the \
 directory and try again."
     return 1
   fi
-  git clone https://github.com/carlosonunez/bash-dotfiles $DEFAULT_SETUP_DIRECTORY
+  if ! test -d "$DEFAULT_SETUP_DIRECTORY"
+  then
+    git clone https://github.com/carlosonunez/bash-dotfiles $DEFAULT_SETUP_DIRECTORY
+  fi
 }
 
 set_context() {
