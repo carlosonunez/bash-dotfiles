@@ -181,7 +181,7 @@ let g:javascript_plugin_ngdoc = 1
 let g:used_javascript_libs = 'jquery,angularjs,angularui,react,jasmine,chai'
 
 " Syntastic Stuff; just the defaults
-let g:syntastic_sh_checkers = ["shellcheck"]
+let g:syntastic_sh_checkers = ["shellcheck", "-x"]
 let g:syntastic_python_checkers = ["pylint", "-E"]
 let g:syntastic_ruby_checkers = ["rubocop"]
 let g:syntastic_go_checkers = [ 'go', 'golint', 'errcheck' ]

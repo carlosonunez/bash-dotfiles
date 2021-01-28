@@ -7,6 +7,7 @@ HOMEBREW_BUILTINS=$(cat <<-APPS
 awscli
 azure-cli
 bash-completion
+bats
 docker-compose-completion
 docker-credential-helper
 feh
@@ -22,6 +23,7 @@ make
 reattach-to-user-namespace
 ruby
 scrcpy
+shellcheck
 tmux
 todo-txt
 tree
