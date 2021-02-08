@@ -9,6 +9,10 @@ FORCE="${FORCE:-false}"
 clone_dotfiles() {
   if test -d "$DEFAULT_SETUP_DIRECTORY" && test "$FORCE" != "true"
   then
+    if $(dirname "$0" | grep -qi -- 'src/setup')
+    then
+      return 0
+    fi
     >&2 echo "ERROR: Setup directory already exists at $DEFAULT_SETUP_DIRECTORY. Delete the \
 directory and try again."
     return 1
