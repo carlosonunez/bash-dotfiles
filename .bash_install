@@ -4,50 +4,54 @@ trap "rm -f $INSTALL_LOCK_FILE" INT
 ONEPASSWORD_VAULT="${ONEPASSWORD_VAULT:-"Carlos's Personal Vault"}"
 INSTALL_LOCK_FILE="$HOME/.bash_install_lock"
 HOMEBREW_BUILTINS=$(cat <<-APPS
-awscli
-azure-cli
-bash-completion
-bats
-docker-compose-completion
-docker-credential-helper
-feh
-gh
-git
-gnu-sed
-googler
-htop
-imagemagick
-jq
-mas
-make
-reattach-to-user-namespace
-ruby
-scrcpy
-shellcheck
-tmux
-todo-txt
-tree
-vim
-w3m
-APPS
-)
-HOMEBREW_CASKS=$(cat <<-APPS
 1password
 1password-cli
 alfred
 android-platform-tools
 authy
+awscli
+azure-cli
+bash-completion
+bats
 contexts
+coreutils
+docker
+docker-compose-completion
+feh
+findutils
 firefox
 font-dejavu-sans-mono-nerd-font
-keyboardcleantool
+gawk
+gh
+git
+gnu-getopt
+gnu-indent
+gnu-sed
+gnu-tar
+gnutls
+googler
+grep
+htop
+imagemagick
 iterm2
+jq
+keyboardcleantool
+make
+mas
+reattach-to-user-namespace
+ruby
+scrcpy
+shellcheck
 shiftit
-xquartz
-docker
+tmux
+todo-txt
+tree
 vagrant
+vim
 virtualbox
 vlc
+w3m
+xquartz
 APPS
 )
 APPLE_APP_STORE_APPS=$(cat <<-APPS
@@ -93,7 +97,6 @@ check_for_internet_access() {
 }
 
 get_homebrew_builtins() { brew list --formula | tr '\t' '\n'; }
-get_homebrew_casks() { brew list --cask | tr '\t' '\n'; }
 get_app_store_apps() { mas list | sed -E 's/^[0-9]+ (.*) \(.*$/\1/'; }
 
 install_if_missing() {
@@ -115,16 +118,8 @@ install_homebrew_builtins() {
   # TECH NOTE: There isn't an option to hide warnings because the Homebrew
   # developers don't think that it's necessary, which is sad.
   # https://github.com/Homebrew/brew/issues/2351
-  2>&1 brew install $(echo "$HOMEBREW_BUILTINS" | tr '\n' ' ') | \
+  2>&1 brew install $(echo "$HOMEBREW_BUILTINS" |  tr '\n' ' ') | \
     grep --line-buffered --color=always -Ev "(already installed|brew reinstall)"
-}
-
-install_homebrew_casks() {
-  # TECH NOTE: There isn't an option to hide warnings because the Homebrew
-  # developers don't think that it's necessary, which is sad.
-  # https://github.com/Homebrew/brew/issues/2351
-  2>&1 brew cask install --quiet $(echo "$HOMEBREW_CASKS" | tr '\n' ' ') | \
-    grep --line-buffered --color=always -Ev "(already installed|brew reinstall|re-install|^$)"
 }
 
 install_app_store_apps() {
