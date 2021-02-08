@@ -15,3 +15,7 @@ export BASH_PROFILE_LOCATION=$(readlink "$HOME/.bash_profile")
 export TMUX_SESSION_NAME='tmux_session'
 export BASH_PROFILE_REPO=$(dirname "$BASH_PROFILE_LOCATION")
 export GIT_EDITOR=vim
+
+# Fix py-cryptography not compiling
+export CPPFLAGS=-I/usr/local/opt/openssl/include
+export LDFLAGS=-L/usr/local/opt/openssl/lib
