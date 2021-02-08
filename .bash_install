@@ -329,7 +329,6 @@ else
   case "$(get_os_type)" in
     Darwin)
       install_homebrew_builtins &&
-      install_homebrew_casks &&
       install_app_store_apps &&
       install_shiftit_prefs &&
       install_contexts_prefs
