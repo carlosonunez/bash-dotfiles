@@ -2,8 +2,22 @@
 export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 export LANG="en_US.UTF-8"
+alias brew=brew_chooser
+
 source ~/.bash_colors
 source ~/.bash_exports
+
+brew_chooser() {
+  if test "$(get_os_type)" != "Darwin"
+  then
+    >&2 echo "Homebrew only works on Macs. Fix the thing you're trying to do \
+in your dotfiles and try again."
+    return 1
+  fi
+
+  $(which brew) $*
+}
+
 ensure_bash_profile_is_symlinked() {
   if [ ! -L "$HOME/.bash_profile" ]
   then
@@ -22,21 +36,26 @@ source_functions() {
 
 set_path() {
   path=$(cat <<-DIRECTORIES
+/opt/homebrew/opt/coreutils/libexec/gnubin
+/opt/homebrew/opt/make/libexec/gnubin
+/opt/homebrew/bin
+/opt/homebrew/sbin
 /Users/$USER/.gems
 /Users/$USER/.gems/bin
-/usr/local/opt/coreutils/libexec/gnubin
-/usr/local/opt/make/libexec/gnubin
 /usr/local/bin
 /usr/bin
 /bin
-/usr/sbin
-/sbin
 /opt/X11/bin
 /Users/$USER/src/go/bin
 /Users/$USER/bin/gyb
 DIRECTORIES
 )
   export PATH=$(echo "$path" | tr '\n' ':' | sed 's/.$//')
+  export HOMEBREW_PREFIX="/opt/homebrew";
+  export HOMEBREW_CELLAR="/opt/homebrew/Cellar";
+  export HOMEBREW_REPOSITORY="/opt/homebrew";
+  export MANPATH="/opt/homebrew/share/man${MANPATH+:$MANPATH}:";
+  export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}";
 }
 
 source_tmux_stuff() {
