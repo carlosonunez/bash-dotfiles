@@ -52,6 +52,7 @@ virtualbox
 vlc
 w3m
 xquartz
+zoom
 APPS
 )
 APPLE_APP_STORE_APPS=$(cat <<-APPS
