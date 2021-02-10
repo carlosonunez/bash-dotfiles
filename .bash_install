@@ -15,6 +15,7 @@ bash-completion
 bats
 contexts
 coreutils
+curl
 homebrew/cask/docker
 docker-compose-completion
 feh
