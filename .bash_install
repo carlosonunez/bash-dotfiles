@@ -15,7 +15,7 @@ bash-completion
 bats
 contexts
 coreutils
-docker
+homebrew/cask/docker
 docker-compose-completion
 feh
 findutils
@@ -121,15 +121,8 @@ install_homebrew_builtins() {
   # developers don't think that it's necessary, which is sad.
   # https://github.com/Homebrew/brew/issues/2351
   2>&1 brew install $(echo "$HOMEBREW_BUILTINS" |  tr '\n' ' ') | \
-    grep --line-buffered --color=always -Ev "(already installed|brew reinstall)"
-}
-
-install_homebrew_casks() {
-  # TECH NOTE: There isn't an option to hide warnings because the Homebrew
-  # developers don't think that it's necessary, which is sad.
-  # https://github.com/Homebrew/brew/issues/2351
-  2>&1 brew install --cask --quiet $(echo "$HOMEBREW_CASKS" | tr '\n' ' ') | \
-    grep --line-buffered --color=always -Ev "(already installed|brew reinstall|re-install|^$)"
+    grep --line-buffered --color=always -Ev "(already installed|brew reinstall|To reinstall|To re-install)" | \
+    grep -Ev '^$'
 }
 
 install_app_store_apps() {

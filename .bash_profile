@@ -40,6 +40,7 @@ set_path() {
 /opt/homebrew/opt/make/libexec/gnubin
 /opt/homebrew/bin
 /opt/homebrew/sbin
+/usr/local/opt/coreutils/libexec/gnubin
 /Users/$USER/.gems
 /Users/$USER/.gems/bin
 /usr/local/bin
