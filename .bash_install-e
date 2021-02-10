@@ -341,7 +341,6 @@ else
       >&2 echo "WARNING: See '$HOME/.bash_install' for a list of applications to install."
       ;;
   esac
-  configure_1password_cli
   get_ssh_and_aws_keys_from_onepassword
   get_firefox_multi_account_containers_from_onepassword
   unlock_install
