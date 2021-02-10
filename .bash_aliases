@@ -68,6 +68,7 @@ run_gyb() {
 }
 
 alias w3m="w3m -cookie"
+alias lynx="lynx -accept_all_cookies -vikeys -use_mouse"
 alias phone='connect_to_phone'
 alias phone_slow='connect_to_phone 1M'
 alias xq='docker run --rm -i carlosnunez/xq'
