@@ -414,10 +414,11 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
   fi
 
   dirstack_count() {
-    count="${#DIRSTACK[@]}"
-    if test "$count" -gt 1
+    raw_count="${#DIRSTACK[@]}"
+    count=$((raw_count-1))
+    if test "$count" -ge 1
     then
-      printf "\[$BCyan\] [$count dirs deep] \[$NC\]"
+      printf "\[$BCyan\] [$count dir(s) deep] \[$NC\]"
     fi
   }
 
