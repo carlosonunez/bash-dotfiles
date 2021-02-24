@@ -45,11 +45,12 @@ set_path() {
 /Users/$USER/.gems/bin
 /usr/local/opt/curl/bin
 /usr/local/bin
-/usr/bin
-/bin
 /opt/X11/bin
 /Users/$USER/src/go/bin
 /Users/$USER/bin/gyb
+/usr/bin
+/bin
+/sbin
 DIRECTORIES
 )
   export PATH=$(echo "$path" | tr '\n' ':' | sed 's/.$//')
