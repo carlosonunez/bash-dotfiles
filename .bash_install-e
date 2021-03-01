@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 trap "rm -f $INSTALL_LOCK_FILE" INT
 
+APPLE_WATCH_PAMID_LIBPATH=/usr/local/lib/pam/pam_watchid.so
+APPLE_WATCH_PAMID_URL=https://github.com/biscuitehh/pam-watchid
+APPLE_WATCH_PAMID_PATH=$HOME/src/pamid-applewatch
 ONEPASSWORD_VAULT="${ONEPASSWORD_VAULT:-"Carlos's Personal Vault"}"
 INSTALL_LOCK_FILE="$HOME/.bash_install_lock"
 HOMEBREW_BUILTINS=$(cat <<-APPS
@@ -347,6 +350,47 @@ else
 fi
 
 >&2 printf "${BGreen}INFO${NC}: Configuring system; please wait.\n"
+enable_sudo_with_apple_watch_and_touch_id() {
+  trap 'popd' EXIT INT HUP
+
+  enable_apple_watch() {
+    if ! test -f $APPLE_WATCH_PAMID_LIBPATH
+    then
+      if ! test -d $APPLE_WATCH_PAMID_PATH
+      then
+        git clone $APPLE_WATCH_PAMID_URL $APPLE_WATCH_PAMID_PATH
+      fi
+      >&2 printf "${BGreen}INFO${NC}: Installing Apple Watch sudo extension. Enter your \
+password when prompted.\n"
+      pushd $APPLE_WATCH_PAMID_PATH && \
+        gsed -i 's/x86_64/$(shell uname -p)/' Makefile && \
+        sudo make install
+    fi
+    if ! grep "pam_watchid.so" /etc/pam.d/sudo
+    then
+      >&2 printf "${BGreen}INFO${NC}: Enabling Apple Watch sudo extension. Enter your \
+password when prompted.\n"
+      sudo gsed -i '1s/^/auth    sufficient      pam_watchid.so    "reason=execute command as root"\n/' \
+        /etc/pam.d/sudo
+    fi
+    popd
+  }
+  enable_touchid() {
+    if ! grep "pam_tid.so" /etc/pam.d/sudo
+    then
+      >&2 printf "${BGreen}INFO${NC}: Enabling Touch ID sudo extension. Enter your \
+password when prompted.\n"
+      sudo gsed -i '1s/^/auth    sufficient      pam_tid.so    "reason=execute command as root"\n/' \
+        /etc/pam.d/sudo
+    fi
+  }
+  if test "$(get_os_type)" == "Darwin"
+  then
+    enable_apple_watch && enable_touchid
+  fi
+}
+
+enable_sudo_with_apple_watch_and_touch_id
 install_reddit_cli
 configure_todos
 make_etc_hosts_adfree
