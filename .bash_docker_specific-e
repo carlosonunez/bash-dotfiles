@@ -27,7 +27,7 @@ remove_dead_install_locks() {
   then
     if ! bash_processes_holding_lock
     then
-      unlock_install
+      docker_check_mutex_unlock
     fi
   fi
 }
