@@ -125,7 +125,8 @@ install_homebrew_builtins() {
   # developers don't think that it's necessary, which is sad.
   # https://github.com/Homebrew/brew/issues/2351
   2>&1 brew install $(echo "$HOMEBREW_BUILTINS" |  tr '\n' ' ') | \
-    grep --line-buffered --color=always -Ev "(already installed|brew reinstall|To reinstall|To re-install)" | \
+    grep --line-buffered --color=always \
+    -Ev "(Downloading|Already downloaded|already installed|brew reinstall|To reinstall|To re-install)" | \
     grep -Ev '^$'
 }
 
