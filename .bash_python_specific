@@ -26,6 +26,7 @@ source "$VENV_PATH/bin/activate"
 pips=$(cat <<-PIP
 black
 googler
+pytest
 PIP
 )
 
