@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 trap "rm -f $INSTALL_LOCK_FILE" INT
 
-APPLE_WATCH_PAMID_LIBPATH=/usr/local/lib/pam/pam_watchid.so
+APPLE_WATCH_PAMID_LIBPATH=/usr/local/lib/pam/pam_watchid.so.2
 APPLE_WATCH_PAMID_URL=https://github.com/biscuitehh/pam-watchid
 APPLE_WATCH_PAMID_PATH=$HOME/src/pamid-applewatch
 ONEPASSWORD_VAULT="${ONEPASSWORD_VAULT:-"Carlos's Personal Vault"}"
@@ -366,7 +366,7 @@ password when prompted.\n"
         gsed -i 's/x86_64/$(shell uname -p)/' Makefile && \
         sudo make install
     fi
-    if ! grep "pam_watchid.so" /etc/pam.d/sudo
+    if ! grep -q "pam_watchid.so" /etc/pam.d/sudo
     then
       >&2 printf "${BGreen}INFO${NC}: Enabling Apple Watch sudo extension. Enter your \
 password when prompted.\n"
@@ -376,7 +376,7 @@ password when prompted.\n"
     popd
   }
   enable_touchid() {
-    if ! grep "pam_tid.so" /etc/pam.d/sudo
+    if ! grep -q "pam_tid.so" /etc/pam.d/sudo
     then
       >&2 printf "${BGreen}INFO${NC}: Enabling Touch ID sudo extension. Enter your \
 password when prompted.\n"
