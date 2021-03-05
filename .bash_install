@@ -312,8 +312,6 @@ tap_caskroom_fonts() {
   fi
 }
 enable_sudo_with_apple_watch_and_touch_id() {
-  trap 'popd' EXIT INT HUP
-
   enable_apple_watch() {
     if ! test -f $APPLE_WATCH_PAMID_LIBPATH
     then

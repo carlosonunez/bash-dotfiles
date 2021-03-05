@@ -434,7 +434,7 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
   then
     PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] ${virtualenv}$(dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   else
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Green\]($git_branch)\[$NC\] $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Green\]($git_branch)\[$NC\] ${virtualenv}$(dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   fi
 }
 
