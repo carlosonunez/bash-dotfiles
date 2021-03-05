@@ -418,7 +418,12 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
     count=$((raw_count-1))
     if test "$count" -ge 1
     then
-      printf "\[$BCyan\] [$count dir(s) deep] \[$NC\]"
+      dirs_deep="dir(s) deep"
+      if test "$count" -eq 1
+      then
+        dirs_deep="dir deep"
+      fi
+      printf "\[%s\] [%d %s] \[%s\]" "$BCyan" "$count" "$dirs_deep" "$NC"
     fi
   }
 
