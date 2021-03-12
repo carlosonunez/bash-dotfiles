@@ -182,6 +182,14 @@ install_shiftit_prefs() {
   defaults import org.shiftitapp.ShiftIt $HOME/src/setup/shiftit.plist
 }
 
+set_vnc_shiftit_prefs() {
+  defaults import org.shiftitapp.ShiftIt $HOME/src/setup/shiftit-vnc.plist
+}
+
+set_regular_shiftit_prefs() {
+  defaults import org.shiftitapp.ShiftIt $HOME/src/setup/shiftit.plist
+}
+
 configure_todos() {
   if ! test -d $HOME/src/todos
   then
