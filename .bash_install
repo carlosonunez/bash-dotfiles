@@ -183,11 +183,15 @@ install_shiftit_prefs() {
 }
 
 set_vnc_shiftit_prefs() {
-  defaults import org.shiftitapp.ShiftIt $HOME/src/setup/shiftit-vnc.plist
+  killall ShiftIt &&
+    defaults import org.shiftitapp.ShiftIt $HOME/src/setup/shiftit-vnc.plist &&
+    open /Applications/ShiftIt.app
 }
 
 set_regular_shiftit_prefs() {
-  defaults import org.shiftitapp.ShiftIt $HOME/src/setup/shiftit.plist
+  killall ShiftIt &&
+    defaults import org.shiftitapp.ShiftIt $HOME/src/setup/shiftit.plist &&
+    open /Applications/ShiftIt.app
 }
 
 configure_todos() {
@@ -340,7 +344,7 @@ password when prompted.\n"
       sudo gsed -i '1s/^/auth    sufficient      pam_watchid.so    "reason=execute command as root"\n/' \
         /etc/pam.d/sudo
     fi
-    popd
+    popd >/dev/null
   }
   enable_touchid() {
     if ! grep -q "pam_tid.so" /etc/pam.d/sudo
