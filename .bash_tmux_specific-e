@@ -53,6 +53,10 @@ join_tmux_session() {
   tmux a -t 0
 }
 
+reattach_to_user_namespace_not_found() {
+  ! test -f "$(which reattach-to-user-namespace 2>/dev/null)"
+}
+
 # Starts a new tmux session with my usual window configuration.
 start_tmux() {
   start_tmux_with_single_window() {
@@ -72,6 +76,13 @@ start_tmux() {
   }
 
   cd $HOME
+  if reattach_to_user_namespace_not_found
+  then
+    >&2 printf "${BRed}ERROR${NC}: reattach-to-user-namespace not installed or found in \
+\$PATH. Please install it with 'brew install reattach-to-user-namespace' and then
+'source $HOME/.bash_profile' again.\n"
+    return 1
+  fi
   if tmux ls &> /dev/null
   then
     tmux attach -t "$TMUX_SESSION_NAME" 2>/dev/null
