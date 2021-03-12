@@ -227,4 +227,5 @@ nnoremap <leader>ud :%g/# vim breakpoint/d<CR>
 augroup go_tests
   autocmd!
   autocmd BufWritePost *.go :GoTest!<CR>
+  au FileType go nmap <leader>c :cclose<CR>:lclose<CR>
 augroup end
