@@ -181,11 +181,16 @@ let g:javascript_plugin_jsdoc = 1
 let g:javascript_plugin_ngdoc = 1
 let g:used_javascript_libs = 'jquery,angularjs,angularui,react,jasmine,chai'
 
-" Syntastic Stuff; just the defaults
+" Golang specific: Lint, test, and vet on save
+let g:go_jump_to_error = 0
+let g:go_metalinter_autosave = 1
+let g:go_metalinter_autosave_enabled = ['deadcode', 'vet', 'golint', 'errcheck']
+
+" Syntastic Stuff
 let g:syntastic_sh_checkers = ["shellcheck", "-e", "SC1090"]
 let g:syntastic_python_checkers = ["pylint", "-E"]
 let g:syntastic_ruby_checkers = ["rubocop"]
-let g:syntastic_go_checkers = [ 'go', 'golint', 'errcheck' ]
+let g:syntastic_go_checkers = [ '' ] 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
@@ -218,5 +223,8 @@ au FileType ruby nmap <leader>d orequire 'pry'; binding.pry # vim breakpoint<Esc
 au FileType python nmap <leader>d oimport pdb; pdb.set_trace() # vim breakpoint<Esc>
 nnoremap <leader>ud :%g/# vim breakpoint/d<CR>
 
-" Stop bugging me
-let g:go_version_warning = 0
+" Testing autosaves
+augroup go_tests
+  autocmd!
+  autocmd BufWritePost *.go :GoTest!<CR>
+augroup end
