@@ -473,3 +473,6 @@ enable_sleep() {
   pkill -9 "PreventSleep" && sudo pkill -9 "Fermata"
 }
 
+reload_tmux(){ 
+  tmux source-file "$HOME/.tmux.conf"
+}
