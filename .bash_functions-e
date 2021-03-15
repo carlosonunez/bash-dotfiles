@@ -447,3 +447,29 @@ preview_markdown() {
   >&2 printf "${BGreen}INFO${NC}: Visit http://localhost:6419 to view your stuff.\n"
   docker run -it --rm -v $PWD:/data -p 6419:3080 thomsch98/markserv
 }
+
+disable_sleep() {
+  if ! test -d "/Applications/Fermata.app"
+  then
+    >&2 echo "ERROR: Fermata is not installed. Please install it."
+    return 1
+  fi
+  if ! pgrep -i fermata
+  then
+    >&2 echo "INFO: Fermata isn't running. Starting it now."
+    open /Applications/Fermata.app
+  fi
+  brightness 0
+  open -a "${HOME}/src/setup/PreventSleep.app"
+}
+
+enable_sleep() {
+  if ! test -d "/Applications/Fermata.app"
+  then
+    >&2 echo "ERROR: Fermata is not installed. Please install it."
+    return 1
+  fi
+  brightness 0.5
+  pkill -9 "PreventSleep" && sudo pkill -9 "Fermata"
+}
+

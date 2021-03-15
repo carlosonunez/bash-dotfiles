@@ -16,6 +16,7 @@ awscli
 azure-cli
 bash-completion
 bats
+brightness
 contexts
 coreutils
 curl
@@ -97,6 +98,7 @@ ETC_HOSTS_INCLUSIONS=$(cat <<-ETC_HOSTS_INCLUSIONS
 ads\.linkedin\.com
 ETC_HOSTS_INCLUSIONS
 )
+FERMATA_URL="https://github.com/iccir/Fermata/releases/download/Fermata-136/Fermata-136.zip"
 
 check_for_internet_access() {
   test "$(curl -s --connect-timeout 3 http://nil.carlosnunez.me)" == "i love socks."
@@ -344,7 +346,7 @@ password when prompted.\n"
       sudo gsed -i '1s/^/auth    sufficient      pam_watchid.so    "reason=execute command as root"\n/' \
         /etc/pam.d/sudo
     fi
-    popd >/dev/null
+    popd &>/dev/null
   }
   enable_touchid() {
     if ! grep -q "pam_tid.so" /etc/pam.d/sudo
@@ -361,6 +363,16 @@ password when prompted.\n"
   fi
 }
 
+install_fermata(){ 
+  if ! test -d "/Applications/Fermata.app"
+  then
+    >&2 printf "${BGreen}INFO${NC}: Installing Fermata. Enter your password when prompted.\n"
+    curl -Lso /tmp/fermata.zip "$FERMATA_URL" &&
+      unzip -q /tmp/fermata.zip -d /tmp &&
+      sudo mv /tmp/Fermata.app /Applications &&
+      defaults import "$HOME/src/setup/fermata.plist" ~/Library/Preferences/com.iccir.Fermata.plist
+  fi
+}
 
 remove_dead_install_locks
 if installation_is_locked
@@ -386,9 +398,10 @@ else
   case "$(get_os_type)" in
     Darwin)
       install_homebrew_builtins &&
-      install_app_store_apps &&
-      install_shiftit_prefs &&
-      install_contexts_prefs
+      install_app_store_apps;
+      install_shiftit_prefs;
+      install_contexts_prefs;
+      install_fermata
           ;;
     *)
       >&2 echo "WARNING: Routines for non-Mac operating systems haven't been written yet."
