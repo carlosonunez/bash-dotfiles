@@ -49,6 +49,7 @@ set_path() {
 /Users/$USER/src/go/bin
 /Users/$USER/bin/gyb
 /usr/bin
+/usr/sbin
 /bin
 /sbin
 DIRECTORIES
