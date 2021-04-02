@@ -5,17 +5,16 @@ tmux_is_installed() {
 }
 
 add_additional_tmux_windows() {
-  set -x
+  tmux display-message "Additional windows: $ADDITIONAL_TMUX_WINDOWS_CSV"
   if ! test -z "$ADDITIONAL_TMUX_WINDOWS_CSV"
   then
-    idx=2
-    printf "$ADDITIONAL_TMUX_WINDOWS_CSV" | \
-      tr ',' '\n' | \
-      while read -r window
-      do tmux new-window -t "$TMUX_SESSION_NAME:1" -n "$window" && idx=$((idx+1))
-      done
+    idx=1
+    for window in $(echo "$ADDITIONAL_TMUX_WINDOWS_CSV" | tr ',' '\n')
+    do
+      tmux new-window -t "$TMUX_SESSION_NAME:$idx" -n "$window"
+      idx=$((idx+1))
+    done
   fi
-  set +x
 }
 
 # Are we in an SSH session?
@@ -59,18 +58,14 @@ reattach_to_user_namespace_not_found() {
 
 # Starts a new tmux session with my usual window configuration.
 start_tmux() {
-  start_tmux_with_single_window() {
+  start_tmux_with_multiple_windows() {
     tmux new-session -d -s "$TMUX_SESSION_NAME" && \
-      tmux new-window -t "$TMUX_SESSION_NAME:1" -n "reddit" && \
       add_additional_tmux_windows && \
       tmux select-window -t "$TMUX_SESSION_NAME:0" && \
       tmux attach-session -t "$TMUX_SESSION_NAME"
   }
-  start_tmux_with_multiple_windows() {
+  start_tmux_with_single_window() {
     tmux new-session -d -s "$TMUX_SESSION_NAME" && \
-      tmux new-window -t "$TMUX_SESSION_NAME:1" -n "reddit" && \
-      tmux select-window -t "$TMUX_SESSION_NAME:0" && \
-      tmux split-window -v && \
       tmux select-pane -t 0 && \
       tmux attach-session -t "$TMUX_SESSION_NAME"
   }
@@ -87,7 +82,10 @@ start_tmux() {
   then
     tmux attach -t "$TMUX_SESSION_NAME" 2>/dev/null
   else
-    in_ssh_session && start_tmux_with_single_window || start_tmux_with_multiple_windows
+    if in_ssh_session
+    then start_tmux_with_single_window
+    else start_tmux_with_multiple_windows
+    fi
   fi
 }
 

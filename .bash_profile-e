@@ -6,6 +6,7 @@ alias brew=brew_chooser
 
 source ~/.bash_colors
 source ~/.bash_exports
+source ~/.bash_secret_exports
 
 brew_chooser() {
   if test "$(get_os_type)" != "Darwin"
@@ -116,11 +117,13 @@ then
 elif tmux_session_is_present && ! in_tmux_session
 then
   configure_client_or_company_specific_settings &&
+  configure_secret_settings &&
   join_tmux_session
 else
   PROMPT_COMMAND='e=$?; set_bash_prompt $e'
     install_bash_completion &&
     configure_client_or_company_specific_settings &&
+    configure_secret_settings &&
     configure_bash_session &&
     configure_machine &&
     add_keys_to_ssh_agent
