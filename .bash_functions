@@ -30,12 +30,16 @@ jumpbox() {
     >&2 printf "${BRed}ERROR${NC}: Host or port is empty.\n"
     return 1
   fi
-  cmd="ssh -T"
+  cmd="ssh -A"
   for arg in "$@"
   do
     cmd="$cmd $arg"
   done
   cmd="$cmd -p $port $username@$host"
+  if ! test -z "$JUMPBOX_SSH_COMMAND"
+  then
+    cmd="$cmd $JUMPBOX_SSH_COMMAND"
+  fi
   printf "${BGreen}-->${NC} $cmd\n"
   $cmd
 }
@@ -82,6 +86,14 @@ configure_machine() {
 configure_client_or_company_specific_settings() {
   # Load any company specific bash submodules first.
   for file in $(find $HOME -type l -name ".bash_company_*" -maxdepth 1)
+  do
+    printf "${BYellow}INFO${NC}: Loading company submodule ${BYellow}${file}${NC}\n"
+    source $file
+  done
+}
+
+configure_secret_settings() {
+  for file in $(find $HOME -type f -name ".bash_secret_*" -maxdepth 1 | grep -v ".bash_secret_exports")
   do
     printf "${BYellow}INFO${NC}: Loading company submodule ${BYellow}${file}${NC}\n"
     source $file
