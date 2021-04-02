@@ -148,10 +148,12 @@ nmap <leader>f :NERDTreeFind<cr>
 nnoremap <C-n> :bnext<CR>
 nnoremap <C-p> :bprevious<CR>
 nnoremap <C-b> :buffers<CR>
-nnoremap <C-l> :vertical resize -5
-nnoremap <C-h> :vertical resize +5
-nnoremap <C-t> :resize +5
-nnoremap <C-b> :resize -5
+nnoremap <C-h> :vertical resize -5<CR>
+nnoremap <C-l> :vertical resize +5<CR>
+nnoremap <C-[> :resize +5<CR>
+nnoremap <C-]> :resize -5<CR>
+nnoremap <CR> <C-w>w
+nnoremap <leader>w :set wrap!<CR>
 
 " Markdown options
 let g:vim_markdown_folding_disabled = 1
@@ -226,6 +228,7 @@ nnoremap <leader>ud :%g/# vim breakpoint/d<CR>
 " Testing autosaves
 augroup go_tests
   autocmd!
-  autocmd BufWritePost *.go :GoTest!<CR>
-  au FileType go nmap <leader>c :cclose<CR>:lclose<CR>
+  autocmd BufWritePost *.go :GoTest! -short
+  autocmd FileType go nmap <leader>c :cclose<CR>:lclose<CR>
+  autocmd FileType go nmap <leader><leader> :GoTest! ./... -run Integration<CR>
 augroup end
