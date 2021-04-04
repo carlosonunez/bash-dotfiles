@@ -1,6 +1,11 @@
 " Tim Popify my vim setup!
 execute pathogen#infect()
 
+" stop opening in replace mode
+if $TERM =~ 'xterm-256color'
+  set noek
+endif
+
 " Set modeline so that we can autoformat files based on top-file comments.
 set modeline
 

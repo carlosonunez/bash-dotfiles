@@ -18,6 +18,7 @@ bash-completion
 bats
 brightness
 contexts
+colordiff
 coreutils
 curl
 homebrew/cask/docker
