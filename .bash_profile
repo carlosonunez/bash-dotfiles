@@ -3,6 +3,7 @@ export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 export LANG="en_US.UTF-8"
 alias brew=brew_chooser
+export HOMEBREW_NO_AUTO_UPDATE=1 # This is incredibly annoying.
 
 source ~/.bash_colors
 source ~/.bash_exports
