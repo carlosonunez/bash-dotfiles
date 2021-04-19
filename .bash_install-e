@@ -17,7 +17,7 @@ azure-cli
 bash-completion
 bats
 brightness
-contexts
+witch
 colordiff
 coreutils
 curl
@@ -177,8 +177,8 @@ make_etc_hosts_adfree() {
   fi
 }
 
-install_contexts_prefs() {
-  cp ~/src/setup/com.contextsformac.Contexts.plist ~/Library/Preferences
+install_witch_prefs() {
+  cp ~/src/setup/com.manytricks.witchdaemon.plist ~/Library/Preferences
 }
 
 install_shiftit_prefs() {
@@ -418,7 +418,7 @@ else
       install_homebrew_builtins &&
       install_app_store_apps;
       install_shiftit_prefs;
-      install_contexts_prefs;
+      install_witch_prefs;
       install_fermata
           ;;
     *)
