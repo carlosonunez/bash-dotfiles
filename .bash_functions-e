@@ -553,3 +553,11 @@ update_dotfiles() {
     fi
   fi
 }
+
+enter_dotfiles_directory() {
+  pushd "$HOME/src/setup"
+}
+
+exit_dotfiles_directory() {
+  popd
+}
