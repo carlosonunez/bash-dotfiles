@@ -429,6 +429,11 @@ update_dotfiles() {
   popd
 }
 
+dirstack_count() {
+  raw_count="${#DIRSTACK[@]}" # this will always be 1 if dirstack is empty.
+  echo $((raw_count-1))
+}
+
 # =================
 # SET PROMPT
 # =================
@@ -466,9 +471,8 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
     virtualenv=""
   fi
 
-  dirstack_count() {
-    raw_count="${#DIRSTACK[@]}"
-    count=$((raw_count-1))
+  print_dirstack_count() {
+    count=$(dirstack_count)
     if test "$count" -ge 1
     then
       dirs_deep="dir(s) deep"
@@ -484,15 +488,15 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
   hostname_fmtd="\[$BBlue\]$hostname_name\[$NC\]"
   if ! $(2>/dev/null git rev-parse --is-inside-work-tree 2>/dev/null)
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]${virtualenv}$(dirstack_count)\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]${virtualenv}$(print_dirstack_count)\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   elif [ "$(2>/dev/null git --no-pager branch --list)" == "" ]
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\](NO BRANCH?)\[$NC\] ${virtualenv}$(dirstack_count) \n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\](NO BRANCH?)\[$NC\] ${virtualenv}$(print_dirstack_count) \n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   elif ! $(2>/dev/null git diff-index --quiet HEAD)
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] ${virtualenv}$(dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] ${virtualenv}$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   else
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Green\]($git_branch)\[$NC\] ${virtualenv}$(dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Green\]($git_branch)\[$NC\] ${virtualenv}$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   fi
 }
 
@@ -528,4 +532,24 @@ enable_sleep() {
 
 reload_tmux(){ 
   tmux source-file "$HOME/.tmux.conf"
+}
+
+update_dotfiles() {
+  if ! {
+    pushd "$HOME/src/setup" &&
+      current_version=$(git log --format="%h") &&
+      git pull --rebase --autostash &&
+      new_version=$(git log --format="%h") &&
+      if test "$current_version" != "$new_version"
+      then
+        >&2 printf "${BYellow}INFO${NC}: dotfiles updated: $current_version -> $new_version"
+      fi &&
+      popd;
+  }
+  then
+    if test "$(dirstack_count)" -ge "1"
+    then
+      popd
+    fi
+  fi
 }
