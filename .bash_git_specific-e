@@ -3,6 +3,10 @@ GITHUB_SSH_KEY="$HOME/.ssh/github"
 GIT_DEFAULT_AUTHOR="${GIT_DEFAULT_AUTHOR:-Carlos Nunez}"
 GIT_DEFAULT_EMAIL="${GIT_DEFAULT_EMAIL:-carlosonunez@noreply.github.com}"
 
+dont_use_master_for_default_branches() {
+  git config --global init.defaultBranch main
+}
+
 set_global_git_configs() {
   git config --global diff.tool vimdiff
 }
@@ -132,3 +136,4 @@ _get_number_of_commits_between_refs() {
 try_to_install_hub_if_not_found
 set_git_author
 set_global_git_configs
+dont_use_master_for_default_branches
