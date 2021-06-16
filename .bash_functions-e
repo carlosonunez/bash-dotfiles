@@ -561,3 +561,21 @@ enter_dotfiles_directory() {
 exit_dotfiles_directory() {
   popd
 }
+
+csvtojson() {
+  _do_it() {
+    python -c 'import csv, json, sys; print(json.dumps([dict(r) for r in csv.DictReader(sys.stdin)]))'
+  }
+  # Courtesy of https://stackoverflow.com/a/65100738
+  if ! test -z "$1"
+  then
+    if test -e "$1"
+    then
+      _do_it < "$1"
+    else
+      echo -e "$1" | _do_it
+    fi
+  else
+    _do_it < /dev/stdin
+  fi
+}
