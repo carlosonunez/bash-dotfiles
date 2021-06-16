@@ -15,6 +15,7 @@ authy
 awscli
 azure-cli
 bash-completion
+bartender
 bats
 brightness
 witch
