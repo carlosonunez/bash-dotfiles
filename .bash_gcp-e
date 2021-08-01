@@ -1,3 +1,5 @@
 GCP_DOCKER_IMAGE=google/cloud-sdk:alpine
-alias gcloud="docker run --rm -i -v $PWD:/app -v $HOME/.config/gcloud:/root/.config/gcloud $GCP_DOCKER_IMAGE gcloud"
-alias gsutil="docker run --rm -i -v $PWD:/app -v $HOME/.config/gcloud:/root/.config/gcloud $GCP_DOCKER_IMAGE gsutil"
+OAUTH2L_DOCKER_IMAGE=gcr.io/oauth2l/oauth2l
+alias gcloud="docker run --rm -i -v /tmp:/tmp -v  $HOME:/app -w /app -v /tmp:/tmp -v  $HOME/.config/gcloud:/root/.config/gcloud $GCP_DOCKER_IMAGE gcloud"
+alias gsutil="docker run --rm -i -v /tmp:/tmp -v  $HOME:/app -w /app -v /tmp:/tmp -v  $HOME/.config/gcloud:/root/.config/gcloud $GCP_DOCKER_IMAGE gsutil"
+alias oauth2l="docker run --rm -i -v /tmp:/tmp -v  $HOME:/app -w /app $OAUTH2L_DOCKER_IMAGE"
