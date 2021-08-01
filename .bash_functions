@@ -218,12 +218,27 @@ kill_all_matching_pids() {
 
 generate_random_string() {
   length=$1
+  lower=$2
   [[ "$length" == "" ]] && length=16
   if [[ "$(uname)" == "Darwin" ]]; then
-    LC_CTYPE=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c $length
+    if grep -Eiq '^true$' <<< "$lower"
+    then
+      LC_CTYPE=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c $length | tr '[:upper:]' '[:lower:]'
+    else
+      LC_CTYPE=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c $length
+    fi
   else
-    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c $length
+    if grep -Eiq '^true$' <<< "$lower"
+    then
+      tr -dc 'a-zA-Z0-9' < /dev/urandom | tr '[:upper:]' '[:lower:]' | head -c $length
+    else
+      tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c $length
+    fi
   fi
+}
+
+generate_lcase_random_string() {
+  generate_random_string "$1" "true"
 }
 
 generate_password() {
