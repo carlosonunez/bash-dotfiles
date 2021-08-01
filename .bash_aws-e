@@ -1,4 +1,4 @@
-AWSCLI_DOCKER_IMAGE=anigeo/awscli
+AWSCLI_DOCKER_IMAGE=amazon/aws-cli:2.2.9
 
 get_aws_profile_parameter() {
   profile="${1?Please provide an AWS profile to configure.}"
