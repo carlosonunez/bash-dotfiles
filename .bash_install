@@ -17,12 +17,12 @@ azure-cli
 bash-completion
 bartender
 bats
-brightness
+homebrew/cask/brightness
+homebrew/cask/docker
 witch
 colordiff
 coreutils
 curl
-homebrew/cask/docker
 docker-compose-completion
 feh
 findutils
