@@ -594,3 +594,27 @@ csvtojson() {
     _do_it < /dev/stdin
   fi
 }
+
+flush_dns_cache() {
+  sudo killall -HUP mDNSResponder
+  sudo killall mDNSResponderHelper
+  sudo dscacheutil -flushcache
+}
+
+toggle() {
+  TOGGLE_FILE=/tmp/toggle_switch
+  if test -z "$(jobs)"
+  then
+    >&2 printf "${BRed}ERROR${NC}: No jobs have been backgrounded."
+  else
+    switch_position="$(cat $TOGGLE_FILE)"
+    if test "$switch_position" == "up"
+    then
+      printf "down" > $TOGGLE_FILE
+      fg "$(jobs | sed -E 's/^\[([0-9]+)\].*$/\1/' | sort -n | head -1)"
+    else
+      printf "up" > $TOGGLE_FILE
+      fg "$(jobs | sed -E 's/^\[([0-9]+)\].*$/\1/' | sort -n | head -2 | tail -1)"
+    fi
+  fi
+}
