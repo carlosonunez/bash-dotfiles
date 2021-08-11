@@ -1,22 +1,103 @@
-AWSCLI_DOCKER_IMAGE=amazon/aws-cli:2.2.9
+#!/usr/bin/env bash
+#vi: set ft=bash:
+DEFAULT_AWS_REGION=us-east-2
+AWS_ROLE_INFO_OP_ITEM_NAME="AWS Admin Role Information"
+AWS_TOKEN_CACHE_LOCATION="$HOME/.config/aws"
 
-get_aws_profile_parameter() {
-  profile="${1?Please provide an AWS profile to configure.}"
-  param="${2?Please provide a parameter to fetch.}"
-  if ! aws configure --profile "$profile" get "$param" 2>/dev/null
+assume_role() {
+  _get_session_json() {
+    arn="$1"
+    password="$2"
+    session_name="awscli-session-$(date +%s)"
+    if ! test -z "$password"
+    then
+      aws sts assume-role --role-arn "$arn" --external-id "$password" \
+        --role-session-name "$session_name"
+    else
+      aws sts assume-role --role-arn "$arn" --external-id "$password" \
+        --role-session-name "$session_name"
+    fi
+  }
+
+  _configure_env() {
+    json="$1"
+    access_key=$(jq -r .Credentials.AccessKeyId <<< "$json")
+    secret_key=$(jq -r .Credentials.SecretAccessKey <<< "$json")
+    session_token=$(jq -r .Credentials.SessionToken <<< "$json")
+    export AWS_ACCESS_KEY_ID=$access_key
+    export AWS_SECRET_ACCESS_KEY=$secret_key
+    export AWS_SESSION_TOKEN=$session_token
+    jq -r .Credentials.Expiration <<< "$json"
+  }
+
+  _write_token_info() {
+    json="$1"
+    arn=$(jq -r .AssumedRoleUser.Arn <<< "$json")
+    expiration=$(jq -r .Credentials.Expiration <<< "$json")
+    expiration_sec=$(date -d "$expiration" +%s)
+    printf '{"arn": "%s", "expiration": "%d"}' "$arn" "$expiration_sec" | \
+      jq -cr . >  "${AWS_TOKEN_CACHE_LOCATION}/sts_info"
+  }
+
+  _create_cache_if_needed() {
+    test -d "$AWS_TOKEN_CACHE_LOCATION" || mkdir -p "$AWS_TOKEN_CACHE_LOCATION"
+  }
+
+  arn="${1?Please provide an ARN for a role to assume.}"
+  password="$2"
+  json=$(_get_session_json "$arn" "$password")
+  _create_cache_if_needed
+  if test -z "$json"
   then
-    >&2 echo "ERROR: Failed to retrieve [$param] for profile [$profile]."
+    >&2 printf "${BRed}ERROR${NC}: Unable to assume [$arn] with external ID [$password]; see \
+above.\n"
+    return 1
+  fi
+  expires_on=$(_configure_env "$json")
+  _write_token_info "$json"
+  printf "${BYellow}INFO${NC}: Run 'log_into_aws' again after $(date -d "$expires_on")\n"
+}
+
+log_into_aws() {
+  _region() {
+    if ! test -z "$AWS_REGION"
+    then
+      echo "$AWS_REGION"
+    else
+      region=$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "region")
+      if test -z "$region"
+      then
+        echo "$DEFAULT_AWS_REGION"
+      else
+        echo "$region"
+      fi
+    fi
+  }
+  access_key=${1:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "access_key")}
+  secret_key=${2:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "secret_key")}
+  if test -z "$access_key" || test -z "$secret_key"
+  then
+    >&2 printf "${BRed}ERROR${NC}: Please provide an AWS access key or secret key.\n"
+    return 1
+  fi
+  unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY  AWS_SESSION_TOKEN
+  export AWS_ACCESS_KEY_ID="$access_key"
+  export AWS_SECRET_ACCESS_KEY="$secret_key"
+  export AWS_REGION="$(_region)"
+  arn=${3:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "arn")}
+  external_id=${4:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "external_id")}
+  if ! test -z "$arn" && ! test -z "$external_id"
+  then
+    assume_role "$arn" "$external_id"
   fi
 }
 
-load_aws_profile() {
-  profile="${1?Please provide an AWS profile to configure.}"
-  export AWS_ACCESS_KEY_ID=$(get_aws_profile_parameter "$profile" "aws_access_key_id") &&
-  export AWS_SECRET_ACCESS_KEY=$(get_aws_profile_parameter "$profile" "aws_secret_access_key") &&
-  export AWS_REGION=$(get_aws_profile_parameter "$profile" "region");
-}
 
->&2 echo "INFO: Loading AWS environment variables for the default profile."
->&2 echo "INFO: To change this, run 'load_aws_profile <your_profile>'."
-load_aws_profile "default"
+message=$(cat <<-MESSAGE
+${BYellow}INFO${NC}: Run 'log_into_aws [ACCESS_KEY] [SECRET_KEY] [REGION]' to log into AWS.
+${BYellow}INFO${NC}: Use 'assume_role [ARN] [EXTERNAL_ID]' if needed.
+${BYellow}INFO${NC}: Region set to [$DEFAULT_AWS_REGION]; export AWS_REGION to change this.
+MESSAGE
+)
+printf "$message\n"
 complete -C '/usr/local/bin/aws_completer' aws

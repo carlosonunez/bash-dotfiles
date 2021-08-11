@@ -52,20 +52,42 @@ popd () {
   command popd "$@" > /dev/null
 }
 
-get_azure_login_status() {
-  azure_profiles="$HOME/.azure/azureProfile.json"
-  if test -f "$azure_profiles"
-  then
-    logged_in_user_guids=$(jq -r '.subscriptions[].user.name' $azure_profiles | \
-      sort -u | \
-      tr '\n' ',' | \
-      sed 's/,$//'
-    )
-    if ! test -z "$logged_in_user_guids"
+get_csp_login_status() {
+  AZURE_PROFILES_LOCATION="$HOME/.azure/azureProfile.json"
+  AWS_STS_LOCATION="$HOME/.config/aws/sts_info"
+  _azure_status() {
+    if test -f "$AZURE_PROFILES_LOCATION"
     then
-      printf "${BRed}[Active Azure logins: $logged_in_user_guids]${NC}"
+      logged_in_user_guids=$(jq -r '.subscriptions[].user.name' $AZURE_PROFILES_LOCATION | \
+        sort -u | \
+        tr '\n' ',' | \
+        sed 's/,$//'
+      )
+      if ! test -z "$logged_in_user_guids"
+      then
+        printf "%s" "$logged_in_user_guids"
+      else
+        printf "not logged in"
+      fi
     fi
-  fi
+  }
+
+  _aws_status() {
+    access_key_loaded="$(echo "$AWS_ACCESS_KEY_ID")"
+    if test -e "$AWS_STS_LOCATION"
+    then
+      sts_arn=$(jq -r .arn "$AWS_STS_LOCATION")
+      expiration=$(jq -r .expiration "$AWS_STS_LOCATION")
+      now=$(date +%s)
+      minutes_til_expiration=$(((expiration-now)/60))
+      printf "%s ~> %s [%d minutes left]" "$access_key_loaded" "$sts_arn" "$minutes_til_expiration"
+    else
+      printf "%s" "$access_key_loaded"
+    fi
+  }
+
+  printf "${BYellow}[AWS${NC}: ${Yellow}%s${NC}\n" "$(_aws_status)]"
+  printf "${BCyan}[Azure${NC}: ${Cyan}%s${NC}" "$(_azure_status)]"
 }
 
 
@@ -503,15 +525,15 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
   hostname_fmtd="\[$BBlue\]$hostname_name\[$NC\]"
   if ! $(2>/dev/null git rev-parse --is-inside-work-tree 2>/dev/null)
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]${virtualenv}$(print_dirstack_count)\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]${virtualenv}$(print_dirstack_count)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   elif [ "$(2>/dev/null git --no-pager branch --list)" == "" ]
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\](NO BRANCH?)\[$NC\] ${virtualenv}$(print_dirstack_count) \n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\](NO BRANCH?)\[$NC\] ${virtualenv}$(print_dirstack_count) \n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   elif ! $(2>/dev/null git diff-index --quiet HEAD)
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] ${virtualenv}$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] ${virtualenv}$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   else
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Green\]($git_branch)\[$NC\] ${virtualenv}$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_azure_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Green\]($git_branch)\[$NC\] ${virtualenv}$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   fi
 }
 
