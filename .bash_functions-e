@@ -80,7 +80,12 @@ get_csp_login_status() {
       expiration=$(jq -r .expiration "$AWS_STS_LOCATION")
       now=$(date +%s)
       minutes_til_expiration=$(((expiration-now)/60))
-      printf "%s ~> %s [%d minutes left]" "$access_key_loaded" "$sts_arn" "$minutes_til_expiration"
+      if test "$minutes_til_expiration" -lt 0
+      then
+        printf "${BRed}%s ~> !! refresh needed !!${NC}" "$access_key_loaded"
+      else
+        printf "%s ~> %s [%d minutes left]" "$access_key_loaded" "$sts_arn" "$minutes_til_expiration"
+      fi
     else
       printf "%s" "$access_key_loaded"
     fi
