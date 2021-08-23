@@ -1,26 +1,103 @@
-if ! which ruby &>/dev/null
-then
-  >&2 echo "INFO: Installing ruby. Hang on."
-  if [ "$(get_os_type | egrep -q 'Ubuntu|Debian'; echo $?)" -eq "0" ]
-  then
-    sudo apt-add-repository -y ppa:brightbox/ruby-ng
-    sudo apt-get update
-  fi
-  install_application "ruby"
-fi
-which bundle &> /dev/null || gem install bundler
+#!/usr/bin/env bash
+#vi: set ft=bash:
+# Colors are loaded earlier and from elsewhere
+# shellcheck disable=SC2154
+RUBY_CHECK_SENTINEL_FILE=/tmp/ruby_installation_in_progress
+RUBY_VERSION_TO_USE="2.7.2"
 
-if ! rvm --version &>/dev/null
-then
-  # Prevent RVM from installing if multiple tmux panes are open
+ruby_check_mutex_lock() {
+  echo -ne $$ >> "$RUBY_CHECK_SENTINEL_FILE"
+}
+
+ruby_check_mutex_unlock() {
+  trap 'exit 1' INT HUP EXIT
+
+  rm -f "$RUBY_CHECK_SENTINEL_FILE"
+}
+
+installation_is_locked() {
   random_wait_time=$(bc -l <<< "scale=4 ; ${RANDOM}/32767")
-  sleep $random_wait_time
-  if ! test -f "/tmp/rvm_lock_file"
+  sleep "$random_wait_time" && test -e "$RUBY_CHECK_SENTINEL_FILE"
+}
+
+get_bash_process_holding_lock() {
+  cat "$RUBY_CHECK_SENTINEL_FILE"
+}
+
+remove_dead_install_locks() {
+  bash_processes_holding_lock() {
+    pgrep -q "$(get_bash_process_holding_lock)"
+  }
+  if installation_is_locked
   then
-    touch "/tmp/rvm_lock_file"
+    if ! bash_processes_holding_lock
+    then
+      ruby_check_mutex_unlock
+    fi
+  fi
+}
+
+
+install_rvm() {
+  if ! rvm --version &>/dev/null
+  then
     >&2 echo "INFO: Installing RVM; please hang on."
     \curl -sSL https://get.rvm.io | bash -s stable --ruby
-  else
-    >&2 echo "WARNING: Another installation of RVM is already in progress."
   fi
+}
+
+configure_rvm_defaults() {
+  _rvm_install_arm() {
+    export PKG_CONFIG_PATH="/opt/homebrew/opt/libffi/lib/pkgconfig"
+    directory="$HOME/.rvm/src/ruby-${RUBY_VERSION_TO_USE}"
+    patched_config_sub_uri="https://raw.githubusercontent.com/carlosonunez/pynacl/57037960e3f2f1796344d02e63d316df08ffc6d3/src/libsodium/build-aux/config.sub"
+    rvm fetch "${RUBY_VERSION_TO_USE}" &&
+      curl -LsS --connect-timeout 3 -o "${directory}/tool/config.sub.updated" "$patched_config_sub_uri" &&
+      ( diff -Naur "${directory}/tool/config.sub" \
+        "${directory}/tool/config.sub.updated" > /tmp/diff || true ) &&
+      LDFLAGS="-L/opt/homebrew/opt/libffi/lib" CPPFLAGS="-I/opt/homebrew/opt/libffi/include" \
+        rvm install "${RUBY_VERSION_TO_USE}" --patch /tmp/diff%0 &&
+        rm -f /tmp/diff
+  }
+  _rvm_install() {
+    if test "$(get_os_type)" == "Darwin" && test "$(uname -p)" == "arm64"
+    then
+        _rvm_install_arm
+    else
+      rvm install "${RUBY_VERSION_TO_USE}"
+    fi
+  }
+  _configure_arm_compat_libffi_if_necessary() {
+    if test "$(get_os_type)" == "Darwin" && \
+      test "$(uname -p)" == "arm64" && \
+      ! test -e "/opt/homebrew/opt/libffi" 
+    then
+      >&2 echo -ne "${BGreen}INFO${NC}: Detected ARM CPU. Installing libffi first."
+      brew install libffi
+    fi
+  }
+  if ! ruby --version 2>/dev/null | grep -q "$RUBY_VERSION_TO_USE"
+  then
+    >&2 echo -ne "${BGreen}INFO${NC}: Installing Ruby ${RUBY_VERSION_TO_USE}...\n"
+    _configure_arm_compat_libffi_if_necessary &&
+      _rvm_install "$RUBY_VERSION_TO_USE" &&
+      rvm --default use "$RUBY_VERSION_TO_USE"
+  fi
+}
+
+install_bundler() {
+  which bundle &> /dev/null || gem install bundler
+}
+
+trap 'ruby_check_mutex_unlock' INT HUP EXIT
+
+remove_dead_install_locks
+if installation_is_locked
+then
+  >&2 echo -ne "${BGreen}INFO${NC}: Ruby installation in progress in another window."
 fi
+ruby_check_mutex_lock
+
+install_rvm &&
+  configure_rvm_defaults &&
+  install_bundler
