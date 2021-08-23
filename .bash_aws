@@ -19,16 +19,23 @@ assume_role() {
     fi
   }
 
-  _configure_env() {
+  _print_env() {
     json="$1"
     access_key=$(jq -r .Credentials.AccessKeyId <<< "$json")
     secret_key=$(jq -r .Credentials.SecretAccessKey <<< "$json")
     session_token=$(jq -r .Credentials.SessionToken <<< "$json")
-    export AWS_ACCESS_KEY_ID=$access_key
-    export AWS_SECRET_ACCESS_KEY=$secret_key
-    export AWS_SESSION_TOKEN=$session_token
+   
+    echo "# Run these commands"
+    echo "export AWS_ACCESS_KEY_ID=$access_key"
+    echo "export AWS_SECRET_ACCESS_KEY=$secret_key"
+    echo "export AWS_SESSION_TOKEN=$session_token"
+  }
+
+  _get_expiration() {
+    json="$1"
     jq -r .Credentials.Expiration <<< "$json"
   }
+
 
   _write_token_info() {
     json="$1"
@@ -53,12 +60,12 @@ assume_role() {
 above.\n"
     return 1
   fi
-  expires_on=$(_configure_env "$json")
+  expires_on=$(_get_expiration "$json")
   _write_token_info "$json"
-  printf "${BYellow}INFO${NC}: Run 'log_into_aws' again after $(date -d "$expires_on")\n"
+  _print_env "$json"
 }
 
-log_into_aws() {
+_log_into_aws() {
   _region() {
     if ! test -z "$AWS_REGION"
     then
@@ -91,6 +98,8 @@ log_into_aws() {
     assume_role "$arn" "$external_id"
   fi
 }
+
+alias log_into_aws='export $(_log_into_aws | grep -Ev "^#" | xargs -0)'
 
 
 message=$(cat <<-MESSAGE
