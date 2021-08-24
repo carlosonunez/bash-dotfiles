@@ -5,6 +5,7 @@ export LC_CTYPE="en_US.UTF-8"
 export LANG="en_US.UTF-8"
 alias brew=brew_chooser
 export HOMEBREW_NO_AUTO_UPDATE=1 # This is incredibly annoying.
+stty -ixon # Enable i-search forwards and backwards but disables TTY flow control (useless)
 
 source ~/.bash_colors
 source ~/.bash_exports
