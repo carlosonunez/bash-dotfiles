@@ -4,6 +4,7 @@
 # shellcheck disable=SC2154
 RUBY_CHECK_SENTINEL_FILE=/tmp/ruby_installation_in_progress
 RUBY_VERSION_TO_USE="2.7.2"
+RUBY_GEMFILE="$HOME/.config/ruby/Gemfile"
 
 ruby_check_mutex_lock() {
   echo -ne $$ >> "$RUBY_CHECK_SENTINEL_FILE"
@@ -89,6 +90,22 @@ install_bundler() {
   which bundle &> /dev/null || gem install bundler
 }
 
+install_gems()  {
+  if ! test -L "$RUBY_GEMFILE"
+  then
+    rm -f "$RUBY_GEMFILE" &&
+      mkdir -p "$(dirname "$RUBY_GEMFILE")" &&
+      ln -s "$HOME/src/setup/Gemfile" "$RUBY_GEMFILE"
+  fi
+  if ! check_for_internet_access
+  then
+    >&2 echo -ne "${BYellow}WARNING${NC}: No internet connection detected or \
+connection is slow. System Ruby gems will not be updated."
+  else
+    bundle install --gemfile="$RUBY_GEMFILE" --quiet --jobs=10
+  fi
+}
+
 trap 'ruby_check_mutex_unlock' INT HUP EXIT
 
 remove_dead_install_locks
@@ -100,4 +117,5 @@ ruby_check_mutex_lock
 
 install_rvm &&
   configure_rvm_defaults &&
-  install_bundler
+  install_bundler &&
+  install_gems
