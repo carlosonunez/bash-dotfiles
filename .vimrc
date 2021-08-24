@@ -191,7 +191,7 @@ let g:go_metalinter_autosave_enabled = ['deadcode', 'vet', 'golint', 'errcheck']
 " Syntastic Stuff
 let g:syntastic_sh_checkers = ["shellcheck", "-e", "SC1090"]
 let g:syntastic_python_checkers = ["pylint", "-E"]
-let g:syntastic_ruby_checkers = ["rubocop"]
+let g:syntastic_ruby_checkers = ["rubocop", "-A", "--require", "rubocop-rspec"]
 let g:syntastic_go_checkers = [ '' ] 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
