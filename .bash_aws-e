@@ -99,7 +99,9 @@ _log_into_aws() {
   fi
 }
 
-alias log_into_aws='export $(_log_into_aws | grep -Ev "^#" | xargs -0)'
+alias log_into_aws='ensure_onepassword_configured && export $(_log_into_aws | grep -Ev "^#" | xargs -0)'
+alias aws_login=log_into_aws
+alias aws_login_custom=_log_into_aws
 
 
 message=$(cat <<-MESSAGE
