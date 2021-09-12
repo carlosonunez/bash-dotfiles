@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+HIDDEN_BASH_PROMPT_FILE="/tmp/use_hidden_bash_prompt"
+
 jumpbox() {
   get_jumpbox_details_from_op() {
     details=$(sudo security find-generic-password -a "$USER" -s "jumpbox" -w 2>/dev/null)
@@ -74,6 +76,11 @@ get_csp_login_status() {
 
   _aws_status() {
     access_key_loaded="$(echo "$AWS_ACCESS_KEY_ID")"
+    if test -z "$access_key_loaded"
+    then
+      echo -ne "${BRed}no access key loaded; run log_into_aws to fix${NC}"
+      return 0
+    fi
     if test -e "$AWS_STS_LOCATION"
     then
       sts_arn=$(jq -r .arn "$AWS_STS_LOCATION" | sed 's/arn:aws:sts:://')
@@ -480,6 +487,15 @@ dirstack_count() {
 # SET PROMPT
 # =================
 set_bash_prompt() {
+  if ! test -f "$HIDDEN_BASH_PROMPT_FILE"
+  then
+    set_full_bash_prompt "$*"
+  else
+    set_hidden_bash_prompt "$*"
+  fi
+}
+
+set_full_bash_prompt() {
   error_code_str=""
   account_type_indicator="\$"
   if [ "$(id -u)" -eq 0 ]
@@ -546,6 +562,29 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
     PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] ${virtualenv}${ruby_version}$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   else
     PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Green\]($git_branch)\[$NC\] ${virtualenv}${ruby_version}$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+  fi
+}
+
+set_hidden_bash_prompt() {
+  error_code_str=""
+  if [[ "$1" != "0" ]]
+  then
+    error_code_str="\[$On_Red\]\[$BWhite\]<<$1>>\[$NC\]"
+  fi
+  account_type_indicator="\$"
+  if [ "$(id -u)" -eq 0 ]
+  then
+    account_type_indicator="\#"
+  fi
+  PS1="$error_code_str\[$BCyan\]$(get_cwd)\[$NC\]\[$BYellow\] $account_type_indicator\[$NC\]: "
+}
+
+toggle_bash_prompt() {
+  if test -f "$HIDDEN_BASH_PROMPT_FILE"
+  then
+    rm -f "$HIDDEN_BASH_PROMPT_FILE"
+  else
+    touch "$HIDDEN_BASH_PROMPT_FILE"
   fi
 }
 
