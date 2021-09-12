@@ -24,6 +24,8 @@ let g:auto_save_events = [ "CursorHold" ]
 " isn't working how I want.
 au FileType python let b:auto_save = 0
 au FileType ruby let b:auto_save = 0
+au FileType txt set tw=0
+au FileType txt set wrap
 
 " Set Python path within Vim so that our linter works
 let $PYTHONPATH = "."
@@ -58,10 +60,14 @@ nnoremap <leader>s :w<CR>
 let g:autoformat_autoindent = 0
 let g:autoformat_retab = 0
 let g:autoformat_remove_trailing_spaces = 0
-nnoremap <leader>f :Autoformat<CR>
+nnoremap <leader><leader>f :Autoformat<CR>
 
 " Language specific autoformatting options
 let g:formatter_yapf_style = 'pep8' "Python
+
+" Disable rbeautify formatter and modify to prevent a line of equals signs from appearing
+let g:formatters_ruby = [ 'rubocop' ]
+let g:formatdef_rubocop = "'rubocop --auto-correct -o /dev/null -s '.bufname('%').' \| sed -n 2,\\$p \| grep -Ev ^='"
 
 " Reformat upon saving
 au BufWrite * :Autoformat
@@ -191,7 +197,7 @@ let g:go_metalinter_autosave_enabled = ['deadcode', 'vet', 'golint', 'errcheck']
 " Syntastic Stuff
 let g:syntastic_sh_checkers = ["shellcheck", "-e", "SC1090"]
 let g:syntastic_python_checkers = ["pylint", "-E"]
-let g:syntastic_ruby_checkers = ["rubocop", "-A", "--require", "rubocop-rspec"]
+let g:syntastic_ruby_checkers = [ "rubocop" ]
 let g:syntastic_go_checkers = [ '' ] 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
