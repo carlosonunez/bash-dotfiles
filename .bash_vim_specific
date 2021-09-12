@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+update_vim_bundles() {
+  for bundle_repo in $VIM_BUNDLE_REPOS
+  do
+    >&2 echo -ne "${BGreen}INFO${NC}: Updating '$bundle_repo'\n"
+    dir="$HOME/.vim/bundle/$(basename $bundle_repo)"
+    pushd "$dir" && git pull --quiet && popd
+  done
+}
+
 VIM_BUNDLE_REPOS=$(cat <<GITHUB_URLS
 907th/vim-auto-save
 AndrewRadev/linediff.vim
