@@ -35,6 +35,7 @@ nnoremap <leader>dc :!docker-compose up -d
 nnoremap <leader>dd :!docker-compose down<CR>
 nnoremap <leader>dr :!docker-compose restart 
 nnoremap <leader>y :!cat % \| pbcopy<CR>
+nnoremap <leader>d :bufdo bd<CR>
 
 " Set undo, backup and swap directories so that Vim doesn't leave
 " all sorts of garbage within my working directory.
