@@ -66,6 +66,15 @@ above.\n"
 }
 
 _log_into_aws() {
+  _session_token_valid() {
+    sts_info="${AWS_TOKEN_CACHE_LOCATION}/sts_info"
+    ! test -e "$sts_info" && return 1
+
+    expired_on=$(jq -r .expiration "$sts_info")
+    now=$(date +%s)
+    test "$expired_on" -gt "$now"
+  }
+
   _region() {
     if ! test -z "$AWS_REGION"
     then
@@ -80,6 +89,8 @@ _log_into_aws() {
       fi
     fi
   }
+  _session_token_valid && return 0
+
   access_key=${1:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "access_key")}
   secret_key=${2:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "secret_key")}
   if test -z "$access_key" || test -z "$secret_key"
@@ -99,9 +110,8 @@ _log_into_aws() {
   fi
 }
 
-alias log_into_aws='ensure_onepassword_configured && export $(_log_into_aws | grep -Ev "^#" | xargs -0)'
-alias aws_login=log_into_aws
-alias aws_login_custom=_log_into_aws
+alias log_into_aws_with_op='configure_1password_cli && export $(_log_into_aws | grep -E "^AWS" | xargs -0)'
+alias aws_login=log_into_aws_with_op
 
 
 message=$(cat <<-MESSAGE
