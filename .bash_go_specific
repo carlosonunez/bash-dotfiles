@@ -1,4 +1,9 @@
 GOLANG_VERSION=1.17.1
+GOLANG_TOOLS=$(cat <<-TOOLS
+golang.org/x/tools/gopls@latest
+github.com/golangci/golangci-lint/cmd/golangci-lint@v1.42.1
+TOOLS
+)
 
 # Install Go if needed
 # ====================
@@ -9,15 +14,16 @@ then
   # FUCKING INSANE. I can't keep up with these kids, man.
   brew install go # To install literally any version of Go that can compile itself
   bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-  source ~/.gvm/scripts/gvm
 fi
+source ~/.gvm/scripts/gvm
 gvm install "go$GOLANG_VERSION" && gvm use "go$GOLANG_VERSION"
 
 # Install the gopls engine (for Vim) and golangci-lint (for linting within Vim with Syntastic)
 # =============================================================================================
-for tool in gopls golangci-lint
+for tool in $GOLANG_TOOLS
 do
-  ! 2>/dev/null which "$tool" || go get "$tool"
+  tool_name=$(echo "$tool" | awk -F'/' '{print $NF}' | cut -f1 -d '@')
+  2>/dev/null which "$tool_name" || go install "$tool"
 done
 
 # Set up the Golang workspace if non-existent
