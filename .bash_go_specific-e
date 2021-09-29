@@ -1,24 +1,24 @@
+GOLANG_VERSION=1.17.1
+
 # Install Go if needed
 # ====================
 if !  which go &> /dev/null
 then
-  case "$(get_os_type)" in
-    "Darwin")
-      brew install go
-      brew install golangci/tap/golangci-lint
-      brew upgrade golangci/tap/golangci-lint
-      ;;
-    "Ubuntu")
-      sudo add-apt-repository ppa:longsleep/golang-backports
-      sudo apt-get update
-      sudo apt-get install golang-go
-      ;;
-    *)
-      echo "ERROR: This OS is not supported." >&2
-      exit 1
-      ;;
-  esac
+  # You need go to compile go (makes sense) but you can't install a binary version of it
+  # if using MacOS Big Sur or above: https://github.com/moovweb/gvm/issues/360
+  # FUCKING INSANE. I can't keep up with these kids, man.
+  brew install go # To install literally any version of Go that can compile itself
+  bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+  source ~/.gvm/scripts/gvm
 fi
+gvm install "go$GOLANG_VERSION" && gvm use "go$GOLANG_VERSION"
+
+# Install the gopls engine (for Vim) and golangci-lint (for linting within Vim with Syntastic)
+# =============================================================================================
+for tool in gopls golangci-lint
+do
+  ! 2>/dev/null which "$tool" || go get "$tool"
+done
 
 # Set up the Golang workspace if non-existent
 # ============================================
