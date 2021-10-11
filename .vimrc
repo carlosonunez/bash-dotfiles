@@ -35,7 +35,7 @@ nnoremap <leader>dc :!docker-compose up -d
 nnoremap <leader>dd :!docker-compose down<CR>
 nnoremap <leader>dr :!docker-compose restart 
 nnoremap <leader>y :!cat % \| pbcopy<CR>
-nnoremap <leader>d :bufdo bd<CR>
+nnoremap <leader>D :bufdo bd<CR>
 
 " Set undo, backup and swap directories so that Vim doesn't leave
 " all sorts of garbage within my working directory.
@@ -239,3 +239,6 @@ augroup go_tests
   autocmd FileType go nmap <leader>c :cclose<CR>:lclose<CR>
   autocmd FileType go nmap <leader><leader> :GoTest! ./... -run Integration<CR>
 augroup end
+
+" Remove newlines from a visual region. Useful for tuir/rtv.
+nnoremap <leader>N :'<,'>s/\n/ /g<CR>
