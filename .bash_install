@@ -4,7 +4,6 @@ trap "rm -f $INSTALL_LOCK_FILE" INT
 APPLE_WATCH_PAMID_LIBPATH=/usr/local/lib/pam/pam_watchid.so.2
 APPLE_WATCH_PAMID_URL=https://github.com/biscuitehh/pam-watchid
 APPLE_WATCH_PAMID_PATH=$HOME/src/pamid-applewatch
-ONEPASSWORD_VAULT="${ONEPASSWORD_VAULT:-"Carlos's Personal Vault"}"
 INSTALL_LOCK_FILE="$HOME/.bash_install_lock"
 HOMEBREW_BUILTINS=$(cat <<-APPS
 1password
@@ -213,8 +212,7 @@ get_ssh_and_aws_keys_from_onepassword() {
   }
 
   download_keys() {
-    op get document "SSH and AWS Keys" \
-      --vault "$ONEPASSWORD_VAULT" >> $HOME/Downloads/keys.zip
+    op get document "SSH and AWS Keys" >> $HOME/Downloads/keys.zip
   }
 
   unzip_keys() {
@@ -238,8 +236,7 @@ get_ssh_and_aws_keys_from_onepassword() {
 
 get_secret_settings_from_onepassword() {
   download_env_settings() {
-    op get document "Secret Environment Settings" \
-      --vault "$ONEPASSWORD_VAULT" >> $HOME/Downloads/environment.zip
+    op get document "Secret Environment Settings" >> $HOME/Downloads/environment.zip
   }
 
   unzip_env_settings() {
@@ -264,7 +261,6 @@ get_firefox_multi_account_containers_from_onepassword() {
 
   download_regexes() {
     op get item "Firefox Multi-Account Container Configuration" \
-      --vault "$ONEPASSWORD_VAULT" \
       --fields notesPlain >> $HOME/.ssh/firefox_mac_regexes
   }
 
@@ -291,7 +287,7 @@ update_firefox_multi_account_containers_into_onepassword() {
   if ! test -z "$containers_string"
   then
     >&2 echo "INFO: Updating 1Password."
-    op edit item --vault "$ONEPASSWORD_VAULT" 'Firefox Multi-Account Container Configuration' notesPlain="$containers_string"
+    op edit item 'Firefox Multi-Account Container Configuration' notesPlain="$containers_string"
   fi
 }
 
