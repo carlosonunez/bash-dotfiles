@@ -242,3 +242,6 @@ augroup end
 
 " Remove newlines from a visual region. Useful for tuir/rtv.
 nnoremap <leader>N :'<,'>s/\n/ /g<CR>
+
+" Populate errors so that unimpared works
+let g:syntastic_always_populate_loc_list = 1

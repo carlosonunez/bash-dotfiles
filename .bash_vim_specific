@@ -36,6 +36,7 @@ scrooloose/nerdtree
 thoughtbot/vim-rspec
 tpope/vim-classpath
 tpope/vim-fugitive.git
+tpope/vim-unimpaired
 vim-airline/vim-airline
 vim-airline/vim-airline-themes
 vim-scripts/groovy.vim
