@@ -14,6 +14,10 @@ MAX_AD_FREE_STALENESS_DAYS=5 # How current should /etc/hosts be?
 ADFREE_ETC_HOSTS_LISTS=$(cat <<-LISTS
 http://sbc.io/hosts/alternates/fakenews-gambling-porn-social/hosts
 LISTS
+HOMEBREW_BUILTINS_X86=$(cat <<-APPS
+vagrant
+virtualbox
+APPS
 )
 HOMEBREW_BUILTINS=$(cat <<-APPS
 1password
@@ -64,9 +68,7 @@ shiftit
 tmux
 todo-txt
 tree
-vagrant
 vim
-virtualbox
 vlc
 w3m
 xquartz
@@ -129,17 +131,30 @@ install_if_missing() {
   do
     if ! $(echo "$installed_apps" | grep -q "$app")
     then
-      printf "${BYellow}INFO${NC}: Installing app: ${BGreen}$app${NC}\n"
+      printf "${BGreen}INFO${NC}: Installing app: ${BGreen}$app${NC}\n"
       eval "$install_command $app"
     fi
   done
+}
+
+is_apple_m1_cpu() {
+  grep -iq 'arm' <<< "$(uname -p)"
 }
 
 install_homebrew_builtins() {
   # TECH NOTE: There isn't an option to hide warnings because the Homebrew
   # developers don't think that it's necessary, which is sad.
   # https://github.com/Homebrew/brew/issues/2351
-  2>&1 brew install $(echo "$HOMEBREW_BUILTINS" |  tr '\n' ' ') | \
+  apps="$(echo "$HOMEBREW_BUILTINS" | tr '\n' ' ')"
+  if is_apple_m1_cpu
+  then
+    >&2 printf "${BCyan}WARNING${NC}: You appear to be using a MacBook with an \
+Apple M1 CPU. Install Rosetta first in order to install these apps: \
+$(echo "${HOMEBREW_BUILTINS_X86}" | tr '\n' ' ')\n"
+  else
+    apps="${apps} $(echo "$HOMEBREW_BUILTINS_X86" | tr '\n' ' ')"
+  fi
+  2>&1 brew install $apps | \
     grep --line-buffered --color=always \
     -Ev "(Downloading|Already downloaded|already installed|brew reinstall|To reinstall|To re-install)" | \
     grep -Ev '^$'
@@ -280,6 +295,18 @@ get_ssh_and_aws_keys_from_onepassword() {
 }
 
 get_secret_settings_from_onepassword() {
+  SECRET_SETTINGS_SENTINEL_FILE="$HOME/.config/setup/secret_settings_downloaded"
+  SECRET_SETTINGS_SENTINEL_DIR=$(dirname "$SECRET_SETTINGS_SENTINEL_FILE")
+
+  secret_settings_installed() {
+    test -f "$SECRET_SETTINGS_SENTINEL_FILE"
+  }
+
+  mark_secret_settings_as_installed() {
+    test -d "$SECRET_SETTINGS_SENTINEL_DIR" || mkdir -p "$SECRET_SETTINGS_SENTINEL_DIR"
+    touch "$SECRET_SETTINGS_SENTINEL_FILE"
+  }
+
   download_env_settings() {
     op get document "Secret Environment Settings" --vault "$OP_DEFAULT_VAULT" \
       >> $HOME/Downloads/environment.zip
@@ -293,8 +320,14 @@ get_secret_settings_from_onepassword() {
     rm "$HOME/Downloads/environment.zip"
   }
 
-  >&2 echo "INFO: Downloading secret environment settings."
-  download_env_settings && unzip_env_settings && remove_downloaded_env_settings
+  if ! secret_settings_installed
+  then
+    >&2 echo "INFO: Downloading secret environment settings."
+    download_env_settings &&
+      unzip_env_settings &&
+      remove_downloaded_env_settings &&
+      mark_secret_settings_as_installed
+  fi
 }
 get_local_firefox_multi_account_containers() {
   cat "$HOME/.ssh/firefox_mac_regexes" | pbcopy
@@ -436,6 +469,31 @@ install_fermata(){
   fi
 }
 
+mark_first_time_setup_as_complete_if_needed() {
+  file="$HOME/.config/setup/first_time_setup_complete"
+  test -d "$(dirname "$file")" || mkdir -p "$(dirname "$file")"
+  touch "$file"
+}
+
+first_time_setup_done() {
+  file="$HOME/.config/setup/first_time_setup_complete"
+  test -f "$file"
+}
+
+if ! first_time_setup_done
+then
+  >&2 printf "${BGreen}INFO${NC}: Welcome to the installer! We'll need to configure 1Password \
+first so that we can fetch your secret preferences. Your system password will be required. \
+Enter it below when prompted.\n"
+  if ! configure_1password_cli
+  then
+    >&2 printf "${BRed}ERROR${NC}: Failed to configure 1Password. This might be because your \
+account has two-factor authentication enabled. Run 'source ~/.bash_profile' again, but \
+pre-pend this to it: 'ONEPASSWORD_OTP=[YOUR_OTP]'."
+    exit 1
+  fi
+fi
+
 remove_dead_install_locks
 if installation_is_locked
 then
@@ -482,3 +540,4 @@ install_reddit_cli
 configure_todos
 make_etc_hosts_adfree
 modify_etc_hosts
+mark_first_time_setup_as_complete_if_needed
