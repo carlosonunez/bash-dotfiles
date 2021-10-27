@@ -14,6 +14,7 @@ MAX_AD_FREE_STALENESS_DAYS=5 # How current should /etc/hosts be?
 ADFREE_ETC_HOSTS_LISTS=$(cat <<-LISTS
 http://sbc.io/hosts/alternates/fakenews-gambling-porn-social/hosts
 LISTS
+)
 HOMEBREW_BUILTINS_X86=$(cat <<-APPS
 vagrant
 virtualbox
@@ -471,8 +472,12 @@ install_fermata(){
 
 mark_first_time_setup_as_complete_if_needed() {
   file="$HOME/.config/setup/first_time_setup_complete"
-  test -d "$(dirname "$file")" || mkdir -p "$(dirname "$file")"
-  touch "$file"
+  if ! test -f "$file"
+  then
+    test -d "$(dirname "$file")" || mkdir -p "$(dirname "$file")"
+    touch "$file"
+    >&2 printf "${BGreen}INFO${NC}: First time setup complete. Enjoy your machine!\n"
+  fi
 }
 
 first_time_setup_done() {
