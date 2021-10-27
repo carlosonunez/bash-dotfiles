@@ -22,6 +22,11 @@ witch
 colordiff
 coreutils
 curl
+<<<<<<< Updated upstream
+=======
+direnv
+homebrew/cask/docker
+>>>>>>> Stashed changes
 docker-compose-completion
 feh
 findutils

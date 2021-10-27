@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 GITHUB_SSH_KEY="$HOME/.ssh/github"
-GIT_DEFAULT_AUTHOR="${GIT_DEFAULT_AUTHOR:-Carlos Nunez}"
-GIT_DEFAULT_EMAIL="${GIT_DEFAULT_EMAIL:-carlosonunez@noreply.github.com}"
 
 dont_use_master_for_default_branches() {
   git config --global init.defaultBranch main
@@ -9,23 +7,6 @@ dont_use_master_for_default_branches() {
 
 set_global_git_configs() {
   git config --global diff.tool vimdiff
-}
-
-set_git_author() {
-  if ! test -z "$WORK_GIT_AUTHOR" && ! test -z "$WORK_GIT_EMAIL"
-  then
-    author="$WORK_GIT_AUTHOR"
-    email="$WORK_GIT_EMAIL"
-  elif ! test -z "$CLIENT_GIT_AUTHOR" && ! test -z "$CLIENT_GIT_EMAIL"
-  then
-    author="$CLIENT_GIT_AUTHOR"
-    email="$CLIENT_GIT_EMAIL"
-  else
-    author="$GIT_DEFAULT_AUTHOR"
-    email="$GIT_DEFAULT_EMAIL"
-  fi
-  git config --global user.name "$author"
-  git config --global user.email "$email"
 }
 
 view_unpushed_commits_across_branches() {
@@ -134,6 +115,5 @@ _get_number_of_commits_between_refs() {
 }
 
 try_to_install_hub_if_not_found
-set_git_author
 set_global_git_configs
 dont_use_master_for_default_branches
