@@ -5,6 +5,13 @@ APPLE_WATCH_PAMID_LIBPATH=/usr/local/lib/pam/pam_watchid.so.2
 APPLE_WATCH_PAMID_URL=https://github.com/biscuitehh/pam-watchid
 APPLE_WATCH_PAMID_PATH=$HOME/src/pamid-applewatch
 INSTALL_LOCK_FILE="$HOME/.bash_install_lock"
+# Update our OBS settings.
+OBS_PREFS_OP_KEY="OBS Settings"
+OBS_PREFS_SENTINEL_FILE="$HOME/.config/setup/obs_has_been_setup"
+DISABLE_OBS_PREFS_CHECK="${DISABLE_OBS_PREFS_CHECK:-false}" # Should we disable updating /etc/hosts?
+FORCE_OBS_PREFS_UPDATE="${FORCE_OBS_PREFS_UPDATE:-false}" # Should we update our /etc/hosts anyway?
+OBS_PREFS_TIMESTAMP_FILE="$HOME/.config/obs-prefs-updater/timestamp"
+MAX_OBS_PREFS_STALENESS_DAYS=5 # How current should /etc/hosts be?
 # Update our local /etc/hosts file to disable tracking, telemetry, and ads.
 # Sourced from firebog.net
 DISABLE_ADFREE_CHECK="${DISABLE_ADFREE_CHECK:-false}" # Should we disable updating /etc/hosts?
@@ -264,6 +271,84 @@ configure_todos() {
     git clone git@github.carlosnunez.me:carlosonunez/todos.git $HOME/src/todos
   fi
 }
+
+update_obs_prefs() {
+  OBS_PREFS_TMP_FILE="/tmp/obs-studio-prefs.zip"
+
+  _write_last_updated_timestamp() {
+    test -d "$(dirname "$OBS_PREFS_TIMESTAMP_FILE")" || mkdir "$(dirname "$OBS_PREFS_TIMESTAMP_FILE")"
+    date +%s > "$OBS_PREFS_TIMESTAMP_FILE"
+  }
+
+  _get_last_updated_timestamp() {
+    test -f "$OBS_PREFS_TIMESTAMP_FILE" &&
+      cat "$OBS_PREFS_TIMESTAMP_FILE" ||
+      printf '0'
+  }
+
+  _obs_prefs_updated_recently() {
+    test "$(_get_last_updated_timestamp)" != "0" && \
+      test "$(_get_last_updated_timestamp)" -lt "$(date +%s -d "+$MAX_AD_FREE_STALENESS_DAYS days")"
+  }
+
+  _obs_prefs_updating_disabled() {
+    grep -Eiq "^true$" <<< "$DISABLE_OBS_PREFS_CHECK"
+  }
+
+  _force() {
+    grep -Eiq "^true$" <<< "$FORCE_OBS_PREFS_UPDATE"
+  }
+
+  _download_and_unzip_obs_prefs() {
+    op get document --vault "$OP_DEFAULT_VAULT" "$OBS_PREFS_OP_KEY" >  "$OBS_PREFS_TMP_FILE" &&
+      unzip -d "${HOME}/Library/Application Support" "$OBS_PREFS_TMP_FILE" &&
+      rm "$OBS_PREFS_TMP_FILE"
+  }
+
+  _zip_and_upload_obs_prefs() {
+    pushd "${HOME}/Library/Application Support" &&
+      zip -q -r "$OBS_PREFS_TMP_FILE" obs-studio &&
+      popd
+    existing=$(op list documents --vault "$OP_DEFAULT_VAULT" | \
+      jq -r '.[].overview.title' | \
+      grep "$OBS_PREFS_OP_KEY")
+    if test -z "$existing"
+    then
+      >&2 echo "INFO: OBS settings not found in 1Password. Creating it now."
+      op create document --vault "$OP_DEFAULT_VAULT" \
+        --title "$OBS_PREFS_OP_KEY" \
+        "$OBS_PREFS_TMP_FILE"
+    else
+      op edit document --vault "$OP_DEFAULT_VAULT" \
+        "$OBS_PREFS_OP_KEY" \
+        "$OBS_PREFS_TMP_FILE"
+    fi
+    rm "$OBS_PREFS_TMP_FILE"
+  }
+
+  if _force || ( ! _obs_prefs_updating_disabled && ! _obs_prefs_updated_recently )
+  then
+    >&2 echo "INFO: It's been over $MAX_OBS_PREFS_STALENESS_DAYS days since OBS prefs have \
+been updated. Doing that now."
+    >&2 echo "INFO: Set DISABLE_OBS_PREFS_CHECK to 'true' to disable this behavior."
+    if ! check_for_internet_access
+    then
+      >&2 echo "ERROR: Internet seems to be down. Do this manually by running '${FUNCNAME[0]}'"
+      return 1
+    fi
+    if ! test -f "$OBS_PREFS_SENTINEL_FILE"
+    then
+      >&2 echo "INFO: It looks like this is the first time this is being done. \
+Zipping and uploading prefs now."
+      _download_and_unzip_obs_prefs
+      touch "$OBS_PREFS_SENTINEL_FILE"
+    else
+      _zip_and_upload_obs_prefs
+    fi
+    _write_last_updated_timestamp
+  fi
+}
+
 
 get_ssh_and_aws_keys_from_onepassword() {
   ssh_folder_not_present_or_empty() {
@@ -545,4 +630,5 @@ install_reddit_cli
 configure_todos
 make_etc_hosts_adfree
 modify_etc_hosts
+update_obs_prefs
 mark_first_time_setup_as_complete_if_needed
