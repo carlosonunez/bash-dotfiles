@@ -338,8 +338,7 @@ been updated. Doing that now."
     fi
     if ! test -f "$OBS_PREFS_SENTINEL_FILE"
     then
-      >&2 echo "INFO: It looks like this is the first time this is being done. \
-Zipping and uploading prefs now."
+      >&2 echo "INFO: It looks like OBS hasn't been set up yet. Fetching prefs now."
       _download_and_unzip_obs_prefs
       touch "$OBS_PREFS_SENTINEL_FILE"
     else
