@@ -46,6 +46,7 @@ zivyangll/git-blame.vim
 will133/vim-dirdiff
 rlue/vim-fold-rspec
 fatih/vim-go
+ctrlpvim/ctrlp.vim
 GITHUB_URLS
 )
 
