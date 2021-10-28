@@ -78,6 +78,7 @@ todo-txt
 tree
 vim
 vlc
+vb-cable
 w3m
 xquartz
 zoom
@@ -499,6 +500,13 @@ install_reddit_cli() {
   fi
 }
 
+tap_drivers() {
+  if ! brew tap | grep -q "homebrew/cask-drivers"
+  then
+    brew tap homebrew/cask-drivers
+  fi
+}
+
 tap_caskroom_fonts() {
   if ! brew tap | grep -q "homebrew/cask-fonts"
   then
@@ -592,6 +600,7 @@ Skipping to post-install."
 else
   >&2 printf "${BGreen}INFO${NC}: Checking and/or updating software. This might take a few minutes.\n"
   lock_install
+  tap_drivers
   tap_caskroom_fonts
 
   # Install a few necessary brew formulae
