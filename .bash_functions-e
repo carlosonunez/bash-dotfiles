@@ -234,16 +234,39 @@ review_wifi_networks() {
         grep -v "Preferred networks on en0:")
 }
 
+run_speed_test_cloudflare() {
+  # Runs a quick speed test using Cloudflare's Speed.
+  # Exponentially ramps to produce the most accurate result.
+  SPEED_TEST_URI="https://speed.cloudflare.com/__down?measId=12345"
+  payload_size_bytes=1000
+  cutoff_seconds=3
+  iterations=0
+  printf "${BGreen}INFO${NC}: Running download speed test via Cloudflare"
+  while true
+  do
+    printf '.'
+    uri="${SPEED_TEST_URI}&bytes=${payload_size_bytes}"
+    start_time=$(date +%s)
+    result=$(2>&1 curl -L -o /dev/null "$uri" | tail -1 | awk '{print $NF}')
+    end_time=$(date +%s)
+    if test "$((end_time-start_time))" -gt "$cutoff_seconds"
+    then
+      printf "\n${BGreen}INFO${NC}: Download speed: %s Mb/s (final payload: %s)" \
+        "$result" \
+        "$((payload_size_bytes/1000)) MB"
+      return
+    fi
+    payload_size_bytes="$((payload_size_bytes*2))"
+  done
+}
+
 run_speed_test() {
-  test_file_size="${1:-100MB}"
-  valid_test_file_sizes="^(100mb|1gb|10gb)$"
-  if ! grep -q --extended-regexp --ignore-case "$valid_test_file_sizes" < <(echo "$test_file_size")
+  if ! check_for_internet_access
   then
-    >&2 echo "ERROR: Please provide a file size that matches '$valid_test_file_sizes'."
+    >&2 printf "${BRed}ERROR${NC}: No internet access. Speed test unavailable."
     return 1
   fi
-  >&2 echo "Test started using $test_file_size of data; type CTRL-C to stop."
-  curl -o /dev/null "https://speed.hetzner.de/${test_file_size}.bin"
+  run_speed_test_cloudflare
 }
 
 kill_all_matching_pids() {
