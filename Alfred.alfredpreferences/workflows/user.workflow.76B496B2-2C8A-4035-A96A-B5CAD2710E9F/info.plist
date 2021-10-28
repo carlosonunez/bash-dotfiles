@@ -72,7 +72,7 @@
 				<key>runningsubtext</key>
 				<string>searching....</string>
 				<key>script</key>
-				<string>val=$(authy fuzz --alfred $@)
+				<string>val=$(/usr/local/bin/docker run --rm -i -v $HOME/.config/authy/authy.json:/root/.authy.json carlosnunez/authy-cli-docker:latest fuzz --alfred $@)
 cat &lt;&lt; EOB
 $val
 EOB</string>
@@ -164,7 +164,7 @@ EOB</string>
 				<key>runningsubtext</key>
 				<string>refreshing...</string>
 				<key>script</key>
-				<string>authy refresh
+				<string>/usr/local/bin/docker run --rm -i -v $HOME/.config/authy/authy.json:/root/.authy.json carlosnunez/authy-cli-docker:latest refresh
 cat &lt;&lt; EOB
 {"items": [{
 	"title": "Authy tokens refresh successfully",
@@ -224,11 +224,6 @@ EOB</string>
 			<key>ypos</key>
 			<integer>280</integer>
 		</dict>
-	</dict>
-	<key>variables</key>
-	<dict>
-		<key>PATH</key>
-		<string>/Users/cn/.home_env/bin:/Users/cn/.rvm/gems/ruby-2.6.5/bin:/Users/cn/.rvm/gems/ruby-2.6.5@global/bin:/Users/cn/.rvm/rubies/ruby-2.6.5/bin:/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/opt/make/libexec/gnubin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/opt/coreutils/libexec/gnubin:/Users/cn/.gems:/Users/cn/.gems/bin:/usr/local/opt/curl/bin:/usr/local/bin:/opt/X11/bin:/Users/cn/src/go/bin:/Users/cn/bin/gyb:/usr/bin:/usr/sbin:/bin:/sbin:/Users/cn/.rvm/bin:/Users/cn/src/go/bin</string>
 	</dict>
 	<key>version</key>
 	<string></string>
