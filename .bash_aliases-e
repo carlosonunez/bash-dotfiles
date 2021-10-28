@@ -108,6 +108,7 @@ source this file again.\n"
 fi
 
 alias dc=docker-compose
+alias speed=run_speed_test
 
 if which hub &>/dev/null
 then
