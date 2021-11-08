@@ -153,7 +153,7 @@ nmap <leader>f :NERDTreeFind<cr>
 
 " Key remappings.
 nnoremap <C-n> :bnext<CR>
-nnoremap <C-p> :bprevious<CR>
+nnoremap <C-m> :bprevious<CR>
 nnoremap <C-b> :buffers<CR>
 nnoremap <C-h> :vertical resize -5<CR>
 nnoremap <C-l> :vertical resize +5<CR>
