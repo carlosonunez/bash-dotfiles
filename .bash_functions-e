@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 HIDDEN_BASH_PROMPT_FILE="/tmp/use_hidden_bash_prompt"
+ONE_GIGABYTE="$(numfmt --from=iec '1G')"
+ONE_MEGABYTE="$(numfmt --from=iec '1M')"
+ONE_KILOBYTE="$(numfmt --from=iec '1K')"
 
 jumpbox() {
   get_jumpbox_details_from_op() {
@@ -234,6 +237,20 @@ review_wifi_networks() {
         grep -v "Preferred networks on en0:")
 }
 
+calculate_speed_from_curl() {
+  speed_iec="$1"
+  if ! &>/dev/null which numfmt
+  then
+    >&2 printf "${BYellow}WARN${NC}: numfmt not installed; returning input"
+    return "$speed_iec"
+  fi
+  result_bytes="$(echo "$speed_iec" | tr '[:lower:]' '[:upper:]' | numfmt --from=iec)"
+  test "$result_bytes" -gt "$ONE_GIGABYTE" && { echo "$(((result_bytes/ONE_GIGABYTE)*8)) Gbps"; return; }
+  test "$result_bytes" -gt "$ONE_MEGABYTE" && { echo "$(((result_bytes/ONE_MEGABYTE)*8)) Mbps"; return; }
+  test "$result_bytes" -gt "$ONE_KILOBYTE" && { echo "$(((result_bytes/ONE_KILOBYTE)*8)) Kbps"; return; }
+  echo "$((result_bytes*8)) bps"
+}
+
 run_speed_test_cloudflare() {
   # Runs a quick speed test using Cloudflare's Speed.
   # Exponentially ramps to produce the most accurate result.
@@ -251,9 +268,10 @@ run_speed_test_cloudflare() {
     end_time=$(date +%s)
     if test "$((end_time-start_time))" -gt "$cutoff_seconds"
     then
-      printf "\n${BGreen}INFO${NC}: Download speed: %s Mb/s (final payload: %s)" \
-        "$result" \
-        "$((payload_size_bytes/1000)) MB"
+      result_str=$(calculate_speed_from_curl "$result")
+      printf "\n${BGreen}INFO${NC}: Download speed: ~%s (final payload: %s)\n" \
+        "$result_str" \
+        "$((payload_size_bytes/ONE_MEGABYTE)) MB"
       return
     fi
     payload_size_bytes="$((payload_size_bytes*2))"
