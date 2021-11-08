@@ -3,6 +3,7 @@
 DEFAULT_AWS_REGION=us-east-2
 AWS_ROLE_INFO_OP_ITEM_NAME="AWS Admin Role Information"
 AWS_TOKEN_CACHE_LOCATION="$HOME/.config/aws"
+AWS_OP_VAULT="${AWS_OP_VAULT:-$OP_DEFAULT_VAULT}"
 
 assume_role() {
   _get_session_json() {
@@ -80,7 +81,7 @@ _log_into_aws() {
     then
       echo "$AWS_REGION"
     else
-      region=$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "region")
+      region="$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "region" "$AWS_OP_VAULT")"
       if test -z "$region"
       then
         echo "$DEFAULT_AWS_REGION"
@@ -89,10 +90,16 @@ _log_into_aws() {
       fi
     fi
   }
-  _session_token_valid && return 0
 
-  access_key=${1:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "access_key")}
-  secret_key=${2:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "secret_key")}
+  if _session_token_valid
+  then
+    >&2 printf "${BRed}ERROR${NC}: The session in the environment is still valid.\n"
+    >&2 printf "${BRed}ERROR${NC}: Delete $AWS_TOKEN_CACHE_LOCATION to recreate it.\n"
+    return 0
+  fi
+
+  access_key="${1:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "access_key" "$AWS_OP_VAULT")}"
+  secret_key="${2:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "secret_key" "$AWS_OP_VAULT")}"
   if test -z "$access_key" || test -z "$secret_key"
   then
     >&2 printf "${BRed}ERROR${NC}: Please provide an AWS access key or secret key.\n"
@@ -102,15 +109,15 @@ _log_into_aws() {
   export AWS_ACCESS_KEY_ID="$access_key"
   export AWS_SECRET_ACCESS_KEY="$secret_key"
   export AWS_REGION="$(_region)"
-  arn=${3:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "arn")}
-  external_id=${4:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "external_id")}
+  arn="${3:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "arn" "$AWS_OP_VAULT")}"
+  external_id="${4:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "external_id" "$AWS_OP_VAULT")}"
   if ! test -z "$arn" && ! test -z "$external_id"
   then
     assume_role "$arn" "$external_id"
   fi
 }
 
-alias log_into_aws_with_op='configure_1password_cli && export $(_log_into_aws | grep -E "^AWS" | xargs -0)'
+alias log_into_aws_with_op='configure_1password_cli && 1>/dev/null export $(_log_into_aws | grep -E "^export AWS" | xargs -0)'
 alias aws_login=log_into_aws_with_op
 
 
