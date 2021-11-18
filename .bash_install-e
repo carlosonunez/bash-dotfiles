@@ -208,20 +208,21 @@ modify_etc_hosts() {
 }
 
 make_etc_hosts_adfree() {
-  _write_last_updated_timestamp() {
+  _write_refresh_date_timestamp() {
     test -d "$(dirname "$ADFREE_TIMESTAMP_FILE")" || mkdir "$(dirname "$ADFREE_TIMESTAMP_FILE")"
-    date +%s > "$ADFREE_TIMESTAMP_FILE"
+    date +%s -d "+$MAX_AD_FREE_STALENESS_DAYS days" > "$ADFREE_TIMESTAMP_FILE"
   }
 
-  _get_last_updated_timestamp() {
+  _get_refresh_date_timestamp() {
     test -f "$ADFREE_TIMESTAMP_FILE" &&
       cat "$ADFREE_TIMESTAMP_FILE" ||
       printf '0'
   }
 
   _etc_hosts_updated_recently() {
-    test "$(_get_last_updated_timestamp)" != "0" && \
-      test "$(_get_last_updated_timestamp)" -lt "$(date +%s -d "+$MAX_AD_FREE_STALENESS_DAYS days")"
+    last_refresh_date="$(_get_refresh_date_timestamp)"
+    today="$(date +%s)"
+    test "$today" -le "$last_refresh_date"
   }
 
   _etc_hosts_updating_disabled() {
@@ -244,7 +245,7 @@ has been updated with ad-free extensions. Updating it now."
         sudo sh -c 'cat /tmp/etc_hosts >> /etc/hosts' &&
         rm -f /tmp/etc_hosts
     done
-    _write_last_updated_timestamp
+    _write_refresh_date_timestamp
   fi
 }
 
@@ -278,20 +279,20 @@ configure_todos() {
 update_obs_prefs() {
   OBS_PREFS_TMP_FILE="/tmp/obs-studio-prefs.zip"
 
-  _write_last_updated_timestamp() {
+  _write_refresh_date_timestamp() {
     test -d "$(dirname "$OBS_PREFS_TIMESTAMP_FILE")" || mkdir "$(dirname "$OBS_PREFS_TIMESTAMP_FILE")"
     date +%s > "$OBS_PREFS_TIMESTAMP_FILE"
   }
 
-  _get_last_updated_timestamp() {
+  _get_refresh_date_timestamp() {
     test -f "$OBS_PREFS_TIMESTAMP_FILE" &&
       cat "$OBS_PREFS_TIMESTAMP_FILE" ||
       printf '0'
   }
 
   _obs_prefs_updated_recently() {
-    test "$(_get_last_updated_timestamp)" != "0" && \
-      test "$(_get_last_updated_timestamp)" -lt "$(date +%s -d "+$MAX_AD_FREE_STALENESS_DAYS days")"
+    test "$(_get_refresh_date_timestamp)" != "0" && \
+      test "$(_get_refresh_date_timestamp)" -lt "$(date +%s -d "+$MAX_AD_FREE_STALENESS_DAYS days")"
   }
 
   _obs_prefs_updating_disabled() {
@@ -347,7 +348,7 @@ been updated. Doing that now."
     else
       _zip_and_upload_obs_prefs
     fi
-    _write_last_updated_timestamp
+    _write_refresh_date_timestamp
   fi
 }
 
@@ -455,7 +456,8 @@ update_firefox_multi_account_containers_into_onepassword() {
   if ! test -z "$containers_string"
   then
     >&2 echo "INFO: Updating 1Password."
-    op edit item 'Firefox Multi-Account Container Configuration' notesPlain="$containers_string"
+    op edit item 'Firefox Multi-Account Container Configuration' notesPlain="$containers_string" \
+      --vault "$OP_DEFAULT_VAULT"
   fi
 }
 
