@@ -1,6 +1,64 @@
 " Tim Popify my vim setup!
 execute pathogen#infect()
 
+" Globals
+let g:TextWidthToggleOn = 1
+
+" Buffer autocommands
+
+" Set the default text width to 100
+autocmd BufReadPre,FileReadPre * set formatoptions+=t
+autocmd BufReadPre,FileReadPre * set textwidth=100
+autocmd BufReadPre,FileReadPre * let &colorcolumn = (&l:textwidth - 20) . ",".join(range(&l:textwidth,999),",")
+autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+autocmd BufWinLeave * call clearmatches()
+
+au BufWrite * :Autoformat
+augroup Markdown
+  au FileType markdown vmap <leader><Bslash> :EasyAlign*<Bar><Enter>
+  au FileType markdown setlocal textwidth=80
+  au FileType markdown let &l:colorcolumn = (&l:textwidth - 20) . ",".join(range(&l:textwidth,999),",")
+augroup end
+augroup GitCommit
+  au Filetype gitcommit setlocal textwidth=150
+  au FileType gitcommit set nowrap
+  au FileType python let &l:colorcolumn = (&l:textwidth - 20) . ",".join(range(&l:textwidth,999),",")
+augroup end
+augroup Python
+  au FileType python let b:auto_save = 0
+  au FileType python nmap <leader>d oimport pdb; pdb.set_trace() # vim breakpoint<Esc>
+augroup end
+augroup Text
+  au FileType txt setlocal textwidth=0
+  au FileType txt setlocal wrap
+augroup end
+augroup Ruby
+  au FileType ruby let b:auto_save = 0
+  au FileType ruby nmap <leader>d orequire 'pry'; binding.pry # vim breakpoint<Esc> 
+augroup end
+augroup Golang
+  autocmd!
+  autocmd BufWritePost *.go :GoTest! -short
+  autocmd FileType go nmap <leader>c :cclose<CR>:lclose<CR>
+  autocmd FileType go nmap <leader><leader> :GoTest! ./... -run Integration<CR>
+augroup end
+
+
+" Colorscheme autocommands
+au ColorScheme * hi ColorColumn ctermbg=darkgray
+au ColorScheme * hi CursorLine ctermbg=235
+au ColorScheme * hi Visual ctermbg=blue
+au ColorScheme * hi Search ctermbg=167 ctermfg=235
+
+" Cursor Color options
+set cursorline
+set cursorcolumn
+
+" Textwidth options
+set formatoptions+=t " Wrap at textwidth
+
 " Set modeline so that we can autoformat files based on top-file comments.
 set modeline
 
@@ -11,7 +69,6 @@ let g:airline_theme = 'atomic'
 set t_Co=256
 
 " vim-easy-align!
-au FileType markdown vmap <leader><Bslash> :EasyAlign*<Bar><Enter>
 let g:table_mode_insert_column_after_map = 1
 let g:table_mode_relign_map = 1
 
@@ -19,13 +76,6 @@ let g:table_mode_relign_map = 1
 set updatetime=2000 " Increase update time so that I can make quick edits.
 let g:auto_save = 1
 let g:auto_save_events = [ "CursorHold" ]
-
-" Disable auto save for some files while I work out why auto_save_events
-" isn't working how I want.
-au FileType python let b:auto_save = 0
-au FileType ruby let b:auto_save = 0
-au FileType txt set tw=0
-au FileType txt set wrap
 
 " Set Python path within Vim so that our linter works
 let $PYTHONPATH = "."
@@ -46,10 +96,6 @@ set directory=~/.vim/swap//
 " Highlight extra whitespace in Normal mode.
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
-autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-autocmd BufWinLeave * call clearmatches()
 
 " Reload our .vimrc easily
 nnoremap <leader>r :source $HOME/.vimrc<CR>
@@ -71,7 +117,6 @@ let g:formatters_ruby = [ 'rubocop' ]
 let g:formatdef_rubocop = "'rubocop --auto-correct -o /dev/null -s '.bufname('%').' \| sed -n 2,\\$p \| grep -Ev ^='"
 
 " Reformat upon saving
-au BufWrite * :Autoformat
 
 " Spacing options.
 " Tabstop: Number of spaces to add to tabs.
@@ -82,40 +127,17 @@ set expandtab
 set backspace=2
 set shiftwidth=2
 
-" Nowrap: Don't wrap text unless I say so explicitly.
-" Textwidth: Autowrap at column n (where n is right of the equals sign)
-set formatoptions+=t
-set nowrap
-set textwidth=100
-
-" Except for Markdown, which needs to have no textwidth to prevent reflow issues,
-" specifically within tables.
-au FileType markdown set textwidth=500
-au Filetype gitcommit set textwidth=150
 
 " Delek: pretty colorscheme.
 colorscheme seti
 
-" Enable the cursorline and cursorcolumn.
-set cursorline
-set cursorcolumn
-au ColorScheme * hi CursorColumn ctermbg=233
-au ColorScheme * hi CursorLine ctermbg=235
-nnoremap <leader>l :set cursorline! cursorcolumn!<CR>
-
 " Override highlight color
-au ColorScheme * hi Visual ctermbg=blue
 
 " Highlight search options
 set hlsearch
-au ColorScheme * hi Search ctermbg=167 ctermfg=235
 
 " vim-cool shows the number of search results on the bottom.
 let g:CoolTotalMatches = 1
-
-" Set a bar at column 80 so that I can keep my code readable.
-au ColorScheme * hi ColorColumn ctermbg=240
-let &colorcolumn="80,".join(range(100,999),",")
 
 " Expandtab: Use spaces instead of hard tabs.
 set expandtab
@@ -199,6 +221,8 @@ let g:go_metalinter_autosave_enabled = ['deadcode', 'vet', 'golint', 'errcheck']
 let g:syntastic_sh_checkers = ["shellcheck", "-e", "SC1090"]
 let g:syntastic_python_checkers = ["pylint", "-E"]
 let g:syntastic_ruby_checkers = [ "rubocop" ]
+let g:syntastic_markdown_mdl_exec = "markdownlint"
+let g:syntastic_markdown_mdl_args = ""
 let g:syntastic_go_checkers = [ '' ] 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
@@ -226,11 +250,35 @@ nnoremap <C-g>l :Gpull<CR>
 " Do an interactive diff against the last staged bit of code.
 nnoremap <C-g>d :Gdiff<CR>
 
-" Debugging convenience functions
-" Add a breakpoint
-au FileType ruby nmap <leader>d orequire 'pry'; binding.pry # vim breakpoint<Esc> 
-au FileType python nmap <leader>d oimport pdb; pdb.set_trace() # vim breakpoint<Esc>
-nnoremap <leader>ud :%g/# vim breakpoint/d<CR>
+nnoremap <leader>T :call TextWidthToggle()<CR>
+nnoremap <leader>W :call WrapToggle()<CR>
+
+function! WrapToggle()
+  if stridx(&formatoptions, 't') > -1
+    set formatoptions-=t
+    hi ColorColumn ctermbg=22
+    echom "wrapping disabled"
+  else
+    set formatoptions+=t
+    hi ColorColumn ctermbg=240
+    echom "wrapping enabled"
+  endif
+endfunction
+
+function! TextWidthToggle()
+  if g:TextWidthToggleOn
+    let g:TextWidthToggleLastWidth = &textwidth
+    let &textwidth = 0
+    let &colorcolumn = 0
+    let g:TextWidthToggleOn = 0
+    echom "text width control disabled"
+  else
+    let &textwidth = g:TextWidthToggleLastWidth
+    let &colorcolumn = (&textwidth - 20) . ",".join(range(&textwidth,999),",")
+    let g:TextWidthToggleOn = 1
+    echom "text width set to " . &textwidth . " characters"
+  endif
+endfunction
 
 " Testing autosaves
 augroup go_tests

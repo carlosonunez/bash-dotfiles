@@ -19,6 +19,7 @@ cespare/vim-toml
 chaquotay/ftl-vim-syntax
 chr4/nginx.vim
 claco/jasmine.vim
+ctrlpvim/ctrlp.vim
 dhruvasagar/vim-table-mode
 flazz/vim-colorschemes
 hashivim/vim-terraform

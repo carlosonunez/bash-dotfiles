@@ -3,7 +3,8 @@ trap "rm -f $INSTALL_LOCK_FILE" INT
 
 APPLE_WATCH_PAMID_LIBPATH=/usr/local/lib/pam/pam_watchid.so.2
 APPLE_WATCH_PAMID_URL=https://github.com/biscuitehh/pam-watchid
-APPLE_WATCH_PAMID_PATH=$HOME/src/pamid-applewatch
+APPLE_WATCH_PAMID_PATH=$HOME/.config/security/pamid-applewatch
+ONEPASSWORD_VAULT="${ONEPASSWORD_VAULT:-"Carlos's Personal Vault"}"
 INSTALL_LOCK_FILE="$HOME/.bash_install_lock"
 # Update our OBS settings.
 OBS_PREFS_OP_KEY="OBS Settings"
@@ -51,6 +52,7 @@ feh
 findutils
 firefox
 font-dejavu-sans-mono-nerd-font
+fzf
 gawk
 gh
 git
@@ -519,7 +521,8 @@ enable_sudo_with_apple_watch_and_touch_id() {
     then
       if ! test -d $APPLE_WATCH_PAMID_PATH
       then
-        git clone $APPLE_WATCH_PAMID_URL $APPLE_WATCH_PAMID_PATH
+        mkdir -p "$APPLE_WATCH_PAMID_PATH" && \
+          git clone $APPLE_WATCH_PAMID_URL $APPLE_WATCH_PAMID_PATH
       fi
       >&2 printf "${BGreen}INFO${NC}: Installing Apple Watch sudo extension. Enter your \
 password when prompted.\n"
