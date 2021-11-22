@@ -84,7 +84,7 @@ then
   if is_mac
   then
     brew install docker
-    &>/dev/null which limactl && brew install lima
+    &>/dev/null which limactl || brew install lima
   elif is_debian
   then
     install_application "apt-transport-https ca-certificates curl"
