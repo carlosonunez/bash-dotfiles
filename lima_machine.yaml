@@ -22,6 +22,8 @@ mounts:
     writable: true
   - location: "/tmp/lima"
     writable: true
+  - location: "~/.config"
+    writable: false
 ssh:
   localPort: 10000
   loadDotSSHPubKeys: true
