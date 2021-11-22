@@ -1,6 +1,27 @@
 #!/usr/bin/env bash
 DOCKER_CHECK_SENTINEL_FILE=/tmp/docker_installation_in_progress
+DOCKER_SOCK_PATH_DARWIN="unix://$HOME/.lima/docker.sock"
+DOCKER_SOCK_PATH_WINDOWS="tcp://0.0.0.0:2375"
+LIMA_MACHINE_NAME=lima_machine
+LIMA_MACHINE_PATH="$HOME/src/setup/lima_machine.yaml"
+
 trap "rm -rf $DOCKER_CHECK_SENTINEL_FILE" INT EXIT
+
+is_mac() {
+  test "$(get_os_type)" == "Darwin"
+}
+
+is_windows_wsl() {
+  test -f /etc/lsb_release && grep -q 'Microsoft' /etc/lsb_release
+}
+
+is_debian() {
+  test -e /etc/debian_release
+}
+
+is_redhat() {
+  test -e /etc/redhat_release
+}
 
 docker_check_mutex_lock() {
   printf $$ >> "$DOCKER_CHECK_SENTINEL_FILE"
@@ -32,6 +53,22 @@ remove_dead_install_locks() {
   fi
 }
 
+start_docker_vm_darwin() {
+  test "$(get_os_type)" == "Darwin" || return 0
+
+  if ! grep -Eq "${LIMA_MACHINE_NAME}[ \t]+Running" < <(limactl list 2>/dev/null)
+  then
+    if ! grep -Eq "$LIMA_MACHINE_NAME" < <(limactl list > /dev/null)
+    then
+      >&2 printf "${BYellow}INFO${NC}: Docker VM [$LIMA_MACHINE_NAME] not created; creating now\n"
+      limactl start "$LIMA_MACHINE_PATH" --tty=false
+    else
+      >&2 printf "${BYellow}INFO${NC}: Docker VM [$LIMA_MACHINE_NAME] not started; starting now\n"
+      limactl start "$LIMA_MACHINE_NAME"
+    fi
+  fi
+}
+
 remove_dead_install_locks
 if installation_is_locked
 then
@@ -44,54 +81,76 @@ docker_check_mutex_lock
 if ! which docker &>/dev/null
 then
   printf "Installing ${BGreen}docker${NC}\n"
-  if test "$(get_os_type)" != "Darwin"
+  if is_mac
   then
-    if grep -q 'Microsoft' /etc/lsb_release
-    then
-      printf "${BYellow}INFO${NC}: Connecting Docker-Windows engine to native Linux session\n"
-      export DOCKER_HOST=tcp://0.0.0.0:2375
-    else
-      install_application "apt-transport-https ca-certificates curl"
-      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-      sudo add-apt-repository \
-         "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-         $(lsb_release -cs) \
-         stable"
-      sudo apt-get update
-      install_application "linux-image-extra-$(uname -r) linux-image-extra-virtual"
-      install_application "docker-ce"
-    fi
-  fi
-fi
-
-if [ "$(get_os_type)" != "Darwin" ] && ! $(id | grep -q "docker")
-then
-  printf "${BYellow}INFO${NC}: Adding your user to the 'docker' group. Password might be needed. \
-  Log out then back in to apply these changes.\n"
-  sudo usermod -aG docker $USER
-fi
-
-if $(file $(which docker-compose) | grep -q "Mach-O")
-then
-  if test -z "$VIRTUAL_ENV"
+    brew install docker
+    &>/dev/null which limactl && brew install lima
+  elif is_debian
   then
-    >&2 echo "ERROR: Can't install Docker Compose; install virtualenv first."
+    install_application "apt-transport-https ca-certificates curl"
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository \
+       "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+       $(lsb_release -cs) \
+       stable"
+    sudo apt-get update
+    install_application "linux-image-extra-$(uname -r) linux-image-extra-virtual"
+    install_application "docker-ce"
+  else
+    >&2 printf "${BRed}ERROR${NC}: A Docker setup routine hasn't been written for this Linux.\n"
     return 1
   fi
-  >&2 echo "INFO: Subbing compiled Docker Compose with Python version"
-  pip install docker-compose
 fi
 
-if ! test -e $(brew --prefix)/etc/bash_completion.d/docker-compose
-then
-  sudo curl -L https://raw.githubusercontent.com/docker/compose/1.27.4/contrib/completion/bash/docker-compose \
-    -o $(brew --prefix)/etc/bash_completion.d/docker-compose
-fi
+add_user_to_docker_group_if_linux() {
+  (is_debian || is_redhat) || return 0
+  
+  printf "${BYellow}INFO${NC}: Adding your user to the 'docker' group. Password might be needed. \
+  Log out then back in to apply these changes.\n"
+  sudo usermod -aG docker "$USER"
+}
 
-if ! test -e $(brew --prefix)/etc/bash_completion.d/docker.sh
-then
-  sudo curl -L https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker \
-    -o $(brew --prefix)/etc/bash_completion.d/docker.sh
-fi
+use_docker_compose_pip_instead_of_binary() {
+  if $(file $(which docker-compose) | grep -q "Mach-O")
+  then
+    if test -z "$VIRTUAL_ENV"
+    then
+      >&2 echo "ERROR: Can't install Docker Compose; install virtualenv first."
+      return 1
+    fi
+    >&2 echo "INFO: Subbing compiled Docker Compose with Python version"
+    pip install docker-compose
+  fi
+}
 
+install_docker_related_bash_completions_if_darwin() {
+  _docker_compose() {
+    brew link docker-compose-completion &>/dev/null || true
+  }
+
+  _docker_cli() {
+    if ! test -e $(brew --prefix)/etc/bash_completion.d/docker
+    then
+      sudo curl -L https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker \
+        -o $(brew --prefix)/etc/bash_completion.d/docker
+    fi
+  }
+
+  _limactl() {
+    completion_file="$(brew --prefix)/etc/bash_completion.d/limactl"
+    ! test -e "$completion_file" && limactl completion bash > "$completion_file"
+  }
+
+  test "$(get_os_type)" == "Darwin" || return 0
+  _docker_cli && _docker_compose && _limactl
+
+}
+
+add_user_to_docker_group_if_linux
+start_docker_vm_darwin
+use_docker_compose_pip_instead_of_binary
+install_docker_related_bash_completions_if_darwin
+
+is_mac && export DOCKER_HOST="$DOCKER_SOCK_PATH_DARWIN"
+is_windows_wsl && export DOCKER_HOST="$DOCKER_SOCK_PATH_WINDOWS"
 docker_check_mutex_unlock

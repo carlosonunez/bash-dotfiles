@@ -1,0 +1,56 @@
+# ===================================================================== #
+# BASIC CONFIGURATION
+# ===================================================================== #
+
+arch: default
+images:
+  - location: "~/Downloads/impish-server-cloudimg-amd64.img"
+    arch: "x86_64"
+  - location: "~/Downloads/impish-server-cloudimg-arm64.img"
+    arch: "aarch64"
+  - location: https://github.com/lima-vm/alpine-lima/releases/download/v0.2.0/alpine-lima-rd-3.13.5-aarch64.iso
+    arch: "aarch64"
+    digest: "sha512:59c2dc5257be4d7dd05de6c64fcebae710f4e6eb993c784379a562be290cc957d5c8f2aef0d4c0c90a6fae5991218771e60e37a40a15414d2c169a6fdf534185"
+  - location: https://github.com/lima-vm/alpine-lima/releases/download/v0.2.0/alpine-lima-rd-3.13.5-x86_64.iso
+    arch: "x86_64"
+    digest: "sha512:73953b3f4e9dee279b058f51b323e430697d2e305b391d997046c3ef0468a6cb7f445144653d297c68cd294d4d0264e01bed114fc3555501b3a733759505f929"
+cpus: 4
+memory: 8GiB
+disk: 50GiB
+mounts:
+  - location: "~/src"
+    writable: true
+  - location: "/tmp/lima"
+    writable: true
+ssh:
+  localPort: 10000
+  loadDotSSHPubKeys: true
+  forwardAgent: false
+containerd:
+  system: false
+  user: false
+provision:
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+      usermod -aG docker $LIMA_CIDATA_USER
+      /etc/init.d/docker start
+probes:
+  - script: |
+      #!/bin/bash
+      set -eux -o pipefail
+      if ! timeout 30s bash -c "until command -v docker ps >/dev/null 2>&1; do sleep 3; done"; then
+        echo >&2 "docker is not installed yet"
+        exit 1
+      fi
+    hint: See "/var/log/cloud-init-output.log". in the guest
+firmware:
+  legacyBIOS: true
+video:
+  display: "none"
+propagateProxyEnv: true
+useHostResolver: true
+portForwards:
+  - guestSocket: "/var/run/docker.sock"
+    hostSocket: "{{.Home}}/.lima/docker.sock"
