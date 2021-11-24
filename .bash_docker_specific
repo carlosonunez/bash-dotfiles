@@ -2,8 +2,8 @@
 DOCKER_CHECK_SENTINEL_FILE=/tmp/docker_installation_in_progress
 DOCKER_SOCK_PATH_DARWIN="unix://$HOME/.lima/docker.sock"
 DOCKER_SOCK_PATH_WINDOWS="tcp://0.0.0.0:2375"
-LIMA_MACHINE_SOURCE_PATH="$HOME/src/setup/lima_machine.yaml"
-LIMA_MACHINE_DESTINATION_PATH="$HOME/.config/lima/docker-light.yaml"
+LIMA_MACHINE_SOURCE_PATH="${LIMA_MACHINE_PATH:-$HOME/src/setup/lima_machine.yaml}"
+LIMA_MACHINE_DESTINATION_PATH="$HOME/.config/lima/${LIMA_MACHINE_NAME:-docker-light.yaml}"
 
 trap "rm -rf $DOCKER_CHECK_SENTINEL_FILE" INT EXIT
 
