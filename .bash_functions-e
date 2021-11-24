@@ -732,3 +732,25 @@ toggle() {
     fi
   fi
 }
+
+terraform() {
+  TERRAFORM_IMAGE="${TERRAFORM_IMAGE:-carlosnunez/terraform:latest}"
+  TF_ENV_VARS="${TF_ENV_VARS}"
+  if ! test -z "$TF_ENV_VARS"
+  then
+    docker run --rm -it -v $PWD:/app -w /app \
+      -e AWS_ACCESS_KEY_ID \
+      -e AWS_SECRET_ACCESS_KEY \
+      -e AWS_SESSION_TOKEN \
+      -e AWS_REGION \
+      "${TF_ENV_VARS}" \
+      "$TERRAFORM_IMAGE" "$@"
+  else
+    docker run --rm -it -v $PWD:/app -w /app \
+      -e AWS_ACCESS_KEY_ID \
+      -e AWS_SECRET_ACCESS_KEY \
+      -e AWS_SESSION_TOKEN \
+      -e AWS_REGION \
+      "$TERRAFORM_IMAGE" "$@"
+  fi
+}
