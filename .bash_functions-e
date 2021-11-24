@@ -738,7 +738,9 @@ terraform() {
   TF_ENV_VARS="${TF_ENV_VARS}"
   if ! test -z "$TF_ENV_VARS"
   then
-    docker run --rm -it -v $PWD:/app -w /app \
+    docker run --rm -it -v $PWD:/app --privileged \
+      -v ${DOCKER_HOST:-/var/run/docker.sock}:/var/run/docker.sock \
+      -w /app \
       -e AWS_ACCESS_KEY_ID \
       -e AWS_SECRET_ACCESS_KEY \
       -e AWS_SESSION_TOKEN \
@@ -747,6 +749,7 @@ terraform() {
       "$TERRAFORM_IMAGE" "$@"
   else
     docker run --rm -it -v $PWD:/app -w /app \
+      -v ${DOCKER_HOST:-/var/run/docker.sock}:/var/run/docker.sock \
       -e AWS_ACCESS_KEY_ID \
       -e AWS_SECRET_ACCESS_KEY \
       -e AWS_SESSION_TOKEN \
