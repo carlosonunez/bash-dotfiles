@@ -15,7 +15,6 @@ jumpbox() {
         >&2 printf "${BRed}ERROR${NC}: Can't get jumpbox details.\n"
         return 1
       fi
-      set -x
       sudo security add-generic-password -a "$USER" -s "jumpbox" -w "$remote_details" -U
       echo "$remote_details"
       return
@@ -734,26 +733,40 @@ toggle() {
 }
 
 terraform() {
+  _gather_extra_vars() {
+    _gather() {
+      start_pattern="$1"
+      tf_extra_vars=""
+      while read -r terraform_var
+      do
+        key=$(echo "$terraform_var" | cut -f1 -d '=')
+        value=$(sed "s/$key=//" <<< "$terraform_var")
+        tf_extra_vars="${tf_extra_vars} -e ${key}=${value}"
+      done < <(env | grep -E "^$start_pattern")
+      echo "$tf_extra_vars" | sed 's/[ ]{2,}/ /g'
+    }
+    _gather_tf_vars() {
+      _gather "TF"
+    }
+    _gather_aws_vars() {
+      _gather "AWS"
+    }
+  all=$(_gather_tf_vars && _gather_aws_vars)
+  echo "$all" | tr -d '\n'
+  }
   TERRAFORM_IMAGE="${TERRAFORM_IMAGE:-carlosnunez/terraform:latest}"
-  TF_ENV_VARS="${TF_ENV_VARS}"
-  if ! test -z "$TF_ENV_VARS"
+  tf_extra_vars="$(_gather_extra_vars)"
+  >&2 echo "DEBUG: Extra vars: $tf_extra_vars"
+  if ! test -z "$tf_extra_vars"
   then
     docker run --rm -it -v $PWD:/app --privileged \
-      -v ${DOCKER_HOST:-/var/run/docker.sock}:/var/run/docker.sock \
+      -v /var/run/docker.sock:/var/run/docker.sock \
       -w /app \
-      -e AWS_ACCESS_KEY_ID \
-      -e AWS_SECRET_ACCESS_KEY \
-      -e AWS_SESSION_TOKEN \
-      -e AWS_REGION \
-      "${TF_ENV_VARS}" \
+      ${tf_extra_vars} \
       "$TERRAFORM_IMAGE" "$@"
   else
     docker run --rm -it -v $PWD:/app -w /app \
-      -v ${DOCKER_HOST:-/var/run/docker.sock}:/var/run/docker.sock \
-      -e AWS_ACCESS_KEY_ID \
-      -e AWS_SECRET_ACCESS_KEY \
-      -e AWS_SESSION_TOKEN \
-      -e AWS_REGION \
+      -v /var/run/docker.sock:/var/run/docker.sock \
       "$TERRAFORM_IMAGE" "$@"
   fi
 }
