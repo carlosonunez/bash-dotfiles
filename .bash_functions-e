@@ -512,9 +512,12 @@ get_cwd() {
 
 update_dotfiles() {
   pushd $HOME/src/setup
-  test -z "$(git status --porcelain)" || git stash
+  if test -z "$(git status --porcelain)"
+  then
+    >&2 echo -ne "${BYellow}WARNING${NC}: Changed files have been detected. Stashing them."
+    git stash
+  fi
   git pull --rebase
-  test -z "$(git stash list)" || git stash pop
   popd
 }
 
