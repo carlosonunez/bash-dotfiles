@@ -1,7 +1,3 @@
-# ===================================================================== #
-# BASIC CONFIGURATION
-# ===================================================================== #
-
 arch: default
 images:
   - location: "~/Downloads/impish-server-cloudimg-amd64.img"
@@ -36,8 +32,30 @@ provision:
     script: |
       #!/bin/bash
       set -eux -o pipefail
+      # Add our user into the 'docker' group so that we don't have to sudo
       usermod -aG docker $LIMA_CIDATA_USER
+
+      # Start Docker
       /etc/init.d/docker start
+
+      # Fix clock drift by syncing with host
+      max_attempts=5
+      attempts=0
+      until docker run --rm --privileged alpine hwclock -s
+      do
+        attempts=$((attempts+1))
+        echo "WARNING: Unable to sync clock with host; trying again in 1 second"
+        sleep 1
+      done
+
+      # Enable multi-arch support
+      # If you need support for other architectures like s90x or PPC,
+      # run the command below manually and provide the target arch at the end
+      if uname -m | grep -Eiq 'aarch|arm'
+      then docker run --rm --privileged aptman/qus -s -- -p x86_64
+      else docker run --rm --privileged aptman/qus -s -- -p arm
+      fi
+      
 probes:
   - script: |
       #!/bin/bash

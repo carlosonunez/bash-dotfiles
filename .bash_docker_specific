@@ -2,10 +2,14 @@
 DOCKER_CHECK_SENTINEL_FILE=/tmp/docker_installation_in_progress
 DOCKER_SOCK_PATH_DARWIN="unix://$HOME/.lima/docker.sock"
 DOCKER_SOCK_PATH_WINDOWS="tcp://0.0.0.0:2375"
-LIMA_MACHINE_NAME=lima_machine
-LIMA_MACHINE_PATH="$HOME/src/setup/lima_machine.yaml"
+LIMA_MACHINE_SOURCE_PATH="$HOME/src/setup/lima_machine.yaml"
+LIMA_MACHINE_DESTINATION_PATH="$HOME/.config/lima/docker-light.yaml"
 
 trap "rm -rf $DOCKER_CHECK_SENTINEL_FILE" INT EXIT
+
+docker_machine_name() {
+  basename "$LIMA_MACHINE_DESTINATION_PATH" | sed 's/.yaml//' | sed 's/.yml//'
+}
 
 is_mac() {
   test "$(get_os_type)" == "Darwin"
@@ -56,15 +60,23 @@ remove_dead_install_locks() {
 start_docker_vm_darwin() {
   test "$(get_os_type)" == "Darwin" || return 0
 
-  if ! grep -Eq "${LIMA_MACHINE_NAME}[ \t]+Running" < <(limactl list 2>/dev/null)
+  if ! test -f "$LIMA_MACHINE_DESTINATION_PATH"
   then
-    if ! grep -Eq "$LIMA_MACHINE_NAME" < <(limactl list > /dev/null)
+    if ! test -d "$(dirname "$LIMA_MACHINE_DESTINATION_PATH")"
     then
-      >&2 printf "${BYellow}INFO${NC}: Docker VM [$LIMA_MACHINE_NAME] not created; creating now\n"
-      limactl start "$LIMA_MACHINE_PATH" --tty=false
+      mkdir -p "$(dirname "$LIMA_MACHINE_DESTINATION_PATH")"
+    fi
+    ln -s "$LIMA_MACHINE_SOURCE_PATH" "$LIMA_MACHINE_DESTINATION_PATH"
+  fi
+  if ! grep -Eq "$(docker_machine_name)[ \t]+Running" < <(limactl list 2>/dev/null)
+  then
+    if ! grep -Eq "$(docker_machine_name)" < <(limactl list 2>/dev/null)
+    then
+      >&2 printf "${BYellow}INFO${NC}: Docker VM [$(docker_machine_name)] not created; creating now\n"
+      limactl start "$LIMA_MACHINE_DESTINATION_PATH" --tty=false
     else
-      >&2 printf "${BYellow}INFO${NC}: Docker VM [$LIMA_MACHINE_NAME] not started; starting now\n"
-      limactl start "$LIMA_MACHINE_NAME"
+      >&2 printf "${BYellow}INFO${NC}: Docker VM [$(docker_machine_name)] not started; starting now\n"
+      limactl start "$(docker_machine_name)"
     fi
   fi
 }
@@ -151,6 +163,12 @@ start_docker_vm_darwin
 use_docker_compose_pip_instead_of_binary
 install_docker_related_bash_completions_if_darwin
 
+export LIMA_INSTANCE=$(docker_machine_name)
+if is_mac
+then
+  export DOCKER_HOST="$DOCKER_SOCK_PATH_DARWIN"
+  grep -Eiq 'arm' < <(uname -m) && export DOCKER_DEFAULT_PLATFORM="linux/arm64"
+fi
 is_mac && export DOCKER_HOST="$DOCKER_SOCK_PATH_DARWIN"
 is_windows_wsl && export DOCKER_HOST="$DOCKER_SOCK_PATH_WINDOWS"
 docker_check_mutex_unlock
