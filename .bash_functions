@@ -759,7 +759,6 @@ terraform() {
   }
   TERRAFORM_IMAGE="${TERRAFORM_IMAGE:-carlosnunez/terraform:latest}"
   tf_extra_vars="$(_gather_extra_vars)"
-  >&2 echo "DEBUG: Extra vars: $tf_extra_vars"
   if ! test -z "$tf_extra_vars"
   then
     docker run --rm -it -v $PWD:/app --privileged \
