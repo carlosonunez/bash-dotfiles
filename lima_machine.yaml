@@ -16,6 +16,10 @@ disk: 50GiB
 mounts:
   - location: "~/src"
     writable: true
+  - location: "~/tmp"
+    writable: true
+  - location: "%TEMPDIR%"
+    writable: true
   - location: "/tmp/lima"
     writable: true
   - location: "~/.config"

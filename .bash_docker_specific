@@ -70,6 +70,8 @@ start_docker_vm_darwin() {
   else
     cp "${LIMA_MACHINE_DESTINATION_PATH}" "$HOME/.lima/$(docker_machine_name)/lima.yaml"
   fi
+  gsed -i "s#%TEMPDIR%#$TMPDIR#g" "$HOME/.lima/$(docker_machine_name)/lima.yaml"
+
   if ! grep -Eq "$(docker_machine_name)[ \t]+Running" < <(limactl list 2>/dev/null)
   then
     if ! grep -Eq "$(docker_machine_name)" < <(limactl list 2>/dev/null)
