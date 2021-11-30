@@ -18,12 +18,17 @@ mounts:
     writable: true
   - location: "~/tmp"
     writable: true
+
+  # NOTE: Replace %TEMPDIR% with your actual temporary directory as provided by
+  # the $TMPDIR environment variable.
   - location: "%TEMPDIR%"
     writable: true
   - location: "/tmp/lima"
     writable: true
   - location: "~/.config"
     writable: true
+  - location: "~/.lima"
+    writable: false
 ssh:
   localPort: 10000
   loadDotSSHPubKeys: true
