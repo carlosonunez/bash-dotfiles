@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-if [ ! -f "$HOME/.ssh/authy" ]
+if ! which authy 2>&1
 then
-  >&2 echo "WARN: Your Authy API key seems to be missing. \
-Copy it into $HOME/.ssh/authy if you would like to do things with Authy."
-else
-  export AUTHY_KEY="$(cat ~/.ssh/authy)"
+  >&2 printf "${BGreen}INFO${NC}: Installing authy"
+  go install "github.com/momaek/authy@v0.1.7" &&
+    >&2 printf "${BGreen}INFO${NC}: Authy installed; run 'authy account' to set up"
 fi
+
