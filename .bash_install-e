@@ -6,6 +6,7 @@ APPLE_WATCH_PAMID_URL=https://github.com/biscuitehh/pam-watchid
 APPLE_WATCH_PAMID_PATH=$HOME/.config/security/pamid-applewatch
 ONEPASSWORD_VAULT="${ONEPASSWORD_VAULT:-"Carlos's Personal Vault"}"
 INSTALL_LOCK_FILE="$HOME/.bash_install_lock"
+COMPLETE_ALIAS_URL=https://raw.githubusercontent.com/cykerway/complete-alias/master/complete_alias
 # Update our OBS settings.
 OBS_PREFS_OP_KEY="OBS Settings"
 OBS_PREFS_SENTINEL_FILE="$HOME/.config/setup/obs_has_been_setup"
@@ -37,7 +38,8 @@ authy
 awscli
 azure-cli
 bartender
-bash-completion
+bash
+bash-completion@2
 bats
 colordiff
 coreutils
@@ -575,6 +577,27 @@ mark_first_time_setup_as_complete_if_needed() {
   fi
 }
 
+install_complete_alias() {
+  if ! test -f "$HOME/.bash_completion.d/complete_alias"
+  then
+    >&2 printf "${BGreen}INFO${NC}: Installing complete_alias"
+    mkdir -p "$HOME/.bash_completion.d" &&
+      curl "$COMPLETE_ALIAS_URL" > ~/.bash_completion.d/complete_alias
+  fi
+}
+
+update_bash() {
+  if grep -iq "^3" <<< "$BASH_VERSION"
+  then
+    >&2 echo "INFO: Updating Bash (provide your password when asked)"
+    brew install bash && \
+      sudo sh -c 'echo /usr/local/bin/bash >> /etc/shells' && \
+      chsh -s '/usr/local/bin/bash' &&
+      >&2 echo "INFO: Bash updated. You'll need to close then re-open Tmux for changes to \
+take effect."
+  fi
+}
+
 first_time_setup_done() {
   file="$HOME/.config/setup/first_time_setup_complete"
   test -f "$file"
@@ -642,4 +665,6 @@ configure_todos
 make_etc_hosts_adfree
 modify_etc_hosts
 update_obs_prefs
+install_complete_alias
+update_bash
 mark_first_time_setup_as_complete_if_needed

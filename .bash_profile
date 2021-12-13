@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+source ~/.bash_functions
+source ~/.bash_aliases
+
 set HISTCONTROL="ignorespace"
 export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
@@ -26,14 +29,6 @@ ensure_bash_profile_is_symlinked() {
   if [ ! -L "$HOME/.bash_profile" ]
   then
     echo "ERROR: .bash_profile must be a symlink to your GitHub clone to use this." >&2
-    return 1
-  fi
-}
-
-source_functions() {
-  if ! source "$HOME/.bash_functions"
-  then
-    >&2 echo "ERROR: Failed to load Bash functions. Ensure that they are in your repo."
     return 1
   fi
 }
@@ -103,8 +98,7 @@ set_path &&
   set_terminal_keybinding &&
   ensure_setup_directory_is_present &&
   ensure_bash_profile_is_symlinked &&
-  source_tmux_stuff &&
-  source_functions
+  source_tmux_stuff
 
 if tmux_is_supported && ! in_tmux_session && ! tmux_is_disabled
 then
@@ -124,7 +118,6 @@ then
   join_tmux_session
 else
   PROMPT_COMMAND='e=$?; set_bash_prompt $e'
-    install_bash_completion &&
     configure_client_or_company_specific_settings &&
     configure_secret_settings &&
     configure_bash_session &&

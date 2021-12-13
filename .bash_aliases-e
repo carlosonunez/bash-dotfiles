@@ -1,4 +1,6 @@
 PHONE_WIFI_NETWORKS_REGEX="atoi|Carlos's Pixel|sandy"
+source "/usr/local/etc/profile.d/bash_completion.sh"
+source "$HOME/.bash_completion.d/complete_alias"
 
 check_for_git_repository() {
   which git &>/dev/null || return 1
@@ -93,20 +95,10 @@ else
   alias pt="ptodo a"
   alias ptl="ptodo ls"
   alias ptdone="ptodo do"
-  if test -z "$CLIENT_NAME"
-  then
-    >&2 printf "${BYellow}WARN${NC}: \$CLIENT_NAME is not defined. \
-Do so in .bash_exports to track client-specific to-dos, then \
-source this file again.\n"
-  else
-    alias ctodo="todo.sh -d $CLIENT_TODO_DIR/$CLIENT_NAME/.todo.cfg"
-    alias ct="ctodo a"
-    alias ctl="ctodo ls"
-    alias ctdone="ctodo do"
-  fi
 fi
 
 alias dc=docker-compose
+complete -F _complete_alias dc
 alias speed=run_speed_test
 
 if which hub &>/dev/null

@@ -142,18 +142,18 @@ configure_bash_session() {
     source $1
     printf "\n"
   }
+  # Aliases and exports need to come first to prevent it breaking configuration
+  # happening in other files.
+  for file in aliases exports
+  do
+    source_file "$HOME/.bash_$file"
+  done
   excludes_re='bash_(aliases|exports|profile|install|custom_profile|company|history|sessions)'
   for file in $(find $HOME -type l -maxdepth 1 -name "*.bash_*" | \
     egrep -v "$excludes_re" | \
     sort -u)
   do
     source_file "$file"
-  done
-  # Aliases and exports need to come last to prevent it breaking configuration
-  # happening in other files.
-  for file in aliases exports
-  do
-    source_file "$HOME/.bash_$file"
   done
 }
 
@@ -209,15 +209,6 @@ restart_ssh_agent() {
   killall ssh-agent && add_keys_to_ssh_agent
 }
 
-
-install_bash_completion() {
-  if [ "$(get_os_type)" == "Darwin" ]
-  then
-    [ -f $(brew --prefix)/etc/bash_completion ] && . $(brew --prefix)/etc/bash_completion
-  else
-    [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
-  fi
-}
 
 review_wifi_networks() {
   while read -u 3 network
