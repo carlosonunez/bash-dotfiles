@@ -114,10 +114,15 @@ case "$(get_os_type)" in
     alias tmux='tmux -u'
     alias ls='ls --color -l'
     alias clip=pbcopy
+    alias upcase='tr [:lower:] [:upper:]'
+    alias downcase='tr [:upper:] [:lower:]'
     ;;
   "Ubuntu|Debian")
     alias tmux=tmux-next
     alias ls='ls -Gla'
     alias clip=xclip
+    alias upcase='tr [:lower:] [:upper:]'
+    alias downcase='tr [:upper:] [:lower:]'
     ;;
 esac
+
