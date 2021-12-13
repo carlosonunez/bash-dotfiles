@@ -4,6 +4,21 @@ ONE_GIGABYTE="$(numfmt --from=iec '1G')"
 ONE_MEGABYTE="$(numfmt --from=iec '1M')"
 ONE_KILOBYTE="$(numfmt --from=iec '1K')"
 
+get_os_type() {
+  case "$(uname)" in
+    "Darwin")
+      echo "Darwin"
+      ;;
+    "Linux")
+      echo "$(lsb_release -is)"
+      ;;
+    *)
+      echo "Unsupported"
+      ;;
+  esac
+}
+
+
 jumpbox() {
   get_jumpbox_details_from_op() {
     details=$(sudo security find-generic-password -a "$USER" -s "jumpbox" -w 2>/dev/null)
@@ -408,20 +423,6 @@ summarize_commits_ahead_and_behind_of_upstream() {
 }
 
 
-
-get_os_type() {
-  case "$(uname)" in
-    "Darwin")
-      echo "Darwin"
-      ;;
-    "Linux")
-      echo "$(lsb_release -is)"
-      ;;
-    *)
-      echo "Unsupported"
-      ;;
-  esac
-}
 
 install_homebrew_if_missing() {
   if [ "$(get_os_type)" -ne "Darwin" ]
