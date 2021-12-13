@@ -751,16 +751,11 @@ terraform() {
   }
   TERRAFORM_IMAGE="${TERRAFORM_IMAGE:-carlosnunez/terraform:latest}"
   tf_extra_vars="$(_gather_extra_vars)"
-  if ! test -z "$tf_extra_vars"
-  then
-    docker run --rm -it -v $PWD:/app --privileged \
-      -v /var/run/docker.sock:/var/run/docker.sock \
-      -w /app \
-      ${tf_extra_vars} \
-      "$TERRAFORM_IMAGE" "$@"
-  else
-    docker run --rm -it -v $PWD:/app -w /app \
-      -v /var/run/docker.sock:/var/run/docker.sock \
-      "$TERRAFORM_IMAGE" "$@"
-  fi
+  docker run --rm -i -v $PWD:/app --privileged \
+    -e TF_IN_AUTOMATION=true \
+    --net=host \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -w /app \
+    ${tf_extra_vars} \
+    "$TERRAFORM_IMAGE" "$@"
 }
