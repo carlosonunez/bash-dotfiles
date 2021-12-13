@@ -11,8 +11,8 @@ export HOMEBREW_NO_AUTO_UPDATE=1 # This is incredibly annoying.
 stty -ixon # Enable i-search forwards and backwards but disables TTY flow control (useless)
 
 source ~/.bash_colors
-source ~/.bash_exports
-source ~/.bash_secret_exports
+test -f "$HOME/.bash_exports" && source ~/.bash_exports
+test -f "$HOME/.bash_secret_exports" && source ~/.bash_secret_exports
 
 brew_chooser() {
   if test "$(get_os_type)" != "Darwin"
