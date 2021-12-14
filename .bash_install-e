@@ -591,8 +591,8 @@ update_bash() {
   then
     >&2 echo "INFO: Updating Bash (provide your password when asked)"
     brew install bash && \
-      sudo sh -c 'echo /usr/local/bin/bash >> /etc/shells' && \
-      chsh -s '/usr/local/bin/bash' &&
+      sudo sh -c "echo $(brew --prefix)/bin/bash >> /etc/shells" && \
+      chsh -s "$(brew --prefix)/bin/bash" &&
       >&2 echo "INFO: Bash updated. You'll need to close then re-open Tmux for changes to \
 take effect."
   fi

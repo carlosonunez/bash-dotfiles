@@ -130,7 +130,6 @@ else
     configure_bash_session &&
     configure_machine &&
     add_keys_to_ssh_agent &&
-    warn_if_not_using_new_bash &&
     printf "${BGreen}INFO${NC}: Shell ready; enjoy! 🎉\n"
 fi
 
