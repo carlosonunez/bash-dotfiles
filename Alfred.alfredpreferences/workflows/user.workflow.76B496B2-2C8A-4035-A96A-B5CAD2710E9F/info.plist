@@ -47,6 +47,25 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<false/>
+				<key>transient</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>16AACC75-D7CF-4425-BCAA-419EBDD1AB0D</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
@@ -72,7 +91,7 @@
 				<key>runningsubtext</key>
 				<string>searching....</string>
 				<key>script</key>
-				<string>val=$(/usr/local/bin/docker run --rm -i -v $HOME/.config/authy/authy.json:/root/.authy.json carlosnunez/authy-cli-docker:latest fuzz --alfred $@)
+				<string>/Users/cn/.config/golang/bin/authy fuzz --alfred $@
 cat &lt;&lt; EOB
 $val
 EOB</string>
@@ -93,25 +112,6 @@ EOB</string>
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
 			<string>AC356E78-96F6-480F-BEB1-0BDD876E5DED</string>
-			<key>version</key>
-			<integer>3</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>autopaste</key>
-				<false/>
-				<key>clipboardtext</key>
-				<string>{query}</string>
-				<key>ignoredynamicplaceholders</key>
-				<false/>
-				<key>transient</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.clipboard</string>
-			<key>uid</key>
-			<string>16AACC75-D7CF-4425-BCAA-419EBDD1AB0D</string>
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
@@ -164,7 +164,7 @@ EOB</string>
 				<key>runningsubtext</key>
 				<string>refreshing...</string>
 				<key>script</key>
-				<string>/usr/local/bin/docker run --rm -i -v $HOME/.config/authy/authy.json:/root/.authy.json carlosnunez/authy-cli-docker:latest refresh
+				<string>/Users/cn/.config/golang/bin/authy refresh
 cat &lt;&lt; EOB
 {"items": [{
 	"title": "Authy tokens refresh successfully",
@@ -224,13 +224,6 @@ EOB</string>
 			<key>ypos</key>
 			<integer>280</integer>
 		</dict>
-	</dict>
-	<key>variables</key>
-	<dict>
-		<key>DOCKER_DEFAULT_PLATFORM</key>
-		<string>linux/arm64</string>
-		<key>DOCKER_HOST</key>
-		<string>unix:///Users/cn/.lima/docker.sock</string>
 	</dict>
 	<key>version</key>
 	<string></string>

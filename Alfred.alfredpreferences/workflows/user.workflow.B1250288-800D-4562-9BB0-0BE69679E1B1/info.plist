@@ -8,24 +8,11 @@
 	<string>Productivity</string>
 	<key>connections</key>
 	<dict>
-		<key>0E8D1037-2E2A-4A06-8DB6-6F614BA1328E</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>C95ED59A-2F8D-4E34-AF48-57720E35990C</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
 		<key>1F807F74-7905-4FF0-B9E6-E57DE19D6235</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>B8B1E30D-182B-4096-872E-B22BEC2827C0</string>
+				<string>C95ED59A-2F8D-4E34-AF48-57720E35990C</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -52,19 +39,6 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>553A6DD5-745E-4B15-9515-8099AEC6F03B</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
-		<key>B8B1E30D-182B-4096-872E-B22BEC2827C0</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>0E8D1037-2E2A-4A06-8DB6-6F614BA1328E</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -113,27 +87,6 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<false/>
-				<key>removeextension</key>
-				<false/>
-				<key>text</key>
-				<string>The VB-Cable service has also been restarted.</string>
-				<key>title</key>
-				<string>OBS has been terminated.</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
-			<key>uid</key>
-			<string>4B26DB85-8BD5-41D7-AD99-23C088B158CE</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -153,6 +106,27 @@
 			<string>B8C4EBF6-24F0-4C31-969C-3A0761451535</string>
 			<key>version</key>
 			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>The VB-Cable service has also been restarted.</string>
+				<key>title</key>
+				<string>OBS has been terminated.</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>4B26DB85-8BD5-41D7-AD99-23C088B158CE</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -188,52 +162,19 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>browser</key>
-				<string></string>
-				<key>spaces</key>
-				<string></string>
-				<key>url</key>
-				<string>{query}</string>
-				<key>utf8</key>
-				<true/>
+				<key>paths</key>
+				<array>
+					<string>/Applications/zoom.us.app</string>
+				</array>
+				<key>toggle</key>
+				<false/>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.action.openurl</string>
+			<string>alfred.workflow.action.launchfiles</string>
 			<key>uid</key>
 			<string>C95ED59A-2F8D-4E34-AF48-57720E35990C</string>
 			<key>version</key>
 			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>query=$1
-id=$(echo "$query" | sed -E 's#.*([0-9]{10}).*#\1#')
-pwd=$(echo "$query" | sed -E 's#.*pwd=([a-zA-Z0-9]+)&amp;.*$#\1#')
-link="zoommtg://zoom.us/join?confno=$id"
-if ! test -z "$pwd"
-then
-  link="${link}&amp;pwd=$pwd"
-fi
-echo -n "$link"</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>0E8D1037-2E2A-4A06-8DB6-6F614BA1328E</string>
-			<key>version</key>
-			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -290,19 +231,6 @@ echo -n "$link"</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>command</key>
-				<integer>1</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.itunescommand</string>
-			<key>uid</key>
-			<string>B8B1E30D-182B-4096-872E-B22BEC2827C0</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>paths</key>
 				<array>
 					<string>/Applications/OBS.app</string>
@@ -322,13 +250,6 @@ echo -n "$link"</string>
 	<string></string>
 	<key>uidata</key>
 	<dict>
-		<key>0E8D1037-2E2A-4A06-8DB6-6F614BA1328E</key>
-		<dict>
-			<key>xpos</key>
-			<integer>425</integer>
-			<key>ypos</key>
-			<integer>395</integer>
-		</dict>
 		<key>1F807F74-7905-4FF0-B9E6-E57DE19D6235</key>
 		<dict>
 			<key>xpos</key>
@@ -364,13 +285,6 @@ echo -n "$link"</string>
 			<key>ypos</key>
 			<integer>395</integer>
 		</dict>
-		<key>B8B1E30D-182B-4096-872E-B22BEC2827C0</key>
-		<dict>
-			<key>xpos</key>
-			<integer>245</integer>
-			<key>ypos</key>
-			<integer>395</integer>
-		</dict>
 		<key>B8C4EBF6-24F0-4C31-969C-3A0761451535</key>
 		<dict>
 			<key>xpos</key>
@@ -381,7 +295,7 @@ echo -n "$link"</string>
 		<key>C95ED59A-2F8D-4E34-AF48-57720E35990C</key>
 		<dict>
 			<key>xpos</key>
-			<integer>595</integer>
+			<integer>525</integer>
 			<key>ypos</key>
 			<integer>395</integer>
 		</dict>
