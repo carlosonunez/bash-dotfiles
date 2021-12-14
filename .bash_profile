@@ -2,6 +2,13 @@
 source ~/.bash_functions
 source ~/.bash_aliases
 
+if test "$(echo "$BASH_VERSION" | cut -f1 -d '.')" -ge 4
+then
+  >&2 echo "PREFLIGHT: Enabling Bash 4+ extensions"
+  export PROMPT_DIRTRIM=3
+  shopt -s autocd
+fi
+
 set HISTCONTROL="ignorespace"
 export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
