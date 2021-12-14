@@ -29,7 +29,7 @@ for tool in $GOTOOLS
 do
   name=$(cut -f1 -d ':' <<< "$tool")
   uri=$(cut -f2 -d ':' <<< "$tool")
-  2>/dev/null which "$name" || go install "$uri"
+  &>/dev/null which "$name" || go install "$uri"
 done
 
 # Set up the Golang workspace if non-existent
