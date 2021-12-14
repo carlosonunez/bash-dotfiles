@@ -178,3 +178,5 @@ fi
 is_mac && export DOCKER_HOST="$DOCKER_SOCK_PATH_DARWIN"
 is_windows_wsl && export DOCKER_HOST="$DOCKER_SOCK_PATH_WINDOWS"
 docker_check_mutex_unlock
+
+trap '-' INT EXIT

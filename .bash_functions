@@ -200,7 +200,7 @@ add_keys_to_ssh_agent() {
   add_ssh_agent_to_environment() {
     unset SSH_AGENT_PID
     unset SSH_AUTH_SOCK
-    eval $(cat $SSH_AGENT_ENV_FILE)
+    &>/dev/null eval $(cat $SSH_AGENT_ENV_FILE) 
   }
 
   add_keys() {

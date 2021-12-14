@@ -13,8 +13,6 @@ ruby_check_mutex_lock() {
 }
 
 ruby_check_mutex_unlock() {
-  trap 'exit 1' INT HUP EXIT
-
   rm -f "$RUBY_CHECK_SENTINEL_FILE"
 }
 

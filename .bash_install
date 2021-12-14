@@ -668,3 +668,5 @@ update_obs_prefs
 install_complete_alias
 update_bash
 mark_first_time_setup_as_complete_if_needed
+
+trap - INT
