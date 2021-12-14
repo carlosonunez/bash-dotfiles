@@ -8,8 +8,8 @@ update_bash_version() {
   if test "$SHELL" != '/usr/local/bin/bash'
   then
     >&2 echo "${BGreen}INFO${NC}: Updating Bash version. Enter password when prompted.\n"
-    sudo sh -c 'echo /usr/local/bin/bash >> /etc/shells' &&
-      chsh -s /usr/local/bin/bash
+    sudo sh -c "echo $(brew --prefix)/bin/bash >> /etc/shells" &&
+      chsh -s "$(brew --prefix)/bin/bash"
   fi
 }
 
