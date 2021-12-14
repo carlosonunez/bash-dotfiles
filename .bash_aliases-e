@@ -1,5 +1,5 @@
 PHONE_WIFI_NETWORKS_REGEX="atoi|Carlos's Pixel|sandy"
-source "/usr/local/etc/profile.d/bash_completion.sh"
+source "$(brew --prefix)/etc/profile.d/bash_completion.sh"
 source "$HOME/.bash_completion.d/complete_alias"
 
 check_for_git_repository() {
