@@ -5,6 +5,7 @@ DOCKER_SOCK_PATH_WINDOWS="tcp://0.0.0.0:2375"
 LIMA_MACHINE_SOURCE_PATH="${LIMA_MACHINE_PATH:-$HOME/src/setup/lima_machine.yaml}"
 LIMA_MACHINE_DESTINATION_PATH="$HOME/.config/lima/${LIMA_MACHINE_NAME:-docker-light.yaml}"
 
+source "$HOME/.bash_python_specific"
 trap "rm -rf $DOCKER_CHECK_SENTINEL_FILE" INT EXIT
 
 docker_machine_name() {
@@ -127,7 +128,8 @@ add_user_to_docker_group_if_linux() {
 }
 
 use_docker_compose_pip_instead_of_binary() {
-  if $(file $(which docker-compose) | grep -q "Mach-O")
+  if ! &>/dev/null which docker-compose ||
+    file $(which docker-compose) | grep -q "Mach-O"
   then
     if test -z "$VIRTUAL_ENV"
     then
