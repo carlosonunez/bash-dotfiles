@@ -97,7 +97,7 @@ install_gems()  {
       mkdir -p "$(dirname "$RUBY_GEMFILE")" &&
       ln -s "$HOME/src/setup/Gemfile" "$RUBY_GEMFILE"
   fi
-  if ! check_for_internet_access
+  if ! nc -w 1 rubygems.org 443
   then
     >&2 echo -ne "${BYellow}WARNING${NC}: No internet connection detected or \
 connection is slow. System Ruby gems will not be updated."
