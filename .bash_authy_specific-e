@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-if ! which authy 2>&1
-then
-  >&2 printf "${BGreen}INFO${NC}: Installing authy"
-  go install "github.com/momaek/authy@v0.1.7" &&
-    >&2 printf "${BGreen}INFO${NC}: Authy installed; run 'authy account' to set up"
-fi
-
