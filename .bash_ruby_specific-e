@@ -115,7 +115,11 @@ then
 fi
 ruby_check_mutex_lock
 
-install_rvm &&
-  configure_rvm_defaults &&
-  install_bundler &&
-  install_gems
+install_rvm || exit 1
+source "$HOME/.rvm/scripts/rvm"
+export PATH="$HOME/.rvm/gems/ruby-$RUBY_VERSION_TO_USE/bin:$PATH"
+configure_rvm_defaults
+install_bundler &&
+install_gems
+
+trap '-' INT HUP EXIT
