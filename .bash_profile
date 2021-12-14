@@ -129,10 +129,8 @@ else
     configure_secret_settings &&
     configure_bash_session &&
     configure_machine &&
-    add_keys_to_ssh_agent
+    add_keys_to_ssh_agent &&
+    printf "${BGreen}INFO${NC}: Shell ready; enjoy! 🎉\n"
 fi
 
-
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-
-[[ -s "/Users/cn/.gvm/scripts/gvm" ]] && source "/Users/cn/.gvm/scripts/gvm"
