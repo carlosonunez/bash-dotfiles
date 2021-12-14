@@ -4,6 +4,25 @@ ONE_GIGABYTE="$(numfmt --from=iec '1G')"
 ONE_MEGABYTE="$(numfmt --from=iec '1M')"
 ONE_KILOBYTE="$(numfmt --from=iec '1K')"
 
+update_bash_version() {
+  if test "$SHELL" != '/usr/local/bin/bash'
+  then
+    >&2 echo "${BGreen}INFO${NC}: Updating Bash version. Enter password when prompted.\n"
+    sudo sh -c 'echo /usr/local/bin/bash >> /etc/shells' &&
+      chsh -s /usr/local/bin/bash
+  fi
+}
+
+warn_if_not_using_new_bash() {
+  if test "$(uname -m)" == "Darwin" && test "$SHELL" != '/usr/local/bin/bash'
+  then
+    printf "${BYellow}WARNING${NC}: You are using outdated Bash version $BASH_VERSION. \
+Some things might break!
+
+A new version of Bash has already been installed. To use it, run 'update_bash_version'."
+  fi
+}
+
 get_os_type() {
   case "$(uname)" in
     "Darwin")
