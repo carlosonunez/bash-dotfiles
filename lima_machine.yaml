@@ -1,9 +1,15 @@
 arch: default
 images:
-  - location: "https://cloud-images.ubuntu.com/impish/current/impish-server-cloudimg-amd64.img"
+  - location: "~/Downloads/impish-server-cloudimg-amd64.img"
     arch: "x86_64"
-  - location: "https://cloud-images.ubuntu.com/impish/current/impish-server-cloudimg-arm64.img"
+  - location: "~/Downloads/impish-server-cloudimg-arm64.img"
     arch: "aarch64"
+  - location: https://github.com/lima-vm/alpine-lima/releases/download/v0.2.0/alpine-lima-rd-3.13.5-aarch64.iso
+    arch: "aarch64"
+    digest: "sha512:59c2dc5257be4d7dd05de6c64fcebae710f4e6eb993c784379a562be290cc957d5c8f2aef0d4c0c90a6fae5991218771e60e37a40a15414d2c169a6fdf534185"
+  - location: https://github.com/lima-vm/alpine-lima/releases/download/v0.2.0/alpine-lima-rd-3.13.5-x86_64.iso
+    arch: "x86_64"
+    digest: "sha512:73953b3f4e9dee279b058f51b323e430697d2e305b391d997046c3ef0468a6cb7f445144653d297c68cd294d4d0264e01bed114fc3555501b3a733759505f929"
 cpus: 4
 memory: 8GiB
 disk: 50GiB
@@ -33,25 +39,43 @@ containerd:
 provision:
   - mode: system
     script: |
-      #!/bin/sh
-      sed -i 's/host.lima.internal.*/host.lima.internal host.docker.internal/' /etc/hosts
-  - mode: system
-    script: |
       #!/bin/bash
       set -eux -o pipefail
-      command -v docker >/dev/null 2>&1 && exit 0
-      export DEBIAN_FRONTEND=noninteractive
-      curl -fsSL https://get.docker.com | sh
+      # Add our user into the 'docker' group so that we don't have to sudo
       usermod -aG docker $LIMA_CIDATA_USER
+
+      # Start Docker
+      /etc/init.d/docker start
+
+      # Fix clock drift by syncing with host
+      max_attempts=5
+      attempts=0
+      until docker run --rm --privileged alpine hwclock -s
+      do
+        attempts=$((attempts+1))
+        echo "WARNING: Unable to sync clock with host; trying again in 1 second"
+        sleep 1
+      done
+
+      # Enable multi-arch support
+      # If you need support for other architectures like s90x or PPC,
+      # run the command below manually and provide the target arch at the end
+      if uname -m | grep -Eiq 'aarch|arm'
+      then docker run --rm --privileged aptman/qus -s -- -p x86_64
+      else docker run --rm --privileged aptman/qus -s -- -p arm
+      fi
+      
 probes:
   - script: |
       #!/bin/bash
       set -eux -o pipefail
-      if ! timeout 30s bash -c "until command -v docker >/dev/null 2>&1; do sleep 3; done"; then
+      if ! timeout 30s bash -c "until command -v docker ps >/dev/null 2>&1; do sleep 3; done"; then
         echo >&2 "docker is not installed yet"
         exit 1
       fi
     hint: See "/var/log/cloud-init-output.log". in the guest
+firmware:
+  legacyBIOS: true
 video:
   display: "none"
 propagateProxyEnv: true
