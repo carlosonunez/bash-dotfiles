@@ -13,6 +13,10 @@ images:
 cpus: 4
 memory: 8GiB
 disk: 50GiB
+useHostResolver: false
+dns:
+  - 8.8.8.8
+  - 4.4.4.4
 mounts:
   - location: "~/src"
     writable: true
@@ -79,7 +83,6 @@ firmware:
 video:
   display: "none"
 propagateProxyEnv: true
-useHostResolver: true
 portForwards:
   - guestSocket: "/var/run/docker.sock"
     hostSocket: "{{.Home}}/.lima/docker.sock"
