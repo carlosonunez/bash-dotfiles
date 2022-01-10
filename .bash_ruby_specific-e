@@ -77,7 +77,7 @@ configure_rvm_defaults() {
       brew install libffi
     fi
   }
-  if ! ruby --version 2>/dev/null | grep -q "$RUBY_VERSION_TO_USE"
+  if ! ( ruby --version 2>/dev/null | grep -q "$RUBY_VERSION_TO_USE" )
   then
     >&2 echo -ne "${BGreen}INFO${NC}: Installing Ruby ${RUBY_VERSION_TO_USE}...\n"
     _configure_arm_compat_libffi_if_necessary &&
