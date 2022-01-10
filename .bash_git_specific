@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+[ -f "$HOME/src/setup/completions/git.bash" ] && source "$HOME/src/setup/completions/git.bash"
+
 GITHUB_SSH_KEY="$HOME/.ssh/github"
 
 dont_use_master_for_default_branches() {
