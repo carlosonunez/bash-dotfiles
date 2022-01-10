@@ -127,20 +127,6 @@ add_user_to_docker_group_if_linux() {
   sudo usermod -aG docker "$USER"
 }
 
-use_docker_compose_pip_instead_of_binary() {
-  if ! &>/dev/null which docker-compose ||
-    file $(which docker-compose) | grep -q "Mach-O"
-  then
-    if test -z "$VIRTUAL_ENV"
-    then
-      >&2 echo "ERROR: Can't install Docker Compose; install virtualenv first."
-      return 1
-    fi
-    >&2 echo "INFO: Subbing compiled Docker Compose with Python version"
-    pip install docker-compose
-  fi
-}
-
 install_docker_related_bash_completions_if_darwin() {
   _docker_compose() {
     brew link docker-compose-completion &>/dev/null || true
@@ -166,7 +152,6 @@ install_docker_related_bash_completions_if_darwin() {
 
 add_user_to_docker_group_if_linux
 start_docker_vm_darwin
-use_docker_compose_pip_instead_of_binary
 install_docker_related_bash_completions_if_darwin
 
 export LIMA_INSTANCE=$(docker_machine_name)
