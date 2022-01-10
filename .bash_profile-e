@@ -134,3 +134,4 @@ else
 fi
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+[ -f "$HOME/src/setup/fzf.bash" ] && source "$HOME/src/setup/fzf.bash"
