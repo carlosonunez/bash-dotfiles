@@ -68,6 +68,10 @@ provision:
       then docker run --rm --privileged aptman/qus -s -- -p x86_64
       else docker run --rm --privileged aptman/qus -s -- -p arm
       fi
+
+      # Add a cron job to keep the time synced up
+      echo 'ntpd -d -q -n -p pool.ntp.org' > /etc/periodic/15min/sync-the-time
+      chmod +x /etc/periodic/15min/sync-the-time
       
 probes:
   - script: |
