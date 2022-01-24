@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export TERM=xterm-256color
+# include other vars the X11 server may need
+/Applications/Utilities/XQuartz.app/Contents/MacOS/X11.bin "${@}"

@@ -84,7 +84,8 @@ create_vim_directories() {
 create_symlinks_for_tuir() {
   mkdir -p ~/.config/tuir &&
     ln -s "${DEFAULT_SETUP_DIRECTORY}/tuir_configs/tuir.cfg" ~/.config/tuir/tuir.cfg || true &&
-    ln -s "${DEFAULT_SETUP_DIRECTORY}/tuir_configs/.mailcap" ~/.mailcap || true
+    ln -s "${DEFAULT_SETUP_DIRECTORY}/tuir_configs/.mailcap" ~/.mailcap || true &&
+    ln -s "${DEFAULT_SETUP_DIRECTORY}/.x11run" ~/.x11run
 }
 
 create_symlinks_for_w3m() {
