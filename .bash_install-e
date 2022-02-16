@@ -371,6 +371,12 @@ get_ssh_and_aws_keys_from_onepassword() {
     grep -Elr "BEGIN (OPENSSH|RSA)" $HOME/.ssh | xargs chmod 600
   }
 
+  import_gpg_keys() {
+    gpg --import-ownertrust ~/.ssh/gpg/ownertrust &&
+    gpg --import ~/.ssh/gpg/public_keys &&
+    gpg --import ~/.ssh/gpg/private_keys
+  }
+
   remove_downloaded_keys() {
     rm "$HOME/Downloads/keys.zip"
   }
@@ -378,7 +384,12 @@ get_ssh_and_aws_keys_from_onepassword() {
   if ssh_folder_not_present_or_empty
   then
     >&2 echo "INFO: Downloading and configuring SSH and cloud keys."
-    download_keys && unzip_keys && permission_keys && remove_downloaded_keys
+    >&2 echo "INFO: (You'll be asked to provide a passphrase for your GPG keys.)"
+    download_keys &&
+      unzip_keys &&
+      permission_keys &&
+      import_gpg_keys &&
+      remove_downloaded_keys
   fi
 }
 

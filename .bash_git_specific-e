@@ -9,6 +9,8 @@ dont_use_master_for_default_branches() {
 
 set_global_git_configs() {
   git config --global diff.tool vimdiff
+  git config --global user.signingKey "$GITHUB_SIGNING_KEY"
+  git config --global commit.gpgsign true
 }
 
 view_unpushed_commits_across_branches() {
