@@ -224,6 +224,14 @@ restart_ssh_agent() {
   killall ssh-agent && add_keys_to_ssh_agent
 }
 
+restart_gpg_agent() {
+  gpg-connect-agent reloadagent /bye
+}
+
+start_gpg_agent() {
+  pgrep -q gpg-agent || gpg-connect-agent /bye
+}
+
 
 review_wifi_networks() {
   while read -u 3 network

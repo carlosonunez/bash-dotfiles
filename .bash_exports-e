@@ -19,3 +19,6 @@ export GIT_EDITOR=vim
 # Fix py-cryptography not compiling
 export CPPFLAGS=-I/usr/local/opt/openssl/include
 export LDFLAGS=-L/usr/local/opt/openssl/lib
+
+# Allow GnuPG to assume the TTY
+export GPG_TTY=$(tty)
