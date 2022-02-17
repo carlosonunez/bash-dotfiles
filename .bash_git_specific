@@ -5,6 +5,14 @@ GITHUB_SSH_KEY="$HOME/.ssh/github"
 DEFAULT_GIT_AUTHOR_NAME="Carlos Nunez"
 DEFAULT_GIT_AUTHOR_EMAIL="carlosonunez@noreply.github.com"
 
+alias c="git cs"
+alias cm="git cs -m"
+alias p="git add -p"
+alias st="git status"
+alias r="squash_outstanding_commits"
+alias push="git push"
+alias pull="git pull --rebase"
+
 dont_use_master_for_default_branches() {
   git config --global init.defaultBranch main
 }
@@ -16,6 +24,8 @@ set_global_git_configs() {
   git config --global user.name "${GIT_AUTHOR_NAME:-$DEFAULT_GIT_AUTHOR_NAME}"
   git config --global user.email "${GIT_AUTHOR_EMAIL:-$DEFAULT_GIT_AUTHOR_EMAIL}"
   git config --global format.signoff true
+  git config --global alias.c 'commit'
+  git config --global alias.cs 'commit --signoff'
 }
 
 view_unpushed_commits_across_branches() {
