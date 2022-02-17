@@ -223,7 +223,6 @@ let g:syntastic_python_checkers = ["pylint", "-E"]
 let g:syntastic_ruby_checkers = [ "rubocop" ]
 let g:syntastic_markdown_mdl_exec = "markdownlint"
 let g:syntastic_markdown_mdl_args = ""
-let g:syntastic_go_checkers = [ '' ] 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
