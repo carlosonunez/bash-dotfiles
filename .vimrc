@@ -217,21 +217,6 @@ let g:go_jump_to_error = 0
 let g:go_metalinter_autosave = 1
 let g:go_metalinter_autosave_enabled = ['deadcode', 'vet', 'golint', 'errcheck']
 
-" Syntastic Stuff
-let g:syntastic_sh_checkers = ["shellcheck", "-e", "SC1090"]
-let g:syntastic_python_checkers = ["pylint", "-E"]
-let g:syntastic_ruby_checkers = [ "rubocop" ]
-let g:syntastic_markdown_mdl_exec = "markdownlint"
-let g:syntastic_markdown_mdl_args = ""
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-nnoremap <leader>c :SyntasticReset<CR>
-
-" Shortcuts for running a Dockerized Python linter
-nmap <leader>pdl :let g:syntastic_python_pylint_exe = 'pylint -E'<CR>
-
 " Fugitive keybindings.
 
 " Git status window.
@@ -290,5 +275,15 @@ augroup end
 " Remove newlines from a visual region. Useful for tuir/rtv.
 nnoremap <leader>N :'<,'>s/\n/ /g<CR>
 
-" Populate errors so that unimpared works
-let g:syntastic_always_populate_loc_list = 1
+" airline extensions
+let g:airline#extensions#tabline#enabled = 1
+
+" ALE configuration
+let g:ale_sign_error = '❌'
+let g:ale_sign_warning = '⚠️ '
+hi SignColumn guibg=Red ctermbg=Red
+
+:nmap ]a :ALENextWrap<CR>
+:nmap [a :ALEPreviousWrap<CR>
+:nmap ]A :ALELast
+:nmap [A :ALEFirst
