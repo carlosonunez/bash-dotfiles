@@ -40,9 +40,9 @@ augroup Ruby
 augroup end
 augroup Golang
   autocmd!
-  autocmd BufWritePost *.go :GoTest! -short
   autocmd FileType go nmap <leader>c :cclose<CR>:lclose<CR>
   autocmd FileType go nmap <leader><leader> :GoTest! ./... -run Integration<CR>
+  au FileType go setlocal textwidth=80
 augroup end
 
 

@@ -10,6 +10,7 @@ update_vim_bundles() {
 }
 
 VIM_BUNDLE_REPOS=$(cat <<GITHUB_URLS
+dense-analysis/ale
 907th/vim-auto-save
 AndrewRadev/linediff.vim
 Chiel92/vim-autoformat

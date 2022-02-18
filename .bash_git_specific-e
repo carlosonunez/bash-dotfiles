@@ -3,7 +3,7 @@
 
 GITHUB_SSH_KEY="$HOME/.ssh/github"
 DEFAULT_GIT_AUTHOR_NAME="Carlos Nunez"
-DEFAULT_GIT_AUTHOR_EMAIL="carlosonunez@noreply.github.com"
+DEFAULT_GIT_AUTHOR_EMAIL="13461447+carlosonunez@users.noreply.github.com"
 
 alias c="git cs"
 alias cm="git cs -m"
