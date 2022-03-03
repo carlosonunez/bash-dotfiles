@@ -54,24 +54,6 @@ create_new_git_branch() {
   git checkout -b "$branch_name" && git push -u "$upstream" "$branch_name"
 }
 
-try_to_install_hub_if_not_found() {
-  if ! which hub &> /dev/null
-  then
-    case $(get_os_type) in
-      "Darwin"|"Fedora")
-        install_application 'hub'
-        ;;
-      "Ubuntu")
-        sudo add-apt-repository ppa:cpick/hub &&
-          sudo apt-get update &&
-          sudo apt-get install hub
-          ;;
-      *)
-        >&2 echo "WARNING: Unable to install 'hub' onto $(get_os_type). Compile it manually."
-    esac
-  fi
-}
-
 refresh_github_ssh_key() {
   if [ "$(ssh-add -l | grep '.github')" == "" ]
   then
@@ -133,6 +115,5 @@ _get_number_of_commits_between_refs() {
   git log --pretty=oneline "$1" 2>/dev/null | wc -l | tr -d ' '
 }
 
-try_to_install_hub_if_not_found
 set_global_git_configs
 dont_use_master_for_default_branches
