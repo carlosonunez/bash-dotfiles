@@ -1,3 +1,4 @@
+# vi:set ft=bash:
 if [ "$(get_os_type)" == "Linux" ] && \
   [ -f /proc/version ] && \
   [ "$(cat /proc/version | grep "Microsoft")" != "" ]
