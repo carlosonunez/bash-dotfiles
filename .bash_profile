@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-source ~/.bash_functions
-source ~/.bash_aliases
+source $HOME/.bash_functions
+source $HOME/.bash_aliases
 
 if test "$(echo "$BASH_VERSION" | cut -f1 -d '.')" -ge 4
 then
