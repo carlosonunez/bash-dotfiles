@@ -73,16 +73,14 @@ configure_rvm_defaults() {
       test "$(uname -p)" == "arm64" && \
       ! test -e "/opt/homebrew/opt/libffi" 
     then
-      >&2 echo -ne "${BGreen}INFO${NC}: Detected ARM CPU. Installing libffi first."
+      log_info "Detected ARM CPU. Installing libffi first."
       brew install libffi
     fi
   }
-  if ! ( ruby --version 2>/dev/null | grep -q "$RUBY_VERSION_TO_USE" )
+  if ! test -d "$HOME/.rvm/rubies/$( ruby --version 2>/dev/null | grep -q "$RUBY_VERSION_TO_USE" )"
   then
-    >&2 echo -ne "${BGreen}INFO${NC}: Installing Ruby ${RUBY_VERSION_TO_USE}...\n"
-    _configure_arm_compat_libffi_if_necessary &&
-      _rvm_install "$RUBY_VERSION_TO_USE" &&
-      rvm --default use "$RUBY_VERSION_TO_USE"
+    log_info "Installing Ruby ${RUBY_VERSION_TO_USE}..."
+    _configure_arm_compat_libffi_if_necessary
   fi
 }
 
@@ -111,11 +109,12 @@ trap 'ruby_check_mutex_unlock' INT HUP EXIT
 remove_dead_install_locks
 if installation_is_locked
 then
-  >&2 echo -ne "${BGreen}INFO${NC}: Ruby installation in progress in another window."
+  log_info "Ruby installation in progress in another window."
 fi
 ruby_check_mutex_lock
 
 install_rvm || exit 1
+rvm --default use "$RUBY_VERSION_TO_USE"
 source "$HOME/.rvm/scripts/rvm"
 export PATH="$HOME/.rvm/gems/ruby-$RUBY_VERSION_TO_USE/bin:$PATH"
 configure_rvm_defaults
