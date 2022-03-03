@@ -71,7 +71,7 @@ DIRECTORIES
 source_tmux_stuff() {
   if ! source "$HOME/.bash_tmux_specific"
   then
-    >&2 echo "ERROR: Failed to load Bash functions. Ensure that they are in your repo."
+    log_error "Failed to load Bash functions. Ensure that they are in your repo."
     return 1
   fi
 }
@@ -113,7 +113,7 @@ then
   then
     if ! install_tmux_and_tpm
     then
-      >&2 echo "ERROR: Failed to install tmux."
+      log_error "Failed to install tmux."
       return 1
     fi
   fi
@@ -130,7 +130,7 @@ else
     configure_bash_session &&
     configure_machine &&
     add_keys_to_ssh_agent &&
-    printf "${BGreen}INFO${NC}: Shell ready; enjoy! 🎉\n"
+    log_info "Shell ready; enjoy! 🎉"
 fi
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*

@@ -6,7 +6,7 @@ then
   windows_home_directory="/mnt/c/Users/accou"
   for d in Downloads
   do
-    printf "${BYellow}INFO${NC}:\t${d}\n"
+    log_info "\t ---> ${d}\n"
     rm "$HOME/${d}"
     ln -s "${windows_home_directory}/${d}" "$HOME/${d}"
   done

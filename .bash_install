@@ -133,15 +133,14 @@ get_homebrew_builtins() { brew list --formula | tr '\t' '\n'; }
 get_app_store_apps() { mas list | sed -E 's/^[0-9]+ (.*) \(.*$/\1/'; }
 
 install_if_missing() {
-  app_to_find="$1"
-  installed_apps="$2"
-  install_command="$3"
-  apps="${@:4}"
+  installed_apps="$1"
+  install_command="$2"
+  apps="${@:3}"
   for app in $apps
   do
     if ! $(echo "$installed_apps" | grep -q "$app")
     then
-      printf "${BGreen}INFO${NC}: Installing app: ${BGreen}$app${NC}\n"
+      log_info "Installing app: ${BGreen}$app${NC}\n"
       eval "$install_command $app"
     fi
   done
@@ -158,7 +157,7 @@ install_homebrew_builtins() {
   apps="$(echo "$HOMEBREW_BUILTINS" | tr '\n' ' ')"
   if is_apple_m1_cpu
   then
-    >&2 printf "${BCyan}WARNING${NC}: You appear to be using a MacBook with an \
+    log_warning "You appear to be using a MacBook with an \
 Apple M1 CPU. Install Rosetta first in order to install these apps: \
 $(echo "${HOMEBREW_BUILTINS_X86}" | tr '\n' ' ')\n"
   else
@@ -176,8 +175,8 @@ install_app_store_apps() {
     install_if_missing "$pkg" "$(get_app_store_apps)" "mas lucky" $APPLE_APP_STORE_APPS
   else
     formatted_apps=$(echo "$APPLE_APP_STORE_APPS" | tr '\n' ' ')
-    >&2 printf "${BCyan}WARNING${NC}: You are not signed in to the App Store. \
-Sign in to install these apps: $formatted_apps\n"
+    log_warning "You are not signed in to the App Store. Sign in to install \
+these apps: $formatted_apps\n"
   fi
 }
 
@@ -249,14 +248,23 @@ has been updated with ad-free extensions. Updating it now."
 }
 
 install_witch_prefs() {
-  cp ~/src/setup/com.manytricks.witchdaemon.plist ~/Library/Preferences
+  test -f "$WITCH_PREFS_UPDATED_SENTINEL_FILE" && return 0
+
+  log_info "Applying Witch preferences"
+  cp ~/src/setup/com.manytricks.witchdaemon.plist ~/Library/Preferences &&
+    touch "$WITCH_PREFS_UPDATED_SENTINEL_FILE"
 }
 
 install_shiftit_prefs() {
-  defaults import org.shiftitapp.ShiftIt $HOME/src/setup/shiftit.plist
+  test -f "$SHIFTIT_PREFS_UPDATED_SENTINEL_FILE" && return 0
+
+  log_info "Applying ShiftIt preferences"
+  defaults import org.shiftitapp.ShiftIt "$HOME/src/setup/shiftit.plist" &&
+    touch "$SHIFTIT_PREFS_UPDATED_SENTINEL_FILE"
 }
 
 set_vnc_shiftit_prefs() {
+  log_info "Applying VNC-compatible ShiftIt preferences"
   killall ShiftIt &&
     defaults import org.shiftitapp.ShiftIt $HOME/src/setup/shiftit-vnc.plist &&
     open /Applications/ShiftIt.app
@@ -271,6 +279,7 @@ set_regular_shiftit_prefs() {
 configure_todos() {
   if ! test -d $HOME/src/todos
   then
+    log_info "Installing shell todos"
     git clone git@github.carlosnunez.me:carlosonunez/todos.git $HOME/src/todos
   fi
 }
@@ -317,7 +326,7 @@ update_obs_prefs() {
       grep "$OBS_PREFS_OP_KEY")
     if test -z "$existing"
     then
-      >&2 echo "INFO: OBS settings not found in 1Password. Creating it now."
+      log_info "OBS settings not found in 1Password. Creating it now."
       op create document --vault "$OP_DEFAULT_VAULT" \
         --title "$OBS_PREFS_OP_KEY" \
         "$OBS_PREFS_TMP_FILE"
@@ -331,17 +340,17 @@ update_obs_prefs() {
 
   if _force || ( ! _obs_prefs_updating_disabled && ! _obs_prefs_updated_recently )
   then
-    >&2 echo "INFO: It's been over $MAX_OBS_PREFS_STALENESS_DAYS days since OBS prefs have \
+    log_info "It's been over $MAX_OBS_PREFS_STALENESS_DAYS days since OBS prefs have \
 been updated. Doing that now."
-    >&2 echo "INFO: Set DISABLE_OBS_PREFS_CHECK to 'true' to disable this behavior."
+    log_info "Set DISABLE_OBS_PREFS_CHECK to 'true' to disable this behavior."
     if ! check_for_internet_access
     then
-      >&2 echo "ERROR: Internet seems to be down. Do this manually by running '${FUNCNAME[0]}'"
+      log_error "Internet seems to be down. Do this manually by running '${FUNCNAME[0]}'"
       return 1
     fi
     if ! test -f "$OBS_PREFS_SENTINEL_FILE"
     then
-      >&2 echo "INFO: It looks like OBS hasn't been set up yet. Fetching prefs now."
+      log_info "It looks like OBS hasn't been set up yet. Fetching prefs now."
       _download_and_unzip_obs_prefs
       touch "$OBS_PREFS_SENTINEL_FILE"
     else
@@ -383,8 +392,8 @@ get_ssh_and_aws_keys_from_onepassword() {
 
   if ssh_folder_not_present_or_empty
   then
-    >&2 echo "INFO: Downloading and configuring SSH and cloud keys."
-    >&2 echo "INFO: (You'll be asked to provide a passphrase for your GPG keys.)"
+    log_info "Downloading and configuring SSH and cloud keys. (You'll be \
+asked to provide a passphrase for your GPG keys.)"
     download_keys &&
       unzip_keys &&
       permission_keys &&
@@ -421,7 +430,7 @@ get_secret_settings_from_onepassword() {
 
   if ! secret_settings_installed
   then
-    >&2 echo "INFO: Downloading secret environment settings."
+    log_info "Downloading secret environment settings."
     download_env_settings &&
       unzip_env_settings &&
       remove_downloaded_env_settings &&
@@ -444,28 +453,28 @@ get_firefox_multi_account_containers_from_onepassword() {
   }
 
   install_regexes() {
-    >&2 echo "INFO: Run this command to copy your Firefox Multi-Account Containers settings. \
+    log_info "Run this command to copy your Firefox Multi-Account Containers settings. \
 Click on 'Containerise' then click the pencil and paste: \
 'get_local_firefox_multi_account_containers'"
   }
 
   if ensure_regexes_not_present
   then
-    >&2 echo "INFO: Downloading and configuring Firefox Multi-Account Containers."
+    log_info "Downloading and configuring Firefox Multi-Account Containers."
     download_regexes && install_regexes
   fi
 }
 
 update_firefox_multi_account_containers_into_onepassword() {
   prompt_for_containers() {
-    >&2 echo "INFO: Add your containers below; press CTRL-d when finished."
+    log_info "Add your containers below; press CTRL-d when finished."
     cat
   }
   configure_1password_cli
   containers_string=$(prompt_for_containers)
   if ! test -z "$containers_string"
   then
-    >&2 echo "INFO: Updating 1Password."
+    log_info "Updating 1Password."
     op edit item 'Firefox Multi-Account Container Configuration' notesPlain="$containers_string" \
       --vault "$OP_DEFAULT_VAULT"
   fi
@@ -510,6 +519,7 @@ unlock_install() {
 install_reddit_cli() {
   if ! tuir --version &>/dev/null
   then
+    log_info "Installing Reddit for CLI"
     pip install tuir
   fi
 }
@@ -517,6 +527,7 @@ install_reddit_cli() {
 tap_drivers() {
   if ! brew tap | grep -q "homebrew/cask-drivers"
   then
+    log_info "Tapping cask-drivers Homebrew tap"
     brew tap homebrew/cask-drivers
   fi
 }
@@ -524,9 +535,11 @@ tap_drivers() {
 tap_caskroom_fonts() {
   if ! brew tap | grep -q "homebrew/cask-fonts"
   then
+    log_info "Tapping cask-fonts Homebrew tap"
     brew tap homebrew/cask-fonts
   fi
 }
+
 enable_sudo_with_apple_watch_and_touch_id() {
   enable_apple_watch() {
     if ! test -f $APPLE_WATCH_PAMID_LIBPATH
@@ -536,16 +549,14 @@ enable_sudo_with_apple_watch_and_touch_id() {
         mkdir -p "$APPLE_WATCH_PAMID_PATH" && \
           git clone $APPLE_WATCH_PAMID_URL $APPLE_WATCH_PAMID_PATH
       fi
-      >&2 printf "${BGreen}INFO${NC}: Installing Apple Watch sudo extension. Enter your \
-password when prompted.\n"
+      log_info "Installing Apple Watch sudo extension. Enter your password when prompted."
       pushd $APPLE_WATCH_PAMID_PATH && \
         gsed -i 's/x86_64/$(shell uname -m)/' Makefile && \
         sudo make install
     fi
     if ! grep -q "pam_watchid.so" /etc/pam.d/sudo
     then
-      >&2 printf "${BGreen}INFO${NC}: Enabling Apple Watch sudo extension. Enter your \
-password when prompted.\n"
+      log_info "Enabling Apple Watch sudo extension. Enter your password when prompted."
       sudo gsed -i '1s/^/auth    sufficient      pam_watchid.so    "reason=execute command as root"\n/' \
         /etc/pam.d/sudo
     fi
@@ -554,8 +565,7 @@ password when prompted.\n"
   enable_touchid() {
     if ! grep -q "pam_tid.so" /etc/pam.d/sudo
     then
-      >&2 printf "${BGreen}INFO${NC}: Enabling Touch ID sudo extension. Enter your \
-password when prompted.\n"
+      log_info "Enabling Touch ID sudo extension. Enter your password when prompted."
       sudo gsed -i '1s/^/auth    sufficient      pam_tid.so    "reason=execute command as root"\n/' \
         /etc/pam.d/sudo
     fi
@@ -567,9 +577,9 @@ password when prompted.\n"
 }
 
 install_fermata(){ 
-  if ! test -d "/Applications/Fermata.app"
+  if test "$(get_os_type)" == "Darwin" && ! is_apple_m1_cpu && ! test -d "/Applications/Fermata.app"
   then
-    >&2 printf "${BGreen}INFO${NC}: Installing Fermata. Enter your password when prompted.\n"
+    log_info_sudo "Installing Fermata"
     curl -Lso /tmp/fermata.zip "$FERMATA_URL" &&
       unzip -q /tmp/fermata.zip -d /tmp &&
       sudo mv /tmp/Fermata.app /Applications &&
@@ -583,14 +593,14 @@ mark_first_time_setup_as_complete_if_needed() {
   then
     test -d "$(dirname "$file")" || mkdir -p "$(dirname "$file")"
     touch "$file"
-    >&2 printf "${BGreen}INFO${NC}: First time setup complete. Enjoy your machine!\n"
+    log_info "First time setup complete. Enjoy your machine!"
   fi
 }
 
 install_complete_alias() {
   if ! test -f "$HOME/.bash_completion.d/complete_alias"
   then
-    >&2 printf "${BGreen}INFO${NC}: Installing complete_alias"
+    log_info "Installing complete_alias"
     mkdir -p "$HOME/.bash_completion.d" &&
       curl "$COMPLETE_ALIAS_URL" > ~/.bash_completion.d/complete_alias
   fi
@@ -599,12 +609,10 @@ install_complete_alias() {
 update_bash() {
   if grep -iq "^3" <<< "$BASH_VERSION"
   then
-    >&2 echo "INFO: Updating Bash (provide your password when asked)"
+    log_info_sudo "Updating Bash (tmux reload required once finished)"
     brew install bash && \
       sudo sh -c "echo $(brew --prefix)/bin/bash >> /etc/shells" && \
-      chsh -s "$(brew --prefix)/bin/bash" &&
-      >&2 echo "INFO: Bash updated. You'll need to close then re-open Tmux for changes to \
-take effect."
+      chsh -s "$(brew --prefix)/bin/bash"
   fi
 }
 
@@ -615,12 +623,11 @@ first_time_setup_done() {
 
 if ! first_time_setup_done
 then
-  >&2 printf "${BGreen}INFO${NC}: Welcome to the installer! We'll need to configure 1Password \
-first so that we can fetch your secret preferences. Your system password will be required. \
-Enter it below when prompted.\n"
+  log_info_sudo "Welcome to the installer! We'll need to configure 1Password \
+first so that we can fetch your secret preferences."
   if ! configure_1password_cli
   then
-    >&2 printf "${BRed}ERROR${NC}: Failed to configure 1Password. This might be because your \
+    log_error "Failed to configure 1Password. This might be because your \
 account has two-factor authentication enabled. Run 'source ~/.bash_profile' again, but \
 pre-pend this to it: 'ONEPASSWORD_OTP=[YOUR_OTP]'."
     exit 1
@@ -630,25 +637,25 @@ fi
 remove_dead_install_locks
 if installation_is_locked
 then
-  >&2 echo -e "${BRed}ERROR${NC}: .bash_install is installing apps in \
-tmux window-pane $(get_tmux_windowpane_holding_lock). \
-Skipping to post-install."
+  log_warning ".bash_install is installing apps in tmux window-pane \
+$(get_tmux_windowpane_holding_lock). Skipping to post-install."
 else
-  >&2 printf "${BGreen}INFO${NC}: Checking and/or updating software. This might take a few minutes.\n"
+  if ! check_for_internet_access
+  then
+    log_warning "Internet access is not available. We will not attempt to install
+or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
+    unlock_install
+    return 0
+  fi
+
+  log_info "Checking and/or updating software. This might take a few minutes."
+
   lock_install
   tap_drivers
   tap_caskroom_fonts
 
   # Install a few necessary brew formulae
   # ======================================
-  if ! check_for_internet_access
-  then
-    >&2 echo "WARN: Internet access is not available. We will not attempt to install
-  or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
-    unlock_install
-    return 0
-  fi
-
   case "$(get_os_type)" in
     Darwin)
       install_homebrew_builtins &&
@@ -658,8 +665,8 @@ else
       install_fermata
           ;;
     *)
-      >&2 echo "WARNING: Routines for non-Mac operating systems haven't been written yet."
-      >&2 echo "WARNING: See '$HOME/.bash_install' for a list of applications to install."
+      log_warning "Routines for non-Mac operating systems haven't been written yet."
+      log_warning "See '$HOME/.bash_install' for a list of applications to install."
       ;;
   esac
   get_ssh_and_aws_keys_from_onepassword
@@ -668,7 +675,6 @@ else
   unlock_install
 fi
 
->&2 printf "${BGreen}INFO${NC}: Configuring system; please wait.\n"
 enable_sudo_with_apple_watch_and_touch_id
 install_reddit_cli
 configure_todos

@@ -73,9 +73,9 @@ start_tmux() {
   cd $HOME
   if reattach_to_user_namespace_not_found
   then
-    >&2 printf "${BRed}ERROR${NC}: reattach-to-user-namespace not installed or found in \
+    log_error "reattach-to-user-namespace not installed or found in \
 \$PATH. Please install it with 'brew install reattach-to-user-namespace' and then
-'source $HOME/.bash_profile' again.\n"
+'source $HOME/.bash_profile' again."
     return 1
   fi
   if tmux ls &> /dev/null
@@ -101,7 +101,7 @@ install_tmux_and_tpm() {
         install_application tmux python-software-properties software-properties-common tmux-next
         ;;
       *)
-        >&2 echo "INFO: tmux not supported by this operating system."
+        log_info "tmux not supported by this operating system."
         return 0
         ;;
     esac

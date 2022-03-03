@@ -3,7 +3,7 @@
 update_vim_bundles() {
   for bundle_repo in $VIM_BUNDLE_REPOS
   do
-    >&2 echo -ne "${BGreen}INFO${NC}: Updating '$bundle_repo'\n"
+    log_info "Updating '$bundle_repo'"
     dir="$HOME/.vim/bundle/$(basename $bundle_repo)"
     pushd "$dir" && git pull --quiet && popd
   done

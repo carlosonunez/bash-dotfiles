@@ -80,10 +80,10 @@ start_docker_vm_darwin() {
   then
     if ! grep -Eq "$(docker_machine_name)" < <(limactl list 2>/dev/null)
     then
-      >&2 printf "${BYellow}INFO${NC}: Docker VM [$(docker_machine_name)] not created; creating now\n"
+      log_info "Docker VM [$(docker_machine_name)] not created; creating now"
       limactl start "$LIMA_MACHINE_DESTINATION_PATH" --tty=false
     else
-      >&2 printf "${BYellow}INFO${NC}: Docker VM [$(docker_machine_name)] not started; starting now\n"
+      log_info "Docker VM [$(docker_machine_name)] not started; starting now"
       limactl start "$(docker_machine_name)"
     fi
   fi
@@ -92,7 +92,7 @@ start_docker_vm_darwin() {
 remove_dead_install_locks
 if installation_is_locked
 then
-  >&2 printf "${BGreen}INFO:${NC} Docker installation is in progress in another window."
+  log_warning "Docker installation is in progress in another window."
   return 0
 fi
 
@@ -100,7 +100,7 @@ docker_check_mutex_lock
 
 if ! which docker &>/dev/null
 then
-  printf "Installing ${BGreen}docker${NC}\n"
+  log_info "Installing Docker"
   if is_mac
   then
     brew install docker
@@ -117,7 +117,7 @@ then
     install_application "linux-image-extra-$(uname -r) linux-image-extra-virtual"
     install_application "docker-ce"
   else
-    >&2 printf "${BRed}ERROR${NC}: A Docker setup routine hasn't been written for this Linux.\n"
+    log_error "A Docker setup routine hasn't been written for this Linux."
     return 1
   fi
 fi
@@ -125,8 +125,8 @@ fi
 add_user_to_docker_group_if_linux() {
   (is_debian || is_redhat) || return 0
   
-  printf "${BYellow}INFO${NC}: Adding your user to the 'docker' group. Password might be needed. \
-  Log out then back in to apply these changes.\n"
+  log_info "Adding your user to the 'docker' group. Password might be needed. Log out then back \
+in to apply these changes."
   sudo usermod -aG docker "$USER"
 }
 

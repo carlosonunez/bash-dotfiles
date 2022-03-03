@@ -6,7 +6,7 @@ check_for_git_repository() {
   which git &>/dev/null || return 1
   if ! 2>/dev/null git rev-parse --show-toplevel
   then
-    >&2 printf "${BRed}ERROR${NC}: $PWD is not a Git repository.\n"
+    log_error "$PWD is not a Git repository."
     return 1
   fi
 }
@@ -62,7 +62,7 @@ run_gyb() {
   email_address=$1
   if ! test -d "$HOME/src/gyb"
   then
-    >&2 echo "INFO: Fetching Dockerized Got-Your-Back..."
+    log_info "Fetching Dockerized Got-Your-Back..."
     mkdir -p "$HOME/src/gyb" && \
       git clone https://github.com/carlosonunez/gyb "$HOME/src/gyb"
   fi
@@ -85,7 +85,7 @@ alias gybp='run_gyb  ${@:1}'
 alias gybw='run_gyb  ${@:1}'
 if ! which todo.sh &>/dev/null
 then
-  >&2 printf "${BYellow}WARN${NC}: todo.sh is not installed. Install it to keep track of stuff\!\n"
+  log_warn "todo.sh is not installed. Install it to keep track of stuff\!"
 else
   alias todo="todo.sh -d $TODO_DIR/.todo.cfg"
   alias t="todo a"
@@ -100,14 +100,7 @@ fi
 alias dc=docker-compose
 complete -F _complete_alias dc
 alias speed=run_speed_test
-
-if which hub &>/dev/null
-then
-  alias git=hub
-else
-  >&2 printf "${BYellow}WARN${NC}: 'hub' is not installed; install it for GitHub extensions.\n"
-  alias git=git
-fi
+alias git=git
 
 case "$(get_os_type)" in
   "Darwin")

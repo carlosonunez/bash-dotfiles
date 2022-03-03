@@ -4,13 +4,42 @@ ONE_GIGABYTE="$(numfmt --from=iec '1G')"
 ONE_MEGABYTE="$(numfmt --from=iec '1M')"
 ONE_KILOBYTE="$(numfmt --from=iec '1K')"
 
+# shellcheck disable=SC2154
+log_init() {
+  >&2 echo -ne "${BCyan}INIT${NC}: $1\n"
+}
+
+log_info() {
+  >&2 echo -ne "${BGreen}INFO${NC}: $1\n"
+}
+
+log_info_sudo() {
+  >&2 echo -ne "${BGreen}INFO${NC}: $1 (Enter password when prompted)\n"
+}
+
+log_warning() {
+  >&2 echo -ne "${BYellow}WARNING${NC}: $1\n"
+}
+
+log_warning() {
+  >&2 echo -ne "${BYellow}WARNING${NC}: $1 (Enter password when prompted)\n"
+}
+
+log_error() {
+  >&2 echo -ne "${BRed}ERROR${NC}: $1 (Enter password when prompted)\n"
+}
+
+log_error() {
+  >&2 echo -ne "${BRed}ERROR${NC}: $1 (Enter password when prompted)\n"
+}
+
 get_os_type() {
   case "$(uname)" in
     "Darwin")
       echo "Darwin"
       ;;
     "Linux")
-      echo "$(lsb_release -is)"
+      lsb_release -is
       ;;
     *)
       echo "Unsupported"
@@ -27,7 +56,7 @@ jumpbox() {
       if ! remote_details=$(op --vault "$ONEPASSWORD_VAULT" get item "Carlos's Jumpbox Details" | \
         jq -r '.details.notesPlain' | tr '\n' ';' )
       then
-        >&2 printf "${BRed}ERROR${NC}: Can't get jumpbox details.\n"
+        log_error "Can't get jumpbox details."
         return 1
       fi
       sudo security add-generic-password -a "$USER" -s "jumpbox" -w "$remote_details" -U
@@ -38,7 +67,7 @@ jumpbox() {
   }
   if ! details=$(get_jumpbox_details_from_op | tr ';' '\n')
   then
-    >&2 printf "${BRed}ERROR${NC}: Can't get jumpbox details.\n"
+    log_error "Can't get jumpbox details."
     return 1
   fi
   host=$(echo "$details" | head -1)
@@ -46,7 +75,7 @@ jumpbox() {
   username=$(echo "$details" | tail -2 | head -1)
   if test -z "$host" || test -z "$port" || test -z "$username"
   then
-    >&2 printf "${BRed}ERROR${NC}: Host or port is empty.\n"
+    log_error "Host or port is empty."
     return 1
   fi
   cmd="ssh -A"
@@ -138,7 +167,7 @@ configure_client_or_company_specific_settings() {
   # Load any company specific bash submodules first.
   for file in $(find $HOME -type l -name ".bash_company_*" -maxdepth 1)
   do
-    printf "${BYellow}INFO${NC}: Loading company submodule ${BYellow}${file}${NC}\n"
+    log_init "Loading company submodule ${BYellow}${file}${NC}"
     source $file
   done
 }
@@ -146,16 +175,16 @@ configure_client_or_company_specific_settings() {
 configure_secret_settings() {
   for file in $(find $HOME -type f -name ".bash_secret_*" -maxdepth 1 | grep -v ".bash_secret_exports")
   do
-    printf "${BYellow}INFO${NC}: Loading company submodule ${BYellow}${file}${NC}\n"
+    log_init "Loading company submodule ${BYellow}${file}${NC}"
     source $file
   done
 }
 
 configure_bash_session() {
   source_file() {
-    printf "${BYellow}INFO${NC}: Loading ${BYellow}$1${NC}\n"
+    log_init "Loading ${BYellow}$1${NC}"
     source $1
-    printf "\n"
+    printf ""
   }
   # Aliases and exports need to come first to prevent it breaking configuration
   # happening in other files.
@@ -254,7 +283,7 @@ calculate_speed_from_curl() {
   speed_iec="$1"
   if ! &>/dev/null which numfmt
   then
-    >&2 printf "${BYellow}WARN${NC}: numfmt not installed; returning input"
+    log_warn "numfmt not installed; returning input"
     return "$speed_iec"
   fi
   result_bytes="$(echo "$speed_iec" | tr '[:lower:]' '[:upper:]' | numfmt --from=iec)"
@@ -271,7 +300,7 @@ run_speed_test_cloudflare() {
   payload_size_bytes=1000
   cutoff_seconds=3
   iterations=0
-  printf "${BGreen}INFO${NC}: Running download speed test via Cloudflare"
+  log_info "Running download speed test via Cloudflare"
   while true
   do
     printf '.'
@@ -294,7 +323,7 @@ run_speed_test_cloudflare() {
 run_speed_test() {
   if ! check_for_internet_access
   then
-    >&2 printf "${BRed}ERROR${NC}: No internet access. Speed test unavailable."
+    log_error "No internet access. Speed test unavailable."
     return 1
   fi
   run_speed_test_cloudflare
@@ -441,7 +470,7 @@ install_homebrew_if_missing() {
 
   if [ "$(which brew)" -eq "" ]
   then
-    printf "${BYellow}INFO${NC}: Installing homebrew\n"
+    log_info "Installing homebrew"
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   fi
 }
@@ -469,11 +498,11 @@ install_application() {
       package_manager_command_to_run="sudo zypper install"
       ;;
     *)
-      printf "${BRed}ERROR${NC}: OS [$os_type] is unsupported\n"
+      log_error "OS [$os_type] is unsupported"
       return 1
       ;;
   esac
-  printf "${BYellow}INFO${NC}: Running ${BGreen}${package_manager_command_to_run} $@${NC}\n"
+  log_info "Running ${BGreen}${package_manager_command_to_run} $@${NC}"
   eval "$package_manager_command_to_run $@"
 }
 
@@ -514,7 +543,7 @@ update_dotfiles() {
   pushd $HOME/src/setup
   if test -z "$(git status --porcelain)"
   then
-    >&2 echo -ne "${BYellow}WARNING${NC}: Changed files have been detected. Stashing them."
+    log_warning "Changed files have been detected. Stashing them."
     git stash
   fi
   git pull --rebase
@@ -632,19 +661,19 @@ toggle_bash_prompt() {
 }
 
 preview_markdown() {
-  >&2 printf "${BGreen}INFO${NC}: Visit http://localhost:6419 to view your stuff.\n"
+  log_info "Visit http://localhost:6419 to view your stuff."
   docker run -it --rm -v $PWD:/data -p 6419:3080 thomsch98/markserv
 }
 
 disable_sleep() {
   if ! test -d "/Applications/Fermata.app"
   then
-    >&2 echo "ERROR: Fermata is not installed. Please install it."
+    log_error "Fermata is not installed. Please install it."
     return 1
   fi
   if ! pgrep -i fermata
   then
-    >&2 echo "INFO: Fermata isn't running. Starting it now."
+    log_info "Fermata isn't running. Starting it now."
     open /Applications/Fermata.app
   fi
   brightness 0
@@ -654,7 +683,7 @@ disable_sleep() {
 enable_sleep() {
   if ! test -d "/Applications/Fermata.app"
   then
-    >&2 echo "ERROR: Fermata is not installed. Please install it."
+    log_error "Fermata is not installed. Please install it."
     return 1
   fi
   brightness 0.5
@@ -673,7 +702,7 @@ update_dotfiles() {
       new_version=$(git log --format="%h") &&
       if test "$current_version" != "$new_version"
       then
-        >&2 printf "${BYellow}INFO${NC}: dotfiles updated: $current_version -> $new_version"
+        log_info "$current_version -> $new_version"
       fi &&
       popd;
   }
@@ -721,7 +750,7 @@ toggle() {
   TOGGLE_FILE=/tmp/toggle_switch
   if test -z "$(jobs)"
   then
-    >&2 printf "${BRed}ERROR${NC}: No jobs have been backgrounded."
+    log_error "No jobs have been backgrounded."
   else
     switch_position="$(cat $TOGGLE_FILE)"
     if test "$switch_position" == "up"

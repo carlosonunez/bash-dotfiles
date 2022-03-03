@@ -44,7 +44,7 @@ update_origin_url() {
     # match repos cloned by ssh
     gsed -i 's/git@github.com/git@github.carlosnunez.me/' .git/config
   else
-    >&2 echo "ERROR: Unsupported clone scheme detected."
+    log_error "Unsupported clone scheme detected."
   fi
 }
 
@@ -111,11 +111,11 @@ squash_these_many_commits() {
     [ "$number_of_commits_to_squash" -gt 0 ]
   then
     _squash_commits "$number_of_commits_to_squash"
-    echo "INFO: You might need to force-push this changeset into your remote. \
+    log_info "You might need to force-push this changeset into your remote. \
 To do so, use \`git push -f\`. Note that not every repository will allow you \
 to do this."
   else
-    echo "ERROR: Please enter the number of commits to squash." >&2
+    log_error "Please enter the number of commits to squash."
     exit 1
   fi
 }

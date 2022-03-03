@@ -57,11 +57,10 @@ assume_role() {
   _create_cache_if_needed
   if test -z "$json"
   then
-    >&2 printf "${BRed}ERROR${NC}: Unable to assume [$arn] with external ID [$password]; see \
-above.\n"
+    log_error "Unable to assume [$arn] with external ID [$password]; see \
+above."
     return 1
   fi
-  expires_on=$(_get_expiration "$json")
   _write_token_info "$json"
   _print_env "$json"
 }
@@ -93,8 +92,8 @@ _log_into_aws() {
 
   if _session_token_valid
   then
-    >&2 printf "${BRed}ERROR${NC}: The session in the environment is still valid.\n"
-    >&2 printf "${BRed}ERROR${NC}: Delete $AWS_TOKEN_CACHE_LOCATION to recreate it.\n"
+    log_error "The session in the environment is still valid."
+    log_error "Delete $AWS_TOKEN_CACHE_LOCATION to recreate it."
     return 0
   fi
 
@@ -121,11 +120,5 @@ alias log_into_aws_with_op='configure_1password_cli && 1>/dev/null export $(_log
 alias aws_login=log_into_aws_with_op
 
 
-message=$(cat <<-MESSAGE
-${BYellow}INFO${NC}: Run 'log_into_aws [ACCESS_KEY] [SECRET_KEY] [REGION]' to log into AWS.
-${BYellow}INFO${NC}: Use 'assume_role [ARN] [EXTERNAL_ID]' if needed.
-${BYellow}INFO${NC}: Region set to [$DEFAULT_AWS_REGION]; export AWS_REGION to change this.
-MESSAGE
-)
-printf "$message\n"
+log_info "AWS shell extensions configured! Run 'aws_login' to log into AWS with 1Password."
 complete -C '/usr/local/bin/aws_completer' aws

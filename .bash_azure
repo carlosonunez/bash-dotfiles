@@ -8,11 +8,9 @@ AZURE_SP_USERNAME_FILE=$HOME/.ssh/azure_sp_username
 alias az_vpn="HTTPS_PROXY=localhost:8888 HTTP_PROXY=localhost:8888 az"
 
 _check_file() {
-  file="$1"
-  error_msg="$2"
   if ! test -f "$1"
   then
-    >&2 printf "${BRed}ERROR${NC}: $2\n"
+    log_error "$2"
     return 1
   fi
 }
@@ -38,7 +36,7 @@ create_az_login_alias() {
 -u '$(cat $AZURE_SP_USERNAME_FILE)' \
 -p '$(cat $AZURE_SP_PASSWORD_FILE)' \
 -t '$(cat $AZURE_SP_TENANT_FILE)'"
-  >&2 printf "${BGreen}INFO${NC}: Azure has been set up. Run 'az_login' to login.\n"
+  log_info "Azure has been set up. Run 'az_login' to login."
 }
 
 export_az_creds_to_shell() {

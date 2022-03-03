@@ -3,7 +3,7 @@ export_trello_board() {
   list_to_export="${1?Please provide a list to export.}"
   if ! test -f "$HOME/Downloads/board.json"
   then
-    >&2 echo "ERROR: board.json not found. Download the board to export from first."
+    log_error "board.json not found. Download the board to export from first."
     exit 1
   fi
   jq_query=$(cat <<-QUERY
