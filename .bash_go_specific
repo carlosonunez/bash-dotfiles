@@ -9,17 +9,18 @@ GOTOOLS
 
 # Install Go if needed
 # ====================
-if !  which go &> /dev/null
+if ! test -d "$HOME/.gvm/gos/go$GOLANG_VERSION"
 then
+  log_info "Installing go$GOLANG_VERSION from source"
   # You need go to compile go (makes sense) but you can't install a binary version of it
   # if using MacOS Big Sur or above: https://github.com/moovweb/gvm/issues/360
   # FUCKING INSANE. I can't keep up with these kids, man.
-  brew install go # To install literally any version of Go that can compile itself
+  &>/dev/null which go || brew install go # To install literally any version of Go that can compile itself
   bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+  gvm install "go$GOLANG_VERSION"
 fi
 # shellcheck disable=SC1090
 source ~/.gvm/scripts/gvm
-test -d "$HOME/.gvm/gos/go$GOLANG_VERSION" || gvm install "go$GOLANG_VERSION"
 gvm use "go$GOLANG_VERSION" >/dev/null
 
 # Install the gopls engine (for Vim) and golangci-lint (for linting within Vim with Syntastic)
