@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 trap "rm -f $INSTALL_LOCK_FILE" INT
 
+SHIFTIT_PREFS_UPDATED_SENTINEL_FILE="$HOME/.config/setup/shiftit_updated"
+WITCH_PREFS_UPDATED_SENTINEL_FILE="$HOME/.config/setup/witch_updated"
+ETC_HOSTS_PREPPED_SENTINEL_FILE="$HOME/.config/setup/etc_hosts_prepped"
 APPLE_WATCH_PAMID_LIBPATH=/usr/local/lib/pam/pam_watchid.so.2
 APPLE_WATCH_PAMID_URL=https://github.com/biscuitehh/pam-watchid
 APPLE_WATCH_PAMID_PATH=$HOME/.config/security/pamid-applewatch
@@ -91,37 +94,33 @@ Spark
 APPS
 )
 ETC_HOSTS_EXCLUSIONS=$(cat <<-EXCLUSIONS
-.*\.whatsapp\.com
-.*\.whatsapp\.net
-twitter\.com
-t\.co
-www\.t\.co
-.*\.twimg\.com
-www\.linkedin\.com
-engineering\.linkedin\.com
-linkedin\.com
-api\.twitter\.com
-.*reddit\.com
-v\.redd\.it
 amp-reddit-com\.cdn\.ampproject\.org
-www\.redditstatic\.com
-i\.reddit\.com
+analytics\.google\.com
+api\.twitter\.com
+dynatrace\.com
+engineering\.linkedin\.com
 i\.redd\.it
-preview\.redd\.it
-mmg\.whatsapp\.net
-reddit\.map\.fastly\.net
-preview\.redd\.it
+i\.reddit\.com
+linkedin\.com
 media\.licdn\.com
 mmg-fna\.whatsapp\.net
-analytics\.google\.com
+mmg\.whatsapp\.net
+preview\.redd\.it
+preview\.redd\.it
+reddit\.com
+reddit\.map\.fastly\.net
 static\.licdn\.com
+t\.co
+twimg\.com
+twitter\.com
+v\.redd\.it
+whatsapp\.com
+whatsapp\.net
 www\.licdn\.com
-dynatrace\.com
+www\.linkedin\.com
+www\.redditstatic\.com
+www\.t\.co
 EXCLUSIONS
-)
-ETC_HOSTS_INCLUSIONS=$(cat <<-ETC_HOSTS_INCLUSIONS
-ads\.linkedin\.com
-ETC_HOSTS_INCLUSIONS
 )
 FERMATA_URL="https://github.com/iccir/Fermata/releases/download/Fermata-136/Fermata-136.zip"
 
@@ -172,7 +171,7 @@ $(echo "${HOMEBREW_BUILTINS_X86}" | tr '\n' ' ')\n"
 install_app_store_apps() {
   if &>/dev/null mas account
   then
-    install_if_missing "$pkg" "$(get_app_store_apps)" "mas lucky" $APPLE_APP_STORE_APPS
+    install_if_missing "$(get_app_store_apps)" "mas lucky" $APPLE_APP_STORE_APPS
   else
     formatted_apps=$(echo "$APPLE_APP_STORE_APPS" | tr '\n' ' ')
     log_warning "You are not signed in to the App Store. Sign in to install \
@@ -181,28 +180,14 @@ these apps: $formatted_apps\n"
 }
 
 modify_etc_hosts() {
-  index=0
-  inclusions=$(echo "$ETC_HOSTS_INCLUSIONS" | tr '\n' '|' | head -c -1)
-  for exclusion in $ETC_HOSTS_EXCLUSIONS
+  test -f "$ETC_HOSTS_PREPPED_SENTINEL_FILE" && return 0
+
+  match_re="0.0.0.0 ($(tr '\n' '%' <<< "$ETC_HOSTS_EXCLUSIONS" | sed 's#%#\|#g; s/.$//g'))$"
+  while read -r pattern
   do
-    exclusion_pretty_print="$(echo "$exclusion" | sed 's/\\././g')"
-    pattern="^0.0.0.0 $exclusion$"
-    if echo "$pattern" | grep -Eq "$inclusions"
-    then
-      message="INFO: Leaving in /etc/hosts - $exclusion_pretty_print"
-      continue
-    elif grep -Eq "$pattern" /etc/hosts
-    then
-      message="INFO: Removing from /etc/hosts - $exclusion_pretty_print"
-      if test "$index" -eq 0
-      then
-        message="${message} (you might need to enter your password)"
-      fi
-      >&2 echo "$message"
-      sudo gsed -i "/$pattern/d" /etc/hosts
-      index=$((index+1))
-    fi
-  done
+    log_info "Removing from /etc/hosts; enter password if prompted: $pattern\n"
+    sudo gsed -i "/$pattern/d" /etc/hosts
+  done < <(grep -E "$match_re" /etc/hosts) && touch "$ETC_HOSTS_PREPPED_SENTINEL_FILE"
 }
 
 make_etc_hosts_adfree() {
@@ -233,12 +218,18 @@ make_etc_hosts_adfree() {
 
   if _force || ( ! _etc_hosts_updating_disabled && ! _etc_hosts_updated_recently )
   then
-    >&2 echo "INFO: It's been over $MAX_AD_FREE_STALENESS_DAYS days since /etc/hosts \
-has been updated with ad-free extensions. Updating it now."
-    >&2 echo "INFO: Set DISABLE_ADFREE_CHECK to 'true' to disable this behavior."
+    rm "$ETC_HOSTS_PREPPED_SENTINEL_FILE"
+    if _force
+    then
+      log_info "You've requested /etc/hosts to be refreshed!\n"
+    else
+      log_info "It's been over $MAX_AD_FREE_STALENESS_DAYS days since /etc/hosts \
+has been updated with ad-free extensions. Updating it now.\n"
+      log_info "Set DISABLE_ADFREE_CHECK to 'true' to disable this behavior."
+    fi
     for list_uri in $ADFREE_ETC_HOSTS_LISTS
     do
-      >&2 echo "   --> List: ${list_uri}"
+      log_info "Applying list: ${list_uri}"
       curl -o /tmp/etc_hosts -L "$list_uri" &&
         sudo sh -c 'cat /tmp/etc_hosts >> /etc/hosts' &&
         rm -f /tmp/etc_hosts
@@ -272,7 +263,7 @@ set_vnc_shiftit_prefs() {
 
 set_regular_shiftit_prefs() {
   killall ShiftIt &&
-    defaults import org.shiftitapp.ShiftIt $HOME/src/setup/shiftit.plist &&
+    rm "$SHIFTIT_PREFS_UPDATED_SENTINEL_FILE" && install_shiftit_prefs &&
     open /Applications/ShiftIt.app
 }
 
