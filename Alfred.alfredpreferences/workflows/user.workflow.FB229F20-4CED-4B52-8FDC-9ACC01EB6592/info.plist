@@ -187,7 +187,7 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>A08D45F0-726B-4CC8-9103-CFC80287E720</string>
+				<string>DED9ED6A-637B-4E7E-B39B-7F3DF3A5AE18</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -599,19 +599,6 @@
 				<false/>
 			</dict>
 		</array>
-		<key>A08D45F0-726B-4CC8-9103-CFC80287E720</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>1939FF8E-5994-4A87-9695-AADEC8C43C14</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
 		<key>A73CE281-93D9-4A74-A917-D705447E9E06</key>
 		<array>
 			<dict>
@@ -718,6 +705,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>0EA8D6CF-8887-4291-94EB-DBCDE3097B0A</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>DED9ED6A-637B-4E7E-B39B-7F3DF3A5AE18</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>1939FF8E-5994-4A87-9695-AADEC8C43C14</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -1069,7 +1069,7 @@ fi</string>
 				<integer>102</integer>
 				<key>script</key>
 				<string>$HOME/src/my-work-journal/entry_exists_for_today
-echo "{\"alfredworkflow\":{\"variables\":{\"entry_exists\": \"$?\", \"date\": \"$(date +"%b %d, %Y")\"}}}";</string>
+echo "{\"alfredworkflow\":{\"variables\":{\"entry_exists\": \"$?\", \"date\": \"$(date +"%Y%m%d")\"}}}";</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -1113,7 +1113,7 @@ echo "{\"alfredworkflow\":{\"variables\":{\"entry_exists\": \"$?\", \"date\": \"
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>while [ ! -f /tmp/journal_entry ]; do sleep 0.5; done</string>
+				<string>while ! test -z "$(ps -ef | grep -E '.*/tmp/journal_entry$' | grep -v grep)"; do sleep 0.5; done</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -1182,6 +1182,7 @@ then
   echo '{"alfredworkflow":{"variables":{"error":"Please provide a journal entry."}}}'
   exit 1
 fi
+test -f "$HOME/src/my-work-journal/$(date +%Y%m%d).md" &amp;&amp; rm -f "$HOME/src/my-work-journal/$(date +%Y%m%d).md"
 if ! output=$($HOME/src/my-work-journal/add_line_to_today &lt;&lt;ENTRY
 $(cat /tmp/journal_entry)
 ENTRY)
@@ -1301,21 +1302,31 @@ fi</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>concurrently</key>
+				<false/>
 				<key>escaping</key>
-				<integer>0</integer>
+				<integer>102</integer>
 				<key>script</key>
-				<string>journal="$HOME/src/my-work-journal/{var:date}.md"
+				<string>&gt;&amp;2 echo "INFO: Copying first"
+journal="$HOME/src/my-work-journal/$(date +%Y%m%d).md"
 if ! cp "$journal" /tmp/journal_entry
 then
-  echo '{"alfredworkflow":{"variables":{"error":"[$journal] could not be copied to a temporary location."}}}'
-fi</string>
+  echo "{\"alfredworkflow\":{\"variables\":{\"error\":\"[$journal] could not be copied to a temporary location.\"}}}"
+fi
+&gt;&amp;2 echo "INFO: Copied $journal to /tmp/journal_entry"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.action.terminalcommand</string>
+			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
-			<string>A08D45F0-726B-4CC8-9103-CFC80287E720</string>
+			<string>DED9ED6A-637B-4E7E-B39B-7F3DF3A5AE18</string>
 			<key>version</key>
-			<integer>1</integer>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1328,7 +1339,7 @@ fi</string>
 						<key>matchcasesensitive</key>
 						<false/>
 						<key>matchmode</key>
-						<integer>0</integer>
+						<integer>1</integer>
 						<key>matchstring</key>
 						<string>""</string>
 						<key>outputlabel</key>
@@ -2298,9 +2309,9 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 			<key>note</key>
 			<string>1. Add a keyword object by right-clicking the canvas and choosing Inputs &gt; Keyword. Set the keyword and title to show it in Alfred's results.</string>
 			<key>xpos</key>
-			<integer>45</integer>
+			<integer>35</integer>
 			<key>ypos</key>
-			<integer>31260</integer>
+			<integer>1800</integer>
 		</dict>
 		<key>055B3F5D-25E7-43DC-BAB1-4369132E91EC</key>
 		<dict>
@@ -2319,30 +2330,30 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 		<key>0A032495-6A09-4277-B3D8-C142A35D3CFC</key>
 		<dict>
 			<key>xpos</key>
-			<integer>215</integer>
+			<integer>205</integer>
 			<key>ypos</key>
-			<integer>31260</integer>
+			<integer>1800</integer>
 		</dict>
 		<key>0BEE2A6F-9E06-40F1-8A84-98D6C84B2E57</key>
 		<dict>
 			<key>xpos</key>
-			<integer>705</integer>
+			<integer>695</integer>
 			<key>ypos</key>
-			<integer>31260</integer>
+			<integer>1800</integer>
 		</dict>
 		<key>0C4684FD-84A8-4FF1-83D8-EC3DE2A4A713</key>
 		<dict>
 			<key>xpos</key>
-			<integer>960</integer>
+			<integer>950</integer>
 			<key>ypos</key>
-			<integer>30660</integer>
+			<integer>1200</integer>
 		</dict>
 		<key>0D98D6D4-4E97-47FE-B432-6BFEB2836545</key>
 		<dict>
 			<key>xpos</key>
-			<integer>400</integer>
+			<integer>390</integer>
 			<key>ypos</key>
-			<integer>30680</integer>
+			<integer>1220</integer>
 		</dict>
 		<key>0EA8D6CF-8887-4291-94EB-DBCDE3097B0A</key>
 		<dict>
@@ -2356,16 +2367,16 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 			<key>colorindex</key>
 			<integer>7</integer>
 			<key>xpos</key>
-			<integer>375</integer>
+			<integer>365</integer>
 			<key>ypos</key>
-			<integer>31570</integer>
+			<integer>2110</integer>
 		</dict>
 		<key>1493C040-DCDF-4F27-8F61-04F746C74D15</key>
 		<dict>
 			<key>xpos</key>
-			<integer>935</integer>
+			<integer>925</integer>
 			<key>ypos</key>
-			<integer>31290</integer>
+			<integer>1830</integer>
 		</dict>
 		<key>1939FF8E-5994-4A87-9695-AADEC8C43C14</key>
 		<dict>
@@ -2377,9 +2388,9 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 		<key>1AAFA180-8CFE-448F-AEB9-0FF8A5DEF945</key>
 		<dict>
 			<key>xpos</key>
-			<integer>515</integer>
+			<integer>505</integer>
 			<key>ypos</key>
-			<integer>30785</integer>
+			<integer>1325</integer>
 		</dict>
 		<key>1C1BF596-B61A-4728-A51E-50042111019A</key>
 		<dict>
@@ -2398,16 +2409,16 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 		<key>255FB9EA-F4B7-4B2B-9D67-55CD8D9358F0</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1500</integer>
+			<integer>1490</integer>
 			<key>ypos</key>
-			<integer>30780</integer>
+			<integer>1320</integer>
 		</dict>
 		<key>26A5F77D-681A-4FF4-B8CD-D870EAD0C931</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1380</integer>
+			<integer>1370</integer>
 			<key>ypos</key>
-			<integer>30690</integer>
+			<integer>1230</integer>
 		</dict>
 		<key>26B26A2C-B879-4464-9EE5-B3F94126970A</key>
 		<dict>
@@ -2419,9 +2430,9 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 		<key>2DA085BB-7DE7-469A-9A85-0C47AFC75DF9</key>
 		<dict>
 			<key>xpos</key>
-			<integer>880</integer>
+			<integer>870</integer>
 			<key>ypos</key>
-			<integer>30520</integer>
+			<integer>1060</integer>
 		</dict>
 		<key>35BBD622-0C4E-4346-88C6-D0354321BFBA</key>
 		<dict>
@@ -2465,9 +2476,9 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 		<key>43198993-1749-4F5B-8BF6-4B4BDE1B6916</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1150</integer>
+			<integer>1140</integer>
 			<key>ypos</key>
-			<integer>30660</integer>
+			<integer>1200</integer>
 		</dict>
 		<key>43467140-863C-428E-8DF1-1DBDA4E4EC27</key>
 		<dict>
@@ -2476,16 +2487,16 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 			<key>note</key>
 			<string>1. Add a keyword object by right-clicking the canvas and choosing Inputs &gt; Keyword. Set the keyword and title to show it in Alfred's results.</string>
 			<key>xpos</key>
-			<integer>45</integer>
+			<integer>35</integer>
 			<key>ypos</key>
-			<integer>30940</integer>
+			<integer>1480</integer>
 		</dict>
 		<key>4D85A469-2B2D-4A67-A469-A73517BEA019</key>
 		<dict>
 			<key>xpos</key>
-			<integer>435</integer>
+			<integer>425</integer>
 			<key>ypos</key>
-			<integer>31090</integer>
+			<integer>1630</integer>
 		</dict>
 		<key>50471C1C-2524-40ED-95CD-43BC2A9874E9</key>
 		<dict>
@@ -2508,30 +2519,30 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 		<key>58407D6C-AF37-4471-B75D-B87DC72600AC</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1055</integer>
+			<integer>1045</integer>
 			<key>ypos</key>
-			<integer>31380</integer>
+			<integer>1920</integer>
 		</dict>
 		<key>58650051-96AC-474E-A4F8-0F3CD09583AF</key>
 		<dict>
 			<key>xpos</key>
-			<integer>555</integer>
+			<integer>545</integer>
 			<key>ypos</key>
-			<integer>30940</integer>
+			<integer>1480</integer>
 		</dict>
 		<key>5C2E4D08-2381-4B94-8F31-37E04242F324</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1500</integer>
+			<integer>1490</integer>
 			<key>ypos</key>
-			<integer>30660</integer>
+			<integer>1200</integer>
 		</dict>
 		<key>60B2FC70-3451-4D6B-AC69-7CC2AD2F8FA4</key>
 		<dict>
 			<key>xpos</key>
-			<integer>515</integer>
+			<integer>505</integer>
 			<key>ypos</key>
-			<integer>31260</integer>
+			<integer>1800</integer>
 		</dict>
 		<key>6664255C-1FD3-4F36-8A56-E57A39E0EB1F</key>
 		<dict>
@@ -2543,9 +2554,9 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 		<key>67925E90-5A22-4F9E-9B6D-7D9C228FB584</key>
 		<dict>
 			<key>xpos</key>
-			<integer>245</integer>
+			<integer>235</integer>
 			<key>ypos</key>
-			<integer>30370</integer>
+			<integer>910</integer>
 		</dict>
 		<key>6A4C5B23-2979-4973-A5B0-B4B55931730A</key>
 		<dict>
@@ -2564,9 +2575,9 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 		<key>6CB95CC2-7CAC-4264-9986-5193517B01B5</key>
 		<dict>
 			<key>xpos</key>
-			<integer>935</integer>
+			<integer>925</integer>
 			<key>ypos</key>
-			<integer>31410</integer>
+			<integer>1950</integer>
 		</dict>
 		<key>6D2396DD-6E32-4035-B5F1-6F3282DEA378</key>
 		<dict>
@@ -2585,37 +2596,37 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 		<key>742F0504-ECE8-4E41-A2EF-CE708CBBC27C</key>
 		<dict>
 			<key>xpos</key>
-			<integer>405</integer>
+			<integer>395</integer>
 			<key>ypos</key>
-			<integer>30390</integer>
+			<integer>930</integer>
 		</dict>
 		<key>759920F1-B7BE-4392-9667-3C0C30DC29DA</key>
 		<dict>
 			<key>xpos</key>
-			<integer>240</integer>
+			<integer>230</integer>
 			<key>ypos</key>
-			<integer>30660</integer>
+			<integer>1200</integer>
 		</dict>
 		<key>76CC0A98-9693-454E-95AC-6063B8484D35</key>
 		<dict>
 			<key>xpos</key>
-			<integer>215</integer>
+			<integer>205</integer>
 			<key>ypos</key>
-			<integer>30940</integer>
+			<integer>1480</integer>
 		</dict>
 		<key>81434409-3F53-41B4-AD28-B0742CF5CA14</key>
 		<dict>
 			<key>xpos</key>
-			<integer>880</integer>
+			<integer>870</integer>
 			<key>ypos</key>
-			<integer>30400</integer>
+			<integer>940</integer>
 		</dict>
 		<key>8C472382-4A84-4E6C-8451-44FD316F1C62</key>
 		<dict>
 			<key>xpos</key>
-			<integer>365</integer>
+			<integer>355</integer>
 			<key>ypos</key>
-			<integer>31260</integer>
+			<integer>1800</integer>
 		</dict>
 		<key>8C8CC30B-E5B4-41CF-9D0A-81047551B74B</key>
 		<dict>
@@ -2627,25 +2638,18 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 		<key>8F131A86-E4BE-4B2A-B2E1-49FD541E9973</key>
 		<dict>
 			<key>xpos</key>
-			<integer>660</integer>
+			<integer>650</integer>
 			<key>ypos</key>
-			<integer>30660</integer>
+			<integer>1200</integer>
 		</dict>
 		<key>A04B314C-D88B-441F-A43E-28D9703E5087</key>
 		<dict>
 			<key>colorindex</key>
 			<integer>7</integer>
 			<key>xpos</key>
-			<integer>45</integer>
+			<integer>35</integer>
 			<key>ypos</key>
-			<integer>31570</integer>
-		</dict>
-		<key>A08D45F0-726B-4CC8-9103-CFC80287E720</key>
-		<dict>
-			<key>xpos</key>
-			<integer>510</integer>
-			<key>ypos</key>
-			<integer>590</integer>
+			<integer>2110</integer>
 		</dict>
 		<key>A73CE281-93D9-4A74-A917-D705447E9E06</key>
 		<dict>
@@ -2654,23 +2658,23 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 			<key>note</key>
 			<string>1. Add a keyword object by right-clicking the canvas and choosing Inputs &gt; Keyword. Set the keyword and title to show it in Alfred's results.</string>
 			<key>xpos</key>
-			<integer>55</integer>
+			<integer>45</integer>
 			<key>ypos</key>
-			<integer>30370</integer>
+			<integer>910</integer>
 		</dict>
 		<key>B3DCF883-E4F6-4DFF-8DCF-4E5C3600DD76</key>
 		<dict>
 			<key>xpos</key>
-			<integer>660</integer>
+			<integer>650</integer>
 			<key>ypos</key>
-			<integer>30370</integer>
+			<integer>910</integer>
 		</dict>
 		<key>B416513F-DAEE-4C90-8CE6-918FBDBD73CF</key>
 		<dict>
 			<key>xpos</key>
-			<integer>435</integer>
+			<integer>425</integer>
 			<key>ypos</key>
-			<integer>30970</integer>
+			<integer>1510</integer>
 		</dict>
 		<key>B8AEC1E9-9BA5-4B3D-B5D2-BAC898B94CF8</key>
 		<dict>
@@ -2682,46 +2686,46 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 		<key>BE007A48-7F7B-44AD-AC44-88F20DE5FBCF</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1000</integer>
+			<integer>990</integer>
 			<key>ypos</key>
-			<integer>30490</integer>
+			<integer>1030</integer>
 		</dict>
 		<key>C11F5D1C-AB90-4361-A5DF-C474CD50C6B2</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1380</integer>
+			<integer>1370</integer>
 			<key>ypos</key>
-			<integer>30810</integer>
+			<integer>1350</integer>
 		</dict>
 		<key>C542EC25-26B4-4ADB-AF4F-AFFA07114E0E</key>
 		<dict>
 			<key>xpos</key>
-			<integer>555</integer>
+			<integer>545</integer>
 			<key>ypos</key>
-			<integer>31060</integer>
+			<integer>1600</integer>
 		</dict>
 		<key>C6633C84-9567-4B97-85C2-3FEF49D177FD</key>
 		<dict>
 			<key>colorindex</key>
 			<integer>7</integer>
 			<key>xpos</key>
-			<integer>215</integer>
+			<integer>205</integer>
 			<key>ypos</key>
-			<integer>31570</integer>
+			<integer>2110</integer>
 		</dict>
 		<key>C7E3C51F-EADB-43B3-BB23-9F7280841960</key>
 		<dict>
 			<key>xpos</key>
-			<integer>810</integer>
+			<integer>800</integer>
 			<key>ypos</key>
-			<integer>30660</integer>
+			<integer>1200</integer>
 		</dict>
 		<key>C88E19C0-6876-44EE-AFB7-053FDC4D9014</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1055</integer>
+			<integer>1045</integer>
 			<key>ypos</key>
-			<integer>31260</integer>
+			<integer>1800</integer>
 		</dict>
 		<key>D266797A-1E45-4408-A82D-A0F4FF24AEF3</key>
 		<dict>
@@ -2733,9 +2737,16 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 		<key>D97C96EC-0C20-4061-98B7-44B6C8FAE6B7</key>
 		<dict>
 			<key>xpos</key>
-			<integer>520</integer>
+			<integer>510</integer>
 			<key>ypos</key>
-			<integer>30495</integer>
+			<integer>1035</integer>
+		</dict>
+		<key>DED9ED6A-637B-4E7E-B39B-7F3DF3A5AE18</key>
+		<dict>
+			<key>xpos</key>
+			<integer>510</integer>
+			<key>ypos</key>
+			<integer>585</integer>
 		</dict>
 		<key>E6FC87A7-97FA-48A4-8F25-4F593DD6E1A9</key>
 		<dict>
@@ -2765,9 +2776,9 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 			<key>note</key>
 			<string>1. Add a keyword object by right-clicking the canvas and choosing Inputs &gt; Keyword. Set the keyword and title to show it in Alfred's results.</string>
 			<key>xpos</key>
-			<integer>45</integer>
+			<integer>35</integer>
 			<key>ypos</key>
-			<integer>30660</integer>
+			<integer>1200</integer>
 		</dict>
 		<key>FA148A76-FDC3-4651-9962-A61310FBB8B1</key>
 		<dict>
@@ -2779,9 +2790,9 @@ Type your keyword into Alfred, followed by your input text if needed, and you'll
 		<key>FA35E507-98E7-4B72-A12B-F5DE6F6AD0F5</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1000</integer>
+			<integer>990</integer>
 			<key>ypos</key>
-			<integer>30370</integer>
+			<integer>910</integer>
 		</dict>
 	</dict>
 	<key>version</key>
