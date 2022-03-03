@@ -113,10 +113,12 @@ then
 fi
 ruby_check_mutex_lock
 
-install_rvm || exit 1
-rvm --default use "$RUBY_VERSION_TO_USE"
 source "$HOME/.rvm/scripts/rvm"
 export PATH="$HOME/.rvm/gems/ruby-$RUBY_VERSION_TO_USE/bin:$PATH"
+install_rvm || exit 1
+rvm rvmrc warning ignore "$HOME/src/setup/.rvmrc"
+rvm rvmrc warning ignore "$HOME/.rvmrc"
+rvm --default use "$RUBY_VERSION_TO_USE"
 configure_rvm_defaults
 install_bundler &&
 install_gems

@@ -93,6 +93,10 @@ create_symlinks_for_w3m() {
     ln -s "${DEFAULT_SETUP_DIRECTORY}/w3m.config" ~/.w3m/config || true
 }
 
+create_symlinks_for_rvm() {
+  ln -s "${DEFAULT_SETUP_DIRECTORY}/.rvmrc" "$HOME/.rvmrc" || true
+}
+
 if {
   clone_dotfiles &&
   set_context &&
@@ -100,6 +104,7 @@ if {
   check_for_required_directories &&
   create_symlinks_for_config_files &&
   create_symlinks_for_tuir &&
+  create_symlinks_for_rvm &&
   create_vim_directories &&
   create_symlinks_for_w3m &&
   leave_context
