@@ -10,6 +10,8 @@ update_vim_bundles() {
 }
 
 VIM_BUNDLE_REPOS=$(cat <<GITHUB_URLS
+preservim/vimux
+vim-test/vim-test
 lambdalisue/battery.vim
 dense-analysis/ale
 907th/vim-auto-save

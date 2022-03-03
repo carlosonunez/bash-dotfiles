@@ -40,9 +40,11 @@ augroup Ruby
 augroup end
 augroup Golang
   autocmd!
+  let test#go#runner = 'ginkgo'
   autocmd FileType go nmap <leader>c :cclose<CR>:lclose<CR>
-  autocmd FileType go nmap <leader><leader> :GoTest! ./... -run Integration<CR>
+  autocmd FileType go nmap <leader><leader> :Ginkgo -strategy=vimux --randomize-suites --cover --label-filter='e2e,integration' test/...<CR>
   au FileType go setlocal textwidth=80
+  autocmd BufWritePost *.go :TestFile -strategy=vimux --randomize-suites --cover --label-filter='!e2e,!integration'
 augroup end
 
 
@@ -175,7 +177,7 @@ nmap <leader>f :NERDTreeFind<cr>
 
 " Key remappings.
 nnoremap <C-n> :bnext<CR>
-nnoremap <C-m> :bprevious<CR>
+nnoremap <C-p> :bprevious<CR>
 nnoremap <C-b> :buffers<CR>
 nnoremap <C-h> :vertical resize -5<CR>
 nnoremap <C-l> :vertical resize +5<CR>
@@ -216,6 +218,7 @@ let g:used_javascript_libs = 'jquery,angularjs,angularui,react,jasmine,chai'
 let g:go_jump_to_error = 0
 let g:go_metalinter_autosave = 1
 let g:go_metalinter_autosave_enabled = ['deadcode', 'vet', 'golint', 'errcheck']
+let g:go_fmt_fail_silently = 1
 
 " Fugitive keybindings.
 
@@ -264,14 +267,6 @@ function! TextWidthToggle()
   endif
 endfunction
 
-" Testing autosaves
-augroup go_tests
-  autocmd!
-  autocmd BufWritePost *.go :GoTest! -short
-  autocmd FileType go nmap <leader>c :cclose<CR>:lclose<CR>
-  autocmd FileType go nmap <leader><leader> :GoTest! ./... -run Integration<CR>
-augroup end
-
 " Remove newlines from a visual region. Useful for tuir/rtv.
 nnoremap <leader>N :'<,'>s/\n/ /g<CR>
 
@@ -287,3 +282,11 @@ hi SignColumn guibg=Red ctermbg=Red
 :nmap [a :ALEPreviousWrap<CR>
 :nmap ]A :ALELast
 :nmap [A :ALEFirst
+
+" ctrl-p configurations
+let g:ctrlp_map = '<c-m>'
+let g:ctrlp_cmd = 'CtrlP'
+
+" vim-test configurations
+let g:test#runner_commands = ['Ginkgo', 'RSpec', 'Nose']
+:nmap ]t :TestFile -strategy=vimux<CR>

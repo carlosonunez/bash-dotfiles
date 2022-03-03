@@ -4,7 +4,10 @@
 GITHUB_SSH_KEY="$HOME/.ssh/github"
 DEFAULT_GIT_AUTHOR_NAME="Carlos Nunez"
 DEFAULT_GIT_AUTHOR_EMAIL="13461447+carlosonunez@users.noreply.github.com"
+export GIT_COMMITTER_NAME="${GIT_COMMITTER_NAME:-$DEFAULT_GIT_AUTHOR_NAME}"
+export GIT_COMMITTER_EMAIL="${GIT_COMMITTER_EMAIL:-$DEFAULT_GIT_AUTHOR_EMAIL}"
 
+alias a="git add . -N"
 alias c="git cs"
 alias cm="git cs -m"
 alias p="git add -p"
