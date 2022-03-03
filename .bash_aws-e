@@ -101,13 +101,14 @@ _log_into_aws() {
   secret_key="${2:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "secret_key" "$AWS_OP_VAULT")}"
   if test -z "$access_key" || test -z "$secret_key"
   then
-    >&2 printf "${BRed}ERROR${NC}: Please provide an AWS access key or secret key.\n"
+    log_error "Please provide an AWS access key or secret key."
     return 1
   fi
   unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY  AWS_SESSION_TOKEN
   export AWS_ACCESS_KEY_ID="$access_key"
   export AWS_SECRET_ACCESS_KEY="$secret_key"
-  export AWS_REGION="$(_region)"
+  region="$(_region)"
+  export AWS_REGION="$region"
   arn="${3:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "arn" "$AWS_OP_VAULT")}"
   external_id="${4:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "external_id" "$AWS_OP_VAULT")}"
   if ! test -z "$arn" && ! test -z "$external_id"
