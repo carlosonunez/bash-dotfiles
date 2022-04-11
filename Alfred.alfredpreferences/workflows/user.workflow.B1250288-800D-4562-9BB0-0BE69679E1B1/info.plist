@@ -8,11 +8,24 @@
 	<string>Productivity</string>
 	<key>connections</key>
 	<dict>
+		<key>1D4AA13F-5B7D-4A1F-AAFD-B83C12FEE423</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>553A6DD5-745E-4B15-9515-8099AEC6F03B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>1F807F74-7905-4FF0-B9E6-E57DE19D6235</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>C95ED59A-2F8D-4E34-AF48-57720E35990C</string>
+				<string>1D4AA13F-5B7D-4A1F-AAFD-B83C12FEE423</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -34,11 +47,11 @@
 				<false/>
 			</dict>
 		</array>
-		<key>AFC526B5-A075-43B6-92F5-7B11C9AA24F3</key>
+		<key>5AACBD7E-E60F-47B0-8560-097284BA1BCF</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>553A6DD5-745E-4B15-9515-8099AEC6F03B</string>
+				<string>E436AB0F-27B6-4ED7-90D7-A6FB7AC6D6FD</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -60,11 +73,24 @@
 				<false/>
 			</dict>
 		</array>
-		<key>C95ED59A-2F8D-4E34-AF48-57720E35990C</key>
+		<key>E436AB0F-27B6-4ED7-90D7-A6FB7AC6D6FD</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>AFC526B5-A075-43B6-92F5-7B11C9AA24F3</string>
+				<string>53FF37BC-BCBC-4225-8BC3-4BAB62219E33</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>F07F7AB2-A339-4BB0-A4BC-1033723425C1</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>5AACBD7E-E60F-47B0-8560-097284BA1BCF</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -92,7 +118,7 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>pkill -i obs &amp;&amp; pkill -i zoom &amp;&amp; launchctl stop com.vbaudio.vbagent &amp;&amp; for action in stop start; do sudo launchctl $action com.vbaudio.vbagent; sleep 1; done</string>
+				<string>pkill -i obs zoom teams chromacam krisp</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -164,7 +190,10 @@
 			<dict>
 				<key>paths</key>
 				<array>
+					<string>/Applications/krisp.app</string>
+					<string>/Applications/OBS.app</string>
 					<string>/Applications/zoom.us.app</string>
+					<string>/Applications/ChromaCam.app</string>
 				</array>
 				<key>toggle</key>
 				<false/>
@@ -172,7 +201,7 @@
 			<key>type</key>
 			<string>alfred.workflow.action.launchfiles</string>
 			<key>uid</key>
-			<string>C95ED59A-2F8D-4E34-AF48-57720E35990C</string>
+			<string>1D4AA13F-5B7D-4A1F-AAFD-B83C12FEE423</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -188,7 +217,7 @@
 				<key>text</key>
 				<string>VB-Cable should be operational in a few seconds.</string>
 				<key>title</key>
-				<string>OBS has been opened.</string>
+				<string>[Mobile] OBS has been opened.</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.output.notification</string>
@@ -211,7 +240,7 @@
 				<key>hotkey</key>
 				<integer>6</integer>
 				<key>hotmod</key>
-				<integer>1179648</integer>
+				<integer>1572864</integer>
 				<key>hotstring</key>
 				<string>Z</string>
 				<key>leftcursor</key>
@@ -231,9 +260,76 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>1</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>6</integer>
+				<key>hotmod</key>
+				<integer>786432</integer>
+				<key>hotstring</key>
+				<string>Z</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>F07F7AB2-A339-4BB0-A4BC-1033723425C1</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>idx=0
+while test idx -lt 15
+do
+  if pgrep -i chromacam
+  then
+    pkill -i chromacam
+    exit
+  fi
+  test=$((test+1))
+  sleep 1
+done</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>E436AB0F-27B6-4ED7-90D7-A6FB7AC6D6FD</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>paths</key>
 				<array>
+					<string>/Applications/krisp.app</string>
 					<string>/Applications/OBS.app</string>
+					<string>/Applications/zoom.us.app</string>
+					<string>/Applications/ChromaCam.app</string>
 				</array>
 				<key>toggle</key>
 				<false/>
@@ -241,7 +337,28 @@
 			<key>type</key>
 			<string>alfred.workflow.action.launchfiles</string>
 			<key>uid</key>
-			<string>AFC526B5-A075-43B6-92F5-7B11C9AA24F3</string>
+			<string>5AACBD7E-E60F-47B0-8560-097284BA1BCF</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>VB-Cable should be operational in a few seconds.</string>
+				<key>title</key>
+				<string>[Office] OBS has been opened.</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>53FF37BC-BCBC-4225-8BC3-4BAB62219E33</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -250,6 +367,13 @@
 	<string></string>
 	<key>uidata</key>
 	<dict>
+		<key>1D4AA13F-5B7D-4A1F-AAFD-B83C12FEE423</key>
+		<dict>
+			<key>xpos</key>
+			<integer>395</integer>
+			<key>ypos</key>
+			<integer>395</integer>
+		</dict>
 		<key>1F807F74-7905-4FF0-B9E6-E57DE19D6235</key>
 		<dict>
 			<key>xpos</key>
@@ -271,6 +395,13 @@
 			<key>ypos</key>
 			<integer>220</integer>
 		</dict>
+		<key>53FF37BC-BCBC-4225-8BC3-4BAB62219E33</key>
+		<dict>
+			<key>xpos</key>
+			<integer>955</integer>
+			<key>ypos</key>
+			<integer>565</integer>
+		</dict>
 		<key>553A6DD5-745E-4B15-9515-8099AEC6F03B</key>
 		<dict>
 			<key>xpos</key>
@@ -278,12 +409,12 @@
 			<key>ypos</key>
 			<integer>395</integer>
 		</dict>
-		<key>AFC526B5-A075-43B6-92F5-7B11C9AA24F3</key>
+		<key>5AACBD7E-E60F-47B0-8560-097284BA1BCF</key>
 		<dict>
 			<key>xpos</key>
-			<integer>775</integer>
+			<integer>390</integer>
 			<key>ypos</key>
-			<integer>395</integer>
+			<integer>565</integer>
 		</dict>
 		<key>B8C4EBF6-24F0-4C31-969C-3A0761451535</key>
 		<dict>
@@ -292,12 +423,19 @@
 			<key>ypos</key>
 			<integer>220</integer>
 		</dict>
-		<key>C95ED59A-2F8D-4E34-AF48-57720E35990C</key>
+		<key>E436AB0F-27B6-4ED7-90D7-A6FB7AC6D6FD</key>
 		<dict>
 			<key>xpos</key>
-			<integer>525</integer>
+			<integer>660</integer>
 			<key>ypos</key>
-			<integer>395</integer>
+			<integer>565</integer>
+		</dict>
+		<key>F07F7AB2-A339-4BB0-A4BC-1033723425C1</key>
+		<dict>
+			<key>xpos</key>
+			<integer>60</integer>
+			<key>ypos</key>
+			<integer>565</integer>
 		</dict>
 	</dict>
 	<key>webaddress</key>
