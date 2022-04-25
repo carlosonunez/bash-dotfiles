@@ -10,10 +10,6 @@ update_vim_bundles() {
 }
 
 VIM_BUNDLE_REPOS=$(cat <<GITHUB_URLS
-preservim/vimux
-vim-test/vim-test
-lambdalisue/battery.vim
-dense-analysis/ale
 907th/vim-auto-save
 AndrewRadev/linediff.vim
 Chiel92/vim-autoformat
@@ -24,17 +20,24 @@ chaquotay/ftl-vim-syntax
 chr4/nginx.vim
 claco/jasmine.vim
 ctrlpvim/ctrlp.vim
+ctrlpvim/ctrlp.vim
+dense-analysis/ale
 dhruvasagar/vim-table-mode
+fatih/vim-go
 flazz/vim-colorschemes
 hashivim/vim-terraform
 junegunn/vim-easy-align
 junegunn/vim-emoji
+lambdalisue/battery.vim
 leafgarland/typescript-vim
 markcornick/vim-bats
 martinda/Jenkinsfile-vim-syntax
 othree/javascript-libraries-syntax.vim
 pangloss/vim-javascript
+pedrohdz/vim-yaml-folds
 plasticboy/vim-markdown
+preservim/vimux
+rlue/vim-fold-rspec
 romainl/vim-cool
 ryanoasis/vim-devicons
 scrooloose/nerdtree
@@ -45,12 +48,10 @@ tpope/vim-unimpaired
 vim-airline/vim-airline
 vim-airline/vim-airline-themes
 vim-scripts/groovy.vim
+vim-test/vim-test
+will133/vim-dirdiff
 yuratomo/w3m.vim
 zivyangll/git-blame.vim
-will133/vim-dirdiff
-rlue/vim-fold-rspec
-fatih/vim-go
-ctrlpvim/ctrlp.vim
 GITHUB_URLS
 )
 
