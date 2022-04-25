@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+export IN_LOCAL_GVM=false
 GOLANG_VERSION=1.17.1
 GOTOOLS=$(cat <<-GOTOOLS
 gopls:golang.org/x/tools/gopls@latest
@@ -6,6 +7,31 @@ golangci-lint:github.com/golangci/golangci-lint/cmd/golangci-lint@v1.42.1
 authy:github.com/momaek/authy@v0.1.7
 GOTOOLS
 )
+
+gvm_hook() {
+  if ! test -f "${PWD}/.gvm_local"
+  then
+    if grep -Eiq '^true$' <<< "$IN_LOCAL_GVM"
+    then
+      gvm use "go$GOLANG_VERSION" >/dev/null
+    fi
+    return 0
+  fi
+  
+  gvm_use_statement=$(tail -1 "${PWD}/.gvm_local")
+  if ! grep -Eq '^gvm use' <<< "$gvm_use_statement"
+  then
+    log_error "A .gvm_local file was detected, but it does not end with a 'gvm use' \
+statement. Please ensure that the last line of the file starts with \
+'gvm use'."
+    return 1
+  fi
+  gvm_version_wanted=$(awk -F ' ' '{print $NF}' <<< "$gvm_use_statement")
+  current_gvm_version=$(gvm list | grep -E '^=>' | awk -F' ' '{print $NF}')
+  test "$gvm_version_wanted" == "$current_gvm_version" && return 0
+
+  source "${PWD}/.gvm_local" && export IN_LOCAL_GVM=true
+}
 
 # Install Go if needed
 # ====================
