@@ -124,6 +124,7 @@ www\.linkedin\.com
 www\.redditstatic\.com
 www\.t\.co
 web\.whatsapp\.com
+incoming\.telemetry\.mozilla\.org
 EXCLUSIONS
 )
 FERMATA_URL="https://github.com/iccir/Fermata/releases/download/Fermata-136/Fermata-136.zip"
