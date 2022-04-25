@@ -113,6 +113,27 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>The VB-Cable service has also been restarted.</string>
+				<key>title</key>
+				<string>OBS has been terminated.</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>4B26DB85-8BD5-41D7-AD99-23C088B158CE</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -132,27 +153,6 @@
 			<string>B8C4EBF6-24F0-4C31-969C-3A0761451535</string>
 			<key>version</key>
 			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<false/>
-				<key>removeextension</key>
-				<false/>
-				<key>text</key>
-				<string>The VB-Cable service has also been restarted.</string>
-				<key>title</key>
-				<string>OBS has been terminated.</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
-			<key>uid</key>
-			<string>4B26DB85-8BD5-41D7-AD99-23C088B158CE</string>
-			<key>version</key>
-			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -191,9 +191,7 @@
 				<key>paths</key>
 				<array>
 					<string>/Applications/krisp.app</string>
-					<string>/Applications/OBS.app</string>
 					<string>/Applications/zoom.us.app</string>
-					<string>/Applications/ChromaCam.app</string>
 				</array>
 				<key>toggle</key>
 				<false/>
@@ -329,7 +327,6 @@ done</string>
 					<string>/Applications/krisp.app</string>
 					<string>/Applications/OBS.app</string>
 					<string>/Applications/zoom.us.app</string>
-					<string>/Applications/ChromaCam.app</string>
 				</array>
 				<key>toggle</key>
 				<false/>
