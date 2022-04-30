@@ -78,7 +78,7 @@ jumpbox() {
     log_error "Host or port is empty."
     return 1
   fi
-  cmd="ssh -A"
+  cmd="ssh -o ServerAliveInterval 30 -o ServerAliveCountMax 10 -A"
   for arg in "$@"
   do
     cmd="$cmd $arg"
