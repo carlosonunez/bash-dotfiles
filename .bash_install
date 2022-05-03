@@ -309,7 +309,7 @@ update_obs_prefs() {
   }
 
   _download_and_unzip_obs_prefs() {
-    op get document --vault "$OP_DEFAULT_VAULT" "$OBS_PREFS_OP_KEY" >  "$OBS_PREFS_TMP_FILE" &&
+    op document get --vault "$OP_DEFAULT_VAULT" "$OBS_PREFS_OP_KEY" >  "$OBS_PREFS_TMP_FILE" &&
       unzip -d "${HOME}/Library/Application Support" "$OBS_PREFS_TMP_FILE" &&
       rm "$OBS_PREFS_TMP_FILE"
   }
