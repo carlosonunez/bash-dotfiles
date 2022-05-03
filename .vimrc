@@ -41,7 +41,7 @@ augroup end
 augroup Golang
   autocmd!
   let test#go#runner = 'ginkgo'
-  autocmd FileType go nmap <leader>c :cclose<CR>:lclose<CR>
+  autocmd FileType go nmap :windo lcl\|ccl<CR>
   autocmd FileType go nmap <leader><leader> :Ginkgo -strategy=vimux --randomize-suites --cover --label-filter='e2e,integration' test/...<CR>
   au FileType go setlocal textwidth=80
   autocmd BufWritePost *.go :TestFile -strategy=vimux --randomize-suites --cover --label-filter='!e2e,!integration'
@@ -88,7 +88,7 @@ nnoremap <leader>dc :!docker-compose up -d
 nnoremap <leader>dd :!docker-compose down<CR>
 nnoremap <leader>dr :!docker-compose restart 
 nnoremap <leader>y :!cat % \| pbcopy<CR>
-nnoremap <leader>D :bufdo bd<CR>
+nnoremap <leader>D :bufdo bd<CR>:NERDTreeToggle<CR>
 
 " Set undo, backup and swap directories so that Vim doesn't leave
 " all sorts of garbage within my working directory.
@@ -291,3 +291,7 @@ let g:ctrlp_cmd = 'CtrlP'
 " vim-test configurations
 let g:test#runner_commands = ['Ginkgo', 'RSpec', 'Nose']
 :nmap ]t :TestFile -strategy=vimux<CR>
+
+" optimized for using vim over ssh
+:set ttyfast
+:set lazyredraw
