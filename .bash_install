@@ -51,7 +51,6 @@ direnv
 docker-compose-completion
 feh
 findutils
-firefox
 font-dejavu-sans-mono-nerd-font
 fzf
 gawk
@@ -91,7 +90,6 @@ zoom
 APPS
 )
 APPLE_APP_STORE_APPS=$(cat <<-APPS
-Spark
 APPS
 )
 ETC_HOSTS_EXCLUSIONS=$(cat <<-EXCLUSIONS

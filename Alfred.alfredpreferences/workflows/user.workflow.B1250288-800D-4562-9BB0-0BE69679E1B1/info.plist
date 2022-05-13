@@ -25,7 +25,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>1D4AA13F-5B7D-4A1F-AAFD-B83C12FEE423</string>
+				<string>5B577687-9BFD-4C6B-883C-8A0A7157088B</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -60,11 +60,37 @@
 				<false/>
 			</dict>
 		</array>
+		<key>5B577687-9BFD-4C6B-883C-8A0A7157088B</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>1D4AA13F-5B7D-4A1F-AAFD-B83C12FEE423</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>B8C4EBF6-24F0-4C31-969C-3A0761451535</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>4B26DB85-8BD5-41D7-AD99-23C088B158CE</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>CF83162C-0499-47C9-84A3-51603E983EEF</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>5AACBD7E-E60F-47B0-8560-097284BA1BCF</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -90,7 +116,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>5AACBD7E-E60F-47B0-8560-097284BA1BCF</string>
+				<string>CF83162C-0499-47C9-84A3-51603E983EEF</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -110,6 +136,37 @@
 	<string>OBS and VB-Cable Handler</string>
 	<key>objects</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>6</integer>
+				<key>hotmod</key>
+				<integer>1835008</integer>
+				<key>hotstring</key>
+				<string>Z</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>341DA14A-CA65-4F00-AC49-A5DEE76C90AB</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -157,37 +214,6 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>action</key>
-				<integer>0</integer>
-				<key>argument</key>
-				<integer>0</integer>
-				<key>focusedappvariable</key>
-				<false/>
-				<key>focusedappvariablename</key>
-				<string></string>
-				<key>hotkey</key>
-				<integer>6</integer>
-				<key>hotmod</key>
-				<integer>1835008</integer>
-				<key>hotstring</key>
-				<string>Z</string>
-				<key>leftcursor</key>
-				<false/>
-				<key>modsmode</key>
-				<integer>0</integer>
-				<key>relatedAppsMode</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.hotkey</string>
-			<key>uid</key>
-			<string>341DA14A-CA65-4F00-AC49-A5DEE76C90AB</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>paths</key>
 				<array>
 					<string>/Applications/krisp.app</string>
@@ -200,27 +226,6 @@
 			<string>alfred.workflow.action.launchfiles</string>
 			<key>uid</key>
 			<string>1D4AA13F-5B7D-4A1F-AAFD-B83C12FEE423</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<false/>
-				<key>removeextension</key>
-				<false/>
-				<key>text</key>
-				<string>VB-Cable should be operational in a few seconds.</string>
-				<key>title</key>
-				<string>[Mobile] OBS has been opened.</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
-			<key>uid</key>
-			<string>553A6DD5-745E-4B15-9515-8099AEC6F03B</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -258,6 +263,55 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>VB-Cable should be operational in a few seconds.</string>
+				<key>title</key>
+				<string>[Mobile] OBS has been opened.</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>553A6DD5-745E-4B15-9515-8099AEC6F03B</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>command</key>
+				<integer>1</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.itunescommand</string>
+			<key>uid</key>
+			<string>5B577687-9BFD-4C6B-883C-8A0A7157088B</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>command</key>
+				<integer>0</integer>
+				<key>confirm</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.systemcommand</string>
+			<key>uid</key>
+			<string>27B143FB-E622-41B4-BD54-DC4170B62A4B</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>action</key>
 				<integer>0</integer>
 				<key>argument</key>
@@ -285,6 +339,25 @@
 			<string>F07F7AB2-A339-4BB0-A4BC-1033723425C1</string>
 			<key>version</key>
 			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>paths</key>
+				<array>
+					<string>/Applications/krisp.app</string>
+					<string>/Applications/OBS.app</string>
+					<string>/Applications/zoom.us.app</string>
+				</array>
+				<key>toggle</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.launchfiles</string>
+			<key>uid</key>
+			<string>5AACBD7E-E60F-47B0-8560-097284BA1BCF</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -322,19 +395,13 @@ done</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>paths</key>
-				<array>
-					<string>/Applications/krisp.app</string>
-					<string>/Applications/OBS.app</string>
-					<string>/Applications/zoom.us.app</string>
-				</array>
-				<key>toggle</key>
-				<false/>
+				<key>command</key>
+				<integer>1</integer>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.action.launchfiles</string>
+			<string>alfred.workflow.action.itunescommand</string>
 			<key>uid</key>
-			<string>5AACBD7E-E60F-47B0-8560-097284BA1BCF</string>
+			<string>CF83162C-0499-47C9-84A3-51603E983EEF</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -378,6 +445,13 @@ done</string>
 			<key>ypos</key>
 			<integer>395</integer>
 		</dict>
+		<key>27B143FB-E622-41B4-BD54-DC4170B62A4B</key>
+		<dict>
+			<key>xpos</key>
+			<integer>1360</integer>
+			<key>ypos</key>
+			<integer>505</integer>
+		</dict>
 		<key>341DA14A-CA65-4F00-AC49-A5DEE76C90AB</key>
 		<dict>
 			<key>xpos</key>
@@ -413,12 +487,26 @@ done</string>
 			<key>ypos</key>
 			<integer>565</integer>
 		</dict>
+		<key>5B577687-9BFD-4C6B-883C-8A0A7157088B</key>
+		<dict>
+			<key>xpos</key>
+			<integer>235</integer>
+			<key>ypos</key>
+			<integer>395</integer>
+		</dict>
 		<key>B8C4EBF6-24F0-4C31-969C-3A0761451535</key>
 		<dict>
 			<key>xpos</key>
 			<integer>775</integer>
 			<key>ypos</key>
 			<integer>220</integer>
+		</dict>
+		<key>CF83162C-0499-47C9-84A3-51603E983EEF</key>
+		<dict>
+			<key>xpos</key>
+			<integer>235</integer>
+			<key>ypos</key>
+			<integer>565</integer>
 		</dict>
 		<key>E436AB0F-27B6-4ED7-90D7-A6FB7AC6D6FD</key>
 		<dict>
