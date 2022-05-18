@@ -501,22 +501,23 @@ dirstack_count() {
 set_bash_prompt() {
   if ! test -f "$HIDDEN_BASH_PROMPT_FILE"
   then
-    set_full_bash_prompt "$*"
+    set_full_bash_prompt "$1"
   else
-    set_hidden_bash_prompt "$*"
+    set_hidden_bash_prompt "$1"
   fi
 }
 
 set_full_bash_prompt() {
-  error_code_str=""
+  if test "$1" -ne 0 && test "$1" -ne 130
+  then
+    error_code_str="\[$On_Red\]\[$BWhite\]<<$1>>\[$NC\]"
+  else
+    error_code_str=""
+  fi
   account_type_indicator="\$"
   if [ "$(id -u)" -eq 0 ]
   then
     account_type_indicator="\#"
-  fi
-  if [[ "$1" != "0" ]]
-  then
-    error_code_str="\[$On_Red\]\[$BWhite\]<<$1>>\[$NC\]"
   fi
   git_branch="$(get_git_branch)"
   next_up_to_dos="$(get_next_thing_to_do "$TODO_DIR" "personal")\
@@ -578,11 +579,13 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
 }
 
 set_hidden_bash_prompt() {
-  error_code_str=""
-  if [[ "$1" != "0" ]]
+  if test "$1" -ne 0 && test "$1" -ne 130
   then
     error_code_str="\[$On_Red\]\[$BWhite\]<<$1>>\[$NC\]"
+  else
+    error_code_str=""
   fi
+
   account_type_indicator="\$"
   if [ "$(id -u)" -eq 0 ]
   then
