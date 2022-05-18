@@ -12,10 +12,16 @@ export GIT_COMMITTER_EMAIL="${GIT_COMMITTER_EMAIL:-$DEFAULT_GIT_AUTHOR_EMAIL}"
 alias a="git add . -N"
 alias c="git cs"
 alias cm="git cs -m"
+alias commit="git -c commit.gpgsign=false commit"
+alias commitm="git -c commit.gpgsign=false commit -m"
 alias p="git add -p"
 alias st="git status"
 alias r="squash_outstanding_commits"
-alias push="git push"
+alias f="git add -A && git fs"
+alias sq="git -c sequence.editor=: rebase --autosquash --interactive"
+alias squash="git -c sequence.editor=: -c commit.gpgsign=false rebase --autosquash --interactive"
+alias push="sq && git push"
+alias pushnosign="squash && git push"
 alias pull="git pull --rebase"
 
 dont_use_master_for_default_branches() {
@@ -31,6 +37,8 @@ set_global_git_configs() {
   git config --global format.signoff true
   git config --global alias.c 'commit'
   git config --global alias.cs 'commit --signoff'
+  git config --global alias.fs 'commit --fixup=HEAD'
+  git config --global rebase.autosquash true
 }
 
 view_unpushed_commits_across_branches() {
@@ -80,12 +88,8 @@ get_number_of_commits_ahead_of_origin() {
   _get_number_of_commits_between_refs "origin/$current_branch..$current_branch"
 }
 
-squash_commits_starting_from() {
-  commit_ref="$1"
-  if [ "$commit_ref" != "" ]
-  then
-    _squash_commits $(_get_number_of_commits_between_refs "$commit_ref~1..HEAD")
-  fi
+squash_commits_starting_from_root() {
+  git rebase -i --root
 }
 
 squash_outstanding_commits() {
