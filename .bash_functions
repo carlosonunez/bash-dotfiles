@@ -547,7 +547,11 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
   else
     virtualenv=""
   fi
-  ruby_version="\[$BRed\][Ruby $(which ruby | sed -E 's/.*ruby-(.*)\/bin.*/\1/' | tr -d ' ')]\[$NC\]"
+  ruby_ver=$(which ruby | grep "rvm" | sed -E 's/.*ruby-(.*)\/bin.*/\1/' | tr -d ' ')
+  if ! test -z "$ruby_ver"
+  then ruby_version="\[$BRed\][Ruby $ruby_ver]\[$NC\]"
+  else ruby_version=""
+  fi
 
   print_dirstack_count() {
     count=$(dirstack_count)
