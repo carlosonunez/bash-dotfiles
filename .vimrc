@@ -15,6 +15,9 @@ autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 
+" Close all quickfix and location windows
+:nmap <leader>c :windo lcl\|ccl<CR>
+
 au BufWrite * :Autoformat
 augroup Markdown
   au FileType markdown vmap <leader><Bslash> :EasyAlign*<Bar><Enter>
@@ -41,10 +44,9 @@ augroup end
 augroup Golang
   autocmd!
   let test#go#runner = 'ginkgo'
-  autocmd FileType go nmap :windo lcl\|ccl<CR>
-  autocmd FileType go nmap <leader><leader> :Ginkgo -strategy=vimux --randomize-suites --cover --label-filter='e2e,integration' test/...<CR>
+  autocmd FileType go nmap <leader><leader> :Ginkgo -strategy=vimux --randomize-suites --cover --label-filter='!e2e && !integration' test/...<CR>
   au FileType go setlocal textwidth=80
-  autocmd BufWritePost *.go :TestFile -strategy=vimux --randomize-suites --cover --label-filter='!e2e,!integration'
+  autocmd BufWritePost *.go :TestFile -strategy=vimux --randomize-suites --cover --label-filter='!e2e && !integration'
   autocmd FileType go nmap <leader>x :GoInfo<CR>
 augroup end
 
