@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-export IN_LOCAL_GVM=false
-export LOCAL_GVM_NAME=""
-export LOCAL_GVM_DIRECTORY=""
-GVM_HOOK_CHECK_SENTINEL_FILE=/tmp/gvm_hook_installation_in_progress
 GOLANG_VERSION=1.17.1
 GOTOOLS=$(cat <<-GOTOOLS
 gopls:golang.org/x/tools/gopls@latest
@@ -11,83 +7,12 @@ authy:github.com/momaek/authy@v0.1.7
 GOTOOLS
 )
 
-trap "rm -rf $GVM_HOOK_CHECK_SENTINEL_FILE" INT EXIT
-
-gvm_hook_check_mutex_lock() {
-  printf $$ >> "$GVM_HOOK_CHECK_SENTINEL_FILE"
-}
-
-gvm_hook_check_mutex_unlock() {
-  rm -f "$GVM_HOOK_CHECK_SENTINEL_FILE"
-}
-
-gvm_hook_is_locked() {
-  random_wait_time=$(bc -l <<< "scale=4 ; ${RANDOM}/32767")
-  sleep "$random_wait_time" && test -e "$GVM_HOOK_CHECK_SENTINEL_FILE"
-}
-
-remove_dead_gvm_install_locks() {
-  if gvm_hook_is_locked 
-  then
-    if ! (ps -ef | grep bash | grep -q "$(cat "$GVM_HOOK_CHECK_SENTINEL_FILE")")
-    then
-      gvm_hook_check_mutex_unlock 
-    fi
-  fi
-}
-
-in_subdir_of_local_gvm_dir() {
-  test -z "$LOCAL_GVM_DIRECTORY" && return 1
-  test "${PWD##$LOCAL_GVM_DIRECTORY}" != "$PWD"
-}
-
-gvm_hook() {
-  if ! test -f "${PWD}/.gvm_local"
-  then
-    in_subdir_of_local_gvm_dir && return 0
-
-    if grep -Eiq '^true$' <<< "$IN_LOCAL_GVM"
-    then
-      gvm use "go$GOLANG_VERSION" >/dev/null
-      export IN_LOCAL_GVM=false
-      export LOCAL_GVM_NAME=""
-    fi
-    return 0
-  fi
-  
-  gvm_use_statement=$(tail -1 "${PWD}/.gvm_local")
-  gvm_version_wanted=$(awk -F ' ' '{print $NF}' <<< "$gvm_use_statement")
-  if ! test -z "$LOCAL_GVM_NAME" && test "$gvm_version_wanted" == "$LOCAL_GVM_NAME"
-  then
-    return 0
-  fi
-  if ! grep -Eq '^gvm use' <<< "$gvm_use_statement"
-  then
-    log_error "A .gvm_local file was detected, but it does not end with a 'gvm use' \
-statement. Please ensure that the last line of the file starts with \
-'gvm use'."
-    return 1
-  fi
-
-  if gvm_hook_is_locked
-  then
-    random_wait_time=$(bc -l <<< "scale=4 ; ${RANDOM}/32767")
-    sleep "$random_wait_time"
-    gvm_hook
-  fi
-
-  gvm_hook_check_mutex_lock
-  source "${PWD}/.gvm_local" &&
-    export IN_LOCAL_GVM=true &&
-    export LOCAL_GVM_NAME="$gvm_version_wanted" &&
-    export LOCAL_GVM_DIRECTORY="$PWD"
-  gvm_hook_check_mutex_unlock
-}
-
-# Install Go if needed
-# ====================
-remove_dead_gvm_install_locks
-grep -Eiq '^true$' <<< "$IN_LOCAL_GVM" && return 0
+if ! test -d "$HOME/.config/gvm-hook"
+then
+  mkdir -p "$HOME/.config/gvm-hook"
+  git clone https://github.com/carlosonunez/gvm-hook "$HOME/.config/gvm-hook"
+fi
+source "$HOME/.config/gvm-hook/gvm_hook.bash"
 
 if ! test -d "$HOME/.gvm/gos/go$GOLANG_VERSION"
 then
