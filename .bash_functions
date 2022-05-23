@@ -542,15 +542,25 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
 
   if ! test -z "$VIRTUAL_ENV"
   then
-    python_version=$(python -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')
-    virtualenv="\[$BGreen\][Python ${python_version}-$VIRTUAL_ENV]\[$NC\]"
+    python_version="$(grep -E "^version" "${VIRTUAL_ENV}/pyvenv.cfg" |
+      awk -F'=' '{print $2}' |
+      tr -d ' ')"
+    virtualenv="\[$BGreen\][python-${python_version}]\[$NC\]"
   else
     virtualenv=""
   fi
-  ruby_ver=$(which ruby | grep "rvm" | sed -E 's/.*ruby-(.*)\/bin.*/\1/' | tr -d ' ')
-  if ! test -z "$ruby_ver"
-  then ruby_version="\[$BRed\][Ruby $ruby_ver]\[$NC\]"
-  else ruby_version=""
+  ruby_version=""
+  if ! test -z "$MY_RUBY_HOME"
+  then
+    ruby_version="\[$BRed\][$(basename "$MY_RUBY_HOME")]\[$NC\]"
+  fi
+  local_go_version=""
+  if ! test -z "$LOCAL_GVM_VERSION"
+  then
+    local_go_version="\[$BGreen\][gvm $LOCAL_GVM_VERSION]\[$NC\]"
+  elif ! test -z "$GOROOT"
+  then
+    local_go_version="\[$BGreen\][$(basename "$GOROOT")]\[$NC\]"
   fi
 
   print_dirstack_count() {
@@ -570,15 +580,15 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
   hostname_fmtd="\[$BBlue\]$hostname_name\[$NC\]"
   if ! $(test -d '.git' && 2>/dev/null git rev-parse --is-inside-work-tree 2>/dev/null)
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]${virtualenv}${ruby_version}$(print_dirstack_count)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]${virtualenv}${ruby_version}${local_go_version}$(print_dirstack_count)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   elif [ "$(2>/dev/null git --no-pager branch --list)" == "" ]
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\](NO BRANCH?)\[$NC\] ${virtualenv}${ruby_version}$(print_dirstack_count) \n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\](NO BRANCH?)\[$NC\] ${virtualenv}${ruby_version}${local_go_version}$(print_dirstack_count) \n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   elif ! $(2>/dev/null git diff-index --quiet HEAD)
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] ${virtualenv}${ruby_version}$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] ${virtualenv}${ruby_version}${local_go_version}$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   else
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Green\]($git_branch)\[$NC\] ${virtualenv}${ruby_version}$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Green\]($git_branch)\[$NC\] ${virtualenv}${ruby_version}${local_go_version}$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   fi
 }
 
