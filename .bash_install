@@ -23,10 +23,7 @@ DISABLE_ADFREE_CHECK="${DISABLE_ADFREE_CHECK:-false}" # Should we disable updati
 FORCE_ADFREE_UPDATE="${FORCE_ADFREE_UPDATE:-false}" # Should we update our /etc/hosts anyway?
 ADFREE_TIMESTAMP_FILE="$HOME/.config/adfree-etchosts/timestamp"
 MAX_AD_FREE_STALENESS_DAYS=5 # How current should /etc/hosts be?
-ADFREE_ETC_HOSTS_LISTS=$(cat <<-LISTS
-http://sbc.io/hosts/alternates/fakenews-gambling-porn-social/hosts
-LISTS
-)
+ADFREE_ETC_HOSTS_LIST=https://github.com/carlosonunez/hosts/releases/download/$(date +'%Y.%m.%d')/with-fb.txt
 HOMEBREW_BUILTINS_X86=$(cat <<-APPS
 vagrant
 virtualbox
@@ -124,6 +121,10 @@ www\.redditstatic\.com
 www\.t\.co
 web\.whatsapp\.com
 incoming\.telemetry\.mozilla\.org
+whatsapp-.*fbcdn\.net
+media-.*whatsapp\.net
+mmx-ds\.cdn\.whatsapp\.net
+www\.facebook\.com$
 EXCLUSIONS
 )
 FERMATA_URL="https://github.com/iccir/Fermata/releases/download/Fermata-136/Fermata-136.zip"
@@ -184,7 +185,14 @@ these apps: $formatted_apps\n"
 }
 
 modify_etc_hosts() {
-  test -f "$ETC_HOSTS_PREPPED_SENTINEL_FILE" && return 0
+  _force() {
+    grep -Eiq "^true$" <<< "$FORCE_ADFREE_UPDATE"
+  }
+
+  if ! _force
+  then
+    test -f "$ETC_HOSTS_PREPPED_SENTINEL_FILE" && return 0
+  fi
 
   match_re="0.0.0.0 ($(tr '\n' '%' <<< "$ETC_HOSTS_EXCLUSIONS" | sed 's#%#\|#g; s/.$//g'))$"
   while read -r pattern
@@ -220,6 +228,13 @@ make_etc_hosts_adfree() {
     grep -Eiq "^true$" <<< "$FORCE_ADFREE_UPDATE"
   }
 
+  _save_original_etc_hosts() {
+    if ! test -f /etc/hosts.original
+    then
+      sudo cp /etc/hosts /etc/hosts.original
+    fi
+  }
+
   if _force || ( ! _etc_hosts_updating_disabled && ! _etc_hosts_updated_recently )
   then
     rm "$ETC_HOSTS_PREPPED_SENTINEL_FILE"
@@ -231,13 +246,13 @@ make_etc_hosts_adfree() {
 has been updated with ad-free extensions. Updating it now.\n"
       log_info "Set DISABLE_ADFREE_CHECK to 'true' to disable this behavior."
     fi
-    for list_uri in $ADFREE_ETC_HOSTS_LISTS
-    do
-      log_info "Applying list: ${list_uri}"
-      curl -o /tmp/etc_hosts -L "$list_uri" &&
-        sudo sh -c 'cat /tmp/etc_hosts >> /etc/hosts' &&
-        rm -f /tmp/etc_hosts
-    done
+    _save_original_etc_hosts
+    log_info "Applying list: $ADFREE_ETC_HOSTS_LIST"
+    sudo sh -c 'cat /etc/hosts.original > /etc/hosts'
+    sudo sh -c 'echo >> /etc/hosts'
+    curl -o /tmp/etc_hosts -L "$ADFREE_ETC_HOSTS_LIST" &&
+      sudo sh -c 'cat /tmp/etc_hosts >> /etc/hosts' &&
+      rm -f /tmp/etc_hosts
     _write_refresh_date_timestamp
   fi
 }
