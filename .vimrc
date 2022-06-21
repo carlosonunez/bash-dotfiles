@@ -3,6 +3,8 @@ execute pathogen#infect()
 
 " Globals
 let g:TextWidthToggleOn = 1
+let g:DefaultGoTestRunner = 'gotest'
+let g:GoTestRunnerToggleOn = 0
 
 " Buffer autocommands
 
@@ -16,7 +18,7 @@ autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 
 " Close all quickfix and location windows
-:nmap <leader>c :windo lcl\|ccl<CR>
+nnoremap <leader>c :windo lcl\|ccl<CR>
 
 au BufWrite * :Autoformat
 augroup Markdown
@@ -42,14 +44,40 @@ augroup Ruby
   au FileType ruby nmap <leader>d orequire 'pry'; binding.pry # vim breakpoint<Esc> 
 augroup end
 augroup Golang
-  autocmd!
-  let test#go#runner = 'ginkgo'
-  autocmd FileType go nmap <leader><leader> :Ginkgo -strategy=vimux --randomize-suites --cover --label-filter='!e2e && !integration' test/...<CR>
+  let test#go#runner = g:DefaultGoTestRunner
+  autocmd FileType go nmap <leader>g :call ToggleGoTestMethod()<CR>
+  autocmd FileType go nmap <leader><leader> :call RunTestGolang()<CR>
   au FileType go setlocal textwidth=80
-  autocmd BufWritePost *.go :TestFile -strategy=vimux --randomize-suites --cover --label-filter='!e2e && !integration'
+  autocmd BufWritePost *.go :call RunTestOnSaveGolang()
   autocmd FileType go nmap <leader>x :GoInfo<CR>
 augroup end
 
+function! RunTestGolang()
+  if g:GoTestRunnerToggleOn
+    :Ginkgo -strategy=vimux --randomize-suites --cover --label-filter='!e2e && !integration' test/...<CR>
+  else
+    :GoTest -race
+  endif
+endfunction
+
+function! RunTestOnSaveGolang()
+  if g:GoTestRunnerToggleOn
+    :TestFile -strategy=vimux --randomize-suites --cover --label-filter='!e2e && !integration'
+  else
+    :TestFile -strategy=vimux -race
+  endif
+endfunction
+
+function! ToggleGoTestMethod()
+  if g:GoTestRunnerToggleOn
+    let test#go#runner = 'ginkgo'
+    let g:GoTestRunnerToggleOn = 0
+  else
+    let test#go#runner = g:DefaultGoTestRunner
+    let g:GoTestRunnerToggleOn = 1
+  endif
+  echom "Go test runner switched to " . test#go#runner
+endfunction!
 
 " Colorscheme autocommands
 au ColorScheme * hi ColorColumn ctermbg=darkgray
