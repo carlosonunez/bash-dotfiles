@@ -125,6 +125,7 @@ whatsapp-.*fbcdn\.net
 media-.*whatsapp\.net
 mmx-ds\.cdn\.whatsapp\.net
 www\.facebook\.com$
+fonts\.gstatic\.com$
 EXCLUSIONS
 )
 FERMATA_URL="https://github.com/iccir/Fermata/releases/download/Fermata-136/Fermata-136.zip"
