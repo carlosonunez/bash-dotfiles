@@ -113,37 +113,6 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>action</key>
-				<integer>0</integer>
-				<key>argument</key>
-				<integer>0</integer>
-				<key>focusedappvariable</key>
-				<false/>
-				<key>focusedappvariablename</key>
-				<string></string>
-				<key>hotkey</key>
-				<integer>6</integer>
-				<key>hotmod</key>
-				<integer>1835008</integer>
-				<key>hotstring</key>
-				<string>Z</string>
-				<key>leftcursor</key>
-				<false/>
-				<key>modsmode</key>
-				<integer>0</integer>
-				<key>relatedAppsMode</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.hotkey</string>
-			<key>uid</key>
-			<string>341DA14A-CA65-4F00-AC49-A5DEE76C90AB</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>lastpathcomponent</key>
 				<false/>
 				<key>onlyshowifquerypopulated</key>
@@ -170,7 +139,11 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>pkill -i obs zoom teams chromacam krisp</string>
+				<string>pkill -i obs zoom teams chromacam krisp
+/Users/cn/.home_env/bin/elgato lights | grep -E ^Light | awk '{print $NF}' |
+	while read -r light_id;
+	do /Users/cn/.home_env/bin/elgato off "$light_id";
+done</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -182,6 +155,37 @@
 			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
 			<string>B8C4EBF6-24F0-4C31-969C-3A0761451535</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>6</integer>
+				<key>hotmod</key>
+				<integer>1835008</integer>
+				<key>hotstring</key>
+				<string>Z</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>341DA14A-CA65-4F00-AC49-A5DEE76C90AB</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
@@ -309,7 +313,9 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>idx=0
+				<string>OFFICE_LAT='29.527943'
+OFFICE_LONG='-95.735772'
+idx=0
 while test idx -lt 15
 do
   if pgrep -i chromacam
@@ -319,7 +325,15 @@ do
   fi
   test=$((test+1))
   sleep 1
-done</string>
+done
+/Users/cn/.home_env/bin/elgato lights | grep -E ^Light | awk '{print $NF}' |
+	while read -r light_id;
+	do /Users/cn/.home_env/bin/elgato on "$light_id";
+done
+/Users/cn/.home_env/bin/elgato brightness --level 40 0
+/Users/cn/.home_env/bin/elgato brightness --level 29 1
+/Users/cn/.home_env/bin/elgato color --level 5200 0
+/Users/cn/.home_env/bin/elgato color --level 3700 1</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
