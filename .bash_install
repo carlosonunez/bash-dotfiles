@@ -128,6 +128,10 @@ www\.facebook\.com$
 fonts\.gstatic\.com$
 EXCLUSIONS
 )
+ETC_HOSTS_INCLUSIONS=$(cat <<-INCLUSIONS
+fonts.gstatic.com:142.250.114.94
+INCLUSIONS
+)
 FERMATA_URL="https://github.com/iccir/Fermata/releases/download/Fermata-136/Fermata-136.zip"
 
 check_for_internet_access() {
@@ -201,6 +205,21 @@ modify_etc_hosts() {
     log_info "Removing from /etc/hosts; enter password if prompted: $pattern\n"
     sudo gsed -i "/$pattern/d" /etc/hosts
   done < <(grep -E "$match_re" /etc/hosts) && touch "$ETC_HOSTS_PREPPED_SENTINEL_FILE"
+}
+
+add_to_etc_hosts() {
+  for domain_ip in $ETC_HOSTS_INCLUSIONS
+  do
+    domain=$(cut -f1 -d ':' <<< "$domain_ip")
+    ip=$(cut -f2 -d ':' <<< "$domain_ip")
+    if ! grep -Eq "^${ip}[ \\t]+${domain}$" /etc/hosts
+    then
+      line="$ip   $domain"
+      log_info "Adding to /etc/hosts: $line"
+      sudo gsed -i "/${domain}$/d" /etc/hosts
+      sudo sh -c "echo '$line' >> /etc/hosts"
+    fi
+  done
 }
 
 make_etc_hosts_adfree() {
