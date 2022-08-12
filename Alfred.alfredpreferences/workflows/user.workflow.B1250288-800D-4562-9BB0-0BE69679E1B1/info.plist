@@ -139,7 +139,8 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>pkill -i obs zoom teams chromacam krisp
+				<string>pkill -HUP zoom
+pkill -i obs teams chromacam krisp
 /Users/cn/.home_env/bin/elgato lights | grep -E ^Light | awk '{print $NF}' |
 	while read -r light_id;
 	do /Users/cn/.home_env/bin/elgato off "$light_id";
@@ -258,21 +259,6 @@ done</string>
 			<string>553A6DD5-745E-4B15-9515-8099AEC6F03B</string>
 			<key>version</key>
 			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>command</key>
-				<integer>0</integer>
-				<key>confirm</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.systemcommand</string>
-			<key>uid</key>
-			<string>27B143FB-E622-41B4-BD54-DC4170B62A4B</string>
-			<key>version</key>
-			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -407,13 +393,6 @@ done
 			<key>ypos</key>
 			<integer>395</integer>
 		</dict>
-		<key>27B143FB-E622-41B4-BD54-DC4170B62A4B</key>
-		<dict>
-			<key>xpos</key>
-			<integer>1360</integer>
-			<key>ypos</key>
-			<integer>505</integer>
-		</dict>
 		<key>341DA14A-CA65-4F00-AC49-A5DEE76C90AB</key>
 		<dict>
 			<key>xpos</key>
@@ -452,7 +431,7 @@ done
 		<key>B8C4EBF6-24F0-4C31-969C-3A0761451535</key>
 		<dict>
 			<key>xpos</key>
-			<integer>775</integer>
+			<integer>395</integer>
 			<key>ypos</key>
 			<integer>220</integer>
 		</dict>
