@@ -21,15 +21,15 @@ log_warning() {
   >&2 echo -ne "${BYellow}WARNING${NC}: $1\n"
 }
 
-log_warning() {
+log_warning_sudo() {
   >&2 echo -ne "${BYellow}WARNING${NC}: $1 (Enter password when prompted)\n"
 }
 
 log_error() {
-  >&2 echo -ne "${BRed}ERROR${NC}: $1 (Enter password when prompted)\n"
+  >&2 echo -ne "${BRed}ERROR${NC}: $1\n"
 }
 
-log_error() {
+log_error_sudo() {
   >&2 echo -ne "${BRed}ERROR${NC}: $1 (Enter password when prompted)\n"
 }
 
