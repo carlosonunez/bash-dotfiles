@@ -23,7 +23,7 @@ DISABLE_ADFREE_CHECK="${DISABLE_ADFREE_CHECK:-false}" # Should we disable updati
 FORCE_ADFREE_UPDATE="${FORCE_ADFREE_UPDATE:-false}" # Should we update our /etc/hosts anyway?
 ADFREE_TIMESTAMP_FILE="$HOME/.config/adfree-etchosts/timestamp"
 MAX_AD_FREE_STALENESS_DAYS=5 # How current should /etc/hosts be?
-ADFREE_ETC_HOSTS_LIST=https://github.com/carlosonunez/hosts/releases/download/$(date +'%Y.%m.%d')/with-fb.txt
+ADFREE_ETC_HOSTS_LIST_TEMPLATE_URL=https://github.com/carlosonunez/hosts/releases/download/%DATE%/with-fb.txt
 HOMEBREW_BUILTINS_X86=$(cat <<-APPS
 vagrant
 virtualbox
@@ -256,6 +256,10 @@ make_etc_hosts_adfree() {
     fi
   }
 
+  _adfree_hosts_list() {
+    echo "${ADFREE_ETC_HOSTS_LIST_TEMPLATE_URL//%DATE%/$(date +%Y.%m.%d)}"
+  }
+
   if _force || ( ! _etc_hosts_updating_disabled && ! _etc_hosts_updated_recently )
   then
     rm "$ETC_HOSTS_PREPPED_SENTINEL_FILE"
@@ -268,10 +272,10 @@ has been updated with ad-free extensions. Updating it now.\n"
       log_info "Set DISABLE_ADFREE_CHECK to 'true' to disable this behavior."
     fi
     _save_original_etc_hosts
-    log_info "Applying list: $ADFREE_ETC_HOSTS_LIST"
+    log_info "Applying list: $(_adfree_hosts_list)"
     sudo sh -c 'cat /etc/hosts.original > /etc/hosts'
     sudo sh -c 'echo >> /etc/hosts'
-    curl -o /tmp/etc_hosts -L "$ADFREE_ETC_HOSTS_LIST" &&
+    curl -o /tmp/etc_hosts -L "$(_adfree_hosts_list)" &&
       sudo sh -c 'cat /tmp/etc_hosts >> /etc/hosts' &&
       rm -f /tmp/etc_hosts
     _write_refresh_date_timestamp
