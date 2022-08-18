@@ -356,17 +356,17 @@ update_obs_prefs() {
     pushd "${HOME}/Library/Application Support" &&
       zip -q -r "$OBS_PREFS_TMP_FILE" obs-studio &&
       popd
-    existing=$(op list documents --vault "$OP_DEFAULT_VAULT" | \
+    existing=$(op document list --format=json --vault "$OP_DEFAULT_VAULT" | \
       jq -r '.[].overview.title' | \
       grep "$OBS_PREFS_OP_KEY")
     if test -z "$existing"
     then
       log_info "OBS settings not found in 1Password. Creating it now."
-      op create document --vault "$OP_DEFAULT_VAULT" \
+      op document create --vault "$OP_DEFAULT_VAULT" \
         --title "$OBS_PREFS_OP_KEY" \
         "$OBS_PREFS_TMP_FILE"
     else
-      op edit document --vault "$OP_DEFAULT_VAULT" \
+      op document edit --vault "$OP_DEFAULT_VAULT" \
         "$OBS_PREFS_OP_KEY" \
         "$OBS_PREFS_TMP_FILE"
     fi
@@ -404,7 +404,8 @@ get_ssh_and_aws_keys_from_onepassword() {
   }
 
   download_keys() {
-    op get document "SSH and AWS Keys" --vault "$OP_DEFAULT_VAULT" >> $HOME/Downloads/keys.zip
+    op document get "SSH and AWS Keys" --vault "$OP_DEFAULT_VAULT" \
+      --output="$HOME/Downloads/keys.zip"
   }
 
   unzip_keys() {
@@ -451,8 +452,8 @@ get_secret_settings_from_onepassword() {
   }
 
   download_env_settings() {
-    op get document "Secret Environment Settings" --vault "$OP_DEFAULT_VAULT" \
-      >> $HOME/Downloads/environment.zip
+    op document get "Secret Environment Settings" --vault "$OP_DEFAULT_VAULT" \
+      --output "$HOME/Downloads/environment.zip"
   }
 
   unzip_env_settings() {
@@ -482,7 +483,7 @@ get_firefox_multi_account_containers_from_onepassword() {
   }
 
   download_regexes() {
-    op get item "Firefox Multi-Account Container Configuration" \
+    op item get "Firefox Multi-Account Container Configuration" \
       --vault "$OP_DEFAULT_VAULT" \
       --fields notesPlain >> $HOME/.ssh/firefox_mac_regexes
   }
@@ -510,7 +511,7 @@ update_firefox_multi_account_containers_into_onepassword() {
   if ! test -z "$containers_string"
   then
     log_info "Updating 1Password."
-    op edit item 'Firefox Multi-Account Container Configuration' notesPlain="$containers_string" \
+    op item edit 'Firefox Multi-Account Container Configuration' notesPlain="$containers_string" \
       --vault "$OP_DEFAULT_VAULT"
   fi
 }
