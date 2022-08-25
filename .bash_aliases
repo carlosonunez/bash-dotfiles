@@ -1,6 +1,47 @@
 PHONE_WIFI_NETWORKS_REGEX="atoi|Carlos's Pixel|sandy"
+TRELLO_CLI_DOCKER_IMAGE=carlosnunez/trello-cli
+TRELLO_CLI_DOCKER_GIT_URL=https://github.com/carlosonunez/trello-cli-docker
 source "$(brew --prefix)/etc/profile.d/bash_completion.sh"
 source "$HOME/.bash_completion.d/complete_alias"
+
+run_trello() {
+  _first_time_setup() {
+    log_info "Performing first time Trello CLI setup..."
+    appKey=$(get_password "Trello API Key")
+    token=$(get_password "Trello API Token")
+    if test -z "$token"
+    then
+      log_error "Unable to retrieve Trello token from 1Password"
+      return 1
+    fi
+    test -d "$HOME/src/trello-cli-docker" ||
+      { git clone "$TRELLO_CLI_DOCKER_GIT_URL"  || return 1; }
+    { docker images | grep -q "$TRELLO_CLI_DOCKER_IMAGE"; } && docker rmi -f "$TRELLO_CLI_DOCKER_IMAGE"
+    docker image build -t "$TRELLO_CLI_DOCKER_IMAGE" - < "$HOME/src/trello-cli-docker/Dockerfile" \
+      || return 1
+    test -d "$HOME/.config/trello-cli" && rm -rf "$HOME/.config/trello-cli"
+    mkdir -p "$HOME/.config/trello-cli" &&
+      echo "{\"token\":\"$token\"}" > "$HOME/.config/trello-cli/authCache.json" &&
+      cat >"$HOME/.config/trello-cli/config.json" <<-EOF
+{
+    "appKey": "$appKey",
+    "configPath": "/",
+    "authCache": "authCache.json",
+    "translationCache": "translationCache.json"
+}
+EOF
+    touch "$HOME/.config/trello-cli/translationCache.json"
+    touch "$HOME/.config/trello-cli/initialized"
+  }
+  _first_time_setup_complete() {
+    test -e "$HOME/.config/trello-cli/initialized"
+  }
+  _first_time_setup_complete || _first_time_setup
+  docker run -v "$HOME/.config/trello-cli/config.json:/root/.trello-cli/config.json" \
+    -v "$HOME/.config/trello-cli/authCache.json:/authCache.json" \
+    -v "$HOME/.config/trello-cli/translationCache.json:/translationCache.json" \
+    "$TRELLO_CLI_DOCKER_IMAGE" "$@"
+}
 
 check_for_git_repository() {
   which git &>/dev/null || return 1
@@ -99,6 +140,7 @@ alias dc=docker-compose
 complete -F _complete_alias dc
 alias speed=run_speed_test
 alias git=git
+alias trello=run_trello
 
 case "$(get_os_type)" in
   "Darwin")
