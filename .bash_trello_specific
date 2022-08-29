@@ -1,29 +1,61 @@
-#!/usr/bin/env bash
-export_trello_board() {
-  list_to_export="${1?Please provide a list to export.}"
-  if ! test -f "$HOME/Downloads/board.json"
-  then
-    log_error "board.json not found. Download the board to export from first."
-    exit 1
-  fi
-  jq_query=$(cat <<-QUERY
-["Item", "Status", "Target Date (if applicable)"], \
-["-----","---------","----------------------------"], \
-(.lists as \$l | \
-.cards[] | .idList as \$list_id | \
-{ \
-  name: .name, \
-  due: (if .badges.due then .badges.due else "none" end), \
-  list: (\$l[] | \
-    select(.id == \$list_id) | \
-    .name) \
-} | \
-select(.list == "$list_to_export") | \
-[.name, .list, .due]) | \
-@csv
-QUERY
-)
-  jq -r "$jq_query" $HOME/Downloads/board.json | \
-    column -s, -t | \
-    tr -d '"'
-} 
+# vi: set ft=sh:
+TRELLO_CONFIG_PATH="$HOME/.config/trello"
+TRELLO_CREDS_FILE="${TRELLO_CONFIG_PATH}/credentials"
+TRELLO_BASE_URL="${TRELLO_BASE_URL:-https://api.trello.com/1}"
+# LITERALLY EVERY Trello CLI sucks. Which makes no fucking sense since the Trello API
+# is so well documented.
+#
+# The most-starred CLI, mheap/trello, is completely designed for human interaction, is poorly tested
+# (the only test that exists is for add_card, which is crazy), and there are tons of bugs
+# lurking around translating card titles to IDs, boards to IDs, etc.
+#
+# So I'll just do it my damn self and use the Trello API directly.
+trello() {
+  endpoint="$1"
+  query_params="$2"
+  method="${3:-GET}"
+  _first_time_setup() {
+    test -d "$TRELLO_CONFIG_PATH" || mkdir -p "$TRELLO_CONFIG_PATH"
+    appKey=$(get_password "Trello API Key")
+    if test -z "$token"
+    then
+      log_error "Unable to retrieve Trello API Key from 1Password"
+      return 1
+    fi
+    token=$(get_password "Trello API Token")
+    if test -z "$token"
+    then
+      log_error "Unable to retrieve Trello token from 1Password"
+      return 1
+    fi
+    printf '{"app_key": "%s", "token": "%s"}' "$appKey" "$token" > "$TRELLO_CREDS_FILE"
+    echo 'done' > "${TRELLO_CONFIG_PATH}/initialized"
+  }
+  _first_time_setup_complete() {
+    test -e "${TRELLO_CONFIG_PATH}/initialized"
+  }
+  _first_time_setup_complete || { _first_time_setup  || return 1; }
+  localAppKey=$(jq -r '.app_key' "$TRELLO_CREDS_FILE")
+  localToken=$(jq -r '.token' "$TRELLO_CREDS_FILE")
+  endpoint=$(sed 's#^/##' <<< "$endpoint")
+  url="${TRELLO_BASE_URL}/${endpoint}?key=$localAppKey&token=$localToken"
+  test -n "$query_params" && url="${url}&${query_params}"
+  curl -sS -H "Content-Type: application/json" -H "Accept: application/json" -X "${method}" "${url}"
+  echo
+}
+
+trello_board_id_by_name() {
+  trello "/members/me/boards" | jq --arg board "$1" -r '.[] | select(.name == $board) | .id'
+}
+
+trello_list_cards_in_board() {
+  trello "/boards/$1/cards"
+}
+
+trello_list_lists_in_board() {
+  trello "/boards/$1/lists"
+}
+
+trello_get_card() {
+  trello "/cards/$1"
+}
