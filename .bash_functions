@@ -747,8 +747,13 @@ terraform() {
   }
   TERRAFORM_IMAGE="${TERRAFORM_IMAGE:-carlosnunez/terraform:latest}"
   tf_extra_vars="$(_gather_extra_vars)"
-  docker run --rm -i -v $PWD:/app --privileged \
+  docker run --rm -it -v $PWD:/app --privileged \
     -e TF_IN_AUTOMATION=true \
+    -e HTTP_PROXY \
+    -e HTTPS_PROXY \
+    -e http_proxy \
+    -e https_proxy \
+    -e no_proxy \
     --net=host \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -w /app \
