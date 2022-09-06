@@ -81,6 +81,17 @@ function! ToggleGoTestMethod()
   echom "Go test runner switched to " . test#go#runner
 endfunction!
 
+function! ToggleGoTestMethod()
+  if g:TestGolangUsingGinkgo == 1
+    let test#go#runner = 'ginkgo'
+    let g:TestGolangUsingGinkgo = 0
+  else
+    let test#go#runner = 'gotest'
+    let g:TestGolangUsingGinkgo = 1
+  endif
+  echom "Using Go test runner " . test#go#runner
+endfunction
+
 " Colorscheme autocommands
 au ColorScheme * hi ColorColumn ctermbg=darkgray
 au ColorScheme * hi CursorLine ctermbg=235
