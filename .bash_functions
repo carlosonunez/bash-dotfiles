@@ -621,7 +621,7 @@ toggle_bash_prompt() {
 
 preview_markdown() {
   log_info "Visit http://localhost:6419 to view your stuff."
-  docker run -it --rm -v $PWD:/data -p 6419:3080 thomsch98/markserv
+  docker run -i --rm -v $PWD:/data -p 6419:3080 thomsch98/markserv
 }
 
 disable_sleep() {
