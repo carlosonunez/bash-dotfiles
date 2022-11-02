@@ -120,9 +120,9 @@
 				<key>removeextension</key>
 				<false/>
 				<key>text</key>
-				<string>The VB-Cable service has also been restarted.</string>
+				<string>Krisp, Zoom, and other VC apps have been closed.</string>
 				<key>title</key>
-				<string>OBS has been terminated.</string>
+				<string>Your meeting is done.</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.output.notification</string>
@@ -249,9 +249,9 @@ done</string>
 				<key>removeextension</key>
 				<false/>
 				<key>text</key>
-				<string>VB-Cable should be operational in a few seconds.</string>
+				<string></string>
 				<key>title</key>
-				<string>[Mobile] OBS has been opened.</string>
+				<string>[Mobile] You're ready to meet!</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.output.notification</string>
@@ -340,7 +340,6 @@ done
 				<key>paths</key>
 				<array>
 					<string>/Applications/krisp.app</string>
-					<string>/Applications/OBS.app</string>
 					<string>/Applications/zoom.us.app</string>
 				</array>
 				<key>toggle</key>
@@ -363,9 +362,9 @@ done
 				<key>removeextension</key>
 				<false/>
 				<key>text</key>
-				<string>VB-Cable should be operational in a few seconds.</string>
+				<string></string>
 				<key>title</key>
-				<string>[Office] OBS has been opened.</string>
+				<string>[Office] You're ready to meet!</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.output.notification</string>

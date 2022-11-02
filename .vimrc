@@ -340,7 +340,7 @@ let g:test#runner_commands = ['Ginkgo', 'RSpec', 'Nose']
 
 " Add cscope bindings (makes it easy to find code in a codebase)
 if has("cscope")
-  set csprg=/usr/local/bin/cscope
+  let &csprg = system("which cscope | tr -d '\n'")
   set csto=0
   set cst
   set nocsverb
