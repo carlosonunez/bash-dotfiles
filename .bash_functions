@@ -455,6 +455,7 @@ get_next_thing_to_do() {
   todo_dir="${1?Please provide a todo.sh-compatible directory.}"
   color_code="${2:-false}"
   ! test -d "$todo_dir" && return 0
+  ! test -f "${todo_dir}/todo.txt" && return 0
 
   next_up_to_do="$(head -1 "${todo_dir}/todo.txt" 2>/dev/null)"
   if [ ! -z "$next_up_to_do" ]
@@ -462,13 +463,13 @@ get_next_thing_to_do() {
     number_of_next_ups=$(wc -l ${todo_dir}/todo.txt | awk '{print $1}' )
     case "$color_code" in
       sensitive)
-        printf "\[$BRed\][$next_up_to_do (1/$number_of_next_ups)]\[$NC\]\n "
+        printf "\[$BRed\][%s (1/$number_of_next_ups)]\[$NC\]\n " "$next_up_to_do"
         ;;
       project)
-        printf "\[$BBlue\][$next_up_to_do (1/$number_of_next_ups)]\[$NC\]\n "
+        printf "\[$BBlue\][%s (1/$number_of_next_ups)]\[$NC\]\n " "$next_up_to_do"
         ;;
       *)
-        printf "\[$BYellow\][$next_up_to_do (1/$number_of_next_ups)]\[$NC\]\n "
+        printf "\[$BYellow\][%s (1/$number_of_next_ups)]\[$NC\]\n " "$next_up_to_do"
         ;;
     esac
   fi
