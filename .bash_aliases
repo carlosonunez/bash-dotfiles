@@ -107,6 +107,7 @@ case "$(get_os_type)" in
     alias clip=pbcopy
     alias upcase='tr [:lower:] [:upper:]'
     alias downcase='tr [:upper:] [:lower:]'
+    alias ctags="`brew --prefix`/bin/ctags"
     ;;
   "Ubuntu|Debian")
     alias tmux=tmux-next

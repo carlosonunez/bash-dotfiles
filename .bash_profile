@@ -124,7 +124,7 @@ then
   configure_secret_settings &&
   join_tmux_session
 else
-  PROMPT_COMMAND='e=$?; history -a; history -c; history -r; gvm_hook; set_bash_prompt $e'
+  PROMPT_COMMAND='e=$?; history -a; history -c; history -r; gvm_hook; cscope_hook; ctags_hook; set_bash_prompt $e'
     configure_client_or_company_specific_settings &&
     configure_secret_settings &&
     configure_bash_session &&

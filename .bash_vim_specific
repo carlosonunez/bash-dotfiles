@@ -1,4 +1,66 @@
 #!/usr/bin/env bash
+print_cscope_file_list() {
+  find . -name "*.bash" -o \
+    -name "*.bats" -o \
+    -name "*.sh" -o \
+    -name "*.go" -o \
+    -name "*.java" -o \
+    -name "*.rb" -o \
+    -name "*.py" -o \
+    -name "*.c" -o \
+    -name "*.h" -o  \
+    -name "*.cpp" -o \
+    -name "*.js" -o \
+    -name "*.ts"
+}
+
+cscope_hook() {
+  cscope_db_file="${PWD}/cscope.out"
+  cscope_filelist="${PWD}/cscope.files"
+
+  test "$(2>/dev/null git rev-parse --is-inside-work-tree)" == "true" || return 0
+  test -e "$cscope_db_file" && return 0
+  if ! test -e "$cscope_filelist"
+  then
+    log_info "Building cscope file list. Please wait."
+    print_cscope_file_list > "$cscope_filelist"
+  fi
+  log_info "Generating cscope database. Please wait."
+  cscope -R -b -q -k
+  if ! test -e "$PWD/.gitignore" || ! grep -iq 'cscope.*' "$PWD/.gitignore"
+  then
+    log_info "Adding cscope files to gitignore. Please wait."
+    echo 'cscope.*' >> "$PWD/.gitignore"
+  fi
+}
+
+ctags_hook() {
+  ctags_prefs="$HOME/.ctags"
+  ctags_file="$PWD/tags"
+  if ! test -e "$ctags_prefs"
+  then
+    log_info "Generating ctags prefs. Please wait."
+    cat >"$ctags_prefs" <<-EOF
+--recurse=yes
+--exclude=.git
+--exclude=.github
+--exclude=*.gpg
+--exclude=.DS_Store
+--exclude=node_packages
+--exclude=gocache
+EOF
+  fi
+  if ! test -e "$ctags_file"
+  then
+    log_info "Generating ctags. Please wait."
+    ctags
+  fi
+  if ! test -e "$PWD/.gitignore" || ! grep -Eiq '^tags$' "$PWD/.gitignore"
+  then
+    log_info "Adding tags to gitignore. Please wait."
+    echo 'tags' >> "$PWD/.gitignore"
+  fi
+}
 
 update_vim_bundles() {
   for bundle_repo in $VIM_BUNDLE_REPOS

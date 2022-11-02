@@ -41,6 +41,8 @@ bartender
 bash
 bash-completion@2
 bats
+cscope
+ctags
 colordiff
 coreutils
 curl
