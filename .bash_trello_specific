@@ -39,8 +39,13 @@ trello() {
   localToken=$(jq -r '.token' "$TRELLO_CREDS_FILE")
   endpoint=$(sed 's#^/##' <<< "$endpoint")
   url="${TRELLO_BASE_URL}/${endpoint}?key=$localAppKey&token=$localToken"
-  test -n "$query_params" && url="${url}&${query_params}"
-  curl -sS -H "Content-Type: application/json" -H "Accept: application/json" -X "${method}" "${url}"
+  if test -n "$query_params" && ( test "${method,,}" == "post" || test "${method,,}" == "put" )
+  then
+    curl -sS --json "$query_params" -H "Content-Type: application/json" -H "Accept: application/json" -X "${method}" "${url}"
+  else
+    url="${url}&${query_params}"
+    curl -sS -H "Content-Type: application/json" -H "Accept: application/json" -X "${method}" "${url}"
+  fi
   echo
 }
 
