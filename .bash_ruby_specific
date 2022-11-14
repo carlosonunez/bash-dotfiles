@@ -104,6 +104,20 @@ System Ruby gems will not be updated."
   fi
 }
 
+install_ruby_version() {
+  grep -iq "ruby-$1" <<< "$(rvm list rubies)" && return 0
+
+  log_info "Installing ruby $1 via rvm"
+  rvm autolibs disable
+  export RUBY_CFLAGS=-DUSE_FFI_CLOSURE_ALLOC
+  export optflags="-Wno-error=implicit-function-declaration"
+  export PATH="$(brew --prefix)/opt/openssl@1.1/bin:$PATH"
+  export LDFLAGS="-L$(brew --prefix)/opt/openssl@1.1/lib"
+  export CPPFLAGS="-I$(brew --prefix)/opt/openssl@1.1/include"
+  export PKG_CONFIG_PATH="$(brew --prefix)/opt/openssl@1.1/lib/pkgconfig"
+  rvm install "$1" --with-openssl-dir="$(brew --prefix)/opt/openssl@1.1"
+}
+
 trap 'ruby_check_mutex_unlock' INT HUP EXIT
 
 remove_dead_install_locks
@@ -115,7 +129,8 @@ ruby_check_mutex_lock
 
 source "$HOME/.rvm/scripts/rvm"
 export PATH="$HOME/.rvm/gems/ruby-$RUBY_VERSION_TO_USE/bin:$PATH"
-install_rvm || exit 1
+install_rvm || return 1
+install_ruby_version "$RUBY_VERSION_TO_USE" || return 1
 rvm rvmrc warning ignore "$HOME/src/setup/.rvmrc"
 rvm rvmrc warning ignore "$HOME/.rvmrc"
 rvm --default use "$RUBY_VERSION_TO_USE"

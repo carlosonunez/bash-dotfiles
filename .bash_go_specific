@@ -7,21 +7,15 @@ authy:github.com/momaek/authy@v0.1.7
 GOTOOLS
 )
 
-if ! test -d "$HOME/.config/gvm-hook"
-then
-  mkdir -p "$HOME/.config/gvm-hook"
-  git clone https://github.com/carlosonunez/gvm-hook "$HOME/.config/gvm-hook"
-fi
-source "$HOME/.config/gvm-hook/gvm_hook.bash"
-
 if ! test -d "$HOME/.gvm/gos/go$GOLANG_VERSION"
 then
-  log_info "Installing go$GOLANG_VERSION from source"
+  log_info "Installing a base version of go before compiling go$GOLANG_VERSION from source"
   # You need go to compile go (makes sense) but you can't install a binary version of it
   # if using MacOS Big Sur or above: https://github.com/moovweb/gvm/issues/360
   # FUCKING INSANE. I can't keep up with these kids, man.
   &>/dev/null which go || brew install go # To install literally any version of Go that can compile itself
   bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+  log_info "Installing go$GOLANG_VERSION from source"
   gvm install "go$GOLANG_VERSION"
 fi
 # shellcheck disable=SC1090
@@ -44,3 +38,10 @@ done
 # Set GOPATH if unset
 # ===================
 export PATH=$PATH:$GOROOT/bin
+
+if ! test -d "$HOME/.config/gvm-hook"
+then
+  mkdir -p "$HOME/.config/gvm-hook"
+  git clone https://github.com/carlosonunez/gvm-hook "$HOME/.config/gvm-hook"
+fi
+source "$HOME/.config/gvm-hook/gvm_hook.bash"

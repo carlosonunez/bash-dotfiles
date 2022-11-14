@@ -107,7 +107,7 @@ To do so, use \`git push -f\`. Note that not every repository will allow you \
 to do this."
   else
     log_error "Please enter the number of commits to squash."
-    exit 1
+    return 1
   fi
 }
 

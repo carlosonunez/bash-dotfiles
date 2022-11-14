@@ -29,6 +29,12 @@ vagrant
 virtualbox
 APPS
 )
+HOMEBREW_TAPS=$(cat <<-TAPS
+homebrew/cask-drivers
+homebrew/cask-fonts
+homebrew/cask-versions
+TAPS
+)
 HOMEBREW_BUILTINS=$(cat <<-APPS
 1password
 1password-cli
@@ -40,14 +46,12 @@ azure-cli
 bartender
 bash
 bash-completion@2
-bats
 cscope
 ctags
 colordiff
 coreutils
 curl
 direnv
-docker-compose-completion
 feh
 findutils
 font-dejavu-sans-mono-nerd-font
@@ -60,19 +64,18 @@ gnu-indent
 gnu-sed
 gnu-tar
 gnutls
-googler
 grep
-homebrew/cask/brightness
+brightness
 htop
 imagemagick
 iterm2
-jq
 keyboardcleantool
 make
 mas
 nightowl
+orion
 reattach-to-user-namespace
-ruby
+safari-technology-preview
 scrcpy
 shellcheck
 shiftit
@@ -175,10 +178,14 @@ $(echo "${HOMEBREW_BUILTINS_X86}" | tr '\n' ' ')\n"
   else
     apps="${apps} $(echo "$HOMEBREW_BUILTINS_X86" | tr '\n' ' ')"
   fi
-  2>&1 brew install $apps | \
-    grep --line-buffered --color=always \
-    -Ev "(Downloading|Already downloaded|already installed|brew reinstall|To reinstall|To re-install)" | \
-    grep -Ev '^$'
+
+  apps_missing=$(comm -2 <(tr ' ' '\n' <<< "$apps" | sort) <(brew list -1 | sort) |
+    grep -Ev '^\t')
+  if test -n "$apps_missing"
+  then
+    log_info "Installing: $(tr '\n' ' ' <<< "$apps_missing")"
+    brew install $apps_missing
+  fi
 }
 
 install_app_store_apps() {
@@ -562,20 +569,13 @@ install_reddit_cli() {
   fi
 }
 
-tap_drivers() {
-  if ! brew tap | grep -q "homebrew/cask-drivers"
-  then
-    log_info "Tapping cask-drivers Homebrew tap"
-    brew tap homebrew/cask-drivers
-  fi
-}
+tap_casks() {
+  missing_taps=$(comm -2 <(sort <<< "$HOMEBREW_TAPS") <(brew tap | sort) |
+    grep -Ev '^\t')
+  test -z "$missing_taps" && return 0
 
-tap_caskroom_fonts() {
-  if ! brew tap | grep -q "homebrew/cask-fonts"
-  then
-    log_info "Tapping cask-fonts Homebrew tap"
-    brew tap homebrew/cask-fonts
-  fi
+  log_info "Tapping: $(tr '\n' ' ' <<< "$missing_taps")"
+  brew tap $missing_taps
 }
 
 enable_sudo_with_apple_watch_and_touch_id() {
@@ -647,10 +647,13 @@ install_complete_alias() {
 update_bash() {
   if grep -iq "^3" <<< "$BASH_VERSION"
   then
+    current_shell="$(dscl . -read /Users/cn shell | awk '{print $NF}')"
+    want_shell="$(brew --prefix)/bin/bash)"
+    test "${current_shell}" == "${want_shell}" && return 0
+
     log_info_sudo "Updating Bash (tmux reload required once finished)"
-    brew install bash && \
-      sudo sh -c "echo $(brew --prefix)/bin/bash >> /etc/shells" && \
-      chsh -s "$(brew --prefix)/bin/bash"
+    sudo sh -c "echo $want_shell >> /etc/shells" && \
+    chsh -s "$want_shell"
   fi
 }
 
@@ -668,7 +671,7 @@ first so that we can fetch your secret preferences."
     log_error "Failed to configure 1Password. This might be because your \
 account has two-factor authentication enabled. Run 'source ~/.bash_profile' again, but \
 pre-pend this to it: 'ONEPASSWORD_OTP=[YOUR_OTP]'."
-    exit 1
+    return 1 2>/dev/null
   fi
 fi
 
@@ -680,7 +683,7 @@ $(get_tmux_windowpane_holding_lock). Skipping to post-install."
 else
   if ! check_for_internet_access
   then
-    log_warning "Internet access is not available. We will not attempt to install
+    log_warning "Internet access is not available. We will not attempt to install \
 or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
     unlock_install
     return 0
@@ -689,8 +692,7 @@ or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
   log_info "Checking and/or updating software. This might take a few minutes."
 
   lock_install
-  tap_drivers
-  tap_caskroom_fonts
+  tap_casks
 
   # Install a few necessary brew formulae
   # ======================================

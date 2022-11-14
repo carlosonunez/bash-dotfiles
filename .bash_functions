@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+PREREQS="gnu-sed,yq,jq,openssl,todo-txt"
 HIDDEN_BASH_PROMPT_FILE="/tmp/use_hidden_bash_prompt"
 ONE_GIGABYTE="$(numfmt --from=iec '1G')"
 ONE_MEGABYTE="$(numfmt --from=iec '1M')"
@@ -23,6 +24,14 @@ log_warning() {
 
 log_warning_sudo() {
   >&2 echo -ne "${BYellow}WARNING${NC}: $1 (Enter password when prompted)\n"
+}
+
+log_warn() {
+  log_warning "$@"
+}
+
+log_warn_sudo() {
+  log_warning_sudo "$@"
 }
 
 log_error() {
@@ -148,6 +157,15 @@ get_csp_login_status() {
   printf "${BCyan}[Azure${NC}: ${Cyan}%s${NC}" "$(_azure_status)]"
 }
 
+install_prerequisites() {
+  comm -2 <(tr ',' '\n' <<< "$PREREQS" | sort) <(brew list -1 | sort) |
+    grep -Ev '^\t' |
+    xargs brew install
+}
+
+configure_machine_pre() {
+  install_prerequisites
+}
 
 configure_machine() {
   install_homebrew_if_on_mac() {
@@ -159,7 +177,8 @@ configure_machine() {
     fi
   }
 
-  install_homebrew_if_on_mac && source "$HOME/.bash_install"
+  install_homebrew_if_on_mac &&
+    source "$HOME/.bash_install"
 }
 
 
@@ -192,7 +211,7 @@ configure_bash_session() {
   do
     source_file "$HOME/.bash_$file"
   done
-  excludes_re='bash_(aliases|exports|profile|install|custom_profile|company|history|sessions)'
+  excludes_re='bash_(aliases|exports|functions|go|profile|install|custom_profile|company|history|sessions)'
   for file in $(find $HOME -type l -maxdepth 1 -name "*.bash_*" | \
     egrep -v "$excludes_re" | \
     sort -u)

@@ -127,6 +127,7 @@ else
   PROMPT_COMMAND='e=$?; history -a; history -c; history -r; gvm_hook; cscope_hook; ctags_hook; set_bash_prompt $e'
     configure_client_or_company_specific_settings &&
     configure_secret_settings &&
+    configure_machine_pre &&
     configure_bash_session &&
     configure_machine &&
     add_keys_to_ssh_agent &&
@@ -135,3 +136,6 @@ fi
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 [ -f "$HOME/src/setup/fzf.bash" ] && source "$HOME/src/setup/fzf.bash"
+
+[[ -s "/Users/cn/.gvm/scripts/gvm" ]] && source "/Users/cn/.gvm/scripts/gvm"
+source "$HOME/src/setup/.bash_go_specific"
