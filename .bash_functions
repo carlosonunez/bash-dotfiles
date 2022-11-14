@@ -780,3 +780,30 @@ terraform() {
     ${tf_extra_vars} \
     "$TERRAFORM_IMAGE" "$@"
 }
+
+_update() {
+  zip_file="$1"
+  vault="$2"
+  path="$3"
+  title="$4"
+  rm "$zip_file" &&
+    op document get "$title" --vault "$vault" --output "$zip_file" &&
+    zip -ujr "$zip_file" $path &&
+    op document edit "$title" --vault "$vault" "$zip_file"
+}
+
+update_secret_settings() {
+  _update \
+    "$HOME/Downloads/environment.zip" \
+    "$OP_DEFAULT_VAULT" \
+    "$HOME/.bash_secret_*" \
+    "Secret Environment Settings"
+}
+
+update_ssh_and_aws_keys() {
+  _update \
+    "$HOME/Downloads/keys.zip" \
+    "$OP_DEFAULT_VAULT" \
+    "$HOME/.ssh/*" \
+    "SSH and AWS Keys"
+}
