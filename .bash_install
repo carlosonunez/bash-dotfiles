@@ -294,9 +294,43 @@ has been updated with ad-free extensions. Updating it now.\n"
 install_witch_prefs() {
   test -f "$WITCH_PREFS_UPDATED_SENTINEL_FILE" && return 0
 
-  log_info "Applying Witch preferences"
-  cp ~/src/setup/com.manytricks.witchdaemon.plist ~/Library/Preferences &&
+  log_info "Applying witch preferences"
+  defaults import com.manytricks.witchdaemon "$HOME/src/setup/witch.plist" &&
     touch "$WITCH_PREFS_UPDATED_SENTINEL_FILE"
+}
+
+set_vnc_witch_prefs() {
+  log_info "Applying VNC-compatible witch preferences"
+  killall witch &&
+    defaults import com.witch.witch $HOME/src/setup/witch-vnc.plist &&
+    open /Applications/witch.app
+}
+
+set_regular_witch_prefs() {
+  killall witch &&
+    rm "$witch_PREFS_UPDATED_SENTINEL_FILE" && install_witch_prefs &&
+    open ~/Library/PreferencePanes/Witch.prefPane/Contents/Helpers/witchdaemon.app/Contents/MacOS/witchdaemon
+}
+
+install_amethyst_prefs() {
+  test -f "$AMETHYST_PREFS_UPDATED_SENTINEL_FILE" && return 0
+
+  log_info "Applying Amethyst preferences"
+  defaults import com.amethyst.Amethyst "$HOME/src/setup/amethyst.plist" &&
+    touch "$AMETHYST_PREFS_UPDATED_SENTINEL_FILE"
+}
+
+set_vnc_amethyst_prefs() {
+  log_info "Applying VNC-compatible amethyst preferences"
+  killall amethyst &&
+    defaults import com.amethyst.Amethyst $HOME/src/setup/amethyst-vnc.plist &&
+    open /Applications/amethyst.app
+}
+
+set_regular_amethyst_prefs() {
+  killall amethyst &&
+    rm "$AMETHYST_PREFS_UPDATED_SENTINEL_FILE" && install_amethyst_prefs &&
+    open /Applications/Amethyst.app
 }
 
 install_shiftit_prefs() {
@@ -319,6 +353,7 @@ set_regular_shiftit_prefs() {
     rm "$SHIFTIT_PREFS_UPDATED_SENTINEL_FILE" && install_shiftit_prefs &&
     open /Applications/ShiftIt.app
 }
+
 
 configure_todos() {
   if ! test -d $HOME/src/todos

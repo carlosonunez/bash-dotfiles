@@ -316,8 +316,8 @@ done
 	while read -r light_id;
 	do /Users/cn/.home_env/bin/elgato on "$light_id";
 done
-/Users/cn/.home_env/bin/elgato brightness --level 40 0
-/Users/cn/.home_env/bin/elgato brightness --level 29 1
+/Users/cn/.home_env/bin/elgato brightness --level 60 0
+/Users/cn/.home_env/bin/elgato brightness --level 45 1
 /Users/cn/.home_env/bin/elgato color --level 5200 0
 /Users/cn/.home_env/bin/elgato color --level 3700 1</string>
 				<key>scriptargtype</key>
