@@ -104,6 +104,7 @@ update_vim_bundles() {
 
 VIM_BUNDLE_REPOS=$(cat <<GITHUB_URLS
 907th/vim-auto-save
+aliou/bats.vim
 AndrewRadev/linediff.vim
 Chiel92/vim-autoformat
 PProvost/vim-ps1
@@ -121,6 +122,8 @@ flazz/vim-colorschemes
 hashivim/vim-terraform
 junegunn/vim-easy-align
 junegunn/vim-emoji
+junegunn/fzf
+junegunn/fzf.vim
 lambdalisue/battery.vim
 leafgarland/typescript-vim
 markcornick/vim-bats

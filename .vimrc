@@ -20,6 +20,9 @@ autocmd BufWinLeave * call clearmatches()
 " Close all quickfix and location windows
 nnoremap <leader>c :windo lcl\|ccl<CR>
 
+" Let Bash be the default syntax highlighting scheme for shell scripts
+let g:is_bash=1
+
 au BufWrite * :Autoformat
 augroup Markdown
   au FileType markdown vmap <leader><Bslash> :EasyAlign*<Bar><Enter>
@@ -128,7 +131,8 @@ let $PYTHONPATH = "."
 
 " Helpful shell commands
 nnoremap <leader>y :!cat % \| pbcopy<CR>
-nnoremap <leader>D :bufdo bd<CR>:NERDTreeToggle<CR>
+nnoremap <leader>D :bd<CR>
+nnoremap <leader>DD :bufdo bd<CR>:NERDTreeToggle<CR>
 nnoremap <leader>dd :%bd\|e#<CR>:NERDTreeToggle<CR>
 
 " Set undo, backup and swap directories so that Vim doesn't leave
@@ -146,6 +150,9 @@ nnoremap <leader>r :source $HOME/.vimrc<CR>
 
 " Easy save
 nnoremap <leader>s :w<CR>
+
+" Easy Ag search
+nnoremap <leader>S :Ag 
 
 " Autoformatting options
 let g:autoformat_autoindent = 0
