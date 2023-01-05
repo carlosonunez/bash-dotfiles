@@ -29,7 +29,7 @@ cscope_hook() {
   fi
 
   test "$(2>/dev/null git rev-parse --is-inside-work-tree)" == "true" || return 0
-  test -n "$(2>/dev/null git stash list)" || return 0
+  test -n "$(2>/dev/null git stash list)" && return 0
   test -e "$cscope_db_file" && return 0
   if ! test -e "$cscope_filelist"
   then
@@ -50,7 +50,7 @@ ctags_hook() {
   ctags_file="$PWD/tags"
   no_ctags_file="$PWD/.noctags"
   test "$(2>/dev/null git rev-parse --is-inside-work-tree)" == "true" || return 0
-  test -n "$(2>/dev/null git stash list)" || return 0
+  test -n "$(2>/dev/null git stash list)" && return 0
   if test -e "$no_ctags_file"
   then
     if test -e "$ctags_file"
