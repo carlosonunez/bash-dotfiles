@@ -3,6 +3,7 @@ trap "rm -f $INSTALL_LOCK_FILE" INT
 
 SHIFTIT_PREFS_UPDATED_SENTINEL_FILE="$HOME/.config/setup/shiftit_updated"
 WITCH_PREFS_UPDATED_SENTINEL_FILE="$HOME/.config/setup/witch_updated"
+AMETHYST_PREFS_UPDATED_SENTINEL_FILE="$HOME/.config/setup/amethyst_updated"
 ETC_HOSTS_PREPPED_SENTINEL_FILE="$HOME/.config/setup/etc_hosts_prepped"
 APPLE_WATCH_PAMID_LIBPATH=/usr/local/lib/pam/pam_watchid.so.2
 APPLE_WATCH_PAMID_URL=https://github.com/biscuitehh/pam-watchid
