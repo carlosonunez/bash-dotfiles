@@ -786,10 +786,10 @@ _update() {
   vault="$2"
   path="$3"
   title="$4"
-  rm "$zip_file" &&
-    op document get "$title" --vault "$vault" --output "$zip_file" &&
-    zip -ujr "$zip_file" $path &&
-    op document edit "$title" --vault "$vault" "$zip_file"
+  test -f "$zip_file" && rm "$zip_file"
+  op document get "$title" --vault "$vault" --output "$zip_file" &&
+  zip -ujr "$zip_file" $path &&
+  op document edit "$title" --vault "$vault" "$zip_file"
 }
 
 update_secret_settings() {
