@@ -24,7 +24,7 @@ DISABLE_ADFREE_CHECK="${DISABLE_ADFREE_CHECK:-false}" # Should we disable updati
 FORCE_ADFREE_UPDATE="${FORCE_ADFREE_UPDATE:-false}" # Should we update our /etc/hosts anyway?
 ADFREE_TIMESTAMP_FILE="$HOME/.config/adfree-etchosts/timestamp"
 MAX_AD_FREE_STALENESS_DAYS=5 # How current should /etc/hosts be?
-ADFREE_ETC_HOSTS_LIST_TEMPLATE_URL=https://github.com/carlosonunez/hosts/releases/download/%DATE%/fb.txt
+ADFREE_ETC_HOSTS_LIST_TEMPLATE_URL=https://github.com/carlosonunez/hosts/releases/download/%DATE%/without-fb.txt
 HOMEBREW_BUILTINS_X86=$(cat <<-APPS
 vagrant
 virtualbox
@@ -74,7 +74,7 @@ keyboardcleantool
 make
 mas
 nightowl
-orion
+obs
 reattach-to-user-namespace
 safari-technology-preview
 scrcpy

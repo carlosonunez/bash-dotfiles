@@ -197,6 +197,7 @@ done</string>
 				<array>
 					<string>/Applications/krisp.app</string>
 					<string>/Applications/zoom.us.app</string>
+					<string>/Applications/OBS.app</string>
 				</array>
 				<key>toggle</key>
 				<false/>
@@ -341,6 +342,7 @@ done
 				<array>
 					<string>/Applications/krisp.app</string>
 					<string>/Applications/zoom.us.app</string>
+					<string>/Applications/OBS.app</string>
 				</array>
 				<key>toggle</key>
 				<false/>
@@ -381,74 +383,76 @@ done
 		<key>1D4AA13F-5B7D-4A1F-AAFD-B83C12FEE423</key>
 		<dict>
 			<key>xpos</key>
-			<integer>395</integer>
+			<real>395</real>
 			<key>ypos</key>
-			<integer>395</integer>
+			<real>395</real>
 		</dict>
 		<key>1F807F74-7905-4FF0-B9E6-E57DE19D6235</key>
 		<dict>
 			<key>xpos</key>
-			<integer>65</integer>
+			<real>65</real>
 			<key>ypos</key>
-			<integer>395</integer>
+			<real>395</real>
 		</dict>
 		<key>341DA14A-CA65-4F00-AC49-A5DEE76C90AB</key>
 		<dict>
 			<key>xpos</key>
-			<integer>65</integer>
+			<real>65</real>
 			<key>ypos</key>
-			<integer>220</integer>
+			<real>220</real>
 		</dict>
 		<key>4B26DB85-8BD5-41D7-AD99-23C088B158CE</key>
 		<dict>
 			<key>xpos</key>
-			<integer>965</integer>
+			<real>965</real>
 			<key>ypos</key>
-			<integer>220</integer>
+			<real>220</real>
 		</dict>
 		<key>53FF37BC-BCBC-4225-8BC3-4BAB62219E33</key>
 		<dict>
 			<key>xpos</key>
-			<integer>955</integer>
+			<real>955</real>
 			<key>ypos</key>
-			<integer>565</integer>
+			<real>565</real>
 		</dict>
 		<key>553A6DD5-745E-4B15-9515-8099AEC6F03B</key>
 		<dict>
 			<key>xpos</key>
-			<integer>960</integer>
+			<real>960</real>
 			<key>ypos</key>
-			<integer>395</integer>
+			<real>395</real>
 		</dict>
 		<key>5AACBD7E-E60F-47B0-8560-097284BA1BCF</key>
 		<dict>
 			<key>xpos</key>
-			<integer>390</integer>
+			<real>390</real>
 			<key>ypos</key>
-			<integer>565</integer>
+			<real>565</real>
 		</dict>
 		<key>B8C4EBF6-24F0-4C31-969C-3A0761451535</key>
 		<dict>
 			<key>xpos</key>
-			<integer>395</integer>
+			<real>395</real>
 			<key>ypos</key>
-			<integer>220</integer>
+			<real>220</real>
 		</dict>
 		<key>E436AB0F-27B6-4ED7-90D7-A6FB7AC6D6FD</key>
 		<dict>
 			<key>xpos</key>
-			<integer>660</integer>
+			<real>660</real>
 			<key>ypos</key>
-			<integer>565</integer>
+			<real>565</real>
 		</dict>
 		<key>F07F7AB2-A339-4BB0-A4BC-1033723425C1</key>
 		<dict>
 			<key>xpos</key>
-			<integer>60</integer>
+			<real>60</real>
 			<key>ypos</key>
-			<integer>565</integer>
+			<real>565</real>
 		</dict>
 	</dict>
+	<key>userconfigurationconfig</key>
+	<array/>
 	<key>webaddress</key>
 	<string></string>
 </dict>
