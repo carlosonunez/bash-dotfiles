@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+disable_cscope_and_ctags() {
+  log_info "Disabling cscope and ctags"
+  touch .nocscope .noctags
+  rm -rf cscope.* tags
+  test -f "$PWD/.gitignore" && gsed -Ei '#(cscope|^tags$)#d' "$PWD/.gitignore"
+}
+
+enable_cscope_and_ctags() {
+  rm .nocscope .noctags
+}
+
 print_cscope_file_list() {
   find . -name "*.bash" -o \
     -name "*.bats" -o \
@@ -103,6 +114,9 @@ update_vim_bundles() {
 }
 
 VIM_BUNDLE_REPOS=$(cat <<GITHUB_URLS
+xolox/vim-misc
+xolox/vim-easytags
+erig0/cscope_dynamic
 907th/vim-auto-save
 aliou/bats.vim
 AndrewRadev/linediff.vim

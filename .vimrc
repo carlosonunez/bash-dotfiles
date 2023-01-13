@@ -34,14 +34,14 @@ augroup end
 augroup GitCommit
   au Filetype gitcommit setlocal textwidth=0
   au FileType gitcommit set wrap
-  au FileType python let &l:colorcolumn = (&l:textwidth - 20) . ",".join(range(&l:textwidth,999),",")
+  au FileType gitcommit let &l:colorcolumn = (&l:textwidth - 20) . ",".join(range(&l:textwidth,999),",")
 augroup end
 augroup Python
   au FileType python let b:auto_save = 0
   au FileType python nmap <leader>d oimport pdb; pdb.set_trace() # vim breakpoint<Esc>
 augroup end
 augroup Text
-  au FileType txt setlocal textwidth=0
+  au FileType txt setocal textwidth=0
   au FileType txt setlocal wrap
 augroup end
 augroup Ruby
@@ -152,8 +152,9 @@ nnoremap <leader>r :source $HOME/.vimrc<CR>
 nnoremap <leader>s :w<CR>
 
 " Easy Ag search
+let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
 nnoremap <leader>S :Ag 
-
+nnoremap <leader>SS :Ag <C-R>=expand("<cword>")<CR><CR>
 " Autoformatting options
 let g:autoformat_autoindent = 0
 let g:autoformat_retab = 0
@@ -408,3 +409,19 @@ nmap <C-Space><C-Space>d
   \:vert scs find d <C-R>=expand("<cword>")<CR><CR>
 nmap <C-Space><C-Space>a
   \:vert scs find a <C-R>=expand("<cword>")<CR><CR>
+
+" show when cscope database is updating
+let g:statusline_cscope_flag = ""
+set statusline=[%n]%<%f\ %h%m%r\ %=\
+set statusline+=%(\ [%{g:statusline_cscope_flag}]\ \ \ %)
+set statusline+=%-14.(%l,%c%V%)\ %P
+function! Cscope_dynamic_update_hook(updating)
+    if a:updating
+        let g:statusline_cscope_flag = "C"
+    else
+        let g:statusline_cscope_flag = ""
+    endif
+    execute "redrawstatus!"
+endfunction
+call Cscope_dynamic_update_hook(0)
+
