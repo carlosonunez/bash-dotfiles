@@ -3,7 +3,11 @@ disable_cscope_and_ctags() {
   log_info "Disabling cscope and ctags"
   touch .nocscope .noctags
   rm -rf cscope.* tags
-  test -f "$PWD/.gitignore" && gsed -Ei '#(cscope|^tags$)#d' "$PWD/.gitignore"
+  # NOTE: These exclusions will not be tracked by Git.
+  cat >>"$PWD/.git/info/exclude" <<-EOF
+.nocscope
+.noctags
+EOF
 }
 
 enable_cscope_and_ctags() {
