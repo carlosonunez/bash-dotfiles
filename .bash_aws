@@ -81,7 +81,7 @@ _log_into_aws() {
       echo "$AWS_REGION"
     else
       region="$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "region" "$AWS_OP_VAULT")"
-      if test -z "$region"
+      if test -z "$region" || test "$region" == "no password found"
       then
         echo "$DEFAULT_AWS_REGION"
       else
