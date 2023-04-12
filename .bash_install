@@ -24,7 +24,6 @@ DISABLE_ADFREE_CHECK="${DISABLE_ADFREE_CHECK:-false}" # Should we disable updati
 FORCE_ADFREE_UPDATE="${FORCE_ADFREE_UPDATE:-false}" # Should we update our /etc/hosts anyway?
 ADFREE_TIMESTAMP_FILE="$HOME/.config/adfree-etchosts/timestamp"
 MAX_AD_FREE_STALENESS_DAYS=5 # How current should /etc/hosts be?
-ADFREE_ETC_HOSTS_LIST_TEMPLATE_URL=https://github.com/carlosonunez/hosts/releases/download/%DATE%/without-fb.txt
 HOMEBREW_BUILTINS_X86=$(cat <<-APPS
 vagrant
 virtualbox
@@ -199,98 +198,6 @@ install_app_store_apps() {
     formatted_apps=$(echo "$APPLE_APP_STORE_APPS" | tr '\n' ' ')
     log_warning "You are not signed in to the App Store. Sign in to install \
 these apps: $formatted_apps\n"
-  fi
-}
-
-modify_etc_hosts() {
-  _force() {
-    grep -Eiq "^true$" <<< "$FORCE_ADFREE_UPDATE"
-  }
-
-  if ! _force
-  then
-    test -f "$ETC_HOSTS_PREPPED_SENTINEL_FILE" && return 0
-  fi
-
-  match_re="0.0.0.0 ($(tr '\n' '%' <<< "$ETC_HOSTS_EXCLUSIONS" | sed 's#%#\|#g; s/.$//g'))$"
-  while read -r pattern
-  do
-    log_info "Removing from /etc/hosts; enter password if prompted: $pattern\n"
-    sudo gsed -i "/$pattern/d" /etc/hosts
-  done < <(grep -E "$match_re" /etc/hosts) && touch "$ETC_HOSTS_PREPPED_SENTINEL_FILE"
-}
-
-add_to_etc_hosts() {
-  for domain_ip in $ETC_HOSTS_INCLUSIONS
-  do
-    domain=$(cut -f1 -d ':' <<< "$domain_ip")
-    ip=$(cut -f2 -d ':' <<< "$domain_ip")
-    if ! grep -Eq "^${ip}[ \\t]+${domain}$" /etc/hosts
-    then
-      line="$ip   $domain"
-      log_info "Adding to /etc/hosts: $line"
-      sudo gsed -i "/${domain}$/d" /etc/hosts
-      sudo sh -c "echo '$line' >> /etc/hosts"
-    fi
-  done
-}
-
-make_etc_hosts_adfree() {
-  _write_refresh_date_timestamp() {
-    test -d "$(dirname "$ADFREE_TIMESTAMP_FILE")" || mkdir "$(dirname "$ADFREE_TIMESTAMP_FILE")"
-    date +%s -d "+$MAX_AD_FREE_STALENESS_DAYS days" > "$ADFREE_TIMESTAMP_FILE"
-  }
-
-  _get_refresh_date_timestamp() {
-    test -f "$ADFREE_TIMESTAMP_FILE" &&
-      cat "$ADFREE_TIMESTAMP_FILE" ||
-      printf '0'
-  }
-
-  _etc_hosts_updated_recently() {
-    last_refresh_date="$(_get_refresh_date_timestamp)"
-    today="$(date +%s)"
-    test "$today" -le "$last_refresh_date"
-  }
-
-  _etc_hosts_updating_disabled() {
-    grep -Eiq "^true$" <<< "$DISABLE_ADFREE_CHECK"
-  }
-
-  _force() {
-    grep -Eiq "^true$" <<< "$FORCE_ADFREE_UPDATE"
-  }
-
-  _save_original_etc_hosts() {
-    if ! test -f /etc/hosts.original
-    then
-      sudo cp /etc/hosts /etc/hosts.original
-    fi
-  }
-
-  _adfree_hosts_list() {
-    echo "${ADFREE_ETC_HOSTS_LIST_TEMPLATE_URL//%DATE%/$(date +%Y.%m.%d)}"
-  }
-
-  if _force || ( ! _etc_hosts_updating_disabled && ! _etc_hosts_updated_recently )
-  then
-    rm "$ETC_HOSTS_PREPPED_SENTINEL_FILE"
-    if _force
-    then
-      log_info "You've requested /etc/hosts to be refreshed!\n"
-    else
-      log_info "It's been over $MAX_AD_FREE_STALENESS_DAYS days since /etc/hosts \
-has been updated with ad-free extensions. Updating it now.\n"
-      log_info "Set DISABLE_ADFREE_CHECK to 'true' to disable this behavior."
-    fi
-    _save_original_etc_hosts
-    log_info "Applying list: $(_adfree_hosts_list)"
-    sudo sh -c 'cat /etc/hosts.original > /etc/hosts'
-    sudo sh -c 'echo >> /etc/hosts'
-    curl -o /tmp/etc_hosts -L "$(_adfree_hosts_list)" &&
-      sudo sh -c 'cat /tmp/etc_hosts >> /etc/hosts' &&
-      rm -f /tmp/etc_hosts
-    _write_refresh_date_timestamp
   fi
 }
 
@@ -756,8 +663,6 @@ fi
 enable_sudo_with_apple_watch_and_touch_id
 install_reddit_cli
 configure_todos
-make_etc_hosts_adfree
-modify_etc_hosts
 update_obs_prefs
 install_complete_alias
 update_bash
