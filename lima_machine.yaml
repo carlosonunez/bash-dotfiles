@@ -10,7 +10,6 @@
 cpus: 4
 memory: 8GiB
 disk: 50GiB
-useHostResolver: false
 ssh:
   localPort: 10000
   loadDotSSHPubKeys: true
@@ -29,10 +28,6 @@ images:
   arch: "x86_64"
 - location: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-arm64.img"
   arch: "aarch64"
-
-dns:
-  - 8.8.8.8
-  - 4.4.4.4
 mounts:
   - location: "~/src"
     writable: true
@@ -79,6 +74,8 @@ provision:
     fi
     export DEBIAN_FRONTEND=noninteractive
     curl -fsSL https://get.docker.com | sh
+    docker run --rm --privileged aptman/qus -s -- -p x86_64
+    docker run --rm --privileged aptman/qus -s -- -p arm
 probes:
 - script: |
     #!/bin/bash
@@ -89,10 +86,7 @@ probes:
     fi
   hint: See "/var/log/cloud-init-output.log". in the guest
 hostResolver:
-  # hostResolver.hosts requires lima 0.8.3 or later. Names defined here will also
-  # resolve inside containers, and not just inside the VM itself.
-  hosts:
-    host.docker.internal: host.lima.internal
+  enabled: false
 portForwards:
 - guestSocket: /var/run/docker.sock
   hostSocket: "{{.Home}}/.lima/docker.sock"
