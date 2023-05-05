@@ -18,7 +18,7 @@ autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 
 " Close all quickfix and location windows
-nnoremap <leader>c :windo lcl\|ccl<CR>
+nnoremap <leader>z :windo lcl\|ccl<CR>
 
 " Let Bash be the default syntax highlighting scheme for shell scripts
 let g:is_bash=1
