@@ -3,7 +3,6 @@ trap "rm -f $INSTALL_LOCK_FILE" INT
 
 SHIFTIT_PREFS_UPDATED_SENTINEL_FILE="$HOME/.config/setup/shiftit_updated"
 WITCH_PREFS_UPDATED_SENTINEL_FILE="$HOME/.config/setup/witch_updated"
-AMETHYST_PREFS_UPDATED_SENTINEL_FILE="$HOME/.config/setup/amethyst_updated"
 ETC_HOSTS_PREPPED_SENTINEL_FILE="$HOME/.config/setup/etc_hosts_prepped"
 APPLE_WATCH_PAMID_LIBPATH=/usr/local/lib/pam/pam_watchid.so.2
 APPLE_WATCH_PAMID_URL=https://github.com/biscuitehh/pam-watchid
@@ -75,6 +74,7 @@ mas
 nightowl
 obs
 reattach-to-user-namespace
+rectangle-pro
 safari-technology-preview
 scrcpy
 shellcheck
@@ -221,49 +221,6 @@ set_regular_witch_prefs() {
     rm "$witch_PREFS_UPDATED_SENTINEL_FILE" && install_witch_prefs &&
     open ~/Library/PreferencePanes/Witch.prefPane/Contents/Helpers/witchdaemon.app/Contents/MacOS/witchdaemon
 }
-
-install_amethyst_prefs() {
-  test -f "$AMETHYST_PREFS_UPDATED_SENTINEL_FILE" && return 0
-
-  log_info "Applying Amethyst preferences"
-  defaults import com.amethyst.Amethyst "$HOME/src/setup/amethyst.plist" &&
-    touch "$AMETHYST_PREFS_UPDATED_SENTINEL_FILE"
-}
-
-set_vnc_amethyst_prefs() {
-  log_info "Applying VNC-compatible amethyst preferences"
-  killall amethyst &&
-    defaults import com.amethyst.Amethyst $HOME/src/setup/amethyst-vnc.plist &&
-    open /Applications/amethyst.app
-}
-
-set_regular_amethyst_prefs() {
-  killall amethyst &&
-    rm "$AMETHYST_PREFS_UPDATED_SENTINEL_FILE" && install_amethyst_prefs &&
-    open /Applications/Amethyst.app
-}
-
-install_shiftit_prefs() {
-  test -f "$SHIFTIT_PREFS_UPDATED_SENTINEL_FILE" && return 0
-
-  log_info "Applying ShiftIt preferences"
-  defaults import org.shiftitapp.ShiftIt "$HOME/src/setup/shiftit.plist" &&
-    touch "$SHIFTIT_PREFS_UPDATED_SENTINEL_FILE"
-}
-
-set_vnc_shiftit_prefs() {
-  log_info "Applying VNC-compatible ShiftIt preferences"
-  killall ShiftIt &&
-    defaults import org.shiftitapp.ShiftIt $HOME/src/setup/shiftit-vnc.plist &&
-    open /Applications/ShiftIt.app
-}
-
-set_regular_shiftit_prefs() {
-  killall ShiftIt &&
-    rm "$SHIFTIT_PREFS_UPDATED_SENTINEL_FILE" && install_shiftit_prefs &&
-    open /Applications/ShiftIt.app
-}
-
 
 configure_todos() {
   if ! test -d $HOME/src/todos
