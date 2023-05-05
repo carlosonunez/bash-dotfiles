@@ -564,6 +564,23 @@ first_time_setup_done() {
   test -f "$file"
 }
 
+bash_completion_location() {
+  locations=(
+    /opt/homebrew/etc/profile.d/bash_completion.sh
+    /opt/homebrew/etc/bash_completion
+    /etc/bash_completion
+  )
+  for location in "${locations[@]}"
+  do
+    if test -f "$location"
+    then
+      echo "$location"
+      return 0
+    fi
+  done
+  log_warning "bash_completion script not found at any of these locations: ${locations[*]}"
+}
+
 if ! first_time_setup_done
 then
   log_info_sudo "Welcome to the installer! We'll need to configure 1Password \
@@ -624,5 +641,7 @@ update_obs_prefs
 install_complete_alias
 update_bash
 mark_first_time_setup_as_complete_if_needed
+
+test -f "$(bash_completion_location)" && source "$(bash_completion_location)"
 
 trap - INT
