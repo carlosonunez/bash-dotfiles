@@ -123,15 +123,12 @@ update_vim_bundles() {
 }
 
 VIM_BUNDLE_REPOS=$(cat <<GITHUB_URLS
-xolox/vim-misc
-xolox/vim-easytags
-erig0/cscope_dynamic
 907th/vim-auto-save
-aliou/bats.vim
 AndrewRadev/linediff.vim
 Chiel92/vim-autoformat
 PProvost/vim-ps1
 Xuyuanp/nerdtree-git-plugin
+aliou/bats.vim
 cespare/vim-toml
 chaquotay/ftl-vim-syntax
 chr4/nginx.vim
@@ -140,13 +137,15 @@ ctrlpvim/ctrlp.vim
 ctrlpvim/ctrlp.vim
 dense-analysis/ale
 dhruvasagar/vim-table-mode
+erig0/cscope_dynamic
 fatih/vim-go
 flazz/vim-colorschemes
 hashivim/vim-terraform
-junegunn/vim-easy-align
-junegunn/vim-emoji
 junegunn/fzf
 junegunn/fzf.vim
+junegunn/vim-easy-align
+junegunn/vim-emoji
+kovetskiy/vim-bash
 lambdalisue/battery.vim
 leafgarland/typescript-vim
 markcornick/vim-bats
@@ -169,6 +168,8 @@ vim-airline/vim-airline-themes
 vim-scripts/groovy.vim
 vim-test/vim-test
 will133/vim-dirdiff
+xolox/vim-easytags
+xolox/vim-misc
 yuratomo/w3m.vim
 zivyangll/git-blame.vim
 GITHUB_URLS
