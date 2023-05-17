@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
 trap "rm -f $INSTALL_LOCK_FILE" INT
 
-SHIFTIT_PREFS_UPDATED_SENTINEL_FILE="$HOME/.config/setup/shiftit_updated"
 WITCH_PREFS_UPDATED_SENTINEL_FILE="$HOME/.config/setup/witch_updated"
 ETC_HOSTS_PREPPED_SENTINEL_FILE="$HOME/.config/setup/etc_hosts_prepped"
-APPLE_WATCH_PAMID_LIBPATH=/usr/local/lib/pam/pam_watchid.so.2
-APPLE_WATCH_PAMID_URL=https://github.com/biscuitehh/pam-watchid
-APPLE_WATCH_PAMID_PATH=$HOME/.config/security/pamid-applewatch
 ONEPASSWORD_VAULT="${ONEPASSWORD_VAULT:-"Carlos's Personal Vault"}"
 INSTALL_LOCK_FILE="$HOME/.bash_install_lock"
 COMPLETE_ALIAS_URL=https://raw.githubusercontent.com/cykerway/complete-alias/master/complete_alias
@@ -78,7 +74,6 @@ rectangle-pro
 safari-technology-preview
 scrcpy
 shellcheck
-shiftit
 sonos
 tailscale
 the_silver_searcher
@@ -480,42 +475,6 @@ tap_casks() {
   brew tap $missing_taps
 }
 
-enable_sudo_with_apple_watch_and_touch_id() {
-  enable_apple_watch() {
-    if ! test -f $APPLE_WATCH_PAMID_LIBPATH
-    then
-      if ! test -d $APPLE_WATCH_PAMID_PATH
-      then
-        mkdir -p "$APPLE_WATCH_PAMID_PATH" && \
-          git clone $APPLE_WATCH_PAMID_URL $APPLE_WATCH_PAMID_PATH
-      fi
-      log_info "Installing Apple Watch sudo extension. Enter your password when prompted."
-      pushd $APPLE_WATCH_PAMID_PATH && \
-        gsed -i 's/x86_64/$(shell uname -m)/' Makefile && \
-        sudo make install
-    fi
-    if ! grep -q "pam_watchid.so" /etc/pam.d/sudo
-    then
-      log_info "Enabling Apple Watch sudo extension. Enter your password when prompted."
-      sudo gsed -i '1s/^/auth    sufficient      pam_watchid.so    "reason=execute command as root"\n/' \
-        /etc/pam.d/sudo
-    fi
-    popd &>/dev/null
-  }
-  enable_touchid() {
-    if ! grep -q "pam_tid.so" /etc/pam.d/sudo
-    then
-      log_info "Enabling Touch ID sudo extension. Enter your password when prompted."
-      sudo gsed -i '1s/^/auth    sufficient      pam_tid.so    "reason=execute command as root"\n/' \
-        /etc/pam.d/sudo
-    fi
-  }
-  if test "$(get_os_type)" == "Darwin"
-  then
-    enable_apple_watch && enable_touchid
-  fi
-}
-
 install_fermata(){ 
   if test "$(get_os_type)" == "Darwin" && ! is_apple_m1_cpu && ! test -d "/Applications/Fermata.app"
   then
@@ -619,7 +578,6 @@ or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
     Darwin)
       install_homebrew_builtins &&
       install_app_store_apps;
-      install_shiftit_prefs;
       install_witch_prefs;
       install_fermata
           ;;
@@ -634,7 +592,6 @@ or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
   unlock_install
 fi
 
-enable_sudo_with_apple_watch_and_touch_id
 install_reddit_cli
 configure_todos
 update_obs_prefs
