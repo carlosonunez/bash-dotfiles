@@ -224,7 +224,7 @@ configure_bash_session() {
   do
     source_file "$HOME/.bash_$file"
   done
-  excludes_re='bash_(aliases|exports|functions|go|profile|install|custom_profile|company|history|sessions)'
+  excludes_re='bash_(aliases|exports|functions|python|go|profile|install|custom_profile|company|history|sessions)'
   for file in $(find $HOME -type l -maxdepth 1 -name "*.bash_*" | \
     egrep -v "$excludes_re" | \
     sort -u)
