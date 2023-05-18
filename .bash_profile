@@ -1,43 +1,29 @@
 #!/usr/bin/env bash
-source $HOME/.bash_functions
-source $HOME/.bash_aliases
-
-if test "$(echo "$BASH_VERSION" | cut -f1 -d '.')" -ge 4
-then
-  >&2 echo "PREFLIGHT: Enabling Bash 4+ extensions"
-  export PROMPT_DIRTRIM=3
-  shopt -s autocd
-fi
-
-set HISTCONTROL="ignorespace"
-export LC_ALL="en_US.UTF-8"
-export LC_CTYPE="en_US.UTF-8"
-export LANG="en_US.UTF-8"
-alias brew=brew_chooser
-export HOMEBREW_NO_AUTO_UPDATE=1 # This is incredibly annoying.
-stty -ixon # Enable i-search forwards and backwards but disables TTY flow control (useless)
-
-source ~/.bash_colors
-test -f "$HOME/.bash_exports" && source ~/.bash_exports
-test -f "$HOME/.bash_secret_exports" && source ~/.bash_secret_exports
-
-brew_chooser() {
-  if test "$(get_os_type)" != "Darwin"
-  then
-    >&2 echo "Homebrew only works on Macs. Fix the thing you're trying to do \
-in your dotfiles and try again."
-    return 1
-  fi
-
-  $(which brew) $*
+soft_exit() {
+  # Courtesy of
+  # https://stackoverflow.com/questions/11141120/exit-function-stack-without-exiting-shell;w
+  return "${1:-1}"
 }
 
-ensure_bash_profile_is_symlinked() {
-  if [ ! -L "$HOME/.bash_profile" ]
-  then
-    echo "ERROR: .bash_profile must be a symlink to your GitHub clone to use this." >&2
-    return 1
-  fi
+get_os_type() {
+  case "$(uname)" in
+    "Darwin")
+      echo "Darwin"
+      ;;
+    "Linux")
+      lsb_release -is
+      ;;
+    *)
+      echo "Unsupported"
+      ;;
+  esac
+}
+
+ensure_bash_profile_is_symlinked_or_die() {
+  [ -L "$HOME/.bash_profile" ] && return 0
+
+  echo "ERROR: .bash_profile must be a symlink to your GitHub clone to use this." >&2
+  soft_exit
 }
 
 set_path() {
@@ -76,12 +62,11 @@ source_tmux_stuff() {
   fi
 }
 
-ensure_setup_directory_is_present() {
-  if [ ! -d "$BASH_PROFILE_REPO" ]
-  then
-    echo "ERROR: Please install your setup scripts to $BASH_PROFILE_LOCATION first." >&2
-    return 1
-  fi
+ensure_setup_directory_is_present_or_die() {
+  [ -d "$BASH_PROFILE_REPO" ] && return 0
+
+  echo "ERROR: Please install your setup scripts to $BASH_PROFILE_LOCATION first." >&2
+  soft_exit
 }
 
 configure_git_hooks() {

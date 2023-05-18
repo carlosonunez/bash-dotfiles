@@ -52,20 +52,6 @@ log_error_sudo() {
   >&2 echo -ne "${BRed}ERROR${NC}: $1 (Enter password when prompted)\n"
 }
 
-get_os_type() {
-  case "$(uname)" in
-    "Darwin")
-      echo "Darwin"
-      ;;
-    "Linux")
-      lsb_release -is
-      ;;
-    *)
-      echo "Unsupported"
-      ;;
-  esac
-}
-
 
 jumpbox() {
   get_jumpbox_details_from_op() {
@@ -179,15 +165,6 @@ configure_machine_pre() {
     return 0
 
   return 1
-}
-
-install_homebrew_if_on_mac() {
-  if test "$(get_os_type)" == "Darwin" && ! which brew &>/dev/null
-  then
-    echo "Installing homebrew and GNU coreutils"
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" && \
-      brew install coreutils
-  fi
 }
 
 configure_machine() {
@@ -439,20 +416,6 @@ summarize_commits_ahead_and_behind_of_upstream() {
 }
 
 
-
-install_homebrew_if_missing() {
-  if [ "$(get_os_type)" -ne "Darwin" ]
-  then
-    # Check not required for non-Darwin operating systems.
-    return 0
-  fi
-
-  if [ "$(which brew)" -eq "" ]
-  then
-    log_info "Installing homebrew"
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-  fi
-}
 
 install_application() {
   if [ $# -eq 0 ]
