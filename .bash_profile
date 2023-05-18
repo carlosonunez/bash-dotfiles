@@ -124,13 +124,17 @@ then
   configure_secret_settings &&
   join_tmux_session
 else
-  PROMPT_COMMAND='e=$?; history -a; history -c; history -r; gvm_hook; cscope_hook; ctags_hook; set_bash_prompt $e'
+  PROMPT_COMMAND='e=$?; history -a; history -c; history -r; set_bash_prompt $e'
+    configure_machine_pre &&
+    configure_machine &&
+    PROMPT_COMMAND='$PROMPT_COMMAND; gvm_hook; cscope_hook; ctags_hook'
     configure_client_or_company_specific_settings &&
     configure_secret_settings &&
     configure_machine_pre &&
     configure_bash_session &&
     configure_machine &&
     add_keys_to_ssh_agent &&
+    start_gpg_agent &&
     log_info "Shell ready; enjoy! 🎉"
 fi
 

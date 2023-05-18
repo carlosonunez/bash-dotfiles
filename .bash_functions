@@ -174,21 +174,24 @@ install_prerequisites() {
 }
 
 configure_machine_pre() {
-  install_prerequisites
+  install_prerequisites &&
+    source "$HOME/.bash_python_specific" &&
+    return 0
+
+  return 1
+}
+
+install_homebrew_if_on_mac() {
+  if test "$(get_os_type)" == "Darwin" && ! which brew &>/dev/null
+  then
+    echo "Installing homebrew and GNU coreutils"
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" && \
+      brew install coreutils
+  fi
 }
 
 configure_machine() {
-  install_homebrew_if_on_mac() {
-    if test "$(get_os_type)" == "Darwin" && ! which brew &>/dev/null
-    then
-      echo "Installing homebrew and GNU coreutils"
-      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" && \
-        brew install coreutils
-    fi
-  }
-
-  install_homebrew_if_on_mac &&
-    source "$HOME/.bash_install"
+  source "$HOME/.bash_install"
 }
 
 
