@@ -5,6 +5,16 @@ ONE_GIGABYTE="$(numfmt --from=iec '1G')"
 ONE_MEGABYTE="$(numfmt --from=iec '1M')"
 ONE_KILOBYTE="$(numfmt --from=iec '1K')"
 
+_add_gpg_conf_if_missing() {
+  test -f "$HOME/.gnupg/gpg-agent.conf" && return 0
+
+  cat >"$HOME/.gnupg/gpg-agent.conf" <<-EOF
+default-cache-ttl 46000
+pinentry-program $(which pinentry)
+allow-preset-passphrase
+EOF
+}
+
 # shellcheck disable=SC2154
 log_init() {
   >&2 echo -ne "${BCyan}INIT${NC}: $1\n"
@@ -273,10 +283,12 @@ restart_ssh_agent() {
 }
 
 restart_gpg_agent() {
+  _add_gpg_conf_if_missing
   gpg-connect-agent reloadagent /bye
 }
 
 start_gpg_agent() {
+  _add_gpg_conf_if_missing
   pgrep -q gpg-agent || gpg-connect-agent /bye
 }
 
