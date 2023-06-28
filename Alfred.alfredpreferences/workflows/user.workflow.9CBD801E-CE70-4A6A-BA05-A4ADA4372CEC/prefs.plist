@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>hostnames_only</key>
+	<false/>
+	<key>modifier_command</key>
+	<string>Copy Password</string>
+	<key>modifier_control</key>
+	<string>View in 1Password</string>
+	<key>modifier_option</key>
+	<string>Copy Username</string>
+</dict>
+</plist>
