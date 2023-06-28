@@ -29,7 +29,8 @@ print_cscope_file_list() {
     -name "*.h" -o  \
     -name "*.cpp" -o \
     -name "*.js" -o \
-    -name "*.ts"
+    -name "*.ts" -o \
+    -name "*.rs"
 }
 
 cscope_hook() {
@@ -158,6 +159,7 @@ preservim/vimux
 rlue/vim-fold-rspec
 romainl/vim-cool
 ryanoasis/vim-devicons
+rust-lang/rust.vim
 scrooloose/nerdtree
 thoughtbot/vim-rspec
 tpope/vim-classpath

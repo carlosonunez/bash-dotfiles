@@ -35,6 +35,7 @@ set_path() {
 /usr/local/opt/coreutils/libexec/gnubin
 /Users/$USER/.gems
 /Users/$USER/.gems/bin
+/Users/$USER/.local/bin
 /usr/local/opt/curl/bin
 /usr/local/bin
 /opt/X11/bin

@@ -257,7 +257,8 @@ let g:vim_markdown_fenced_languages = [
   \'javascript=javascript',
   \'yaml=yaml',
   \'toml=toml',
-  \'json=json'
+  \'json=json',
+  \'rust=rust'
 \]
 
 " JavaScript stuff
