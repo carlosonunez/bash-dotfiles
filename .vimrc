@@ -426,3 +426,9 @@ function! Cscope_dynamic_update_hook(updating)
 endfunction
 call Cscope_dynamic_update_hook(0)
 
+" vim-terraform settings
+let g:terraform_fmt_on_save = 1
+let g:terraform_align = 1
+
+" vim-sops settings
+let g:sops_files_match = "{sops-*,*.sops,*.enc.yaml}"

@@ -147,6 +147,7 @@ junegunn/fzf.vim
 junegunn/vim-easy-align
 junegunn/vim-emoji
 kovetskiy/vim-bash
+jsecchiero/vim-sops.git
 lambdalisue/battery.vim
 leafgarland/typescript-vim
 markcornick/vim-bats
