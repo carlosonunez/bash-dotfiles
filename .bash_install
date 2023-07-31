@@ -19,6 +19,7 @@ DISABLE_ADFREE_CHECK="${DISABLE_ADFREE_CHECK:-false}" # Should we disable updati
 FORCE_ADFREE_UPDATE="${FORCE_ADFREE_UPDATE:-false}" # Should we update our /etc/hosts anyway?
 ADFREE_TIMESTAMP_FILE="$HOME/.config/adfree-etchosts/timestamp"
 MAX_AD_FREE_STALENESS_DAYS=5 # How current should /etc/hosts be?
+HOMEBREW_APPS_EXCLUSION_FILE="$HOME/.skip_these_apps"
 HOMEBREW_BUILTINS_X86=$(cat <<-APPS
 vagrant
 virtualbox
@@ -176,12 +177,22 @@ $(echo "${HOMEBREW_BUILTINS_X86}" | tr '\n' ' ')\n"
     apps="${apps} $(echo "$HOMEBREW_BUILTINS_X86" | tr '\n' ' ')"
   fi
 
-  apps_missing=$(comm -2 <(tr ' ' '\n' <<< "$apps" | sort) <(brew list -1 | sort) |
-    grep -Ev '^\t')
+  apps_missing=$(comm -2 <(tr ' ' '\n' <<< "$apps" | sort) <(brew list -1 | sort) | grep -Ev '^\t')
   if test -n "$apps_missing"
   then
-    log_info "Installing: $(tr '\n' ' ' <<< "$apps_missing")"
-    brew install $apps_missing
+    if test -f "$HOMEBREW_APPS_EXCLUSION_FILE"
+    then
+      apps_to_exclude=$(cat "$HOMEBREW_APPS_EXCLUSION_FILE")
+      log_warn "Homebrew exclusion file detected; skipping these apps: $(tr '\n' ' ' <<< $apps_to_exclude)"
+      apps_missing=$(comm -2 \
+        <(tr ' ' '\n' <<< "$apps_missing" | sort) \
+        <(sort <<< "$apps_to_exclude") | grep -Ev '^\t')
+    fi
+    if test -n "$apps_missing"
+    then
+      log_info "Installing: $(tr '\n' ' ' <<< "$apps_missing")"
+      brew install "$apps_missing"
+    fi
   fi
 }
 
@@ -509,7 +520,7 @@ update_bash() {
   if grep -iq "^3" <<< "$BASH_VERSION"
   then
     current_shell="$(dscl . -read /Users/cn shell | awk '{print $NF}')"
-    want_shell="$(brew --prefix)/bin/bash)"
+    want_shell="$(brew --prefix)/bin/bash"
     test "${current_shell}" == "${want_shell}" && return 0
 
     log_info_sudo "Updating Bash (tmux reload required once finished)"
