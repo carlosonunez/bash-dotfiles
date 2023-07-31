@@ -97,6 +97,11 @@ create_symlinks_for_rvm() {
   ln -s "${DEFAULT_SETUP_DIRECTORY}/.rvmrc" "$HOME/.rvmrc" || true
 }
 
+create_gpg_symlinks() {
+  test -d "$HOME/.config/gnupg" || mkdir -p "$HOME/.config/gnupg"
+  ln -s "${DEFAULT_SETUP_DIRECTORY}/gpg-agent.conf" "$HOME/.config/gnupg/gpg-agent.conf"
+}
+
 if {
   clone_dotfiles &&
   set_context &&
@@ -107,6 +112,7 @@ if {
   create_symlinks_for_rvm &&
   create_vim_directories &&
   create_symlinks_for_w3m &&
+  create_gpg_symlinks &&
   leave_context
 }
 then

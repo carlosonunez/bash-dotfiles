@@ -46,6 +46,10 @@ mounts:
     writable: false
   - location: "~/.kube"
     writable: true
+  - location: "~/.ssh"
+    writable: false
+  - location: "~/.gnupg"
+    writable: false
 # containerd is managed by Docker, not by Lima, so the values are set to false here.
 containerd:
   system: false
