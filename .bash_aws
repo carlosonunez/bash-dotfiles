@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #vi: set ft=bash:
-DEFAULT_AWS_REGION=us-east-2
+export DEFAULT_AWS_REGION=us-east-2
 AWS_ROLE_INFO_OP_ITEM_NAME="AWS Admin Role Information"
 AWS_TOKEN_CACHE_LOCATION="$HOME/.config/aws"
 AWS_OP_VAULT="${AWS_OP_VAULT:-$OP_DEFAULT_VAULT}"
