@@ -5,6 +5,7 @@ execute pathogen#infect()
 let g:TextWidthToggleOn = 1
 let g:DefaultGoTestRunner = 'gotest'
 let g:GoTestRunnerToggleOn = 0
+let g:TestGolangUsingGinkgo = 1
 
 " Buffer autocommands
 
@@ -16,9 +17,6 @@ autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
-
-" Close all quickfix and location windows
-nnoremap <leader>z :windo lcl\|ccl<CR>
 
 " Let Bash be the default syntax highlighting scheme for shell scripts
 let g:is_bash=1
@@ -53,23 +51,15 @@ augroup Golang
   autocmd FileType go nmap <leader>g :call ToggleGoTestMethod()<CR>
   autocmd FileType go nmap <leader><leader> :call RunTestGolang()<CR>
   au FileType go setlocal textwidth=80
-  autocmd BufWritePost *.go :call RunTestOnSaveGolang()
+  autocmd BufWritePost *.go :call RunTestGolang()
   autocmd FileType go nmap <leader>x :GoInfo<CR>
 augroup end
 
 function! RunTestGolang()
   if g:GoTestRunnerToggleOn
-    :Ginkgo -strategy=vimux --randomize-suites --cover --label-filter='!e2e && !integration' ./...
+    :Ginkgo -strategy=vimterminal --randomize-suites --cover --label-filter='!e2e && !integration' ./...
   else
     :GoTest -race
-  endif
-endfunction
-
-function! RunTestOnSaveGolang()
-  if g:GoTestRunnerToggleOn
-    :TestFile -strategy=vimux --randomize-suites --cover --label-filter='!e2e && !integration'
-  else
-    :TestFile -strategy=vimux -race
   endif
 endfunction
 
@@ -131,7 +121,7 @@ let $PYTHONPATH = "."
 
 " Helpful shell commands
 nnoremap <leader>y :!cat % \| pbcopy<CR>
-nnoremap <leader>D :bd<CR>
+nnoremap <leader>Dx :bd<CR>
 nnoremap <leader>DD :bufdo bd<CR>:NERDTreeToggle<CR>
 nnoremap <leader>dd :%bd\|e#<CR>:NERDTreeToggle<CR>
 
@@ -341,7 +331,7 @@ let g:ctrlp_cmd = 'CtrlP'
 
 " vim-test configurations
 let g:test#runner_commands = ['Ginkgo', 'RSpec', 'Nose']
-:nmap ]t :TestFile -strategy=vimux<CR>
+:nmap ]t :TestFile -strategy=vimterminal<CR>
 
 " optimized for using vim over ssh
 :set ttyfast
@@ -432,3 +422,5 @@ let g:terraform_align = 1
 
 " vim-sops settings
 let g:sops_files_match = "{sops-*,*.sops,*.enc.yaml}"
+" Close all quickfix and location windows
+nnoremap <leader>z :windo lcl\|ccl<CR>

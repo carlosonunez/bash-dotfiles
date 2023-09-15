@@ -170,11 +170,13 @@ vim-airline/vim-airline
 vim-airline/vim-airline-themes
 vim-scripts/groovy.vim
 vim-test/vim-test
+willchao612/vim-diagon
 will133/vim-dirdiff
 xolox/vim-easytags
 xolox/vim-misc
 yuratomo/w3m.vim
 zivyangll/git-blame.vim
+skywind3000/asyncrun.vim
 GITHUB_URLS
 )
 
