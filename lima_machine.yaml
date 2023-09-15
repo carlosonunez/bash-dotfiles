@@ -8,7 +8,7 @@
 
 # This example requires Lima v0.8.0 or later
 cpus: 4
-memory: 8GiB
+memory: 4GiB
 disk: 50GiB
 ssh:
   localPort: 10000
