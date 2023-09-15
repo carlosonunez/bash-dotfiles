@@ -41,18 +41,21 @@ set_path() {
 /opt/X11/bin
 /Users/$USER/src/go/bin
 /Users/$USER/bin/gyb
+/Users/$USER/.cargo/bin
 /usr/bin
 /usr/sbin
 /bin
 /sbin
 DIRECTORIES
 )
-  export PATH=$(echo "$path" | tr '\n' ':' | sed 's/.$//')
-  export HOMEBREW_PREFIX="/opt/homebrew";
-  export HOMEBREW_CELLAR="/opt/homebrew/Cellar";
-  export HOMEBREW_REPOSITORY="/opt/homebrew";
-  export MANPATH="/opt/homebrew/share/man${MANPATH+:$MANPATH}:";
-  export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}";
+  cat <<-EXPORTS
+export PATH=$(echo "$path" | tr '\n' ':' | sed 's/.$//')
+export HOMEBREW_PREFIX=/opt/homebrew
+export HOMEBREW_CELLAR=/opt/homebrew/Cellar
+export HOMEBREW_REPOSITORY=/opt/homebrew
+export MANPATH=$(sed -E 's/:\+$//' <<< /opt/homebrew/share/man${MANPATH+:$MANPATH}:)
+export INFOPATH=$(sed -E 's/:\+$//' <<< /opt/homebrew/share/info:${INFOPATH:-})
+EXPORTS
 }
 
 source_tmux_stuff() {
@@ -98,11 +101,11 @@ install_homebrew_if_on_mac_or_die() {
   soft_exit
 }
 
+export $(set_path | grep -E '^export' | xargs -0)
 set HISTCONTROL="ignorespace"
 export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 export LANG="en_US.UTF-8"
-set_path
 set_terminal_keybinding
 ensure_bash_profile_is_symlinked_or_die
 ensure_setup_directory_is_present_or_die
@@ -150,8 +153,7 @@ else
     configure_secret_settings &&
     configure_bash_session &&
     add_keys_to_ssh_agent &&
-    start_gpg_agent &&
-    log_info "Shell ready; enjoy! 🎉"
+    start_gpg_agent
 fi
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
@@ -159,3 +161,8 @@ fi
 
 [[ -s "/Users/cn/.gvm/scripts/gvm" ]] && source "/Users/cn/.gvm/scripts/gvm"
 source "$HOME/src/setup/.bash_go_specific"
+
+# We need to do this again becasue some scripts trample over the PATH and cause
+# duplicate/errant entries.
+export $(set_path | grep -E '^export' | xargs -0)
+log_info "Shell ready; enjoy! 🎉"
