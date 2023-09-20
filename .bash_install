@@ -188,7 +188,7 @@ $(echo "${HOMEBREW_BUILTINS_X86}" | tr '\n' ' ')\n"
     if test -n "$apps_missing"
     then
       log_info "Installing: $(tr '\n' ' ' <<< "$apps_missing")"
-      brew install "$apps_missing"
+      brew install $apps_missing
     fi
   fi
 }
@@ -475,12 +475,12 @@ install_reddit_cli() {
 }
 
 tap_casks() {
-  missing_taps=$(comm -2 <(sort <<< "$HOMEBREW_TAPS") <(brew tap | sort) |
+  missing_taps=$(comm -2 <(sort <<< $HOMEBREW_TAPS) <(brew tap | sort) |
     grep -Ev '^\t')
   test -z "$missing_taps" && return 0
 
   log_info "Tapping: $(tr '\n' ' ' <<< "$missing_taps")"
-  brew tap $missing_taps
+  while read -r tap; do brew tap "$tap"; done <<< $missing_taps
 }
 
 install_fermata(){ 
