@@ -26,7 +26,6 @@ virtualbox
 APPS
 )
 HOMEBREW_TAPS=$(cat <<-TAPS
-homebrew/cask-drivers
 homebrew/cask-fonts
 homebrew/cask-versions
 TAPS
