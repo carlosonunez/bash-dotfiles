@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 trap "rm -f $INSTALL_LOCK_FILE" INT
 
-WITCH_PREFS_UPDATED_SENTINEL_FILE="$HOME/.config/setup/witch_updated"
 ETC_HOSTS_PREPPED_SENTINEL_FILE="$HOME/.config/setup/etc_hosts_prepped"
 ONEPASSWORD_VAULT="${ONEPASSWORD_VAULT:-"Carlos's Personal Vault"}"
 INSTALL_LOCK_FILE="$HOME/.bash_install_lock"
@@ -43,6 +42,7 @@ bash
 bash-completion@2
 cscope
 ctags
+contexts
 colordiff
 coreutils
 curl
@@ -82,7 +82,6 @@ vb-cable
 vim
 vlc
 w3m
-witch
 xquartz
 zoom
 APPS
@@ -204,32 +203,16 @@ these apps: $formatted_apps\n"
   fi
 }
 
-install_witch_prefs() {
-  test -f "$WITCH_PREFS_UPDATED_SENTINEL_FILE" && return 0
-
-  log_info "Applying witch preferences"
-  defaults import com.manytricks.witchdaemon "$HOME/src/setup/witch.plist" &&
-    touch "$WITCH_PREFS_UPDATED_SENTINEL_FILE"
-}
-
-set_vnc_witch_prefs() {
-  log_info "Applying VNC-compatible witch preferences"
-  killall witch &&
-    defaults import com.witch.witch $HOME/src/setup/witch-vnc.plist &&
-    open /Applications/witch.app
-}
-
-set_regular_witch_prefs() {
-  killall witch &&
-    rm "$witch_PREFS_UPDATED_SENTINEL_FILE" && install_witch_prefs &&
-    open ~/Library/PreferencePanes/Witch.prefPane/Contents/Helpers/witchdaemon.app/Contents/MacOS/witchdaemon
-}
-
 configure_todos() {
-  if ! test -d $HOME/src/todos
+  if ! test -d "$HOME/src/todos"
   then
     log_info "Installing shell todos"
-    git clone git@github.carlosnunez.me:carlosonunez/todos.git $HOME/src/todos
+    if ! test -f "$HOME/.ssh/config" || ! grep 'Host github.carlosnunez.me' "$HOME/.ssh/config"
+    then
+      log_error "Can't configure todos yet; set up SSH config first."
+      return 0
+    fi
+    git clone git@github.carlosnunez.me:carlosonunez/todos.git "$HOME/src/todos"
   fi
 }
 
@@ -586,7 +569,6 @@ or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
     Darwin)
       install_homebrew_builtins &&
       install_app_store_apps;
-      install_witch_prefs;
       install_fermata
           ;;
     *)
