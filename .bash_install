@@ -294,6 +294,18 @@ been updated. Doing that now."
 
 
 get_ssh_and_aws_keys_from_onepassword() {
+  SSH_SENTINEL_FILE="$HOME/.config/setup/ssh_keys_downloaded"
+  SSH_SENTINEL_DIR=$(dirname "$SSH_SENTINEL_FILE")
+
+  ssh_and_aws_keys_retrieved() {
+    test -f "$SSH_SENTINEL_FILE"
+  }
+
+  mark_ssh_and_aws_keys_retrieved() {
+    test -d "$SSH_SENTINEL_DIR" || mkdir -p "$SSH_SENTINEL_DIR"
+    touch "$SSH_SENTINEL_FILE"
+  }
+
   ssh_folder_not_present_or_empty() {
     # TECH NOTE: executing `find` against an empty directory will only
     # yield the directory itself.
@@ -323,16 +335,16 @@ get_ssh_and_aws_keys_from_onepassword() {
     rm "$HOME/Downloads/keys.zip"
   }
 
-  if ssh_folder_not_present_or_empty
-  then
-    log_info "Downloading and configuring SSH and cloud keys. (You'll be \
+  ssh_and_aws_keys_retrieved && return 0
+
+  log_info "Downloading and configuring SSH and cloud keys. (You'll be \
 asked to provide a passphrase for your GPG keys.)"
-    download_keys &&
-      unzip_keys &&
-      permission_keys &&
-      import_gpg_keys &&
-      remove_downloaded_keys
-  fi
+  download_keys &&
+    unzip_keys &&
+    permission_keys &&
+    import_gpg_keys &&
+    remove_downloaded_keys &&
+    mark_ssh_and_aws_keys_retrieved
 }
 
 get_secret_settings_from_onepassword() {
