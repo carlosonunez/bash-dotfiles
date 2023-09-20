@@ -543,6 +543,22 @@ bash_completion_location() {
   log_warning "bash_completion script not found at any of these locations: ${locations[*]}"
 }
 
+stop_stealing_focus() {
+  test "$(defaults read com.apple.dock workspaces-auto-swoosh)" == 0 && return 0
+
+  defaults write com.apple.dock workspaces-auto-swoosh -bool false
+  osascript -e 'tell application "Dock" to quit'
+}
+
+disable_the_dock_entirely() {
+  test -f "$HOME/.config/setup/dock-hidden" && return 0
+
+  defaults write com.apple.dock persistent-apps -array &&
+    defaults write com.apple.Dock autohide -bool TRUE &&
+    defaults write com.apple.dock autohide-delay -float 1000 &&
+    killall Dock
+}
+
 if ! first_time_setup_done
 then
   log_info_sudo "Welcome to the installer! We'll need to configure 1Password \
@@ -593,7 +609,8 @@ or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
   get_firefox_multi_account_containers_from_onepassword
   unlock_install
 fi
-
+stop_stealing_focus
+disable_the_dock_entirely
 install_reddit_cli
 configure_todos
 update_obs_prefs
