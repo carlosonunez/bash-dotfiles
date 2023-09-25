@@ -154,7 +154,6 @@ markcornick/vim-bats
 martinda/Jenkinsfile-vim-syntax
 othree/javascript-libraries-syntax.vim
 pangloss/vim-javascript
-pedrohdz/vim-yaml-folds
 plasticboy/vim-markdown
 preservim/vimux
 rlue/vim-fold-rspec
