@@ -210,7 +210,17 @@ configure_bash_session() {
   done
 }
 
+onepassword_ssh_agent_configuration_exists() {
+  test -f "$HOME/.config/1Password/ssh/agent.toml"
+}
+
 add_keys_to_ssh_agent() {
+  if onepassword_ssh_agent_configuration_exists
+  then
+    >&2 echo "INFO: SSH keys are managed by 1Password. Go ahead and add them there."
+    return 0
+  fi
+
   SSH_AGENT_ENV_FILE="$HOME/.ssh/agent_env"
   apply_ssh_askpass_hack() {
     export OLD_DISPLAY=$DISPLAY
@@ -259,6 +269,11 @@ add_keys_to_ssh_agent() {
 }
 
 restart_ssh_agent() {
+  if onepassword_ssh_agent_configuration_exists
+  then
+    >&2 echo "INFO: This SSH agent is managed by 1Password. Restart 1Password if you're having issues."
+    return 0
+  fi
   killall ssh-agent && add_keys_to_ssh_agent
 }
 
@@ -785,3 +800,19 @@ update_ssh_and_aws_keys() {
     "$HOME/.ssh/*" \
     "SSH and AWS Keys"
 }
+
+if onepassword_ssh_agent_configuration_exists
+then
+  killall ssh-agent;
+  case "$(get_os_type)" in
+    Darwin)
+      export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+      ;;
+    Linux)
+      export SSH_AUTH_SOCK=~/.1Password/agent.sock
+      ;;
+    *)
+      >&2 echo "Automatic 1Password configuration isn't available for this OS yet."
+      ;;
+  esac
+fi
