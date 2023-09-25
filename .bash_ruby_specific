@@ -5,7 +5,7 @@
 source "$HOME/.bash_functions"
 
 RUBY_CHECK_SENTINEL_FILE=/tmp/ruby_installation_in_progress
-RUBY_VERSION_TO_USE="2.7.2"
+RUBY_VERSION_TO_USE="3.1.0"
 RUBY_GEMFILE="$HOME/.config/ruby/Gemfile"
 
 ruby_check_mutex_lock() {
