@@ -111,11 +111,11 @@ install_ruby_version() {
   rvm autolibs disable
   export RUBY_CFLAGS=-DUSE_FFI_CLOSURE_ALLOC
   export optflags="-Wno-error=implicit-function-declaration"
-  export PATH="$(brew --prefix)/opt/openssl@1.1/bin:$PATH"
-  export LDFLAGS="-L$(brew --prefix)/opt/openssl@1.1/lib"
-  export CPPFLAGS="-I$(brew --prefix)/opt/openssl@1.1/include"
-  export PKG_CONFIG_PATH="$(brew --prefix)/opt/openssl@1.1/lib/pkgconfig"
-  rvm install "$1" --with-openssl-dir="$(brew --prefix)/opt/openssl@1.1"
+  export PATH="$(brew --prefix)/opt/openssl@3.1/bin:$PATH"
+  export LDFLAGS="-L$(brew --prefix)/opt/openssl@3.1/lib"
+  export CPPFLAGS="-I$(brew --prefix)/opt/openssl@3.1/include"
+  export PKG_CONFIG_PATH="$(brew --prefix)/opt/openssl@3.1/lib/pkgconfig"
+  rvm install "$1" --with-openssl-dir="$(brew --prefix)/opt/openssl@3.1"
 }
 
 trap 'ruby_check_mutex_unlock' INT HUP EXIT
