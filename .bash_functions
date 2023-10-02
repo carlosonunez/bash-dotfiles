@@ -58,7 +58,7 @@ jumpbox() {
     details=$(sudo security find-generic-password -a "$USER" -s "jumpbox" -w 2>/dev/null)
     if test -z "$details"
     then
-      if ! remote_details=$(op --vault "$ONEPASSWORD_VAULT" get item "Carlos's Jumpbox Details" | \
+      if ! remote_details=$(op_cli --vault "$ONEPASSWORD_VAULT" get item "Carlos's Jumpbox Details" | \
         jq -r '.details.notesPlain' | tr '\n' ';' )
       then
         log_error "Can't get jumpbox details."
@@ -780,9 +780,9 @@ _update() {
   path="$3"
   title="$4"
   test -f "$zip_file" && rm "$zip_file"
-  op document get "$title" --vault "$vault" --output "$zip_file" &&
+  op_cli document get "$title" --vault "$vault" --output "$zip_file" &&
   zip -ujr "$zip_file" $path &&
-  op document edit "$title" --vault "$vault" "$zip_file"
+  op_cli document edit "$title" --vault "$vault" "$zip_file"
 }
 
 update_secret_settings() {

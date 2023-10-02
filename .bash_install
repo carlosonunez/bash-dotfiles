@@ -335,6 +335,10 @@ get_ssh_and_aws_keys_from_onepassword() {
     rm "$HOME/Downloads/keys.zip"
   }
 
+  symlink_git_config() {
+    ln -s "$HOME/.ssh/gitconfig" "$HOME/.gitconfig"
+  }
+
   ssh_and_aws_keys_retrieved && return 0
 
   log_info "Downloading and configuring SSH and cloud keys. (You'll be \
@@ -344,6 +348,7 @@ asked to provide a passphrase for your GPG keys.)"
     permission_keys &&
     import_gpg_keys &&
     remove_downloaded_keys &&
+    symlink_git_config &&
     mark_ssh_and_aws_keys_retrieved
 }
 
