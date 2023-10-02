@@ -23,7 +23,7 @@ ensure_bash_profile_is_symlinked_or_die() {
   [ -L "$HOME/.bash_profile" ] && return 0
 
   echo "ERROR: .bash_profile must be a symlink to your GitHub clone to use this." >&2
-  soft_exit
+  soft_exit 1
 }
 
 set_path() {
@@ -70,7 +70,7 @@ ensure_setup_directory_is_present_or_die() {
   [ -d "$BASH_PROFILE_REPO" ] && return 0
 
   echo "ERROR: Please install your setup scripts to $BASH_PROFILE_LOCATION first." >&2
-  soft_exit
+  soft_exit 1
 }
 
 configure_git_hooks() {
@@ -93,12 +93,12 @@ set_terminal_keybinding() {
 install_homebrew_if_on_mac_or_die() {
   { test "$(get_os_type)" != "Darwin" || &>/dev/null which brew; } && return 0
 
-  echo "Installing homebrew and GNU coreutils"
+  echo "Installing homebrew, GNU coreutils, sops and yq"
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" && \
-    brew install coreutils &&
+    brew install coreutils sops yq &&
     return 0
 
-  soft_exit
+  soft_exit 1
 }
 
 export $(set_path | grep -E '^export' | xargs -0)
