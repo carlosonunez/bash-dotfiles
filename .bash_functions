@@ -634,8 +634,17 @@ toggle_bash_prompt() {
 }
 
 preview_markdown() {
-  log_info "Visit http://localhost:6419 to view your stuff."
-  docker run -i --rm -v $PWD:/data -p 6419:3080 thomsch98/markserv
+  file="${1:-$PWD}"
+  file_abs="$(realpath "$file" | sed 's;/private;;')"
+  if ! test -e "$file_abs"
+  then
+    log_error "File does not exist: $file_abs"
+    return 1
+  fi
+  mountpoint=/work
+  test -f "$file_abs" && mountpoint=/work/file.md
+  docker run -it --net=host --rm -v "${file_abs}:$mountpoint" carlosnunez/md-fileserver:alpine \
+    "$mountpoint"
 }
 
 disable_sleep() {
