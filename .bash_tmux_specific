@@ -4,17 +4,34 @@ tmux_is_installed() {
   &>/dev/null which tmux
 }
 
+get_additional_windows_csv() {
+  local session="$1"
+  env_key="ADDITIONAL_TMUX_WINDOWS_CSV_$(tr '[:lower:]' '[:upper:]' <<< "$session")"
+  default_env_key="ADDITIONAL_TMUX_WINDOWS_CSV_DEFAULT"
+  for k in "$env_key" "$default_env_key"
+  do
+    v="${!k}"
+    test -z "$v" && continue
+
+    echo "$v"
+    return 0
+  done
+  log_error "$env_key or $default_env_key not defined."
+  return 1
+}
+
 add_additional_tmux_windows() {
-  tmux display-message "Additional windows: $ADDITIONAL_TMUX_WINDOWS_CSV"
-  if ! test -z "$ADDITIONAL_TMUX_WINDOWS_CSV"
-  then
-    idx=1
-    for window in $(echo "$ADDITIONAL_TMUX_WINDOWS_CSV" | tr ',' '\n')
-    do
-      tmux new-window -t "$TMUX_SESSION_NAME:$idx" -n "$window"
-      idx=$((idx+1))
-    done
-  fi
+  local session="$1"
+  additional_windows_csv="$(get_additional_windows_csv "$session")"
+  test -z "$additional_windows_csv" && return 0
+
+  tmux display-message "Additional windows: $additional_windows_csv"
+  idx=1
+  for window in $(echo "$additional_windows_csv" | tr ',' '\n')
+  do
+    tmux new-window -t "$session:$idx" -n "$window"
+    idx=$((idx+1))
+  done
 }
 
 # Are we in an SSH session?
@@ -59,18 +76,21 @@ reattach_to_user_namespace_not_found() {
 # Starts a new tmux session with my usual window configuration.
 start_tmux() {
   start_tmux_with_multiple_windows() {
-    tmux new-session -d -s "$TMUX_SESSION_NAME" && \
-      add_additional_tmux_windows && \
-      tmux select-window -t "$TMUX_SESSION_NAME:0" && \
-      tmux attach-session -t "$TMUX_SESSION_NAME"
+    local session="$1"
+    tmux new-session -d -s "$session" && \
+      add_additional_tmux_windows "$session" && \
+      tmux select-window -t "$session:0" && \
+      tmux attach-session -t "$session"
   }
   start_tmux_with_single_window() {
-    tmux new-session -d -s "$TMUX_SESSION_NAME" && \
+    local session="$1"
+    tmux new-session -d -s "$session" && \
       tmux select-pane -t 0 && \
-      tmux attach-session -t "$TMUX_SESSION_NAME"
+      tmux attach-session -t "$session"
   }
 
-  cd $HOME
+  session_name="${1:-$TMUX_SESSION_NAME}"
+  cd "$HOME" || return
   if reattach_to_user_namespace_not_found
   then
     log_error "reattach-to-user-namespace not installed or found in \
@@ -78,13 +98,13 @@ start_tmux() {
 'source $HOME/.bash_profile' again."
     return 1
   fi
-  if tmux ls &> /dev/null
+  if tmux ls | grep -q "$session_name"
   then
-    tmux attach -t "$TMUX_SESSION_NAME" 2>/dev/null
+    tmux attach -t "$session_name" 2>/dev/null
   else
     if in_ssh_session
-    then start_tmux_with_single_window
-    else start_tmux_with_multiple_windows
+    then start_tmux_with_single_window "$session_name"
+    else start_tmux_with_multiple_windows "$session_name"
     fi
   fi
 }
