@@ -591,7 +591,7 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
 
   hostname_name=$(echo "$HOSTNAME" | sed 's/.local$//')
   hostname_fmtd="\[$BBlue\]$hostname_name\[$NC\]"
-  if ! test -f "$PWD/.git" || ! $(2>/dev/null git rev-parse --is-inside-work-tree)
+  if ! test -d "$PWD/.git" || ! $(2>/dev/null git rev-parse --is-inside-work-tree)
   then
     PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]${virtualenv}${ruby_version}${local_go_version}$(print_dirstack_count)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   elif [ "$(2>/dev/null git --no-pager branch --list)" == "" ]
