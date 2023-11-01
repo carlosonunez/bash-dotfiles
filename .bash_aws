@@ -123,7 +123,7 @@ update_default_aws_profile_with_current_creds() {
   log_info "[default] awscli profile updated."
 }
 
-alias log_into_aws_with_op='configure_1password_cli && 1>/dev/null export $(_log_into_aws | grep -E "^export AWS" | xargs -0)'
+alias log_into_aws_with_op='eval $(configure_1password_cli) && 1>/dev/null export $(_log_into_aws | grep -E "^export AWS" | xargs -0)'
 alias aws_login=log_into_aws_with_op
 
 
