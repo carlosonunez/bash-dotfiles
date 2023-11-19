@@ -51,7 +51,6 @@ augroup Golang
   autocmd FileType go nmap <leader>g :call ToggleGoTestMethod()<CR>
   autocmd FileType go nmap <leader><leader> :call RunTestGolang()<CR>
   au FileType go setlocal textwidth=80
-  autocmd BufWritePost *.go :call RunTestGolang()
   autocmd FileType go nmap <leader>x :GoInfo<CR>
 augroup end
 
@@ -59,7 +58,7 @@ function! RunTestGolang()
   if g:GoTestRunnerToggleOn
     :Ginkgo -strategy=vimterminal --randomize-suites --cover --label-filter='!e2e && !integration' ./...
   else
-    :GoTest -race
+    :GoTest -race -tags !slow -tags !e2e
   endif
 endfunction
 
@@ -259,8 +258,8 @@ let g:used_javascript_libs = 'jquery,angularjs,angularui,react,jasmine,chai'
 " Golang specific: Lint, test, and vet on save
 let g:go_jump_to_error = 0
 let g:go_metalinter_autosave = 1
-let g:go_metalinter_autosave_enabled = ['deadcode', 'vet', 'golint', 'errcheck']
-let g:go_fmt_fail_silently = 1
+let g:go_metalinter_autosave_enabled = ['bugs', 'error', 'complexity', 'metalinter', 'style']
+let g:go_fmt_fail_silently = 0
 
 " Fugitive keybindings.
 
@@ -318,6 +317,7 @@ let g:airline#extensions#tabline#enabled = 1
 " ALE configuration
 let g:ale_sign_error = '❌'
 let g:ale_sign_warning = '⚠️ '
+let g:ale_go_golangci_lint_package = 1
 hi SignColumn guibg=Red ctermbg=Red
 
 :nmap ]a :ALENextWrap<CR>
