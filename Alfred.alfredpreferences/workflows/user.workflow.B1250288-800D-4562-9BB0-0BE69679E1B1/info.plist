@@ -8,11 +8,21 @@
 	<string>Productivity</string>
 	<key>connections</key>
 	<dict>
-		<key>1D4AA13F-5B7D-4A1F-AAFD-B83C12FEE423</key>
+		<key>188728F5-7DFC-4049-B6BB-C374180D79BB</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>553A6DD5-745E-4B15-9515-8099AEC6F03B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>E436AB0F-27B6-4ED7-90D7-A6FB7AC6D6FD</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -25,7 +35,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>1D4AA13F-5B7D-4A1F-AAFD-B83C12FEE423</string>
+				<string>188728F5-7DFC-4049-B6BB-C374180D79BB</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -39,19 +49,6 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>B8C4EBF6-24F0-4C31-969C-3A0761451535</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
-		<key>5AACBD7E-E60F-47B0-8560-097284BA1BCF</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>E436AB0F-27B6-4ED7-90D7-A6FB7AC6D6FD</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -90,7 +87,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>5AACBD7E-E60F-47B0-8560-097284BA1BCF</string>
+				<string>188728F5-7DFC-4049-B6BB-C374180D79BB</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -193,25 +190,6 @@ done</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>paths</key>
-				<array>
-					<string>/Applications/krisp.app</string>
-					<string>/Applications/zoom.us.app</string>
-					<string>/Applications/OBS.app</string>
-				</array>
-				<key>toggle</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.launchfiles</string>
-			<key>uid</key>
-			<string>1D4AA13F-5B7D-4A1F-AAFD-B83C12FEE423</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>action</key>
 				<integer>0</integer>
 				<key>argument</key>
@@ -260,6 +238,32 @@ done</string>
 			<string>553A6DD5-745E-4B15-9515-8099AEC6F03B</string>
 			<key>version</key>
 			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>open ~/Applications/krisp.app
+open /Applications/zoom.us.app
+sleep 5
+open /Applications/OBS.app</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>188728F5-7DFC-4049-B6BB-C374180D79BB</string>
+			<key>version</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -338,25 +342,6 @@ done
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>paths</key>
-				<array>
-					<string>/Applications/krisp.app</string>
-					<string>/Applications/zoom.us.app</string>
-					<string>/Applications/OBS.app</string>
-				</array>
-				<key>toggle</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.launchfiles</string>
-			<key>uid</key>
-			<string>5AACBD7E-E60F-47B0-8560-097284BA1BCF</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>lastpathcomponent</key>
 				<false/>
 				<key>onlyshowifquerypopulated</key>
@@ -380,7 +365,7 @@ done
 	<string></string>
 	<key>uidata</key>
 	<dict>
-		<key>1D4AA13F-5B7D-4A1F-AAFD-B83C12FEE423</key>
+		<key>188728F5-7DFC-4049-B6BB-C374180D79BB</key>
 		<dict>
 			<key>xpos</key>
 			<real>395</real>
@@ -421,13 +406,6 @@ done
 			<real>960</real>
 			<key>ypos</key>
 			<real>395</real>
-		</dict>
-		<key>5AACBD7E-E60F-47B0-8560-097284BA1BCF</key>
-		<dict>
-			<key>xpos</key>
-			<real>390</real>
-			<key>ypos</key>
-			<real>565</real>
 		</dict>
 		<key>B8C4EBF6-24F0-4C31-969C-3A0761451535</key>
 		<dict>

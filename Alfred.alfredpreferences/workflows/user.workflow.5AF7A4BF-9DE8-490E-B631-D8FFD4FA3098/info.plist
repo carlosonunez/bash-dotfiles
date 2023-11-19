@@ -47,25 +47,6 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>autopaste</key>
-				<false/>
-				<key>clipboardtext</key>
-				<string>{query}</string>
-				<key>ignoredynamicplaceholders</key>
-				<false/>
-				<key>transient</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.clipboard</string>
-			<key>uid</key>
-			<string>16AACC75-D7CF-4425-BCAA-419EBDD1AB0D</string>
-			<key>version</key>
-			<integer>3</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
@@ -91,7 +72,7 @@
 				<key>runningsubtext</key>
 				<string>searching....</string>
 				<key>script</key>
-				<string>val=$(/Users/cn/.gvm/pkgsets/go1.17.1/global/bin/authy fuzz --alfred $@)
+				<string>val=$(/Users/cn/.gvm/pkgsets/go1.21.1/global/bin/authy fuzz --alfred $@)
 cat &lt;&lt; EOB
 $val
 EOB</string>
@@ -112,6 +93,25 @@ EOB</string>
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
 			<string>AC356E78-96F6-480F-BEB1-0BDD876E5DED</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<false/>
+				<key>transient</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>16AACC75-D7CF-4425-BCAA-419EBDD1AB0D</string>
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
@@ -164,7 +164,7 @@ EOB</string>
 				<key>runningsubtext</key>
 				<string>refreshing...</string>
 				<key>script</key>
-				<string>/Users/cn/.gvm/pkgsets/go1.17.1/global/bin/authy refresh
+				<string>/Users/cn/.gvm/pkgsets/go1.21.1/global/bin/authy refresh
 cat &lt;&lt; EOB
 {"items": [{
 	"title": "Authy tokens refresh successfully",
@@ -199,32 +199,34 @@ EOB</string>
 		<key>16AACC75-D7CF-4425-BCAA-419EBDD1AB0D</key>
 		<dict>
 			<key>xpos</key>
-			<integer>580</integer>
+			<real>580</real>
 			<key>ypos</key>
-			<integer>80</integer>
+			<real>80</real>
 		</dict>
 		<key>853616B0-58FF-4ABF-9A77-F41BAFE066CA</key>
 		<dict>
 			<key>xpos</key>
-			<integer>580</integer>
+			<real>580</real>
 			<key>ypos</key>
-			<integer>200</integer>
+			<real>200</real>
 		</dict>
 		<key>AC356E78-96F6-480F-BEB1-0BDD876E5DED</key>
 		<dict>
 			<key>xpos</key>
-			<integer>210</integer>
+			<real>210</real>
 			<key>ypos</key>
-			<integer>80</integer>
+			<real>80</real>
 		</dict>
 		<key>CE64ED04-6C02-4918-AE23-849C04DFC617</key>
 		<dict>
 			<key>xpos</key>
-			<integer>210</integer>
+			<real>210</real>
 			<key>ypos</key>
-			<integer>280</integer>
+			<real>280</real>
 		</dict>
 	</dict>
+	<key>userconfigurationconfig</key>
+	<array/>
 	<key>variables</key>
 	<dict>
 		<key>PATH</key>
