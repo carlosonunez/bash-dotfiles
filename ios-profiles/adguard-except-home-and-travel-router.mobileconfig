@@ -92,7 +92,7 @@
     <string>Adds different encrypted DNS configurations to Big Sur (or newer) and iOS 14 (or newer)
     based systems</string>
     <key>PayloadDisplayName</key>
-    <string>Encrypted DNS (DoH, DoT)</string>
+    <string>AdGuard DNS (except at home and travel router)</string>
     <key>PayloadIdentifier</key>
     <string>com.notjakob.apple-dns.52de8eeb-5fe6-41df-ab36-de89644383b3</string>
     <key>PayloadRemovalDisallowed</key>
