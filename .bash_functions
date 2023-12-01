@@ -362,26 +362,23 @@ kill_all_matching_pids() {
 generate_random_string() {
   length=$1
   lower=$2
-  [[ "$length" == "" ]] && length=16
-  if [[ "$(uname)" == "Darwin" ]]; then
-    if grep -Eiq '^true$' <<< "$lower"
-    then
-      LC_CTYPE=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c $length | tr '[:upper:]' '[:lower:]'
-    else
-      LC_CTYPE=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c $length
-    fi
-  else
-    if grep -Eiq '^true$' <<< "$lower"
-    then
-      tr -dc 'a-zA-Z0-9' < /dev/urandom | tr '[:upper:]' '[:lower:]' | head -c $length
-    else
-      tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c $length
-    fi
-  fi
+  alphanumeric_only=$3
+  filter='a-zA-Z0-9'
+  special_chars=' !"#$%&()*+,-./:;<=>?@[]^_`{|}~'"'"
+  [[ -z "$length" ]] && length=16
+  grep -Eiq '^true$' <<< "$alphanumeric_only" || filter="${filter}${special_chars}"
+  [[ "$(get_os_type)" == "Darwin" ]] && export LC_CTYPE=C
+  res="$(tr -dc "[$filter]" < /dev/urandom | head -c "$length")"
+  grep -Eiq '^true$' <<< "$lower" && res="${res,,}"
+  echo "$res"
 }
 
 generate_lcase_random_string() {
   generate_random_string "$1" "true"
+}
+
+generate_random_alphanumeric_string() {
+  generate_random_string "$1" "$2" 'true'
 }
 
 generate_password() {

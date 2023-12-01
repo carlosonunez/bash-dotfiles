@@ -95,7 +95,7 @@ else
   alias ptdone="ptodo do"
 fi
 
-alias dc=docker-compose
+alias dc='docker-compose --log-level ERROR'
 complete -F _complete_alias dc
 alias speed=run_speed_test
 alias git=git
