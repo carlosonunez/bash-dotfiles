@@ -567,18 +567,20 @@ disable_the_dock_entirely() {
     killall Dock
 }
 
-if ! first_time_setup_done
-then
-  log_info_sudo "Welcome to the installer! We'll need to configure 1Password \
-first so that we can fetch your secret preferences."
-  if ! configure_1password_cli
+setup_onepassword() {
+  if ! first_time_setup_done
   then
-    log_error "Failed to configure 1Password. This might be because your \
-account has two-factor authentication enabled. Run 'source ~/.bash_profile' again, but \
-pre-pend this to it: 'ONEPASSWORD_OTP=[YOUR_OTP]'."
-    return 1 2>/dev/null
+    log_info_sudo "Welcome to the installer! We'll need to configure 1Password \
+  first so that we can fetch your secret preferences."
+    if ! configure_1password_cli
+    then
+      log_error "Failed to configure 1Password. This might be because your \
+  account has two-factor authentication enabled. Run 'source ~/.bash_profile' again, but \
+  pre-pend this to it: 'ONEPASSWORD_OTP=[YOUR_OTP]'."
+      return 1 2>/dev/null
+    fi
   fi
-fi
+}
 
 remove_dead_install_locks
 if installation_is_locked
