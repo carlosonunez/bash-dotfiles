@@ -480,21 +480,10 @@ unlock_install() {
   rm -f "$INSTALL_LOCK_FILE"
 }
 
-install_reddit_cli() {
-  if ! tuir --version &>/dev/null
-  then
-    log_info "Installing Reddit for CLI"
-    pip install tuir
-  fi
-}
-
 tap_casks() {
-  missing_taps=$(comm -2 <(sort <<< $HOMEBREW_TAPS) <(brew tap | sort) |
-    grep -Ev '^\t')
-  test -z "$missing_taps" && return 0
-
-  log_info "Tapping: $(tr '\n' ' ' <<< "$missing_taps")"
-  while read -r tap; do brew tap "$tap"; done <<< $missing_taps
+  comm -2 <(sort <<< "$HOMEBREW_TAPS") <(brew tap | sort) |
+  grep -Ev '^\t' |
+  xargs -I {} brew tap {}
 }
 
 install_fermata(){ 
