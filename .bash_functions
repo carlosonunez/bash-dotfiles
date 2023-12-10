@@ -53,50 +53,6 @@ log_error_sudo() {
 }
 
 
-jumpbox() {
-  get_jumpbox_details_from_op() {
-    details=$(sudo security find-generic-password -a "$USER" -s "jumpbox" -w 2>/dev/null)
-    if test -z "$details"
-    then
-      if ! remote_details=$(op_cli --vault "$ONEPASSWORD_VAULT" get item "Carlos's Jumpbox Details" | \
-        jq -r '.details.notesPlain' | tr '\n' ';' )
-      then
-        log_error "Can't get jumpbox details."
-        return 1
-      fi
-      sudo security add-generic-password -a "$USER" -s "jumpbox" -w "$remote_details" -U
-      echo "$remote_details"
-      return
-    fi
-    echo "$details"
-  }
-  if ! details=$(get_jumpbox_details_from_op | tr ';' '\n')
-  then
-    log_error "Can't get jumpbox details."
-    return 1
-  fi
-  host=$(echo "$details" | head -1)
-  port=$(echo "$details" | tail -2 | tail -1)
-  username=$(echo "$details" | tail -2 | head -1)
-  if test -z "$host" || test -z "$port" || test -z "$username"
-  then
-    log_error "Host or port is empty."
-    return 1
-  fi
-  cmd="ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -A"
-  for arg in "$@"
-  do
-    cmd="$cmd $arg"
-  done
-  cmd="$cmd -p $port $username@$host"
-  if ! test -z "$JUMPBOX_SSH_COMMAND"
-  then
-    cmd="$cmd $JUMPBOX_SSH_COMMAND"
-  fi
-  printf "${BGreen}-->${NC} $cmd\n"
-  $cmd
-}
-
 pushd () {
   command pushd "$@" > /dev/null
 }
