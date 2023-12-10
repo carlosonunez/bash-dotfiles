@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+export FROM_BASH_INSTALL=true
+source "$HOME/.bash_onepassword_specific"
 trap "rm -f $INSTALL_LOCK_FILE" INT
 
 ETC_HOSTS_PREPPED_SENTINEL_FILE="$HOME/.config/setup/etc_hosts_prepped"
