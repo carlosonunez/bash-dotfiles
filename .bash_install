@@ -137,6 +137,18 @@ INCLUSIONS
 )
 FERMATA_URL="https://github.com/iccir/Fermata/releases/download/Fermata-136/Fermata-136.zip"
 
+_wait_for_file_to_be_manually_downloaded_from_op() {
+  local key="$1"
+  local file="$2"
+  test -f "$file" && return 0
+
+  while ! test -f "$file"
+  do
+    echo "INFO: Please open 1Password and download '$key' into '$file'. Press ENTER to continue."
+    read
+  done
+}
+
 check_for_internet_access() {
   test "$(curl -s --connect-timeout 3 http://nil.carlosnunez.me)" == "i love socks."
 }
@@ -316,8 +328,7 @@ get_ssh_and_aws_keys_from_onepassword() {
   }
 
   download_keys() {
-    op document get "SSH and AWS Keys" --vault "$OP_DEFAULT_VAULT" \
-      --output="$HOME/Downloads/keys.zip"
+    _wait_for_file_to_be_manually_downloaded_from_op "SSH and AWS Keys" "$HOME/Downloads/keys.zip"
   }
 
   unzip_keys() {
@@ -369,8 +380,8 @@ get_secret_settings_from_onepassword() {
   }
 
   download_env_settings() {
-    op document get "Secret Environment Settings" --vault "$OP_DEFAULT_VAULT" \
-      --output "$HOME/Downloads/environment.zip"
+    _wait_for_file_to_be_manually_downloaded_from_op "Secret Environment Settings" \
+      "$HOME/Downloads/environment.zip"
   }
 
   unzip_env_settings() {
@@ -400,7 +411,7 @@ get_firefox_multi_account_containers_from_onepassword() {
   }
 
   download_regexes() {
-    op item get "Firefox Multi-Account Container Configuration" \
+    op-cli item get "Firefox Multi-Account Container Configuration" \
       --vault "$OP_DEFAULT_VAULT" \
       --fields notesPlain >> $HOME/.ssh/firefox_mac_regexes
   }
@@ -428,7 +439,7 @@ update_firefox_multi_account_containers_into_onepassword() {
   if ! test -z "$containers_string"
   then
     log_info "Updating 1Password."
-    op item edit 'Firefox Multi-Account Container Configuration' notesPlain="$containers_string" \
+    op-cli item edit 'Firefox Multi-Account Container Configuration' notesPlain="$containers_string" \
       --vault "$OP_DEFAULT_VAULT"
   fi
 }
