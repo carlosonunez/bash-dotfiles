@@ -62,6 +62,7 @@ gnu-sed
 gnu-tar
 gnutls
 grep
+gnupg
 brightness
 htop
 imagemagick
@@ -246,7 +247,7 @@ update_obs_prefs() {
   }
 
   _download_and_unzip_obs_prefs() {
-    op document get --vault "$OP_DEFAULT_VAULT" "$OBS_PREFS_OP_KEY" >  "$OBS_PREFS_TMP_FILE" &&
+    op-cli document get --vault "$OP_DEFAULT_VAULT" "$OBS_PREFS_OP_KEY" >  "$OBS_PREFS_TMP_FILE" &&
       unzip -d "${HOME}/Library/Application Support" "$OBS_PREFS_TMP_FILE" &&
       rm "$OBS_PREFS_TMP_FILE"
   }
@@ -255,17 +256,17 @@ update_obs_prefs() {
     pushd "${HOME}/Library/Application Support" &&
       zip -q -r "$OBS_PREFS_TMP_FILE" obs-studio &&
       popd
-    existing=$(op document list --format=json --vault "$OP_DEFAULT_VAULT" | \
+    existing=$(op-cli document list --format=json --vault "$OP_DEFAULT_VAULT" | \
       jq -r '.[].overview.title' | \
       grep "$OBS_PREFS_OP_KEY")
     if test -z "$existing"
     then
       log_info "OBS settings not found in 1Password. Creating it now."
-      op document create --vault "$OP_DEFAULT_VAULT" \
+      op-cli document create --vault "$OP_DEFAULT_VAULT" \
         --title "$OBS_PREFS_OP_KEY" \
         "$OBS_PREFS_TMP_FILE"
     else
-      op document edit --vault "$OP_DEFAULT_VAULT" \
+      op-cli document edit --vault "$OP_DEFAULT_VAULT" \
         "$OBS_PREFS_OP_KEY" \
         "$OBS_PREFS_TMP_FILE"
     fi
@@ -328,9 +329,9 @@ get_ssh_and_aws_keys_from_onepassword() {
   }
 
   import_gpg_keys() {
-    gpg --import-ownertrust ~/.ssh/gpg/ownertrust &&
-    gpg --import ~/.ssh/gpg/public_keys &&
-    gpg --import ~/.ssh/gpg/private_keys
+    gpg --import-ownertrust ~/.ssh/ownertrust &&
+    gpg --import ~/.ssh/public_keys &&
+    gpg --import ~/.ssh/private_keys
   }
 
   remove_downloaded_keys() {
