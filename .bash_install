@@ -621,7 +621,6 @@ or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
 fi
 stop_stealing_focus
 disable_the_dock_entirely
-install_reddit_cli
 configure_todos
 update_obs_prefs
 install_complete_alias
