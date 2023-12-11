@@ -15,6 +15,15 @@ allow-preset-passphrase
 EOF
 }
 
+# NOTE: It's assumed that the `User` and `Hostname` for "work-machine" is defined in your SSH
+# config somewhere
+wm() {
+  if test -n "$USE_MOSH"
+  then mosh --server="$(which mosh-server)" work-machine
+  else ssh work-machine
+  fi
+}
+
 # shellcheck disable=SC2154
 log_init() {
   >&2 echo -ne "${BCyan}INIT${NC}: $1\n"
