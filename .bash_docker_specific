@@ -6,7 +6,6 @@ LIMA_MACHINE_SOURCE_PATH="${LIMA_MACHINE_PATH:-$HOME/src/setup/lima_machine.yaml
 LIMA_MACHINE_DESTINATION_PATH="$HOME/.config/lima/${LIMA_MACHINE_NAME:-docker-light.yaml}"
 export DOCKER_DEFAULT_PLATFORM="linux/$(uname -p)"
 
-trap "rm -rf $DOCKER_CHECK_SENTINEL_FILE" INT EXIT
 
 docker_machine_name() {
   basename "$LIMA_MACHINE_DESTINATION_PATH" | sed 's/.yaml//' | sed 's/.yml//'
@@ -96,32 +95,6 @@ then
   return 0
 fi
 
-docker_check_mutex_lock
-
-if ! which docker &>/dev/null
-then
-  log_info "Installing Docker"
-  if is_mac
-  then
-    brew install docker
-    &>/dev/null which limactl || brew install lima
-  elif is_debian
-  then
-    install_application "apt-transport-https ca-certificates curl"
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    sudo add-apt-repository \
-       "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-       $(lsb_release -cs) \
-       stable"
-    sudo apt-get update
-    install_application "linux-image-extra-$(uname -r) linux-image-extra-virtual"
-    install_application "docker-ce"
-  else
-    log_error "A Docker setup routine hasn't been written for this Linux."
-    return 1
-  fi
-fi
-
 add_user_to_docker_group_if_linux() {
   (is_debian || is_redhat) || return 0
   
@@ -152,6 +125,32 @@ install_docker_related_bash_completions_if_darwin() {
   _docker_cli && _docker_compose && _limactl
 
 }
+
+docker_check_mutex_lock
+trap 'rc=$?; docker_check_mutex_unlock; exit $rc' INT EXIT
+if ! which docker &>/dev/null
+then
+  log_info "Installing Docker"
+  if is_mac
+  then
+    brew install docker
+    &>/dev/null which limactl || brew install lima
+  elif is_debian
+  then
+    install_application "apt-transport-https ca-certificates curl"
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository \
+       "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+       $(lsb_release -cs) \
+       stable"
+    sudo apt-get update
+    install_application "linux-image-extra-$(uname -r) linux-image-extra-virtual"
+    install_application "docker-ce"
+  else
+    log_error "A Docker setup routine hasn't been written for this Linux."
+    return 1
+  fi
+fi
 
 add_user_to_docker_group_if_linux
 start_docker_vm_darwin

@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 export FROM_BASH_INSTALL=true
 source "$HOME/.bash_onepassword_specific"
-trap "rm -f $INSTALL_LOCK_FILE" INT
 
 ETC_HOSTS_PREPPED_SENTINEL_FILE="$HOME/.config/setup/etc_hosts_prepped"
 ONEPASSWORD_VAULT="${ONEPASSWORD_VAULT:-"Carlos's Personal Vault"}"
@@ -49,6 +48,7 @@ colordiff
 coreutils
 curl
 direnv
+docker-compose
 feh
 findutils
 font-dejavu-sans-mono-nerd-font
@@ -56,6 +56,7 @@ fzf
 gawk
 gh
 git
+golang
 gnu-getopt
 gnu-indent
 gnu-sed
@@ -599,6 +600,7 @@ or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
   log_info "Checking and/or updating software. This might take a few minutes."
 
   lock_install
+  trap 'rc=$?; unlock_install; exit $rc' INT EXIT
   tap_casks
 
   # Install a few necessary brew formulae
@@ -618,6 +620,7 @@ or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
   get_secret_settings_from_onepassword
   get_firefox_multi_account_containers_from_onepassword
   unlock_install
+  trap '-' INT EXIT
 fi
 stop_stealing_focus
 disable_the_dock_entirely
@@ -628,5 +631,3 @@ update_bash
 mark_first_time_setup_as_complete_if_needed
 
 test -f "$(bash_completion_location)" && source "$(bash_completion_location)"
-
-trap - INT

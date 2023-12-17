@@ -118,14 +118,13 @@ install_ruby_version() {
   rvm install "$1" --with-openssl-dir="$(brew --prefix)/opt/openssl@3.2"
 }
 
-trap 'ruby_check_mutex_unlock' INT HUP EXIT
-
 remove_dead_install_locks
 if installation_is_locked
 then
   log_info "Ruby installation in progress in another window."
 fi
 ruby_check_mutex_lock
+trap 'rc=$?; ruby_check_mutex_unlock; exit $rc' INT HUP EXIT
 
 source "$HOME/.rvm/scripts/rvm"
 export PATH="$HOME/.rvm/gems/ruby-$RUBY_VERSION_TO_USE/bin:$PATH"
@@ -136,6 +135,6 @@ rvm rvmrc warning ignore "$HOME/.rvmrc"
 rvm --default use "$RUBY_VERSION_TO_USE"
 configure_rvm_defaults
 install_bundler &&
-install_gems
-
+install_gems &&
+ruby_check_mutex_unlock
 trap '-' INT HUP EXIT
