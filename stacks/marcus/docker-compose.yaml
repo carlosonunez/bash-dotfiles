@@ -1,0 +1,121 @@
+version: '3.9'
+services:
+  rclone:
+    image: rclone/rclone:1.65.0
+    volumes:
+      - ./rclone/conf:/config/rclone
+      - $PWD:/data
+    network_mode: host
+    command:
+      - rcd
+      - --rc-addr
+      - "0.0.0.0:7000"
+      - --rc-web-gui
+      - --rc-web-gui-no-open-browser
+  adguard-home:
+    image: adguard/adguardhome:v0.107.43
+    container_name: adguardhome
+    network_mode: host
+    volumes:
+      - ./adguard-home/workdir:/opt/adguardhome/work
+      - ./adguard-home/confdir:/opt/adguardhome/conf
+    restart: unless-stopped
+  home-assistant:
+    depends_on:
+      mqtt-broker:
+        condition: service_started
+      ring-mqtt:
+        condition: service_started
+      scrypted-ring:
+        condition: service_started
+      ha-install-integrations:
+        condition: service_completed_successfully
+    image: ghcr.io/home-assistant/home-assistant:stable
+    privileged: true
+    container_name: homeassistant
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./home-assistant/config:/config
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      TZ: America/Chicago
+  # Mosquitto is a simple MQTT broker that works well
+  # within Docker.
+  mqtt-broker:
+    image: eclipse-mosquitto
+    container_name: mqtt-broker
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - $PWD/home-assistant/add-on-config/mosquitto:/mosquitto/config
+  # Ring-MQTT exposes Ring Alarm devices to Home Assistant
+  # via MQTT.
+  ring-mqtt:
+    depends_on:
+      - mqtt-broker
+    container_name: ring-mqtt
+    restart: unless-stopped
+    image: tsightler/ring-mqtt
+    network_mode: host
+    volumes:
+      - $PWD/home-assistant/add-on-config/ring-mqtt:/data
+  scrypted-ring:
+    image: koush/scrypted
+    container_name: scrypted
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - SCRYPTED_WEBHOOK_UPDATE_AUTHORIZATION=Bearer foobar
+      - SCRYPTED_WEBHOOK_UPDATE=https://localhost:10444/v1/update
+    volumes:
+      - $PWD/home-assistant/.scrypted/volume:/server/volume
+      - /var/run/dbus:/var/run/dbus
+      - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+    labels:
+      - "com.centurylinklabs.watchtower.scope=scrypted"
+  watchtower:
+    image: containrrr/watchtower
+    restart: unless-stopped
+    command: --interval 3600 --cleanup --scope scrypted
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "com.centurylinklabs.watchtower.scope=scrypted"
+    ports:
+      - 10444:8080
+    environment:
+      - WATCHTOWER_HTTP_API_TOKEN=foobar
+      - WATCHTOWER_HTTP_API_UPDATE=true
+      - WATCHTOWER_SCOPE=scrypted
+      - WATCHTOWER_HTTP_API_PERIODIC_POLLS=true
+  rpi-fan:
+    container_name: fan
+    restart: always
+    image: pilotak/rpi-fan
+    environment:
+      - DESIRED_TEMP=45
+      - FAN_PIN=12
+      - FAN_PWM_MIN=25
+      - FAN_PWM_MAX=100
+      - FAN_PWM_FREQ=25
+      - P_TEMP=15
+      - I_TEMP=0.4
+    devices:
+      - /dev/gpiomem
+  ha-install-integrations:
+    image: bitnami/git:2.43.0
+    environment:
+      HOME_ASSISTANT_FOLDER: /work
+    working_dir: /work
+    volumes:
+      - $PWD/home-assistant:/work
+    entrypoint:
+      - bash
+    command:
+      - ./stack.start
