@@ -1,5 +1,37 @@
 #!/usr/bin/env bash
-PREREQS="gnu-sed,yq,jq,openssl,todo-txt"
+ASDF_PLUGINS=$(cat <<-PLUGINS
+direnv
+PLUGINS
+)
+LANG_STACKS=$(cat <<-APPS
+golang
+python
+ruby
+APPS
+)
+PREREQS=$(cat <<-APPS
+asdf
+1password
+1password-cli
+bash
+bash-completion@2
+curl
+findutils
+gnu-getopt
+gnu-indent
+gnu-sed
+gnu-tar
+gnupg
+gnutls
+grep
+jq
+make
+openssl@3
+todo-txt
+tree
+yq
+APPS
+)
 HIDDEN_BASH_PROMPT_FILE="/tmp/use_hidden_bash_prompt"
 ONE_GIGABYTE="$(numfmt --from=iec '1G')"
 ONE_MEGABYTE="$(numfmt --from=iec '1M')"
@@ -126,9 +158,21 @@ install_prerequisites() {
 
 configure_machine_pre() {
   install_prerequisites &&
-    source "$HOME/.bash_python_specific" &&
+    for plugin in $ASDF_PLUGINS $LANG_STACKS
+    do
+      asdf plugin list | grep -q "$plugin" || {
+        log_info "Installing asdf plugin: ${BCyan}$plugin${NC}"
+        asdf plugin install "$plugin";
+      }
+    done &&
+    for stack in $LANG_STACKS
+    do
+      log_info "Configuring language stack: ${BCyan}$stack${NC}"
+      stack_config="$HOME/.bash_${stack}_specific"
+      test -f "$stack_config" && source "$stack_config"
+    done &&
+      
     return 0
-
   return 1
 }
 
@@ -166,7 +210,7 @@ configure_bash_session() {
   do
     source_file "$HOME/.bash_$file"
   done
-  excludes_re='bash_(aliases|exports|functions|python|go|profile|install|custom_profile|company|history|sessions)'
+  excludes_re='bash_(aliases|exports|functions|python|go|ruby|profile|install|custom_profile|company|history|sessions)'
   for file in $(find $HOME -type l -maxdepth 1 -name "*.bash_*" | \
     egrep -v "$excludes_re" | \
     sort -u)
@@ -333,7 +377,7 @@ generate_random_string() {
   [[ -z "$length" ]] && length=16
   grep -Eiq '^true$' <<< "$alphanumeric_only" || filter="${filter}${special_chars}"
   [[ "$(get_os_type)" == "Darwin" ]] && export LC_CTYPE=C
-  res="$(tr -dc "[$filter]" < /dev/urandom | head -c "$length")"
+  res="$(tr -dc "$filter" < /dev/urandom | head -c "$length")"
   grep -Eiq '^true$' <<< "$lower" && res="${res,,}"
   echo "$res"
 }
@@ -530,12 +574,9 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
     ruby_version="\[$BRed\][$(basename "$MY_RUBY_HOME")]\[$NC\]"
   fi
   local_go_version=""
-  if ! test -z "$LOCAL_GVM_VERSION"
+  if ! test -z "$GOROOT"
   then
-    local_go_version="\[$BGreen\][gvm $LOCAL_GVM_VERSION]\[$NC\]"
-  elif ! test -z "$GOROOT"
-  then
-    local_go_version="\[$BGreen\][$(basename "$GOROOT")]\[$NC\]"
+    local_go_version="\[$BGreen\][go-$(awk -F '/' '{print $(NF-1)}' <<< "$GOROOT")]\[$NC\]"
   fi
 
   print_dirstack_count() {
@@ -666,9 +707,30 @@ exit_dotfiles_directory() {
   popd
 }
 
-csvtojson() {
+_nsvtojson() {
   _do_it() {
-    python -c 'import csv, json, sys; print(json.dumps([dict(r) for r in csv.DictReader(sys.stdin)]))'
+    local dialect dialect_reg_cmd
+    dialect_reg_cmd="# none"
+    case "${FORMAT,,}" in
+      csv)
+        dialect="unix"
+        ;;
+      psv)
+        dialect="custom"
+        dialect_reg_cmd="csv.register_dialect('custom', delimiter='|', quoting=csv.QUOTE_NONE)"
+        ;;
+      tsv)
+        dialect="custom"
+        dialect_reg_cmd="csv.register_dialect('custom', delimiter='"'\t'"', quoting=csv.QUOTE_NONE)"
+        ;;
+      *)
+        dialect="unix"
+        ;;
+    esac
+    script=$(printf 'import csv, json, sys; %s; print(json.dumps([dict(r) for r in csv.DictReader(sys.stdin, dialect="%s")]))' \
+             "$dialect_reg_cmd" \
+             "$dialect" | sed -E 's/# none;//')
+    python -c "$script" < /dev/stdin
   }
   # Courtesy of https://stackoverflow.com/a/65100738
   if ! test -z "$1"
@@ -682,6 +744,18 @@ csvtojson() {
   else
     _do_it < /dev/stdin
   fi
+}
+
+csvtojson() {
+  _nsvtojson "$*"
+}
+
+psvtojson() {
+  FORMAT=psv _nsvtojson "$*"
+}
+
+tsvtojson() {
+  FORMAT=tsv _nsvtojson "$*"
 }
 
 flush_dns_cache() {

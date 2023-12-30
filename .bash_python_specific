@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
+PYTHON_VERSION=3.10.13
 VENV_PATH=$HOME/.home_env
 
-if ! which python3 &>/dev/null
-then
-  install_application python3
-fi
+asdf list python 2>/dev/null | grep -q "$PYTHON_VERSION" || asdf install python "$PYTHON_VERSION"
+asdf global python "$PYTHON_VERSION"
 
 if ! which pip3 &>/dev/null
 then
@@ -17,8 +16,7 @@ then
 fi
 
 if ! test -d "$VENV_PATH"
-then
-  python3 -m venv "$VENV_PATH"
+then python3 -m venv "$VENV_PATH"
 fi
 
 source "$VENV_PATH/bin/activate"
@@ -31,6 +29,5 @@ PIP
 )
 
 for pip in $pips
-do
-  which "$pip" &>/dev/null || pip install "$pip"
+do which "$pip" &>/dev/null || pip install "$pip"
 done

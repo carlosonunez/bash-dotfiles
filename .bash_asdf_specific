@@ -1,0 +1,12 @@
+# vi: set ft=bash:
+
+# case 1: non-asdf dir to non-asdf dir
+# - do nothing
+# case 2: non-asdf dir to asdf parent dir
+# - set parent dir as asdf dir
+# - load tools version file if not already loaded
+# - mark tools version file as loaded
+# case 3: asdf parent dir to asdf child dir
+# - 
+# case 4: asdf child dir to asdf parent dir
+# case 5: asdf parent dir to non-asdf dir

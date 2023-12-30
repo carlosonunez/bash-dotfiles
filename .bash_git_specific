@@ -31,6 +31,7 @@ dont_use_master_for_default_branches() {
 set_global_git_configs() {
   git config --global diff.tool vimdiff
   git config --global --replace-all user.signingKey "$GITHUB_SIGNING_KEY"
+  git config --global --replace-all merge.tool vimdiff
   git config --global commit.gpgsign true
   git config --global --replace-all user.name "${GIT_AUTHOR_NAME:-$DEFAULT_GIT_AUTHOR_NAME}"
   git config --global --replace-all user.email "${GIT_AUTHOR_EMAIL:-$DEFAULT_GIT_AUTHOR_EMAIL}"

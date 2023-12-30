@@ -141,26 +141,22 @@ then
   start_tmux
 elif tmux_session_is_present && ! in_tmux_session
 then
-  configure_client_or_company_specific_settings &&
-  configure_secret_settings &&
+  configure_client_or_company_specific_settings
+  configure_secret_settings
   join_tmux_session
 else
   PROMPT_COMMAND='e=$?; history -a; history -c; history -r; set_bash_prompt $e'
-    configure_machine_pre &&
-    configure_machine &&
-    PROMPT_COMMAND='e=$?; history -a; history -c; history -r; gvm_hook; cscope_hook; ctags_hook; set_bash_prompt $e'
-    configure_client_or_company_specific_settings &&
-    configure_secret_settings &&
-    configure_bash_session &&
-    add_keys_to_ssh_agent &&
+    configure_machine_pre
+    configure_machine
+    configure_client_or_company_specific_settings
+    configure_secret_settings
+    configure_bash_session
+    add_keys_to_ssh_agent
     start_gpg_agent
+    PROMPT_COMMAND='e=$?; history -a; history -c; history -r; trap - SIGINT SIGHUP EXIT; cscope_hook; ctags_hook; set_bash_prompt $e'
 fi
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 [ -f "$HOME/src/setup/fzf.bash" ] && source "$HOME/src/setup/fzf.bash"
-
-[[ -s "/Users/cn/.gvm/scripts/gvm" ]] && source "/Users/cn/.gvm/scripts/gvm"
-source "$HOME/src/setup/.bash_go_specific"
 
 # We need to do this again becasue some scripts trample over the PATH and cause
 # duplicate/errant entries.
