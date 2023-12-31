@@ -569,9 +569,9 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
     virtualenv=""
   fi
   ruby_version=""
-  if ! test -z "$MY_RUBY_HOME"
+  if ! test -z "$ASDF_RUBY_VERSION"
   then
-    ruby_version="\[$BRed\][$(basename "$MY_RUBY_HOME")]\[$NC\]"
+    ruby_version="\[$BRed\][ruby-$ASDF_RUBY_VERSION]\[$NC\]"
   fi
   local_go_version=""
   if ! test -z "$GOROOT"

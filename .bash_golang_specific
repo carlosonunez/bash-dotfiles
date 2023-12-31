@@ -12,7 +12,7 @@ asdf global golang "$GOLANG_VERSION"
 
 go_root="$(dirname "$(dirname "$(asdf which go)")")"
 export GOROOT="$go_root"
-export PATH=$PATH:$GOROOT/bin
+export PATH=$GOROOT/bin:$PATH
 
 # Install the gopls engine (for Vim) and golangci-lint (for linting within Vim with Syntastic)
 # =============================================================================================

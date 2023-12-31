@@ -2,7 +2,7 @@
 #vi: set ft=bash:
 # Colors are loaded earlier and from elsewhere
 # shellcheck disable=SC2154
-RUBY_VERSION_TO_USE="3.1.0"
+RUBY_VERSION_TO_USE=3.2.2
 RUBY_CHECK_SENTINEL_FILE=/tmp/ruby_installation_in_progress
 RUBY_GEMFILE="$HOME/.config/ruby/Gemfile"
 
@@ -58,6 +58,8 @@ System Ruby gems will not be updated."
 
 asdf list ruby | grep -q "$RUBY_VERSION_TO_USE" || asdf install ruby "$RUBY_VERSION_TO_USE"
 asdf global ruby "$RUBY_VERSION_TO_USE"
+export ASDF_RUBY_VERSION="$RUBY_VERSION_TO_USE"
+export PATH="$(asdf where ruby)/bin:$PATH"
 remove_dead_install_locks
 if installation_is_locked
 then
