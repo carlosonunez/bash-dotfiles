@@ -28,6 +28,7 @@ ensure_bash_profile_is_symlinked_or_die() {
 
 set_path() {
   path=$(cat <<-DIRECTORIES
+$PATH
 /opt/homebrew/opt/coreutils/libexec/gnubin
 /opt/homebrew/opt/make/libexec/gnubin
 /opt/homebrew/bin
@@ -49,7 +50,7 @@ set_path() {
 DIRECTORIES
 )
   cat <<-EXPORTS
-export PATH=$(echo "$path" | tr '\n' ':' | sed 's/.$//')
+export PATH=$(echo "$path" | tr ':' '\n' | sort -u | tr '\n' ':' | sed 's/.$//')
 export HOMEBREW_PREFIX=/opt/homebrew
 export HOMEBREW_CELLAR=/opt/homebrew/Cellar
 export HOMEBREW_REPOSITORY=/opt/homebrew

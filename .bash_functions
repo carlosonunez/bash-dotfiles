@@ -162,7 +162,7 @@ configure_machine_pre() {
     do
       asdf plugin list | grep -q "$plugin" || {
         log_info "Installing asdf plugin: ${BCyan}$plugin${NC}"
-        asdf plugin install "$plugin";
+        asdf plugin add "$plugin";
       }
     done &&
     for stack in $LANG_STACKS
