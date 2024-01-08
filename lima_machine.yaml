@@ -78,8 +78,22 @@ provision:
     fi
     export DEBIAN_FRONTEND=noninteractive
     curl -fsSL https://get.docker.com | sh
+    curl -fsSL https://get.docker.com | sh
+- mode: system
+  script: |
+    #!/bin/bash
+    # Increase inotify limits to prevent nested Kubernetes control planes
+    # from crash looping.
+    set -eux -o pipefail
+    grep -q  'fs.inotify.max_user_watches = 524288' /etc/sysctl.conf || echo 'fs.inotify.max_user_watches = 524288' >> /etc/sysctl.conf
+    grep -q 'fs.inotify.max_user_instances = 512' /etc/sysctl.conf || echo 'fs.inotify.max_user_instances = 512' >> /etc/sysctl.conf
+    sysctl --system
+- mode: system
+  script: |
+    sudo chmod 666 /var/run/docker.sock
+- mode: system
+  script: |
     docker run --rm --privileged aptman/qus -s -- -p x86_64
-    docker run --rm --privileged aptman/qus -s -- -p arm
 probes:
 - script: |
     #!/bin/bash
