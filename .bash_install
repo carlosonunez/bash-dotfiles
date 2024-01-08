@@ -236,7 +236,7 @@ update_obs_prefs() {
 
   _write_refresh_date_timestamp() {
     test -d "$(dirname "$OBS_PREFS_TIMESTAMP_FILE")" || mkdir "$(dirname "$OBS_PREFS_TIMESTAMP_FILE")"
-    date +%s > "$OBS_PREFS_TIMESTAMP_FILE"
+    gdate +%s > "$OBS_PREFS_TIMESTAMP_FILE"
   }
 
   _get_refresh_date_timestamp() {
@@ -247,7 +247,7 @@ update_obs_prefs() {
 
   _obs_prefs_updated_recently() {
     test "$(_get_refresh_date_timestamp)" != "0" && \
-      test "$(_get_refresh_date_timestamp)" -lt "$(date +%s -d "+$MAX_AD_FREE_STALENESS_DAYS days")"
+      test "$(_get_refresh_date_timestamp)" -lt "$(gdate +%s -d "+$MAX_AD_FREE_STALENESS_DAYS days")"
   }
 
   _obs_prefs_updating_disabled() {
