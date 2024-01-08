@@ -573,12 +573,12 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
   then
     ruby_version="\[$BRed\][ruby-$ASDF_RUBY_VERSION]\[$NC\]"
   fi
-  local_go_version=""
-  if ! test -z "$GOROOT"
-  then
-    local_go_version="\[$BGreen\][go-$(awk -F '/' '{print $(NF-1)}' <<< "$GOROOT")]\[$NC\]"
+  # using grep to evaluate go version managed by asdf is faster
+  local_go_version="$(grep -oh -E '([0-9]{1,}\.[0-9]{1,}\.[0-9]{1,})' < <(which go))"
+  if test -z "$local_go_version"
+  then local_go_version="$(cut -f3 -d ' ' < <(2>/dev/null go version) | sed 's/go//')"
   fi
-
+  local_go_version="\[$BGreen\][go-$local_go_version]\[$NC\]"
   print_dirstack_count() {
     count=$(dirstack_count)
     if test "$count" -ge 1
