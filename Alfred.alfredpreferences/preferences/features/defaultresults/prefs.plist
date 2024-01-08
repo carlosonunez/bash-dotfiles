@@ -2,6 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>fallbacks</key>
+	<array>
+		<string>features.websearch.custom.5E328285-2784-4A12-8DB2-D7D4E1DC8229.fallback</string>
+		<string>user.workflow.9CBD801E-CE70-4A6A-BA05-A4ADA4372CEC.AB4202F0-D40C-43BF-B596-C9F1B44B6DB7</string>
+	</array>
 	<key>showAppleScripts</key>
 	<true/>
 	<key>showArchives</key>
