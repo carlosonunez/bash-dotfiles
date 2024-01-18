@@ -122,3 +122,4 @@ alias e1p='eval $(configure_1password_cli)'
 alias lpm=list_password_titles_matching_regex
 alias gp=get_password_by_name
 alias gpr=get_password_by_name_regex
+alias date=gdate

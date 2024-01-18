@@ -261,7 +261,18 @@ add_keys_to_ssh_agent() {
   }
 
   add_keys() {
-    grep -ElR "BEGIN (RSA|OPENSSH)" $HOME/.ssh | sort -u | xargs ssh-add
+    local whitelisted_keys all_keys keys_to_load
+    whitelisted_keys=$(pushd "$HOME/.ssh"; xargs grealpath -s < $PWD/whitelisted-keys | sort -u; popd)
+    all_keys=$(grep -ElR "BEGIN (RSA|OPENSSH)" $HOME/.ssh | sort -u)
+    keys_to_load="$all_keys"
+    if test -n "$whitelisted_keys"
+    then
+      log_info "Whitelisted SSH keys found. Only loading these keys: $(tr '\n' ',' <<< "$whitelisted_keys" |
+        sed 's/,$//' |
+        sed 's/,/, /g')"
+      keys_to_load=$(comm -2 <(echo "$whitelisted_keys") <(echo "$all_keys"))
+    fi
+    xargs ssh-add < <(echo "$keys_to_load")
   }
 
   if ! is_ssh_agent_running
