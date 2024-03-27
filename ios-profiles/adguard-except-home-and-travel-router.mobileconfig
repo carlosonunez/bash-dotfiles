@@ -29,6 +29,7 @@
             <array>
               <string>Tricycle Twins</string>
               <string>MISTA WORLDWIDE</string>
+              <string>MISTA WORLDWIDER</string>
             </array>
           </dict>
           <dict>
@@ -73,10 +74,10 @@
           </dict>
         </array>
         <key>PayloadDescription</key>
-        <string>Enables global ad-blocking within iOS when connected to anything except our home
+        <string>Enables global ad-blocking within iOS when connected to anything except our home and travel router.
         wifi.</string>
         <key>PayloadDisplayName</key>
-        <string>AdGuard (except at home)</string>
+        <string>AdGuard (except home and travel router)</string>
         <key>PayloadIdentifier</key>
         <string>com.apple.dnsSettings.managed.a090651e-2981-4e2b-b7fa-289d1664099f</string>
         <key>PayloadType</key>
