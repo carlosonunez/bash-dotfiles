@@ -50,6 +50,7 @@
                   <string>bap.aws.opennetworkexchange.net</string>
                   <string>attwifimanager</string>
                   <string>router</string>
+                  <string>cp-webapp.wifi.connected.xfinity.com</string>
                 </array>
               </dict>
             </array>
