@@ -24,6 +24,10 @@ alias push="sq && git push"
 alias pushnosign="squash && git push"
 alias pull="git pull --rebase"
 
+branch() {
+  git branch --show-current
+}
+
 dont_use_master_for_default_branches() {
   git config --global init.defaultBranch main
 }
