@@ -20,16 +20,6 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
-			<dict>
-				<key>destinationuid</key>
-				<string>E436AB0F-27B6-4ED7-90D7-A6FB7AC6D6FD</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
 		</array>
 		<key>1F807F74-7905-4FF0-B9E6-E57DE19D6235</key>
 		<array>
@@ -95,16 +85,26 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>E436AB0F-27B6-4ED7-90D7-A6FB7AC6D6FD</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 		</array>
 	</dict>
 	<key>createdby</key>
 	<string></string>
 	<key>description</key>
-	<string>OBS has better noise suppression techniques than most VC apps. Open it to enable routing input via VB-Cable.</string>
+	<string>Load applications that make meetings better.</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>OBS and VB-Cable Handler</string>
+	<string>Meeting Handler</string>
 	<key>objects</key>
 	<array>
 		<dict>
@@ -137,7 +137,7 @@
 				<integer>102</integer>
 				<key>script</key>
 				<string>pkill -HUP zoom
-pkill -i obs teams chromacam krisp
+pkill -i teams chromacam krisp
 /Users/cn/.home_env/bin/elgato lights | grep -E ^Light | awk '{print $NF}' |
 	while read -r light_id;
 	do /Users/cn/.home_env/bin/elgato off "$light_id";
@@ -190,37 +190,6 @@ done</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>action</key>
-				<integer>0</integer>
-				<key>argument</key>
-				<integer>1</integer>
-				<key>focusedappvariable</key>
-				<false/>
-				<key>focusedappvariablename</key>
-				<string></string>
-				<key>hotkey</key>
-				<integer>6</integer>
-				<key>hotmod</key>
-				<integer>1572864</integer>
-				<key>hotstring</key>
-				<string>Z</string>
-				<key>leftcursor</key>
-				<false/>
-				<key>modsmode</key>
-				<integer>0</integer>
-				<key>relatedAppsMode</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.hotkey</string>
-			<key>uid</key>
-			<string>1F807F74-7905-4FF0-B9E6-E57DE19D6235</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>lastpathcomponent</key>
 				<false/>
 				<key>onlyshowifquerypopulated</key>
@@ -248,9 +217,7 @@ done</string>
 				<integer>102</integer>
 				<key>script</key>
 				<string>open ~/Applications/krisp.app
-open /Applications/zoom.us.app
-sleep 5
-open /Applications/OBS.app</string>
+open /Applications/zoom.us.app</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -262,6 +229,37 @@ open /Applications/OBS.app</string>
 			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
 			<string>188728F5-7DFC-4049-B6BB-C374180D79BB</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>1</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>6</integer>
+				<key>hotmod</key>
+				<integer>1572864</integer>
+				<key>hotstring</key>
+				<string>Z</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>1F807F74-7905-4FF0-B9E6-E57DE19D6235</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
@@ -304,20 +302,7 @@ open /Applications/OBS.app</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>OFFICE_LAT='29.527943'
-OFFICE_LONG='-95.735772'
-idx=0
-while test idx -lt 15
-do
-  if pgrep -i chromacam
-  then
-    pkill -i chromacam
-    exit
-  fi
-  test=$((test+1))
-  sleep 1
-done
-/Users/cn/.home_env/bin/elgato lights | grep -E ^Light | awk '{print $NF}' |
+				<string>/Users/cn/.home_env/bin/elgato lights | grep -E ^Light | awk '{print $NF}' |
 	while read -r light_id;
 	do /Users/cn/.home_env/bin/elgato on "$light_id";
 done

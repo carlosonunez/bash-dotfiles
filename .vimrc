@@ -123,6 +123,7 @@ nnoremap <leader>y :!cat % \| pbcopy<CR>
 nnoremap <leader>Dx :bd<CR>
 nnoremap <leader>DD :bufdo bd<CR>:NERDTreeToggle<CR>
 nnoremap <leader>dd :%bd\|e#<CR>:NERDTreeToggle<CR>
+nnoremap <leader>R @:<CR>
 
 " Set undo, backup and swap directories so that Vim doesn't leave
 " all sorts of garbage within my working directory.

@@ -1,4 +1,4 @@
-# vi: set ft=sh:
+# vi: set ft=bash:
 TRELLO_CONFIG_PATH="$HOME/.config/trello"
 TRELLO_CREDS_FILE="${TRELLO_CONFIG_PATH}/credentials"
 TRELLO_BASE_URL="${TRELLO_BASE_URL:-https://api.trello.com/1}"
@@ -17,7 +17,7 @@ trello() {
   _first_time_setup() {
     test -d "$TRELLO_CONFIG_PATH" || mkdir -p "$TRELLO_CONFIG_PATH"
     appKey=$(get_password "Trello API Key")
-    if test -z "$token"
+    if test -z "$appKey"
     then
       log_error "Unable to retrieve Trello API Key from 1Password"
       return 1
@@ -49,6 +49,10 @@ trello() {
   echo
 }
 
+trello_list_boards() {
+  trello "/members/me/boards" | jq -r '[.[] | { name: .name, id: .id }]'
+}
+
 trello_board_id_by_name() {
   trello "/members/me/boards" | jq --arg board "$1" -r '.[] | select(.name == $board) | .id'
 }
@@ -63,4 +67,42 @@ trello_list_lists_in_board() {
 
 trello_get_card() {
   trello "/cards/$1"
+}
+
+trello_get_board_labels() {
+  board="$1"
+  boardID="$(trello_board_id_by_name "$board")" || return 1
+  trello "/boards/$boardID/labels" | jq -r '[.[] | {name: .name, id: .id}]'
+}
+
+trello_get_list_in_board_by_list_name() {
+  board="$1"
+  list="$2"
+  boardID="$(trello_board_id_by_name "$board")" || return 1
+  trello_list_lists_in_board "$boardID" | jq --arg listName "$list" -r '.[] | select(.name == $listName)'
+}
+
+trello_get_label_in_board_by_name() {
+  board="$1"
+  name="$2"
+  trello_get_board_labels "$board" | jq --arg label "$name" -r '.[] | select(.name == $label)'
+}
+
+trello_add_card_with_due_date_and_labels() {
+  name="$1"
+  board="$2"
+  list_name="$3"
+  due_date="$4"
+  labels="$5"
+  description="$6"
+  listID="$(trello_get_list_in_board_by_list_name "$board" "$list_name" | jq -r '.id')" || return 1
+  due_date="$(date -d "$due_date" +"%Y-%m-%d")" || return 1
+  labelIDs=""
+  for label in $(tr ',' '\n' <<< "$labels")
+  do labelIDs="$labelIDs,$(trello_get_label_in_board_by_name "$board" "$label" | jq '.id')" || return 1
+  done
+  labelIDs="$(sed 's/^,//' <<< "$labelIDs")"
+  >&2 echo "===> Adding card: $name [board: $board, list_id: $listID, due date: $due_date, labels: $labelIDs]"
+  trello "/cards" "$(printf '{"name":"%s","desc":"%s","due":"%s","idList":"%s","idLabels":[%s],"pos":"bottom"}' \
+    "$name" "$description" "$due_date" "$listID" "$labelIDs")" "POST"
 }
