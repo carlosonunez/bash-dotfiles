@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>customSites</key>
+	<dict>
+		<key>5E328285-2784-4A12-8DB2-D7D4E1DC8229</key>
+		<dict>
+			<key>enabled</key>
+			<true/>
+			<key>keyword</key>
+			<string>kagi</string>
+			<key>text</key>
+			<string>Search Kagi for '{query}'</string>
+			<key>url</key>
+			<string>https://kagi.com/search?q={query}</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
