@@ -851,11 +851,18 @@ update_secret_settings() {
 }
 
 update_ssh_and_aws_keys() {
-  _update \
-    "$HOME/Downloads/keys.zip" \
-    "$OP_DEFAULT_VAULT" \
-    "$HOME/.ssh/*" \
-    "SSH and AWS Keys"
+  export_gpg_keys &&
+    _update \
+      "$HOME/Downloads/keys.zip" \
+      "$OP_DEFAULT_VAULT" \
+      "$HOME/.ssh/*" \
+      "SSH and AWS Keys"
+}
+
+export_gpg_keys() {
+  gpg --export --armor > "$HOME/.ssh/public_keys"
+  gpg --export-secret-keys --armor >  "$HOME/.ssh/private_keys"
+  gpg --export-ownertrust > "$HOME/.ssh/ownertrust"
 }
 
 if onepassword_ssh_agent_configuration_exists
