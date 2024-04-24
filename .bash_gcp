@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-GCP_DOCKER_IMAGE=google/cloud-sdk:alpine
+GCP_DOCKER_IMAGE=gcr.io/google.com/cloudsdktool/google-cloud-cli:467.0.0-alpine
 OAUTH2L_DOCKER_IMAGE=gcr.io/oauth2l/oauth2l
 
 exec_gcloud() {
