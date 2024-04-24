@@ -106,6 +106,7 @@ in to apply these changes."
 install_docker_related_bash_completions_if_darwin() {
   _docker_compose() {
     brew link docker-compose-completion &>/dev/null || true
+    mkdir -p ~/.docker/cli-plugins && ln -s $(which docker-compose) ~/.docker/cli-plugins/docker-compose
   }
 
   _docker_cli() {
