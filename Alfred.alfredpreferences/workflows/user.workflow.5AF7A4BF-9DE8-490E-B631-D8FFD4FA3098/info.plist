@@ -47,6 +47,25 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<false/>
+				<key>transient</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>16AACC75-D7CF-4425-BCAA-419EBDD1AB0D</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
@@ -72,7 +91,7 @@
 				<key>runningsubtext</key>
 				<string>searching....</string>
 				<key>script</key>
-				<string>val=$(/Users/cn/.gvm/pkgsets/go1.21.1/global/bin/authy fuzz --alfred $@)
+				<string>val=$(/usr/local/bin/authy fuzz --alfred $@)
 cat &lt;&lt; EOB
 $val
 EOB</string>
@@ -93,25 +112,6 @@ EOB</string>
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
 			<string>AC356E78-96F6-480F-BEB1-0BDD876E5DED</string>
-			<key>version</key>
-			<integer>3</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>autopaste</key>
-				<false/>
-				<key>clipboardtext</key>
-				<string>{query}</string>
-				<key>ignoredynamicplaceholders</key>
-				<false/>
-				<key>transient</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.clipboard</string>
-			<key>uid</key>
-			<string>16AACC75-D7CF-4425-BCAA-419EBDD1AB0D</string>
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
@@ -164,7 +164,7 @@ EOB</string>
 				<key>runningsubtext</key>
 				<string>refreshing...</string>
 				<key>script</key>
-				<string>/Users/cn/.gvm/pkgsets/go1.21.1/global/bin/authy refresh
+				<string>/usr/local/bin/authy refresh
 cat &lt;&lt; EOB
 {"items": [{
 	"title": "Authy tokens refresh successfully",
