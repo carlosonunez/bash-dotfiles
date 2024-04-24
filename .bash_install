@@ -68,6 +68,7 @@ htop
 imagemagick
 iterm2
 keyboardcleantool
+krisp
 make
 mas
 obs
@@ -76,6 +77,7 @@ rectangle-pro
 scrcpy
 shellcheck
 sonos
+sops
 tailscale
 the_silver_searcher
 tmux
