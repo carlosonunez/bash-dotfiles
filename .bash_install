@@ -35,7 +35,6 @@ HOMEBREW_BUILTINS=$(cat <<-APPS
 1password-cli
 alfred
 android-platform-tools
-authy
 awscli
 azure-cli
 bartender
