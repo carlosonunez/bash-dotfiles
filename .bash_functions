@@ -103,9 +103,8 @@ popd () {
 }
 
 get_csp_login_status() {
-  AZURE_PROFILES_LOCATION="$HOME/.azure/azureProfile.json"
-  AWS_STS_LOCATION="$HOME/.config/aws/sts_info"
   _azure_status() {
+    AZURE_PROFILES_LOCATION="$HOME/.azure/azureProfile.json"
     if test -f "$AZURE_PROFILES_LOCATION"
     then
       logged_in_user_guids=$(jq -r '.subscriptions[].user.name' $AZURE_PROFILES_LOCATION | \
