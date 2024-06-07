@@ -1703,29 +1703,6 @@ fi</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>while ! test -z "$(ps -ef | grep -E '.*/tmp/journal_entry$' | grep -v grep)"; do sleep 0.5; done</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>C3F9AE58-BDE9-408E-8A69-2C038D553DEB</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
 				<string>test -f /tmp/journal_entry &amp;&amp; rm -f /tmp/journal_entry</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
@@ -1738,6 +1715,29 @@ fi</string>
 			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
 			<string>E8D78880-D64C-40EE-9416-40EA3BBA3B5E</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>while ! test -z "$(ps -ef | grep -E '.*/tmp/journal_entry$' | grep -v grep)"; do sleep 0.5; done</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>C3F9AE58-BDE9-408E-8A69-2C038D553DEB</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>

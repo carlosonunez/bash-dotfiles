@@ -138,9 +138,9 @@
 				<key>script</key>
 				<string>pkill -HUP zoom
 pkill -i teams chromacam krisp
-/Users/cn/.home_env/bin/elgato lights | grep -E ^Light | awk '{print $NF}' |
+${ELGATO_BIN} lights | grep -E ^Light | awk '{print $NF}' |
 	while read -r light_id;
-	do /Users/cn/.home_env/bin/elgato off "$light_id";
+	do ${ELGATO_BIN} off "$light_id";
 done</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
@@ -277,7 +277,7 @@ open /Applications/zoom.us.app</string>
 				<key>hotkey</key>
 				<integer>6</integer>
 				<key>hotmod</key>
-				<integer>786432</integer>
+				<integer>1310720</integer>
 				<key>hotstring</key>
 				<string>Z</string>
 				<key>leftcursor</key>
@@ -302,14 +302,14 @@ open /Applications/zoom.us.app</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>/Users/cn/.home_env/bin/elgato lights | grep -E ^Light | awk '{print $NF}' |
+				<string>${ELGATO_BIN} lights | grep -E ^Light | awk '{print $NF}' |
 	while read -r light_id;
-	do /Users/cn/.home_env/bin/elgato on "$light_id";
+	do ${ELGATO_BIN} on "$light_id";
 done
-/Users/cn/.home_env/bin/elgato brightness --level 60 0
-/Users/cn/.home_env/bin/elgato brightness --level 45 1
-/Users/cn/.home_env/bin/elgato color --level 5200 0
-/Users/cn/.home_env/bin/elgato color --level 3700 1</string>
+${ELGATO_BIN} brightness --level 60 0
+${ELGATO_BIN} brightness --level 45 1
+${ELGATO_BIN} color --level 5200 0
+${ELGATO_BIN} color --level 3700 1</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -353,7 +353,7 @@ done
 		<key>188728F5-7DFC-4049-B6BB-C374180D79BB</key>
 		<dict>
 			<key>xpos</key>
-			<real>395</real>
+			<real>400</real>
 			<key>ypos</key>
 			<real>395</real>
 		</dict>
@@ -416,6 +416,15 @@ done
 	</dict>
 	<key>userconfigurationconfig</key>
 	<array/>
+	<key>variables</key>
+	<dict>
+		<key>AUTHY_BIN</key>
+		<string></string>
+		<key>ELGATO_BIN</key>
+		<string>/Users/carlos.nunez/.home_env/bin/elgato</string>
+	</dict>
+	<key>version</key>
+	<string></string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

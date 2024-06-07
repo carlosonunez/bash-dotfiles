@@ -95,10 +95,10 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>/Users/cn/.home_env/bin/elgato brightness --level 40 0
-/Users/cn/.home_env/bin/elgato brightness --level 29 1
-/Users/cn/.home_env/bin/elgato color --level 5200 0
-/Users/cn/.home_env/bin/elgato color --level 3700 1</string>
+				<string>${ELGATO_BIN} brightness --level 40 0
+${ELGATO_BIN} brightness --level 29 1
+${ELGATO_BIN} color --level 5200 0
+${ELGATO_BIN} color --level 3700 1</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -152,10 +152,10 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>/Users/cn/.home_env/bin/elgato brightness --level 20 0
-/Users/cn/.home_env/bin/elgato brightness --level 14 1
-/Users/cn/.home_env/bin/elgato color --level 6000 0
-/Users/cn/.home_env/bin/elgato color --level 6000 1</string>
+				<string>${ELGATO_BIN} brightness --level 20 0
+${ELGATO_BIN} brightness --level 14 1
+${ELGATO_BIN} color --level 6000 0
+${ELGATO_BIN} color --level 6000 1</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -209,8 +209,8 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>/Users/cn/.home_env/bin/elgato off 0
-/Users/cn/.home_env/bin/elgato off 1</string>
+				<string>${ELGATO_BIN} off 0
+${ELGATO_BIN} off 1</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -275,6 +275,13 @@
 	</dict>
 	<key>userconfigurationconfig</key>
 	<array/>
+	<key>variables</key>
+	<dict>
+		<key>ELGATO_BIN</key>
+		<string>/Users/carlos.nunez/.home_env/bin/elgato</string>
+	</dict>
+	<key>version</key>
+	<string></string>
 	<key>webaddress</key>
 	<string></string>
 </dict>
