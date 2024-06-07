@@ -122,31 +122,8 @@ get_csp_login_status() {
     fi
   }
 
-  _aws_status() {
-    access_key_loaded="$(echo "$AWS_ACCESS_KEY_ID")"
-    if test -z "$access_key_loaded"
-    then
-      echo -ne "${BRed}no access key loaded; run log_into_aws to fix${NC}"
-      return 0
-    fi
-    if test -e "$AWS_STS_LOCATION"
-    then
-      sts_arn=$(jq -r .arn "$AWS_STS_LOCATION" | sed 's/arn:aws:sts:://')
-      expiration=$(jq -r .expiration "$AWS_STS_LOCATION")
-      now=$(date +%s)
-      minutes_til_expiration=$(((expiration-now)/60))
-      if test "$minutes_til_expiration" -lt 0
-      then
-        printf "${BRed}%s ~> !! refresh needed !!${NC}" "$access_key_loaded"
-      else
-        printf "%s ~> %s [%d minutes left]" "$access_key_loaded" "$sts_arn" "$minutes_til_expiration"
-      fi
-    else
-      printf "%s" "$access_key_loaded"
-    fi
-  }
 
-  printf "${BYellow}[AWS${NC}: ${Yellow}%s${NC}\n" "$(_aws_status)]"
+  printf "${BYellow}[AWS${NC}: ${Yellow}%s${NC}\n" "$(aws_ps1_hook)]"
   printf "${BCyan}[Azure${NC}: ${Cyan}%s${NC}" "$(_azure_status)]"
 }
 

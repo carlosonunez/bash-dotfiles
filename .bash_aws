@@ -1,131 +1,435 @@
-#!/usr/bin/env bash
-#vi: set ft=bash:
+# vi: set ft=sh:
 export DEFAULT_AWS_REGION=us-east-2
-AWS_ROLE_INFO_OP_ITEM_NAME="AWS Admin Role Information"
-AWS_TOKEN_CACHE_LOCATION="$HOME/.config/aws"
 AWS_OP_VAULT="${AWS_OP_VAULT:-$OP_DEFAULT_VAULT}"
+AWS_OP_RELOAD_ENTRIES="${AWS_OP_RELOAD_ENTRIES:-false}"
+AWS_FORCE_REFRESH="${AWS_FORCE_REFRESH:-false}"
+AWS_OP_CACHE="$HOME/.aws/cache_op"
+AWS_PROFILE_LOCATION="$HOME/.aws/config"
+AWS_CREDENTIALS_LOCATION="$HOME/.aws/credentials"
+AWS_ONEPASSWORD_TAG_TO_LOOK_FOR="aws profile"
 
-assume_role() {
-  _get_session_json() {
-    arn="$1"
-    password="$2"
-    session_name="awscli-session-$(date +%s)"
-    if ! test -z "$password"
-    then
-      aws sts assume-role --role-arn "$arn" --external-id "$password" \
-        --role-session-name "$session_name"
-    else
-      aws sts assume-role --role-arn "$arn" --external-id "$password" \
-        --role-session-name "$session_name"
-    fi
-  }
-
-  _print_env() {
-    json="$1"
-    access_key=$(jq -r .Credentials.AccessKeyId <<< "$json")
-    secret_key=$(jq -r .Credentials.SecretAccessKey <<< "$json")
-    session_token=$(jq -r .Credentials.SessionToken <<< "$json")
-   
-    echo "# Run these commands"
-    echo "export AWS_ACCESS_KEY_ID=$access_key"
-    echo "export AWS_SECRET_ACCESS_KEY=$secret_key"
-    echo "export AWS_SESSION_TOKEN=$session_token"
-  }
-
-  _get_expiration() {
-    json="$1"
-    jq -r .Credentials.Expiration <<< "$json"
-  }
-
-
-  _write_token_info() {
-    json="$1"
-    arn=$(jq -r .AssumedRoleUser.Arn <<< "$json")
-    expiration=$(jq -r .Credentials.Expiration <<< "$json")
-    expiration_sec=$(date -d "$expiration" +%s)
-    printf '{"arn": "%s", "expiration": "%d"}' "$arn" "$expiration_sec" | \
-      jq -cr . >  "${AWS_TOKEN_CACHE_LOCATION}/sts_info"
-  }
-
-  _create_cache_if_needed() {
-    test -d "$AWS_TOKEN_CACHE_LOCATION" || mkdir -p "$AWS_TOKEN_CACHE_LOCATION"
-  }
-
-  arn="${1?Please provide an ARN for a role to assume.}"
-  password="$2"
-  json=$(_get_session_json "$arn" "$password")
-  _create_cache_if_needed
-  if test -z "$json"
-  then
-    log_error "Unable to assume [$arn] with external ID [$password]; see \
-above."
-    return 1
-  fi
-  _write_token_info "$json"
-  _print_env "$json"
+_aws_cli() {
+  $(which aws) "$@"
 }
 
-_log_into_aws() {
-  _session_token_valid() {
-    sts_info="${AWS_TOKEN_CACHE_LOCATION}/sts_info"
-    ! test -e "$sts_info" && return 1
+_profile_id_from_profile() {
+  echo "$1" |
+    tr -c '[:alnum:]' '_' |
+    tr '[:upper:]' '[:lower:]' |
+    sed -E 's/[_]{2,}/_/g ; s/_$//'
+}
 
-    expired_on=$(jq -r .expiration "$sts_info")
-    now=$(date +%s)
-    test "$expired_on" -gt "$now"
-  }
+# aws configure is way too slow for PS1.
+#
+# Default profile via `aws configure get default.profile`:
+# ========================================================
+#
+# ```sh
+# wiz_aws_commercial_personal_account
+#
+# real    0m0.717s
+# user    0m0.331s
+# sys     0m0.139s
+# ```
+#
+# Default profile via Bash hackery:
+# ==================================
+#
+# ```
+# $: time grep -A 1 '\[default\]' ~/.aws/config | grep 'profile = ' | cut -f2 -d '=' | tr -d ' '
+# wiz_aws_commercial_personal_account
+# 
+# real    0m0.015s
+# user    0m0.006s
+# sys     0m0.027s
+# ```
+_get_key_from_profile_file() {
+  test -f "$1" || return
 
-  _region() {
-    if ! test -z "$AWS_REGION"
-    then
-      echo "$AWS_REGION"
-    else
-      region="$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "region" "$AWS_OP_VAULT")"
-      if test -z "$region" || test "$region" == "no password found"
-      then
-        echo "$DEFAULT_AWS_REGION"
-      else
-        echo "$region"
-      fi
-    fi
-  }
+  local profile key lines_to_search
+  profile="$2"
+  key="$3"
+  lines_to_search="${4:-4}"
+  { test "$profile" == 'default' || grep -q 'credentials' <<< "$1"; } || profile="profile $profile"
+  grep -A "$lines_to_search" '\['"$profile"'\]' "$1" |
+    grep -m 1 "$key = " |
+    cut -f2 -d '=' |
+    tr -d ' '
+}
 
-  if _session_token_valid
+_get_key_from_profile() {
+  _get_key_from_profile_file "$AWS_PROFILE_LOCATION" "${@:1}"
+}
+
+_get_credential_from_profile() {
+  _get_key_from_profile_file "$AWS_CREDENTIALS_LOCATION" "${@:1}"
+}
+
+_assume_role() {
+  local profile="$1"
+  local ak="$2"
+  local sk="$3"
+  local region="$4"
+  local role_arn="$5"
+  local role_external_id="$6"
+  profile_id="$(_profile_id_from_profile "$profile")"
+  json=$(AWS_ACCESS_KEY_ID="$ak" AWS_SECRET_ACCESS_KEY="$sk" AWS_REGION="$region" \
+    _aws_cli sts assume-role --role-arn "$role_arn" \
+      --region "$region" \
+      --external-id "$role_external_id" \
+      --role-session-name "${profile_id}-session-$(date +%s)") || return 1
+  access_key_assumed=$(jq -r .Credentials.AccessKeyId <<< "$json")
+  secret_key_assumed=$(jq -r .Credentials.SecretAccessKey <<< "$json")
+  session_token=$(jq -r .Credentials.SessionToken <<< "$json")
+  expiry=$(jq -r .Credentials.Expiration <<< "$json")
+  echo -e "${access_key_assumed}\t${secret_key_assumed}\t${session_token}\t${expiry}"
+}
+
+_expiration_file_from_profile() {
+  echo "$HOME/.aws/expiration_time_$(_profile_id_from_profile "$1")"
+}
+
+_aws_set_profile() {
+  _aws_cli configure set profile "$(_profile_id_from_profile "$1")"
+}
+
+_credentials_expired_for_profile() {
+  grep -Eq '^true$' <<< "$AWS_FORCE_REFRESH" && return 0
+
+  profile_exp_time_fp="$(_expiration_file_from_profile "$1")"
+  test -f "$profile_exp_time_fp" || return 0
+  now="$(date +%s)"
+  expiry="$(cat "$profile_exp_time_fp")"
+  test "$now" -ge "$expiry"
+}
+
+_set_credential_expiry() {
+  exp="$(awk '{print $NF}' <<< "$2")"
+  if test -z "$exp"
   then
-    log_error "The session in the environment is still valid."
-    log_error "Delete $AWS_TOKEN_CACHE_LOCATION to recreate it."
+    log_warning "[AWS] No expiration time found for this session token! Refresh manually."
+    return 1
+  fi
+  profile_exp_time_fp="$(_expiration_file_from_profile "$1")"
+  date -d "$exp" '+%s' > "$profile_exp_time_fp"
+}
+
+_write_aws_profile() {
+  local profile region assumed_credentials
+  profile="$1"
+  region="$2"
+  assumed_credentials="$3"
+  profile_id="$(_profile_id_from_profile "$profile")"
+  ak="$(awk -F'\t' '{print $1}' <<< "$assumed_credentials")"
+  sk="$(awk -F'\t' '{print $2}' <<< "$assumed_credentials")"
+  token="$(awk -F'\t' '{print $3}' <<< "$assumed_credentials")"
+  exp="$(awk -F'\t' '{print $4}' <<< "$assumed_credentials")"
+  done=1
+  _aws_cli configure set aws_access_key_id "$ak" --profile "$profile_id" &&
+    _aws_cli configure set aws_secret_access_key "$sk" --profile "$profile_id" &&
+    _aws_cli configure set aws_session_token "$token" --profile "$profile_id" &&
+    _aws_cli configure set region "$region" --profile "$profile_id" &&
+    done=0
+  test "$done" -ne 0 && return 1
+
+  _set_credential_expiry "$profile" "$exp"
+}
+
+_get_aws_credentials_from_1password() {
+  _read_cache() {
+    test -f "$AWS_OP_CACHE" || return 1
+    cat "$AWS_OP_CACHE"
+  }
+
+  _write_cache() {
+    echo "$1" > "$AWS_OP_CACHE"
+  }
+  
+  _clear_cache() {
+    rm "$AWS_OP_CACHE"
+  }
+
+  local cred_entries
+
+  grep -Eq '^true$' <<< "$AWS_OP_RELOAD_ENTRIES" && _clear_cache
+  cred_entries=$(_read_cache)
+  if test -n "$cred_entries"
+  then
+    echo "$cred_entries"
     return 0
   fi
+  cred_entries="$(op_cli item list --tags "$AWS_ONEPASSWORD_TAG_TO_LOOK_FOR" --vault "$AWS_OP_VAULT"  --format json |
+    jq -r '.[] | [.title,.vault.name,.default]|@tsv')"
+  test -z "$cred_entries" && return 1
 
-  access_key="${1:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "access_key" "$AWS_OP_VAULT")}"
-  secret_key="${2:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "secret_key" "$AWS_OP_VAULT")}"
-  if test -z "$access_key" || test -z "$secret_key"
+  echo "$cred_entries"
+  _write_cache "$cred_entries"
+}
+
+_get_aws_credentials() {
+  local creds
+  case "${1,,}" in
+    onepassword|1password)
+      creds=$(_get_aws_credentials_from_1password)
+      ;;
+    *)
+      log_error "[AWS] Unsupported AWS login type: $1"
+      return 1
+      ;;
+  esac
+  if test -z "$creds"
   then
-    log_error "Please provide an AWS access key or secret key."
+    log_error "[AWS] No valid credentials found from login type: $1" return 1
+  fi
+  echo -e "$creds"
+}
+
+_get_credential_value() {
+  val="$(get_password_field "$1" "$2" "$3")"
+  if test -z "$val" || test "$val" == 'no password found'
+  then
+    log_error "[AWS] Couldn't get '$2' for profile '$1'"
     return 1
   fi
-  unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY  AWS_SESSION_TOKEN
-  export AWS_ACCESS_KEY_ID="$access_key"
-  export AWS_SECRET_ACCESS_KEY="$secret_key"
-  region="$(_region)"
-  export AWS_REGION="$region"
-  arn="${3:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "arn" "$AWS_OP_VAULT")}"
-  external_id="${4:-$(get_password_field "$AWS_ROLE_INFO_OP_ITEM_NAME" "external_id" "$AWS_OP_VAULT")}"
-  if ! test -z "$arn" && ! test -z "$external_id"
+  echo "$val"
+}
+
+_get_active_aws_profile() {
+  _get_key_from_profile 'default' 'profile'
+}
+
+
+_access_key_from_profile() {
+  _get_credential_from_profile "$1" 'aws_access_key_id'
+}
+
+_secret_key_from_profile() {
+  _get_credential_from_profile "$1" 'aws_secret_access_key'
+}
+
+_session_token_from_profile() {
+  _get_credential_from_profile "$1" 'aws_session_token'
+}
+
+_region_from_profile () {
+  _get_key_from_profile "$1" 'region'
+}
+
+_get_credential_expiration_minutes() {
+  exp="$(2>/dev/null cat "$(_expiration_file_from_profile "$1")")"
+  if test -z "$exp" || test "$exp" -le 0
   then
-    assume_role "$arn" "$external_id"
+    echo '0'
+    return 0
+  fi
+  now=$(date +%s)
+  printf "%s/60" "$((exp-now))" | bc
+}
+
+_aws_login() {
+  set -o pipefail
+  local profile_type profiles default_profile
+
+  profile_type="$1"
+  from_cli="$2"
+  profiles="$(_get_aws_credentials "$profile_type")" || return 1
+  idx=0
+  profile_set=1
+  while read -r profile_vault_kv
+  do
+    profile_entry_name=$(awk -F'\t' '{print $1}' <<< "$profile_vault_kv") || return 1
+    if test -z "$profile_entry_name"
+    then
+      log_error "[AWS] Profile not found given this data: $profile_vault_kv"
+      return 1
+    fi
+    profile="${profile_entry_name//AWS Login: /}"
+    test "$idx" == 0 && default_profile="$profile"
+    if ! _credentials_expired_for_profile "$profile"
+    then
+      test -n "$from_cli" && return 0
+      log_info "[AWS] Credentials still valid for profile '$profile'; use AWS_FORCE_REFRESH=true to force a refresh"
+      continue
+    fi
+    log_info "[AWS] Creating a temporary session for profile '${profile//AWS Login: /}'"
+    vault=$(awk -F'\t' '{print $2}' <<< "$profile_vault_kv") || return 1
+    if test -z "$vault"
+    then
+      log_error "[AWS] Vault for profile '$profile' not found given this data: $profile_vault_kv"
+      return 1
+    fi
+    is_default=$(awk -F'\t' '{print $NF}' <<< "$profile_vault_kv")
+    if test -n "$is_default"
+    then default_profile="$profile"
+    fi
+    # TODO: Fix hard dependency on 1Password.
+    access_key="$(_get_credential_value "$profile_entry_name" 'access_key' "$vault")" || return 1
+    secret_key="$(_get_credential_value "$profile_entry_name" 'secret_key' "$vault")" || return 1
+    role_arn="$(_get_credential_value "$profile_entry_name" 'arn' "$vault")" || return 1
+    role_external_id="$(_get_credential_value "$profile_entry_name" 'external_id' "$vault")" || return 1
+    region="$(_get_credential_value "$profile_entry_name" 'region' "$vault")"
+    test -z "$region" && region="$DEFAULT_AWS_REGION"
+    assumed_credentials=$(_assume_role "$profile" "$access_key" "$secret_key" \
+      "$region" "$role_arn" "$role_external_id") || return 1
+    _write_aws_profile "$profile" "$region" "$assumed_credentials" || return 1
+    idx=$((idx+1))
+    profile_set=0
+  done <<< "$profiles"
+
+  test "$profile_set" -eq 0 && _aws_set_profile "$default_profile"
+}
+
+_aws_login_internal() {
+  _aws_login "$1" 1
+}
+
+# aws_next_profile: Changes to the next profile in the list of profiles available
+aws_next_profile() {
+  local this_profile all_profiles next_profile
+  this_profile="$(_get_active_aws_profile)"
+  # This was confusing to type without using functions or something to explain
+  # what's happening here, hence the comment.
+  #
+  # This is selecting the next item in a list without using a stateful counter.
+  #
+  # Algorithm
+  # ==========
+  #
+  # 1. Mark our current profile with a cursor (>).
+  # 2. Find the position of our current profile in the list returned from (1).
+  # 3a. If the current profile is the last profile in our list, rollover and
+  #     select the first profile in the list.
+  # 3b. Otherwise, select the profile underneath the cursor.
+  all_profiles="$(grep -E '^\[' "$HOME/.aws/config" |
+    grep -v default |
+    sed 's/profile //' |
+    tr -d '[]' |
+    sed "s/${this_profile}/> ${this_profile}/")"
+  num_profiles="$(wc -l <<< "$all_profiles")"
+  match_location=$(grep -n '>' <<< "$all_profiles" | cut -f1 -d ':')
+  if test "$match_location" -eq "$num_profiles"
+  then next_profile="$(head -1 <<< "$all_profiles")"
+  else next_profile="$(grep -A 1 '>' <<< "$all_profiles" | tail -1)"
+  fi
+  _aws_set_profile "$next_profile"
+}
+
+
+# aws_switch_profile: Interactively switch between profiles, if any were found
+# from your credential source.
+aws_switch_profile() {
+  local choice prompt all_profiles num_profiles max_attempts
+  max_attempts=3
+  prompt=""
+  if ! test -f "$AWS_PROFILE_LOCATION"
+  then
+    log_error "[AWS] No profiles found! Run a 'log_into_aws_with_' to fix."
+    return 1
+  fi
+  all_profiles="$(grep -E '^\[' "$HOME/.aws/config" |
+    grep -v default |
+    sed 's/profile //' |
+    tr -d '[]')"
+  num_profiles="$(wc -l <<< "$all_profiles")"
+  if test "$num_profiles" -eq 1
+  then
+    log_info "[AWS] Only one profile found: $all_profiles"
+    return 0
+  fi
+  idx=1
+  while read -r profile
+  do
+    time_left=$(_get_credential_expiration_minutes "$profile")
+    if test "$time_left" -le 0
+    then time_left_text="[expired]"
+    else time_left_text="[$time_left minutes remaining]"
+    fi
+    prompt="${prompt}${idx}) ${profile} ${time_left_text}\n"
+    idx=$((idx+1))
+  done <<< "$all_profiles"
+  if test -z "$prompt"
+  then
+    log_error "[AWS] No profiles found"
+    return 1
+  fi
+  attempts=0
+  while test "$attempts" -lt "$max_attempts"
+  do
+    read -rp  $'Profiles\n===========\n'"$(echo -e "${prompt}")"$'\n\nPlease choose an AWS profile: ' choice
+    if test -z "$choice" || test "$choice" -gt "$num_profiles"
+    then
+      log_error "Invalid choice: $choice"
+      attempts="$((attempts+1))"
+      continue
+    fi
+    break
+  done
+  if test "$attempts" -eq "$max_attempts"
+  then
+    log_error "No valid choices provided; giving up."
+    return 1
+  fi
+  profile_to_use="$(echo -e "$prompt" |
+    grep -E "^${choice})" |
+    cut -f2 -d ' ' |
+    tr -d ' ')"
+  _aws_set_profile "$profile_to_use"
+}
+
+# aws_creds: Prints AWS credentials (access key ID, secret access key, session token)
+# in `export` form. Meant to be used with `eval`.
+aws_creds() {
+  profile="${1:-$(_get_active_aws_profile)}"
+  cat <<-EXPORT
+# Run this command again inside of 'eval' to set these
+# environment variables in your environment.
+export AWS_ACCESS_KEY_ID=$(_access_key_from_profile "$profile")
+export AWS_SECRET_ACCESS_KEY=$(_secret_key_from_profile "$profile")
+export AWS_SESSION_TOKEN=$(_session_token_from_profile "$profile")
+export AWS_REGION=$(_region_from_profile "$profile")
+EXPORT
+}
+
+# aws_ps1_hook: Adds information about your active profile into your shell's PS1.
+aws_ps1_hook() {
+  if ! test -f "$AWS_PROFILE_LOCATION"
+  then
+    # shellcheck disable=SC2059,SC2154
+    printf "${BRed}no profiles found; run log_into_aws to fix"
+    return 0
+  fi
+  active_profile="$(_get_active_aws_profile)"
+  if test -z "$active_profile"
+  then
+    # shellcheck disable=SC2059,SC2154
+    printf "${BRed}no profile loaded; run 'log_into_aws_with_x' to fix${NC}"
+    return 0
+  fi
+  time_left_mins=$(_get_credential_expiration_minutes "$active_profile")
+  # shellcheck disable=SC2059,SC2154
+  if test "$time_left_mins" -le 0
+  then printf "${BYellow}$active_profile${Yellow} $(_access_key_from_profile "$active_profile"): ${BRed}!!! expired !!!${NC}"
+  else printf "${BYellow}$active_profile${Yellow} $(_access_key_from_profile "$active_profile"): ${time_left_mins} minutes remaining${NC}"
   fi
 }
 
-update_default_aws_profile_with_current_creds() {
-  { echo '[default]'; env | grep -E '^AWS' | awk -F'=' '{var=tolower($1)" = "$2; print var}'; } \
-    > "$HOME/.aws/credentials"
-  log_info "[default] awscli profile updated."
+# AWS wrapped with profile context
+aws_op() {
+  _aws_login_internal "1password" &&
+    _aws_cli "$@" --profile="$(_get_active_aws_profile)"
 }
 
-alias log_into_aws_with_op='eval $(configure_1password_cli) && 1>/dev/null export $(_log_into_aws | grep -E "^export AWS" | xargs -0)'
-alias aws_login=log_into_aws_with_op
+aws_op_with_profile() {
+  _aws_login_internal "1password" &&
+    _aws_cli "${@:2}" --profile="${1?Please provide a profile to use}"
+}
 
+# These are the login functions that login you into AWS via plugins.
+alias log_into_aws_with_op="_aws_login '1password'"
+alias aws='aws_op'
 
-log_info "AWS shell extensions configured! Run 'aws_login' to log into AWS with 1Password."
+alias awsp=aws_with_profile
+alias awsn=aws_next_profile
+
+log_info "AWS shell extensions configured! Run 'log_into_aws_with_op' to log into AWS with 1Password."
 complete -C '/usr/local/bin/aws_completer' aws
