@@ -342,8 +342,8 @@ get_ssh_and_aws_keys_from_onepassword() {
 
   import_gpg_keys() {
     gpg --import-ownertrust ~/.ssh/ownertrust &&
-    gpg --import ~/.ssh/public_keys &&
-    gpg --import ~/.ssh/private_keys
+    gpg --batch --import ~/.ssh/public_keys &&
+    gpg --batch --import ~/.ssh/private_keys
   }
 
   remove_downloaded_keys() {
