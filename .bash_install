@@ -27,8 +27,12 @@ APPS
 )
 HOMEBREW_TAPS=$(cat <<-TAPS
 homebrew/cask-fonts
-homebrew/cask-versions
 TAPS
+)
+HOMEBREW_FORMULA_URLS=$(cat <<-URLS
+# Bartender: Lock on 5.0.52 due to enshittification: https://news.ycombinator.com/item?id=40584606
+bartender;https://raw.githubusercontent.com/Homebrew/homebrew-cask/4d4cf9b3716a7225cc5db9fe379378e847b3406a/Casks/b/bartender.rb
+URLS
 )
 HOMEBREW_BUILTINS=$(cat <<-APPS
 1password
@@ -37,7 +41,6 @@ alfred
 android-platform-tools
 awscli
 azure-cli
-bartender
 bash
 bash-completion@2
 cscope
@@ -66,6 +69,7 @@ brightness
 htop
 imagemagick
 iterm2
+jordanbaird-ice
 keyboardcleantool
 krisp
 make
@@ -88,9 +92,6 @@ vlc
 w3m
 xquartz
 zoom
-APPS
-)
-APPLE_APP_STORE_APPS=$(cat <<-APPS
 APPS
 )
 ETC_HOSTS_EXCLUSIONS=$(cat <<-EXCLUSIONS
@@ -179,8 +180,9 @@ install_homebrew_builtins() {
   # TECH NOTE: There isn't an option to hide warnings because the Homebrew
   # developers don't think that it's necessary, which is sad.
   # https://github.com/Homebrew/brew/issues/2351
+  apps_with_urls=$(grep -Ev '^#' <<< "$HOMEBREW_FORMULA_URLS" | cut -f1 -d ';')
   apps="$(echo "$HOMEBREW_BUILTINS" | tr '\n' ' ')"
-  if is_apple_m1_cpu
+  if is_apple_m1_cpu && test -n "$HOMEBREW_BUILTINS_X86"
   then
     log_warning "You appear to be using a MacBook with an \
 Apple M1 CPU. Install Rosetta first in order to install these apps: \
@@ -189,13 +191,15 @@ $(echo "${HOMEBREW_BUILTINS_X86}" | tr '\n' ' ')\n"
     apps="${apps} $(echo "$HOMEBREW_BUILTINS_X86" | tr '\n' ' ')"
   fi
 
-  apps_missing=$(comm -2 <(tr ' ' '\n' <<< "$apps" | sort) <(brew list -1 | sort) | grep -Ev '^\t')
+  installed=$(brew list -1 | sort)
+  apps_missing=$(comm -2 <(tr ' ' '\n' <<< "$apps" | sort) <(echo "$installed") | grep -Ev '^\t')
+  apps_with_urls_missing=$(comm -2 <(tr ' ' '\n' <<< "$apps_with_urls" | sort) <(echo "$installed"))
   if test -n "$apps_missing"
   then
     if test -f "$HOMEBREW_APPS_EXCLUSION_FILE"
     then
       apps_to_exclude=$(cat "$HOMEBREW_APPS_EXCLUSION_FILE")
-      log_warn "Homebrew exclusion file detected; skipping these apps: $(tr '\n' ' ' <<< $apps_to_exclude)"
+      log_warning "Homebrew exclusion file detected; skipping these apps: $(tr '\n' ' ' <<< $apps_to_exclude)"
       apps_missing=$(comm -2 \
         <(tr ' ' '\n' <<< "$apps_missing" | sort) \
         <(sort <<< "$apps_to_exclude") | grep -Ev '^\t')
@@ -206,9 +210,43 @@ $(echo "${HOMEBREW_BUILTINS_X86}" | tr '\n' ' ')\n"
       brew install $apps_missing
     fi
   fi
+  if test -n "$apps_with_urls_missing"
+  then
+    if test -f "$HOMEBREW_APPS_EXCLUSION_FILE"
+    then
+      apps_to_exclude=$(cat "$HOMEBREW_APPS_EXCLUSION_FILE")
+      log_warning "Homebrew exclusion file detected; skipping these apps: $(tr '\n' ' ' <<< $apps_to_exclude)"
+      apps_with_urls_missing=$(comm -2 \
+        <(tr ' ' '\n' <<< "$apps_with_urls_missing" | sort) \
+        <(sort <<< "$apps_to_exclude") | grep -Ev '^\t')
+    fi
+    # Unfortunately, Homebrew makes it REALLY difficult to pin versions of software
+    # to install. This is problematic for supply chain attacks like what happened with Bartender
+    # and Nightowl. This is the only way of installing specific versions of Homebrew
+    # formulas that I know of.
+    #
+    # See also: https://stackoverflow.com/a/65946969
+    if test -n "$apps_with_urls_missing"
+    then
+      while read -r package
+      do
+        formula_url="$(grep -Ev '^#' <<< "$HOMEBREW_FORMULA_URLS" |
+          grep -E "^${package}" |
+          cut -f2 -d ';')"
+        log_info "Installing cask from URL: $package [url: $formula_url]"
+        fp="/tmp/${package}.rb"
+        curl -sSo "$fp" "$formula_url" &&
+          2>/dev/null brew unlink "$package" || true &&
+          brew install --cask "$fp" &&
+          rm -f /tmp/formula.rb
+      done <<< "$(tr ' ' '\n' <<< "$apps_with_urls_missing")"
+    fi
+  fi
 }
 
 install_app_store_apps() {
+  test -z "$APPLE_APP_STORE_APPS" && return 0
+
   if &>/dev/null mas account
   then
     install_if_missing "$(get_app_store_apps)" "mas lucky" $APPLE_APP_STORE_APPS
