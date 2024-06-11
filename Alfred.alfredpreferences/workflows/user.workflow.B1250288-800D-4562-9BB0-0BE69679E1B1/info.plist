@@ -141,7 +141,8 @@ pkill -i teams chromacam krisp
 ${ELGATO_BIN} lights | grep -E ^Light | awk '{print $NF}' |
 	while read -r light_id;
 	do ${ELGATO_BIN} off "$light_id";
-done</string>
+done
+pointer_size --small</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -217,7 +218,8 @@ done</string>
 				<integer>102</integer>
 				<key>script</key>
 				<string>open ~/Applications/krisp.app
-open /Applications/zoom.us.app</string>
+open /Applications/zoom.us.app
+pointer_size --huge</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -420,8 +422,12 @@ ${ELGATO_BIN} color --level 3700 1</string>
 	<dict>
 		<key>AUTHY_BIN</key>
 		<string></string>
+		<key>DEMO_MOUSE_SIZE</key>
+		<string>4</string>
 		<key>ELGATO_BIN</key>
 		<string>/Users/carlos.nunez/.home_env/bin/elgato</string>
+		<key>NORMAL_MOUSE_SIZE</key>
+		<string>1</string>
 	</dict>
 	<key>version</key>
 	<string></string>

@@ -2,7 +2,7 @@
 export FROM_BASH_INSTALL=true
 source "$HOME/.bash_onepassword_specific"
 
-ETC_HOSTS_PREPPED_SENTINEL_FILE="$HOME/.config/setup/etc_hosts_prepped"
+POINTER_SIZE_URL=https://raw.githubusercontent.com/carlosonunez/macos-mouse-size-toggler/main/toggler.sh
 ONEPASSWORD_VAULT="${ONEPASSWORD_VAULT:-"Carlos's Personal Vault"}"
 INSTALL_LOCK_FILE="$HOME/.bash_install_lock"
 COMPLETE_ALIAS_URL=https://raw.githubusercontent.com/cykerway/complete-alias/master/complete_alias
@@ -15,9 +15,6 @@ OBS_PREFS_TIMESTAMP_FILE="$HOME/.config/obs-prefs-updater/timestamp"
 MAX_OBS_PREFS_STALENESS_DAYS=5 # How current should /etc/hosts be?
 # Update our local /etc/hosts file to disable tracking, telemetry, and ads.
 # Sourced from firebog.net
-DISABLE_ADFREE_CHECK="${DISABLE_ADFREE_CHECK:-false}" # Should we disable updating /etc/hosts?
-FORCE_ADFREE_UPDATE="${FORCE_ADFREE_UPDATE:-false}" # Should we update our /etc/hosts anyway?
-ADFREE_TIMESTAMP_FILE="$HOME/.config/adfree-etchosts/timestamp"
 MAX_AD_FREE_STALENESS_DAYS=5 # How current should /etc/hosts be?
 HOMEBREW_APPS_EXCLUSION_FILE="$HOME/.skip_these_apps"
 HOMEBREW_BUILTINS_X86=$(cat <<-APPS
@@ -69,7 +66,6 @@ brightness
 htop
 imagemagick
 iterm2
-jordanbaird-ice
 keyboardcleantool
 krisp
 make
@@ -621,6 +617,12 @@ setup_onepassword() {
   fi
 }
 
+install_mouse_toggle_size() {
+   curl -Lo /tmp/pointer_size "$POINTER_SIZE_URL" &&
+     chmod +x /tmp/pointer_size
+     sudo mv /tmp/pointer_size /usr/local/bin/pointer_size
+}
+
 remove_dead_install_locks
 if installation_is_locked
 then
@@ -662,6 +664,7 @@ or update apps. To re-attempt manually, run 'source \$HOME/.bash_install'."
 fi
 stop_stealing_focus
 disable_the_dock_entirely
+install_mouse_toggle_size
 configure_todos
 update_obs_prefs
 install_complete_alias
