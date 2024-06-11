@@ -22,6 +22,21 @@ exec_gcloud() {
  update_any_new_kubeconfigs_to_use_dockerized_gcloud
 }
 
+gcp_ps1_hook_enabled() {
+  test -f "$HOME/.config/gcloud/active_config" &&
+  test -f "$HOME/.config/gcloud/credentials.db" &&
+    which sqlite3 &>/dev/null
+}
+
+gcp_ps1_hook() {
+  config_dir="$HOME/.config/gcloud"
+  active_config=$(cat "${config_dir}/active_config")
+  active_project="$(grep -hr 'project =' "${config_dir}/configurations/config_${active_config}" | sed -E 's/^project =//' | tr -d ' ')"
+  test -z "$active_project" && active_project="None"
+  active_user="$(sqlite3 -ascii "${config_dir}/credentials.db" 'SELECT * FROM credentials LIMIT 1' | head -1 | tr -d '{ ')"
+  printf "%s (project: %s)" "$active_user" "$active_project"
+}
+
 test -d "$HOME/.config/gke" || mkdir -p "$HOME/.config/gke"
 alias gcloud=exec_gcloud
 alias gsutil="docker run --rm -i -v /tmp:/tmp -v  $PWD:/app -w /app -v /tmp:/tmp -v  $HOME/.config/gcloud:/root/.config/gcloud $GCP_DOCKER_IMAGE gsutil"

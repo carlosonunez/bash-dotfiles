@@ -105,6 +105,7 @@ popd () {
 get_csp_login_status() {
   aws_ps1_hook_enabled && printf "${BYellow}[AWS${NC}: ${Yellow}%s${NC}${BYellow}]${NC}\n" "$(aws_ps1_hook)"
   azure_ps1_hook_enabled && printf "${BCyan}[Azure${NC}: ${Cyan}%s${NC}${BCyan}]${NC}\n" "$(azure_ps1_hook)"
+  gcp_ps1_hook_enabled && printf "${BPurple}[GCP${NC}: ${Purple}%s${NC}${BPurple}]${NC}\n" "$(gcp_ps1_hook)"
 }
 
 install_prerequisites() {
