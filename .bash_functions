@@ -796,7 +796,7 @@ _update() {
   title="$4"
   test -f "$zip_file" && rm "$zip_file"
   op_cli document get "$title" --vault "$vault" --output "$zip_file" &&
-  zip -ujr "$zip_file" $path &&
+  zip -fjr "$zip_file" $path &&
   op_cli document edit "$title" --vault "$vault" "$zip_file"
 }
 
