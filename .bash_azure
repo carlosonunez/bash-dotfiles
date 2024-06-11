@@ -86,6 +86,28 @@ INI
   fi
 }
 
+azure_ps1_hook_enabled() {
+  test -f "$AZURE_PROFILES_LOCATION"
+}
+
+azure_ps1_hook() {
+  AZURE_PROFILES_LOCATION="$HOME/.azure/azureProfile.json"
+  if test -f "$AZURE_PROFILES_LOCATION"
+  then
+    logged_in_user_guids=$(jq -r '.subscriptions[].user.name' $AZURE_PROFILES_LOCATION | \
+      sort -u | \
+      tr '\n' ',' | \
+      sed 's/,$//'
+    )
+    if ! test -z "$logged_in_user_guids"
+    then
+      printf "%s" "$logged_in_user_guids"
+    else
+      printf "not logged in"
+    fi
+  fi
+}
+
 verify_sp_url_file_is_present &&
   verify_sp_cert_is_present &&
   verify_sp_tenant_file_is_present &&
