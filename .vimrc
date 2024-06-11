@@ -425,3 +425,6 @@ let g:terraform_align = 1
 let g:sops_files_match = "{sops-*,*.sops,*.enc.yaml}"
 " Close all quickfix and location windows
 nnoremap <leader>z :windo lcl\|ccl<CR>
+
+" Credit: https://stackoverflow.com/a/8585343
+map <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
