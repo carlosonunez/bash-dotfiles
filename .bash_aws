@@ -391,6 +391,9 @@ EXPORT
 }
 
 # aws_ps1_hook: Adds information about your active profile into your shell's PS1.
+aws_ps1_hook_enabled() {
+  test -f "$AWS_PROFILE_LOCATION"
+}
 aws_ps1_hook() {
   if ! test -f "$AWS_PROFILE_LOCATION"
   then

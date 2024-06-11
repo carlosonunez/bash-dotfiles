@@ -103,27 +103,7 @@ popd () {
 }
 
 get_csp_login_status() {
-  _azure_status() {
-    AZURE_PROFILES_LOCATION="$HOME/.azure/azureProfile.json"
-    if test -f "$AZURE_PROFILES_LOCATION"
-    then
-      logged_in_user_guids=$(jq -r '.subscriptions[].user.name' $AZURE_PROFILES_LOCATION | \
-        sort -u | \
-        tr '\n' ',' | \
-        sed 's/,$//'
-      )
-      if ! test -z "$logged_in_user_guids"
-      then
-        printf "%s" "$logged_in_user_guids"
-      else
-        printf "not logged in"
-      fi
-    fi
-  }
-
-
-  printf "${BYellow}[AWS${NC}: ${Yellow}%s${NC}\n" "$(aws_ps1_hook)]"
-  printf "${BCyan}[Azure${NC}: ${Cyan}%s${NC}" "$(_azure_status)]"
+  aws_ps1_hook_enabled && printf "${BYellow}[AWS${NC}: ${Yellow}%s${NC}${BYellow}]${NC}\n" "$(aws_ps1_hook)"
 }
 
 install_prerequisites() {
