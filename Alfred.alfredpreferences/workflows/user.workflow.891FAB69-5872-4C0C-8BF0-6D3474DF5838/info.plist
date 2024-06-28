@@ -209,8 +209,8 @@ ${ELGATO_BIN} color --level 6000 1</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>${ELGATO_BIN} off 0
-${ELGATO_BIN} off 1</string>
+				<string>${ELGATO_BIN} toggle 0
+${ELGATO_BIN} toggle 1</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
