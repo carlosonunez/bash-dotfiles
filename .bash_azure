@@ -1,4 +1,5 @@
 # vi: set ft=sh:
+AZURE_PROFILES_LOCATION="$HOME/.azure/azureProfile.json"
 AZURE_DIRECTORY=$HOME/.azure
 AZURE_CONFIG_FILE=$AZURE_DIRECTORY/config
 AZURE_SP_TENANT_FILE=$HOME/.ssh/azure_tenant
@@ -13,6 +14,10 @@ _check_file() {
     log_error "$2"
     return 1
   fi
+}
+
+_az_current_user() {
+  jq -r '.subscriptions[] | select(.isDefault == true) | .user.name' "$AZURE_PROFILES_LOCATION"
 }
 
 verify_sp_url_file_is_present() {
@@ -91,20 +96,13 @@ azure_ps1_hook_enabled() {
 }
 
 azure_ps1_hook() {
-  AZURE_PROFILES_LOCATION="$HOME/.azure/azureProfile.json"
   if test -f "$AZURE_PROFILES_LOCATION"
   then
-    logged_in_user_guids=$(jq -r '.subscriptions[].user.name' $AZURE_PROFILES_LOCATION | \
-      sort -u | \
-      tr '\n' ',' | \
-      sed 's/,$//'
-    )
-    if ! test -z "$logged_in_user_guids"
-    then
-      printf "%s" "$logged_in_user_guids"
-    else
-      printf "not logged in"
+    current_user=$(_az_current_user)
+    if test -n "$current_user"
+    then printf '%s' "$current_user" && return 0
     fi
+    printf "not logged in"
   fi
 }
 
