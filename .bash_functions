@@ -141,7 +141,7 @@ configure_machine() {
 
 configure_client_or_company_specific_settings() {
   # Load any company specific bash submodules first.
-  for file in $(find $HOME -type l -name ".bash_company_*" -maxdepth 1)
+  for file in $(find $HOME -not -type d -name ".bash_company_*" -maxdepth 1)
   do
     log_init "Loading company submodule ${BYellow}${file}${NC}"
     source $file
@@ -149,9 +149,9 @@ configure_client_or_company_specific_settings() {
 }
 
 configure_secret_settings() {
-  for file in $(find $HOME -type f -name ".bash_secret_*" -maxdepth 1 | grep -v ".bash_secret_exports")
+  for file in $(find $HOME -not -type d -name ".bash_secret_*" -maxdepth 1 | grep -v ".bash_secret_exports")
   do
-    log_init "Loading company submodule ${BYellow}${file}${NC}"
+    log_init "Loading secret setting ${BYellow}${file}${NC}"
     source $file
   done
 }
@@ -169,7 +169,7 @@ configure_bash_session() {
     source_file "$HOME/.bash_$file"
   done
   excludes_re='bash_(aliases|exports|functions|python|go|ruby|profile|install|custom_profile|company|history|sessions)'
-  for file in $(find $HOME -type l -maxdepth 1 -name "*.bash_*" | \
+  for file in $(find $HOME -not -type d -maxdepth 1 -name "*.bash_*" | \
     egrep -v "$excludes_re" | \
     sort -u)
   do
