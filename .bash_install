@@ -2,7 +2,7 @@
 export FROM_BASH_INSTALL=true
 source "$HOME/.bash_onepassword_specific"
 
-POINTER_SIZE_URL=https://raw.githubusercontent.com/carlosonunez/macos-mouse-size-toggler/main/toggler.sh
+POINTER_SIZE_URL=https://raw.githubusercontent.com/carlosonunez/macos-pointer-size/main/toggler.sh
 ONEPASSWORD_VAULT="${ONEPASSWORD_VAULT:-"Carlos's Personal Vault"}"
 INSTALL_LOCK_FILE="$HOME/.bash_install_lock"
 COMPLETE_ALIAS_URL=https://raw.githubusercontent.com/cykerway/complete-alias/master/complete_alias
@@ -618,6 +618,9 @@ setup_onepassword() {
 }
 
 install_mouse_toggle_size() {
+  test -f /usr/local/bin/pointer_size && return 0
+
+  log_info_sudo "Installing macOS Pointer Size Toggler"
    curl -Lo /tmp/pointer_size "$POINTER_SIZE_URL" &&
      chmod +x /tmp/pointer_size
      sudo mv /tmp/pointer_size /usr/local/bin/pointer_size
