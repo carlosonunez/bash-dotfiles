@@ -1,4 +1,4 @@
-# vi: set ft=sh:
+# vi: set ft=bash:
 export DEFAULT_AWS_REGION=us-east-2
 AWS_OP_VAULT="${AWS_OP_VAULT:-$OP_DEFAULT_VAULT}"
 AWS_OP_RELOAD_ENTRIES="${AWS_OP_RELOAD_ENTRIES:-false}"
@@ -73,7 +73,7 @@ _assume_role() {
   local role_arn="$5"
   local role_external_id="$6"
   profile_id="$(_profile_id_from_profile "$profile")"
-  json=$(AWS_ACCESS_KEY_ID="$ak" AWS_SECRET_ACCESS_KEY="$sk" AWS_REGION="$region" \
+  json=$(AWS_SESSION_TOKEN="" AWS_ACCESS_KEY_ID="$ak" AWS_SECRET_ACCESS_KEY="$sk" AWS_REGION="$region" \
     _aws_cli sts assume-role --role-arn "$role_arn" \
       --region "$region" \
       --external-id "$role_external_id" \
