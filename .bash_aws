@@ -287,6 +287,22 @@ _aws_login_internal() {
   _aws_login "$1" 1
 }
 
+_aws_creds() {
+  profile="${1:-$(_get_active_aws_profile)}"
+  cat <<-EXPORT
+export AWS_ACCESS_KEY_ID=$(_access_key_from_profile "$profile")
+export AWS_REGION=$(_region_from_profile "$profile")
+export AWS_SECRET_ACCESS_KEY=$(_secret_key_from_profile "$profile")
+export AWS_SESSION_TOKEN=$(_session_token_from_profile "$profile")
+EXPORT
+}
+
+_aws_active_creds_match_keys_in_env() {
+  active_creds=$(_aws_creds | sort)
+  env_creds=$(env | grep 'AWS_' | grep -v 'DEFAULT' | sort)
+  test "${active_creds//export /}" == "$env_creds"
+}
+
 # aws_next_profile: Changes to the next profile in the list of profiles available
 aws_next_profile() {
   local this_profile all_profiles next_profile
@@ -379,24 +395,16 @@ aws_switch_profile() {
   _aws_set_profile "$profile_to_use"
 }
 
-# aws_creds: Prints AWS credentials (access key ID, secret access key, session token)
-# in `export` form. Meant to be used with `eval`.
-aws_creds() {
-  profile="${1:-$(_get_active_aws_profile)}"
-  cat <<-EXPORT
-# Run this command again inside of 'eval' to set these
-# environment variables in your environment.
-export AWS_ACCESS_KEY_ID=$(_access_key_from_profile "$profile")
-export AWS_SECRET_ACCESS_KEY=$(_secret_key_from_profile "$profile")
-export AWS_SESSION_TOKEN=$(_session_token_from_profile "$profile")
-export AWS_REGION=$(_region_from_profile "$profile")
-EXPORT
+# aws_exec_cmd runs a command with your profile's credentials loaded in its environment.
+aws_exec_cmd() {
+  eval "$(_aws_creds); $*"
 }
 
 # aws_ps1_hook: Adds information about your active profile into your shell's PS1.
 aws_ps1_hook_enabled() {
   test -f "$AWS_PROFILE_LOCATION"
 }
+
 aws_ps1_hook() {
   if ! test -f "$AWS_PROFILE_LOCATION"
   then
@@ -417,6 +425,13 @@ aws_ps1_hook() {
   then printf "${BYellow}$active_profile${Yellow} $(_access_key_from_profile "$active_profile"): ${BRed}!!! expired !!!${NC}"
   else printf "${BYellow}$active_profile${Yellow} $(_access_key_from_profile "$active_profile"): ${time_left_mins} minutes remaining${NC}"
   fi
+}
+
+aws_prompt_command_hook() {
+  aws_ps1_hook_enabled || return 0
+  _aws_active_creds_match_keys_in_env && return 0
+
+  eval "$(_aws_creds)"
 }
 
 # AWS wrapped with profile context
