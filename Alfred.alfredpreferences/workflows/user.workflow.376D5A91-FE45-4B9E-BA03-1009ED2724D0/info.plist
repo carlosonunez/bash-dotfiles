@@ -6,11 +6,11 @@
 	<string></string>
 	<key>connections</key>
 	<dict>
-		<key>493E41C7-7202-4B29-B650-440BC471B49E</key>
+		<key>16B02850-508B-478D-B856-9FDB8183C9D8</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>AD331DB3-26DE-4D7E-B88B-FC11471BEB56</string>
+				<string>91E31294-78AA-497F-AC86-2CFFF4E3213B</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -19,24 +19,11 @@
 				<false/>
 			</dict>
 		</array>
-		<key>9C4A4BE4-3A71-4AEA-8EB9-D7D457324889</key>
+		<key>CBC39E0C-3B57-4CD9-8CE4-D195EDC92D73</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>2AB10F01-495E-4CBC-8F8A-A01E9A87A2E4</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
-		<key>FAB95522-EB4E-4114-BC8E-23E0452E4BB9</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>DB46E60B-EDA5-48C6-BF78-CDC891D6012B</string>
+				<string>CFD94B60-3782-46E3-AC6F-123F81DB5A72</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -53,7 +40,7 @@
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>Elgato Handler</string>
+	<string>Big Mouse Energy</string>
 	<key>objects</key>
 	<array>
 		<dict>
@@ -68,11 +55,11 @@
 				<key>focusedappvariablename</key>
 				<string></string>
 				<key>hotkey</key>
-				<integer>3</integer>
+				<integer>46</integer>
 				<key>hotmod</key>
 				<integer>1835008</integer>
 				<key>hotstring</key>
-				<string>F</string>
+				<string>M</string>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -83,7 +70,7 @@
 			<key>type</key>
 			<string>alfred.workflow.trigger.hotkey</string>
 			<key>uid</key>
-			<string>9C4A4BE4-3A71-4AEA-8EB9-D7D457324889</string>
+			<string>16B02850-508B-478D-B856-9FDB8183C9D8</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
@@ -95,10 +82,7 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>${ELGATO_BIN} brightness --level 40 0
-${ELGATO_BIN} brightness --level 29 1
-${ELGATO_BIN} color --level 5200 0
-${ELGATO_BIN} color --level 3700 1</string>
+				<string>pointer_size --huge</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -109,33 +93,7 @@ ${ELGATO_BIN} color --level 3700 1</string>
 			<key>type</key>
 			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
-			<string>2AB10F01-495E-4CBC-8F8A-A01E9A87A2E4</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>${ELGATO_BIN} brightness --level 20 0
-${ELGATO_BIN} brightness --level 14 1
-${ELGATO_BIN} color --level 6000 0
-${ELGATO_BIN} color --level 6000 1</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>DB46E60B-EDA5-48C6-BF78-CDC891D6012B</string>
+			<string>91E31294-78AA-497F-AC86-2CFFF4E3213B</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
@@ -151,11 +109,11 @@ ${ELGATO_BIN} color --level 6000 1</string>
 				<key>focusedappvariablename</key>
 				<string></string>
 				<key>hotkey</key>
-				<integer>5</integer>
+				<integer>46</integer>
 				<key>hotmod</key>
-				<integer>1835008</integer>
+				<integer>917504</integer>
 				<key>hotstring</key>
-				<string>G</string>
+				<string>M</string>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -166,38 +124,7 @@ ${ELGATO_BIN} color --level 6000 1</string>
 			<key>type</key>
 			<string>alfred.workflow.trigger.hotkey</string>
 			<key>uid</key>
-			<string>FAB95522-EB4E-4114-BC8E-23E0452E4BB9</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>action</key>
-				<integer>0</integer>
-				<key>argument</key>
-				<integer>0</integer>
-				<key>focusedappvariable</key>
-				<false/>
-				<key>focusedappvariablename</key>
-				<string></string>
-				<key>hotkey</key>
-				<integer>4</integer>
-				<key>hotmod</key>
-				<integer>1835008</integer>
-				<key>hotstring</key>
-				<string>H</string>
-				<key>leftcursor</key>
-				<false/>
-				<key>modsmode</key>
-				<integer>0</integer>
-				<key>relatedAppsMode</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.hotkey</string>
-			<key>uid</key>
-			<string>493E41C7-7202-4B29-B650-440BC471B49E</string>
+			<string>CBC39E0C-3B57-4CD9-8CE4-D195EDC92D73</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
@@ -209,8 +136,7 @@ ${ELGATO_BIN} color --level 6000 1</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>${ELGATO_BIN} off 0
-${ELGATO_BIN} off 1</string>
+				<string>pointer_size --small</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -221,7 +147,7 @@ ${ELGATO_BIN} off 1</string>
 			<key>type</key>
 			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
-			<string>AD331DB3-26DE-4D7E-B88B-FC11471BEB56</string>
+			<string>CFD94B60-3782-46E3-AC6F-123F81DB5A72</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
@@ -230,58 +156,37 @@ ${ELGATO_BIN} off 1</string>
 	<string></string>
 	<key>uidata</key>
 	<dict>
-		<key>2AB10F01-495E-4CBC-8F8A-A01E9A87A2E4</key>
+		<key>16B02850-508B-478D-B856-9FDB8183C9D8</key>
 		<dict>
 			<key>xpos</key>
-			<real>355</real>
+			<real>255</real>
 			<key>ypos</key>
-			<real>70</real>
+			<real>305</real>
 		</dict>
-		<key>493E41C7-7202-4B29-B650-440BC471B49E</key>
+		<key>91E31294-78AA-497F-AC86-2CFFF4E3213B</key>
 		<dict>
 			<key>xpos</key>
-			<real>30</real>
+			<real>650</real>
 			<key>ypos</key>
-			<real>390</real>
+			<real>305</real>
 		</dict>
-		<key>9C4A4BE4-3A71-4AEA-8EB9-D7D457324889</key>
+		<key>CBC39E0C-3B57-4CD9-8CE4-D195EDC92D73</key>
 		<dict>
 			<key>xpos</key>
-			<real>30</real>
+			<real>260</real>
 			<key>ypos</key>
-			<real>70</real>
+			<real>490</real>
 		</dict>
-		<key>AD331DB3-26DE-4D7E-B88B-FC11471BEB56</key>
+		<key>CFD94B60-3782-46E3-AC6F-123F81DB5A72</key>
 		<dict>
 			<key>xpos</key>
-			<real>355</real>
+			<real>655</real>
 			<key>ypos</key>
-			<real>390</real>
-		</dict>
-		<key>DB46E60B-EDA5-48C6-BF78-CDC891D6012B</key>
-		<dict>
-			<key>xpos</key>
-			<real>355</real>
-			<key>ypos</key>
-			<real>225</real>
-		</dict>
-		<key>FAB95522-EB4E-4114-BC8E-23E0452E4BB9</key>
-		<dict>
-			<key>xpos</key>
-			<real>30</real>
-			<key>ypos</key>
-			<real>225</real>
+			<real>490</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
 	<array/>
-	<key>variables</key>
-	<dict>
-		<key>ELGATO_BIN</key>
-		<string>/Users/carlos.nunez/.home_env/bin/elgato</string>
-	</dict>
-	<key>version</key>
-	<string></string>
 	<key>webaddress</key>
 	<string></string>
 </dict>
