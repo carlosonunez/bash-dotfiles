@@ -226,6 +226,10 @@ _get_credential_expiration_minutes() {
   printf "%s/60" "$((exp-now))" | bc
 }
 
+_aws_creds_expired() {
+  test "$(_get_credential_expiration_minutes "$profile")" -le 0
+}
+
 _aws_login() {
   set -o pipefail
   local profile_type profiles default_profile
@@ -339,8 +343,7 @@ aws_switch_profile() {
   idx=1
   while read -r profile
   do
-    time_left=$(_get_credential_expiration_minutes "$profile")
-    if test "$time_left" -le 0
+    if _aws_creds_expired
     then time_left_text="[expired]"
     else time_left_text="[$time_left minutes remaining]"
     fi
