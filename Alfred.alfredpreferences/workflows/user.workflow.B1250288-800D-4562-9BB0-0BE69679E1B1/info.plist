@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string></string>
+	<string>me.carlosnunez.bundles.meetings</string>
 	<key>category</key>
 	<string>Productivity</string>
 	<key>connections</key>
@@ -12,7 +12,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>553A6DD5-745E-4B15-9515-8099AEC6F03B</string>
+				<string>B7232222-B2A1-48A1-8F15-E73E55FE733D</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -38,7 +38,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>B8C4EBF6-24F0-4C31-969C-3A0761451535</string>
+				<string>57C00D48-FCB7-4D4D-8B32-BF41F60E2BB7</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -47,7 +47,40 @@
 				<false/>
 			</dict>
 		</array>
-		<key>B8C4EBF6-24F0-4C31-969C-3A0761451535</key>
+		<key>392E71F1-352B-4800-B067-CD963FEFE558</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>BA460B04-B19C-4B28-8444-67A25C276E85</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>53FF37BC-BCBC-4225-8BC3-4BAB62219E33</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>188728F5-7DFC-4049-B6BB-C374180D79BB</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>55BA005E-5532-46FB-A710-EB4FD06BB542</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
@@ -60,11 +93,93 @@
 				<false/>
 			</dict>
 		</array>
-		<key>E436AB0F-27B6-4ED7-90D7-A6FB7AC6D6FD</key>
+		<key>57C00D48-FCB7-4D4D-8B32-BF41F60E2BB7</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>53FF37BC-BCBC-4225-8BC3-4BAB62219E33</string>
+				<string>813D4660-9F4B-4A40-AD21-223CEFF191DF</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>B8C4EBF6-24F0-4C31-969C-3A0761451535</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>A148E479-237D-435D-9CC5-026391CD2D0F</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>4354276C-0F2A-4DEF-B718-B0D840A6B522</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>57C00D48-FCB7-4D4D-8B32-BF41F60E2BB7</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>A4BF5516-DCE4-457A-A1A4-8C1694BB3EAB</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>09A88435-5BFB-4095-8337-FD869F3A7BF4</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>392E71F1-352B-4800-B067-CD963FEFE558</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>B7232222-B2A1-48A1-8F15-E73E55FE733D</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>553A6DD5-745E-4B15-9515-8099AEC6F03B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>B8C4EBF6-24F0-4C31-969C-3A0761451535</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>55BA005E-5532-46FB-A710-EB4FD06BB542</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -77,17 +192,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>188728F5-7DFC-4049-B6BB-C374180D79BB</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
-				<string>E436AB0F-27B6-4ED7-90D7-A6FB7AC6D6FD</string>
+				<string>392E71F1-352B-4800-B067-CD963FEFE558</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -98,7 +203,7 @@
 		</array>
 	</dict>
 	<key>createdby</key>
-	<string></string>
+	<string>Carlos Nunez</string>
 	<key>description</key>
 	<string>Load applications that make meetings better.</string>
 	<key>disabled</key>
@@ -110,52 +215,73 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>lastpathcomponent</key>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>3</integer>
+				<key>argumenttext</key>
+				<string>off</string>
+				<key>focusedappvariable</key>
 				<false/>
-				<key>onlyshowifquerypopulated</key>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>13</integer>
+				<key>hotmod</key>
+				<integer>1835008</integer>
+				<key>hotstring</key>
+				<string>W</string>
+				<key>leftcursor</key>
 				<false/>
-				<key>removeextension</key>
-				<false/>
-				<key>text</key>
-				<string>Krisp, Zoom, and other VC apps have been closed.</string>
-				<key>title</key>
-				<string>Your meeting is done.</string>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
+			<string>alfred.workflow.trigger.hotkey</string>
 			<key>uid</key>
-			<string>4B26DB85-8BD5-41D7-AD99-23C088B158CE</string>
+			<string>A148E479-237D-435D-9CC5-026391CD2D0F</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>externaltriggerid</key>
+				<string>wiz</string>
+				<key>passinputasargument</key>
+				<true/>
+				<key>passvariables</key>
+				<false/>
+				<key>workflowbundleid</key>
+				<string>me.carlosnunez.bundles.demos.wiz</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>4354276C-0F2A-4DEF-B718-B0D840A6B522</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>pkill -HUP zoom
-pkill -i teams chromacam krisp
-${ELGATO_BIN} lights | grep -E ^Light | awk '{print $NF}' |
-	while read -r light_id;
-	do ${ELGATO_BIN} off "$light_id";
-done
-pointer_size --small</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
+				<key>externaltriggerid</key>
+				<string>switch</string>
+				<key>passinputasargument</key>
+				<true/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>me.carlosnunez.bundles.lights</string>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.action.script</string>
+			<string>alfred.workflow.output.callexternaltrigger</string>
 			<key>uid</key>
-			<string>B8C4EBF6-24F0-4C31-969C-3A0761451535</string>
+			<string>813D4660-9F4B-4A40-AD21-223CEFF191DF</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -163,7 +289,7 @@ pointer_size --small</string>
 				<key>action</key>
 				<integer>0</integer>
 				<key>argument</key>
-				<integer>0</integer>
+				<integer>3</integer>
 				<key>focusedappvariable</key>
 				<false/>
 				<key>focusedappvariablename</key>
@@ -198,14 +324,14 @@ pointer_size --small</string>
 				<key>removeextension</key>
 				<false/>
 				<key>text</key>
-				<string></string>
+				<string>Krisp, Zoom, and other VC apps have been closed.</string>
 				<key>title</key>
-				<string>[Mobile] You're ready to meet!</string>
+				<string>Your meeting is done.</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.output.notification</string>
 			<key>uid</key>
-			<string>553A6DD5-745E-4B15-9515-8099AEC6F03B</string>
+			<string>4B26DB85-8BD5-41D7-AD99-23C088B158CE</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -217,9 +343,9 @@ pointer_size --small</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>open ~/Applications/krisp.app
-open /Applications/zoom.us.app
-pointer_size --huge</string>
+				<string>for app in zoom teams krisp
+do ps -ef | grep -i "$app" | grep -Ev 'grep|Core Audio' | awk '{print $2}' | while read -r pid; do &gt;&amp;2 echo "INFO: Terminating '$app' with PID '$pid'"; kill "$pid"; done
+done</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -230,9 +356,62 @@ pointer_size --huge</string>
 			<key>type</key>
 			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
-			<string>188728F5-7DFC-4049-B6BB-C374180D79BB</string>
+			<string>B8C4EBF6-24F0-4C31-969C-3A0761451535</string>
 			<key>version</key>
 			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputmode</key>
+				<integer>-1</integer>
+				<key>outputmode</key>
+				<integer>0</integer>
+				<key>shortcut</key>
+				<string>Do Not Disturb - Off</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.automation.runshortcut</string>
+			<key>uid</key>
+			<string>55BA005E-5532-46FB-A710-EB4FD06BB542</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>off</string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>57C00D48-FCB7-4D4D-8B32-BF41F60E2BB7</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>externaltriggerid</key>
+				<string>wiz</string>
+				<key>passinputasargument</key>
+				<true/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>me.carlosnunez.bundles.demos.wiz</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>09A88435-5BFB-4095-8337-FD869F3A7BF4</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -240,17 +419,19 @@ pointer_size --huge</string>
 				<key>action</key>
 				<integer>0</integer>
 				<key>argument</key>
-				<integer>1</integer>
+				<integer>3</integer>
+				<key>argumenttext</key>
+				<string>on</string>
 				<key>focusedappvariable</key>
 				<false/>
 				<key>focusedappvariablename</key>
 				<string></string>
 				<key>hotkey</key>
-				<integer>6</integer>
+				<integer>13</integer>
 				<key>hotmod</key>
 				<integer>1572864</integer>
 				<key>hotstring</key>
-				<string>Z</string>
+				<string>W</string>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -261,7 +442,7 @@ pointer_size --huge</string>
 			<key>type</key>
 			<string>alfred.workflow.trigger.hotkey</string>
 			<key>uid</key>
-			<string>1F807F74-7905-4FF0-B9E6-E57DE19D6235</string>
+			<string>A4BF5516-DCE4-457A-A1A4-8C1694BB3EAB</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
@@ -299,32 +480,21 @@ pointer_size --huge</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>${ELGATO_BIN} lights | grep -E ^Light | awk '{print $NF}' |
-	while read -r light_id;
-	do ${ELGATO_BIN} on "$light_id";
-done
-${ELGATO_BIN} brightness --level 60 0
-${ELGATO_BIN} brightness --level 45 1
-${ELGATO_BIN} color --level 5200 0
-${ELGATO_BIN} color --level 3700 1</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
+				<key>externaltriggerid</key>
+				<string>switch</string>
+				<key>passinputasargument</key>
+				<true/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>me.carlosnunez.bundles.lights</string>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.action.script</string>
+			<string>alfred.workflow.output.callexternaltrigger</string>
 			<key>uid</key>
-			<string>E436AB0F-27B6-4ED7-90D7-A6FB7AC6D6FD</string>
+			<string>BA460B04-B19C-4B28-8444-67A25C276E85</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -347,73 +517,257 @@ ${ELGATO_BIN} color --level 3700 1</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>on</string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>392E71F1-352B-4800-B067-CD963FEFE558</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>1</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>6</integer>
+				<key>hotmod</key>
+				<integer>1572864</integer>
+				<key>hotstring</key>
+				<string>Z</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>1F807F74-7905-4FF0-B9E6-E57DE19D6235</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string></string>
+				<key>title</key>
+				<string>[Mobile] You're ready to meet!</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>553A6DD5-745E-4B15-9515-8099AEC6F03B</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>open ~/Applications/krisp.app
+open /Applications/zoom.us.app
+open "/Applications/Microsoft Teams.app"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>188728F5-7DFC-4049-B6BB-C374180D79BB</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputmode</key>
+				<integer>-1</integer>
+				<key>outputmode</key>
+				<integer>0</integer>
+				<key>shortcut</key>
+				<string>Do Not Disturb - On</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.automation.runshortcut</string>
+			<key>uid</key>
+			<string>B7232222-B2A1-48A1-8F15-E73E55FE733D</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string></string>
 	<key>uidata</key>
 	<dict>
+		<key>09A88435-5BFB-4095-8337-FD869F3A7BF4</key>
+		<dict>
+			<key>xpos</key>
+			<real>365</real>
+			<key>ypos</key>
+			<real>630</real>
+		</dict>
 		<key>188728F5-7DFC-4049-B6BB-C374180D79BB</key>
 		<dict>
 			<key>xpos</key>
-			<real>400</real>
+			<real>655</real>
 			<key>ypos</key>
-			<real>395</real>
+			<real>1000</real>
 		</dict>
 		<key>1F807F74-7905-4FF0-B9E6-E57DE19D6235</key>
 		<dict>
+			<key>note</key>
+			<string>Turn on meeting stuff while on the go.</string>
 			<key>xpos</key>
-			<real>65</real>
+			<real>45</real>
 			<key>ypos</key>
-			<real>395</real>
+			<real>1000</real>
 		</dict>
 		<key>341DA14A-CA65-4F00-AC49-A5DEE76C90AB</key>
 		<dict>
+			<key>note</key>
+			<string>Tear down meeting stuff.</string>
 			<key>xpos</key>
-			<real>65</real>
+			<real>60</real>
 			<key>ypos</key>
-			<real>220</real>
+			<real>325</real>
+		</dict>
+		<key>392E71F1-352B-4800-B067-CD963FEFE558</key>
+		<dict>
+			<key>xpos</key>
+			<real>395</real>
+			<key>ypos</key>
+			<real>860</real>
+		</dict>
+		<key>4354276C-0F2A-4DEF-B718-B0D840A6B522</key>
+		<dict>
+			<key>xpos</key>
+			<real>365</real>
+			<key>ypos</key>
+			<real>105</real>
 		</dict>
 		<key>4B26DB85-8BD5-41D7-AD99-23C088B158CE</key>
 		<dict>
 			<key>xpos</key>
-			<real>965</real>
+			<real>1465</real>
 			<key>ypos</key>
-			<real>220</real>
+			<real>325</real>
 		</dict>
 		<key>53FF37BC-BCBC-4225-8BC3-4BAB62219E33</key>
 		<dict>
 			<key>xpos</key>
-			<real>955</real>
+			<real>940</real>
 			<key>ypos</key>
-			<real>565</real>
+			<real>830</real>
 		</dict>
 		<key>553A6DD5-745E-4B15-9515-8099AEC6F03B</key>
 		<dict>
 			<key>xpos</key>
-			<real>960</real>
+			<real>1215</real>
 			<key>ypos</key>
-			<real>395</real>
+			<real>1000</real>
+		</dict>
+		<key>55BA005E-5532-46FB-A710-EB4FD06BB542</key>
+		<dict>
+			<key>xpos</key>
+			<real>1185</real>
+			<key>ypos</key>
+			<real>325</real>
+		</dict>
+		<key>57C00D48-FCB7-4D4D-8B32-BF41F60E2BB7</key>
+		<dict>
+			<key>xpos</key>
+			<real>415</real>
+			<key>ypos</key>
+			<real>355</real>
+		</dict>
+		<key>813D4660-9F4B-4A40-AD21-223CEFF191DF</key>
+		<dict>
+			<key>xpos</key>
+			<real>700</real>
+			<key>ypos</key>
+			<real>325</real>
+		</dict>
+		<key>A148E479-237D-435D-9CC5-026391CD2D0F</key>
+		<dict>
+			<key>note</key>
+			<string>Turn down Wiz demo environment.</string>
+			<key>xpos</key>
+			<real>60</real>
+			<key>ypos</key>
+			<real>100</real>
+		</dict>
+		<key>A4BF5516-DCE4-457A-A1A4-8C1694BB3EAB</key>
+		<dict>
+			<key>note</key>
+			<string>Start up Wiz demo environment.</string>
+			<key>xpos</key>
+			<real>45</real>
+			<key>ypos</key>
+			<real>630</real>
+		</dict>
+		<key>B7232222-B2A1-48A1-8F15-E73E55FE733D</key>
+		<dict>
+			<key>xpos</key>
+			<real>935</real>
+			<key>ypos</key>
+			<real>1000</real>
 		</dict>
 		<key>B8C4EBF6-24F0-4C31-969C-3A0761451535</key>
 		<dict>
 			<key>xpos</key>
-			<real>395</real>
+			<real>910</real>
 			<key>ypos</key>
-			<real>220</real>
+			<real>325</real>
 		</dict>
-		<key>E436AB0F-27B6-4ED7-90D7-A6FB7AC6D6FD</key>
+		<key>BA460B04-B19C-4B28-8444-67A25C276E85</key>
 		<dict>
 			<key>xpos</key>
-			<real>660</real>
+			<real>655</real>
 			<key>ypos</key>
-			<real>565</real>
+			<real>830</real>
 		</dict>
 		<key>F07F7AB2-A339-4BB0-A4BC-1033723425C1</key>
 		<dict>
+			<key>note</key>
+			<string>Turn on meeting stuff while in the office.</string>
 			<key>xpos</key>
-			<real>60</real>
+			<real>45</real>
 			<key>ypos</key>
-			<real>565</real>
+			<real>830</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
@@ -432,6 +786,6 @@ ${ELGATO_BIN} color --level 3700 1</string>
 	<key>version</key>
 	<string></string>
 	<key>webaddress</key>
-	<string></string>
+	<string>https://github.com/carlosonunez</string>
 </dict>
 </plist>
