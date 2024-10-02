@@ -127,6 +127,15 @@ install_docker_related_bash_completions_if_darwin() {
 
 }
 
+export LIMA_INSTANCE=$(docker_machine_name)
+if is_mac
+then
+  export DOCKER_HOST="$DOCKER_SOCK_PATH_DARWIN"
+  grep -Eiq 'arm' < <(uname -m) && export DOCKER_DEFAULT_PLATFORM="linux/arm64"
+fi
+is_mac && export DOCKER_HOST="$DOCKER_SOCK_PATH_DARWIN"
+is_windows_wsl && export DOCKER_HOST="$DOCKER_SOCK_PATH_WINDOWS"
+
 docker_check_mutex_lock
 trap 'rc=$?; docker_check_mutex_unlock; exit $rc' INT EXIT
 if ! which docker &>/dev/null
@@ -157,14 +166,6 @@ add_user_to_docker_group_if_linux
 start_docker_vm_darwin
 install_docker_related_bash_completions_if_darwin
 
-export LIMA_INSTANCE=$(docker_machine_name)
-if is_mac
-then
-  export DOCKER_HOST="$DOCKER_SOCK_PATH_DARWIN"
-  grep -Eiq 'arm' < <(uname -m) && export DOCKER_DEFAULT_PLATFORM="linux/arm64"
-fi
-is_mac && export DOCKER_HOST="$DOCKER_SOCK_PATH_DARWIN"
-is_windows_wsl && export DOCKER_HOST="$DOCKER_SOCK_PATH_WINDOWS"
 docker_check_mutex_unlock
 
 trap '-' INT EXIT
