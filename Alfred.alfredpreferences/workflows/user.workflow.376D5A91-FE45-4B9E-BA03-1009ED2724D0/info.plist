@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string></string>
+	<string>me.carlosnunez.bundles.mouse</string>
 	<key>connections</key>
 	<dict>
 		<key>16B02850-508B-478D-B856-9FDB8183C9D8</key>
@@ -32,17 +32,81 @@
 				<false/>
 			</dict>
 		</array>
+		<key>E44EB8F9-CC64-47AA-A107-233A0100DF94</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>91E31294-78AA-497F-AC86-2CFFF4E3213B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>EDC12B0D-3C18-4DFF-BB2B-565887F04C8E</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>CFD94B60-3782-46E3-AC6F-123F81DB5A72</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 	</dict>
 	<key>createdby</key>
-	<string></string>
+	<string>Carlos Nunez</string>
 	<key>description</key>
-	<string></string>
+	<string>See title.</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
 	<string>Big Mouse Energy</string>
 	<key>objects</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>availableviaurlhandler</key>
+				<true/>
+				<key>triggerid</key>
+				<string>big</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>E44EB8F9-CC64-47AA-A107-233A0100DF94</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>pointer_size --huge</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>91E31294-78AA-497F-AC86-2CFFF4E3213B</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -71,29 +135,6 @@
 			<string>alfred.workflow.trigger.hotkey</string>
 			<key>uid</key>
 			<string>16B02850-508B-478D-B856-9FDB8183C9D8</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>pointer_size --huge</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>91E31294-78AA-497F-AC86-2CFFF4E3213B</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
@@ -151,6 +192,21 @@
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>availableviaurlhandler</key>
+				<true/>
+				<key>triggerid</key>
+				<string>small</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>EDC12B0D-3C18-4DFF-BB2B-565887F04C8E</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string></string>
@@ -184,10 +240,24 @@
 			<key>ypos</key>
 			<real>490</real>
 		</dict>
+		<key>E44EB8F9-CC64-47AA-A107-233A0100DF94</key>
+		<dict>
+			<key>xpos</key>
+			<real>255</real>
+			<key>ypos</key>
+			<real>180</real>
+		</dict>
+		<key>EDC12B0D-3C18-4DFF-BB2B-565887F04C8E</key>
+		<dict>
+			<key>xpos</key>
+			<real>260</real>
+			<key>ypos</key>
+			<real>620</real>
+		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
 	<array/>
 	<key>webaddress</key>
-	<string></string>
+	<string>https://github.com/carlosonunez</string>
 </dict>
 </plist>
