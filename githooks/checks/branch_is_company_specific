@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -x
 allowed_branches_regex=$(git show main:allowed_branches |
   tr '\n' '|' |
   sed 's/.$//')
