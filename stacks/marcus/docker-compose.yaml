@@ -4,7 +4,7 @@ services:
     image: rclone/rclone:1.65.0
     volumes:
       - ./rclone/conf:/config/rclone
-      - $PWD:/data
+      - $PWD:/data:ro
     network_mode: host
     command:
       - rcd
@@ -20,6 +20,29 @@ services:
       - ./adguard-home/workdir:/opt/adguardhome/work
       - ./adguard-home/confdir:/opt/adguardhome/conf
     restart: unless-stopped
+  calibre-server:
+    network_mode: host
+    image: linuxserver/calibre:7.18.0
+    container_name: calibre
+    security_opt:
+      - seccomp=unconfined
+    volumes:
+      - ./calibre-config:/config
+    environment:
+      CUSTOM_PORT: "8089"
+      CUSTOM_HTTPS_PORT: "8189"
+      NO_DECOR: 1
+      TITLE: Calibre
+  calibre-web:
+    network_mode: host
+    image: lscr.io/linuxserver/calibre-web:0.6.23
+    container_name: calibre-web
+    environment:
+      OAUTHLIB_RELAX_TOKEN_SCOPE: "1"
+      DOCKER_MODS: "linuxserver/mods:universal-calibre"
+    volumes:
+      - "./calibre-config/Calibre Library:/books"
+      - ./calibre-web-config:/config
   home-assistant:
     depends_on:
       mqtt-broker:
