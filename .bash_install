@@ -27,8 +27,6 @@ homebrew/cask-fonts
 TAPS
 )
 HOMEBREW_FORMULA_URLS=$(cat <<-URLS
-# Bartender: Lock on 5.0.52 due to enshittification: https://news.ycombinator.com/item?id=40584606
-bartender;https://raw.githubusercontent.com/Homebrew/homebrew-cask/4d4cf9b3716a7225cc5db9fe379378e847b3406a/Casks/b/bartender.rb
 URLS
 )
 HOMEBREW_BUILTINS=$(cat <<-APPS
@@ -64,6 +62,7 @@ grep
 gnupg
 brightness
 htop
+ice
 imagemagick
 iterm2
 keyboardcleantool
@@ -89,49 +88,6 @@ w3m
 xquartz
 zoom
 APPS
-)
-ETC_HOSTS_EXCLUSIONS=$(cat <<-EXCLUSIONS
-amp-reddit-com\.cdn\.ampproject\.org
-analytics\.google\.com
-api\.twitter\.com
-dynatrace\.com
-engineering\.linkedin\.com
-i\.redd\.it
-i\.reddit\.com
-www\.reddit\.com
-linkedin\.com
-media\.licdn\.com
-mmg-fna\.whatsapp\.net
-mmg\.whatsapp\.net
-preview\.redd\.it
-preview\.redd\.it
-oauth\.reddit\.com
-reddit\.com
-old\.reddit\.com
-reddit\.map\.fastly\.net
-static\.licdn\.com
-t\.co
-twimg\.com
-twitter\.com
-v\.redd\.it
-whatsapp\.com
-whatsapp\.net
-www\.licdn\.com
-www\.linkedin\.com
-www\.redditstatic\.com
-www\.t\.co
-web\.whatsapp\.com
-incoming\.telemetry\.mozilla\.org
-whatsapp-.*fbcdn\.net
-media-.*whatsapp\.net
-mmx-ds\.cdn\.whatsapp\.net
-www\.facebook\.com$
-fonts\.gstatic\.com$
-EXCLUSIONS
-)
-ETC_HOSTS_INCLUSIONS=$(cat <<-INCLUSIONS
-fonts.gstatic.com:142.250.114.94
-INCLUSIONS
 )
 FERMATA_URL="https://github.com/iccir/Fermata/releases/download/Fermata-136/Fermata-136.zip"
 
