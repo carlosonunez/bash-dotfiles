@@ -1,13 +1,16 @@
 # Marcus Stack
 
-This folder contains a Docker Compose file that stands up "Marcus," the
-everything box for our house.
+Marcus is a terribly-named whole-home automation service powered by Flatcar
+Linux.
 
-Marcus runs the following services:
+## Services Provided
 
-- **AdGuard Home**: Whole-home ad blocking
-- **Home Assistant**: Centralized light, sensor and alarm system control and
-  HomeKit bridge
+- **AdGuard Home**: Whole-home ad blocking!
+- **Home Assistant**: Centralized smart home control and HomeKit hub
+  for IoT devices that don't speak HomeKit.
+- **Calibre**: A private eBook library of books mostly sourced from Amazon
+  Kindle.
+- **Scrypted**: HomeKit Secure Recording for Ring
 
 ## Backups and Restores
 
