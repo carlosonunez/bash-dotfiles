@@ -30,6 +30,7 @@ dont_use_master_for_default_branches() {
 }
 
 set_global_git_configs() {
+  git config --global core.hooksPath='.githooks'
   git config --global diff.tool vimdiff
   git config --global --replace-all user.signingKey "$GITHUB_SIGNING_KEY"
   git config --global --replace-all merge.tool vimdiff
