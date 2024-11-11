@@ -215,6 +215,9 @@ nnoremap <leader>n :set number!<cr>
 nmap <leader>t :NERDTreeToggle<cr>
 nmap <leader>f :NERDTreeFind<cr>
 
+" Command-T things.
+nmap <leader><leader>t :CommandT<cr>
+
 " Key remappings.
 nnoremap <C-n> :bnext<CR>
 nnoremap <C-p> :bprevious<CR>

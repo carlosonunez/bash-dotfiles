@@ -142,12 +142,12 @@ erig0/cscope_dynamic
 fatih/vim-go
 flazz/vim-colorschemes
 hashivim/vim-terraform
+jsecchiero/vim-sops.git
 junegunn/fzf
 junegunn/fzf.vim
 junegunn/vim-easy-align
 junegunn/vim-emoji
 kovetskiy/vim-bash
-jsecchiero/vim-sops.git
 lambdalisue/battery.vim
 leafgarland/typescript-vim
 markcornick/vim-bats
@@ -158,9 +158,10 @@ plasticboy/vim-markdown
 preservim/vimux
 rlue/vim-fold-rspec
 romainl/vim-cool
-ryanoasis/vim-devicons
 rust-lang/rust.vim
+ryanoasis/vim-devicons
 scrooloose/nerdtree
+skywind3000/asyncrun.vim
 thoughtbot/vim-rspec
 tpope/vim-classpath
 tpope/vim-fugitive.git
@@ -169,13 +170,12 @@ vim-airline/vim-airline
 vim-airline/vim-airline-themes
 vim-scripts/groovy.vim
 vim-test/vim-test
-willchao612/vim-diagon
 will133/vim-dirdiff
+willchao612/vim-diagon
 xolox/vim-easytags
 xolox/vim-misc
 yuratomo/w3m.vim
 zivyangll/git-blame.vim
-skywind3000/asyncrun.vim
 GITHUB_URLS
 )
 
