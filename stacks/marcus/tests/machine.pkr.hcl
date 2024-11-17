@@ -2,6 +2,14 @@ variable "ignition_file" {
   type = string
 }
 
+variable "marcus_subnet" {
+  default = "192.168.0.0/23"
+}
+
+variable "marcus_subnet_dhcp_start" {
+  default = "192.168.0.253"
+}
+
 packer {
   required_plugins {
     qemu = {
@@ -16,38 +24,52 @@ packer {
 }
 
 source "qemu" "machine" {
-  iso_url = "https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/aarch64/alpine-standard-3.20.3-aarch64.iso"
-  iso_checksum = "7d6f065d18af54c3686dceae51235661"
-  output_directory = "out"
-  shutdown_command = "halt -d 0"
-  disk_size = "5000M"
-  format = "qcow2"
   accelerator = "hvf"
-  efi_boot = true
-  efi_firmware_code = "/opt/homebrew/share/qemu/edk2-aarch64-code.fd"
-  efi_firmware_vars = "/opt/homebrew/share/qemu/edk2-arm-vars.fd"
-  vm_name = "faux-marcus-bootstrap"
-  boot_wait = "60s"
-  ssh_username = "root"
-  ssh_password = "alpine123!"
+  boot_wait = "15s"
   boot_command = [
-    "root<enter><wait>",
-    "passwd root<enter>",
-    "alpine123!<enter>",
-    "alpine123!<enter>",
-    "sed -Ei 's/PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config<enter>",
-    "/etc/init.d/sshd restart"
+    "root<enter><wait3s>",
+    "passwd root<enter><wait2s>",
+    "alpine123!<enter><wait2s>",
+    "alpine123!<enter><wait2s>",
+    "echo 'iface eth0 inet dhcp' >> /etc/network/interfaces<enter><wait>",
+    "ifup eth0<enter><wait5s>",
+    "apk add openssh<enter><wait>",
+    "sed -Ei 's/#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config<enter><wait>",
+    "/etc/init.d/sshd restart<enter><wait1s>"
+  ]
+  boot_key_interval = "10ms"
+  cores = 4
+  cpus = 4
+  disk_size = "5G"
+  format = "qcow2"
+  iso_checksum = "7d6f065d18af54c3686dceae51235661"
+  # TODO: Un-hardcode Alpine version.
+  iso_url = "https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/aarch64/alpine-standard-3.20.3-aarch64.iso"
+  machine_type = "virt"
+  net_device = "virtio-net-pci"
+  output_directory = "out"
+  # -boot=n works around "no function defined" errors that come up from qemu failing to exclude
+  # the '-boot' option while building qemu args.
+  qemuargs = [
+    [ "-cpu", "host" ],
+    [ "-boot", "n" ],
+    [ "-bios", "/opt/homebrew/share/qemu/edk2-aarch64-code.fd" ],
+    [ "-device", "virtio-gpu" ],
+    [ "-device", "virtio-scsi-pci,id=scsi-bus" ],
+    [ "-device", "nec-usb-xhci,id=usb-bus" ],
+    [ "-device", "usb-kbd,bus=usb-bus.0" ]
   ]
   qemu_binary = "qemu-system-aarch64"
-  qemuargs = [
-    [ "-machine", "virt"],
-    [ "-display", "cocoa" ],
-    [ "-device", "virtio-gpu-pci" ],
-    [ "-device", "virtio-serial" ],
-    [ "-device", "virtio-rng-pci" ],
-    [ "-device", "virtio-balloon" ],
-    [ "-monitor", "unix:monitor.sock,server,nowait" ]
-  ]
+  shutdown_command = "halt -d 0"
+  sockets = 1
+  ssh_password = "alpine123!"
+  ssh_username = "root"
+  threads = 1
+  use_default_display = true
+  vm_name = "faux-marcus-bootstrap"
+  vnc_port_max = 5959
+  vnc_port_min = 5959
+  vnc_use_password = true
 }
 
 build {
@@ -58,8 +80,12 @@ build {
     destination = "/tmp/ignition.json"
   }
 
+  # TODO: Un-hardcode Alpine version.
   provisioner "shell" {
     inline = [
+      "echo 'https://dl-cdn.alpinelinux.org/alpine/v3.20/main' > /etc/apk/repositories",
+      "echo 'https://dl-cdn.alpinelinux.org/alpine/v3.20/community' >> /etc/apk/repositories",
+      "apk update",
       "apk add bash btrfs-progs btrfs-progs-extra gawk gpg mdadm-udev eudev wipefs wget gpg-agent coreutils",
       "wget -O - https://raw.githubusercontent.com/flatcar/init/flatcar-master/bin/flatcar-install | bash -s -- -d /dev/vda -i /tmp/ignition.json"
     ]
