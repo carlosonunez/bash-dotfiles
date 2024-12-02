@@ -326,7 +326,7 @@ ${ELGATO_BIN} lights | grep -E '^Light' | rev | cut -f1 -d ' ' | xargs -L 1 ${EL
 	<key>variables</key>
 	<dict>
 		<key>ELGATO_BIN</key>
-		<string>/Users/carlos.nunez/.home_env/bin/elgato</string>
+		<string>/Users/cn/.home_env/bin/elgato</string>
 	</dict>
 	<key>version</key>
 	<string></string>
