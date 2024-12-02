@@ -2,20 +2,12 @@ variable "ignition_file" {
   type = string
 }
 
-variable "marcus_subnet" {
-  default = "192.168.0.0/23"
-}
-
-variable "marcus_subnet_dhcp_start" {
-  default = "192.168.0.253"
+variable "box_path" {
+  type = string
 }
 
 packer {
   required_plugins {
-    qemu = {
-      version = "1.1.0"
-      source = "github.com/hashicorp/qemu"
-    }
     vagrant = {
       source = "github.com/hashicorp/vagrant"
       version = "~> 1"
@@ -25,7 +17,7 @@ packer {
 
 source "qemu" "machine" {
   accelerator = "hvf"
-  boot_wait = "15s"
+  boot_wait = "10s"
   boot_command = [
     "root<enter><wait3s>",
     "passwd root<enter><wait2s>",
@@ -40,7 +32,7 @@ source "qemu" "machine" {
   boot_key_interval = "10ms"
   cores = 4
   cpus = 4
-  disk_size = "5G"
+  disk_size = "20G"
   format = "qcow2"
   iso_checksum = "7d6f065d18af54c3686dceae51235661"
   # TODO: Un-hardcode Alpine version.
@@ -70,6 +62,7 @@ source "qemu" "machine" {
   vnc_port_max = 5959
   vnc_port_min = 5959
   vnc_use_password = true
+  vnc_password = "supersecret"
 }
 
 build {
@@ -86,13 +79,13 @@ build {
       "echo 'https://dl-cdn.alpinelinux.org/alpine/v3.20/main' > /etc/apk/repositories",
       "echo 'https://dl-cdn.alpinelinux.org/alpine/v3.20/community' >> /etc/apk/repositories",
       "apk update",
-      "apk add bash btrfs-progs btrfs-progs-extra gawk gpg mdadm-udev eudev wipefs wget gpg-agent coreutils",
+      "apk add bash blkid lsblk btrfs-progs btrfs-progs-extra gawk gpg mdadm-udev eudev wipefs wget gpg-agent coreutils",
+      "modprobe btrfs vfat ext4",
       "wget -O - https://raw.githubusercontent.com/flatcar/init/flatcar-master/bin/flatcar-install | bash -s -- -d /dev/vda -i /tmp/ignition.json"
     ]
   }
 
   post-processor "vagrant" {
-    keep_input_artifact = true
-    output = "faux-marcus.box"
+    output = var.box_path
   }
 }
