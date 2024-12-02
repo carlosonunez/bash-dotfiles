@@ -3,16 +3,15 @@ GOLANG_VERSION=1.21.1
 GOTOOLS=$(cat <<-GOTOOLS
 gopls:golang.org/x/tools/gopls@latest
 golangci-lint:github.com/golangci/golangci-lint/cmd/golangci-lint@v1.42.1
-authy:github.com/momaek/authy@v0.1.7
 GOTOOLS
 )
 
 asdf list golang | grep -q "$GOLANG_VERSION" || asdf install golang "$GOLANG_VERSION"
 asdf global golang "$GOLANG_VERSION"
 
-go_root="$(dirname "$(dirname "$(asdf which go)")")"
-export GOROOT="$go_root"
-export PATH=$GOROOT/bin:$PATH
+export GOPATH=$(asdf where golang)/packages
+export GOROOT=$(asdf where golang)/go
+export PATH="$(go env GOPATH)/bin:$PATH"
 
 # Install the gopls engine (for Vim) and golangci-lint (for linting within Vim with Syntastic)
 # =============================================================================================
