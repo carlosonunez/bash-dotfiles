@@ -9,3 +9,5 @@ tags
 *.bz2
 *.tar
 *.bin
+out
+stacks/marcus/tests/.vagrant
