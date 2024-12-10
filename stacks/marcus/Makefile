@@ -34,7 +34,8 @@ edit_flatcar_config: _confirm_pgp_pubkey
 
 view_flatcar_ignition: _confirm_pgp_pubkey
 	$(MAKE) view_flatcar_config | \
-		docker run --rm -i quay.io/coreos/butane
+		docker run --rm -i ghcr.io/flatcar/ct:latest
+
 
 update_flatcar_ignition: _confirm_pgp_pubkey
 	fp=$$($(MAKE) _get_pgp_pubkey) || exit 1; \
