@@ -11,3 +11,4 @@ tags
 *.bin
 out
 stacks/marcus/tests/.vagrant
+.vagrant

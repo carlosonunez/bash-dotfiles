@@ -1,7 +1,8 @@
 MAKEFLAGS += --silent
 SHELL ?= /usr/bin/env bash
 TESTS_CONFIG := $(PWD)/tests/include/config.yaml
-FAUX_MARCUS_VAGRANT_BOX := $(shell echo "$${TMPDIR:-/tmp}")/faux-marcus.box
+FAUX_MARCUS_MACHINE_NAME := faux-marcus
+FAUX_MARCUS_VAGRANT_BOX := $(shell echo "$${TMPDIR:-/tmp}")/$(FAUX_MARCUS_MACHINE_NAME).box
 DOCKER_COMPOSE_TEST := docker-compose -f $(PWD)/tests/include/docker-compose.yaml
 PACKER_PLUGIN_QEMU_FORK_URL := https://github.com/carlosonunez/packer-plugin-qemu
 PACKER_PLUGIN_QEMU_REF_URL := locally.installed/plugins/qemu
@@ -14,7 +15,10 @@ PACKER_PLUGIN_QEMU_REF_URL := locally.installed/plugins/qemu
 
 test: _build_forked_packer_plugin_qemu _build_faux_marcus _start_faux_marcus
 test:
-	$(DOCKER_COMPOSE_TEST) run --rm tests
+	$(DOCKER_COMPOSE_TEST) run --rm tests; \
+	rc=$$?; \
+	$(MAKE) _stop_faux_marcus || true; \
+	exit "$$rc";
 
 view_tests_config: _confirm_pgp_pubkey_for_tests
 	sops -d $(TESTS_CONFIG)
@@ -69,7 +73,7 @@ removed once it gets merged upstream)"; \
 _build_faux_marcus: _ensure_packer
 _build_faux_marcus:
 	test -f "$(FAUX_MARCUS_VAGRANT_BOX)" && exit 0; \
-	temp_ignition_file=$$(mktemp /tmp/.faux-marcus-ignition-XXXXXX); \
+	temp_ignition_file=$$(mktemp /tmp/.$(FAUX_MARCUS_MACHINE_NAME)-ignition-XXXXXX); \
 	trap 'rc=$$?; rm -f "$$temp_ignition_file"; exit $$rc' INT HUP EXIT; \
 	$(MAKE) view_flatcar_ignition >"$$temp_ignition_file"; \
 	packer init $(PWD)/tests/include && \
@@ -79,11 +83,17 @@ _build_faux_marcus:
 			test -f "$(FAUX_MARCUS_VAGRANT_BOX)"
 
 _start_faux_marcus: _ensure_vagrant _ensure_vagrant_qemu_installed
-_start_faux_marcus:
+	pushd $(PWD)/tests &>/dev/null; \
+	trap 'rc=$$?; popd &>/dev/null; $(MAKE) _stop_faux_marcus; exit $$rc' INT HUP EXIT; \
+	vagrant box list | grep -q $(FAUX_MARCUS_MACHINE_NAME) || \
+		vagrant box add $(FAUX_MARCUS_VAGRANT_BOX) --name $(FAUX_MARCUS_MACHINE_NAME); \
+		VAGRANT_VAGRANTFILE=$(PWD)/tests/include/Vagrantfile vagrant up --provider qemu
+
+_stop_faux_marcus: _ensure_vagrant _ensure_vagrant_qemu_installed
+_stop_faux_marcus:
 	pushd $(PWD)/tests &>/dev/null; \
 	trap 'rc=$$?; popd &>/dev/null; exit $$rc' INT HUP EXIT; \
-	vagrant box list | grep -q faux-marcus || vagrant box add $(FAUX_MARCUS_VAGRANT_BOX) --name faux-marcus && \
-		VAGRANT_VAGRANTFILE=$(PWD)/tests/include/Vagrantfile vagrant up --provider qemu
+		VAGRANT_VAGRANTFILE=$(PWD)/tests/include/Vagrantfile vagrant halt;
 
 _ensure_packer:
 	&>/dev/null which packer && exit 0; \

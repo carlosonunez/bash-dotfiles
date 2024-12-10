@@ -1,11 +1,15 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "faux-marcus"
-  config.vm.network :forwarded_port, guest: 22, host: 65522
+  config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.provider "qemu" do |vm|
-    vm.arch = "arm64"
+    vm.ssh_port = 65522
+    vm.arch = "aarch64"
     vm.cpu = "host"
+    vm.no_daemonize = true
     vm.net_device = "virtio-net-pci"
-    vm.extra_qemu_args = %w(-bios "/opt/homebrew/share/qemu/edk2-aarch64-code.fd")
+    vm.extra_qemu_args = %w(-device virtio-gpu -bios /opt/homebrew/share/qemu/edk2-aarch64-code.fd)
+    vm.other_default = %w(-display cocoa)
+    vm.firmware_format = nil
   end
 end
 
