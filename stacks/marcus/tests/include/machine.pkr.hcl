@@ -52,7 +52,7 @@ source "qemu" "machine" {
     [ "-device", "usb-kbd,bus=usb-bus.0" ]
   ]
   qemu_binary = "qemu-system-aarch64"
-  shutdown_command = "halt -d 0"
+  shutdown_command = "poweroff"
   sockets = 1
   ssh_password = "alpine123!"
   ssh_username = "root"

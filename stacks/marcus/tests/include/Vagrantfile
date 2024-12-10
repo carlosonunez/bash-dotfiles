@@ -1,4 +1,9 @@
+raise "SSH private key not set in environment" if ENV["VAGRANT_SSH_PRIVATE_KEY_PATH"].to_s.empty?
+raise "SSH user not set in environment" if ENV["VAGRANT_SSH_USER"].to_s.empty?
 Vagrant.configure("2") do |config|
+  config.ssh.username = ENV["VAGRANT_SSH_USER"]
+  config.ssh.private_key_path = ENV["VAGRANT_SSH_PRIVATE_KEY_PATH"]
+  config.vm.allow_fstab_modification = false
   config.vm.box = "faux-marcus"
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.provider "qemu" do |vm|
@@ -7,7 +12,10 @@ Vagrant.configure("2") do |config|
     vm.cpu = "host"
     vm.no_daemonize = true
     vm.net_device = "virtio-net-pci"
-    vm.extra_qemu_args = %w(-device virtio-gpu -bios /opt/homebrew/share/qemu/edk2-aarch64-code.fd)
+    vm.extra_qemu_args = %w(
+      -device virtio-gpu
+      -bios /opt/homebrew/share/qemu/edk2-aarch64-code.fd
+    )
     vm.other_default = %w(-display cocoa)
     vm.firmware_format = nil
   end
