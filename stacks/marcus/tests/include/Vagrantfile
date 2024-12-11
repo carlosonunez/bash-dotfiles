@@ -3,8 +3,8 @@
   raise "#{k} not set in environment; export #{var} to set it" if ENV[var].to_s.empty?
 end
 Vagrant.configure("2") do |config|
-  config.ssh.username = ENV["VAGRANT_SSH_USER"]
-  config.ssh.private_key_path = ENV["VAGRANT_SSH_PRIVATE_KEY_PATH"]
+  config.ssh.username = ENV["FAUX_MARCUS_SSH_USER"]
+  config.ssh.private_key_path = ENV["FAUX_MARCUS_SSH_PRIVATE_KEY_PATH"]
   config.vm.allow_fstab_modification = false
   config.vm.box = ENV["FAUX_MARCUS_BOX"]
   config.vm.synced_folder ".", "/vagrant", disabled: true

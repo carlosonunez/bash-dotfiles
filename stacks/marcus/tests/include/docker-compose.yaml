@@ -1,45 +1,11 @@
-volumes:
-  marcus-secrets: {}
-networks:
-  marcus:
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.0.0/23
 services:
-  test:
-    depends_on:
-      faux-marcus:
-        condition: service_started
-      test-env-init:
-        condition: service_completed_successfully
-    networks:
-      marcus: {}
-    image: bats-core/bats
+  tests:
+    build:
+      dockerfile: include/bats.Dockerfile
+      context: /tmp/.nilcontext
+    volumes:
+      - $TESTS_DIR:/tests
+      - $TESTS_DIR/helpers:/helpers
     command:
       - -p
       - .
-  faux-marcus:
-    networks:
-      marcus: {}
-    build:
-      dockerfile: flatcar.Dockerfile
-      context: .
-    entrypoint: sleep
-    command:
-      - infinity
-  test-env-init:
-    image: bash:5
-    volumes:
-      - marcus-secrets:/secrets
-    command:
-      - -c
-      - |-
-        # These should have been loaded by Make
-        for fname in ssh_key
-        do
-          f="/secrets/$$fname"
-          test -f "$$f" && continue
-          >&2 echo "ERROR: File missing: $$f"
-          exit 1
-        done
