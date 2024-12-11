@@ -122,6 +122,7 @@ _start_faux_marcus: _ensure_vagrant _ensure_vagrant_qemu_installed
 		vagrant box list | grep -q $(FAUX_MARCUS_MACHINE_NAME) && \
 		vagrant box remove "$(FAUX_MARCUS_MACHINE_NAME)"; \
 	fi; \
+	vagrant global-status | grep 'running' | grep -q $(PWD)/tests && exit 0; \
 	pushd $(PWD)/tests &>/dev/null; \
 	trap 'rc=$$?; popd &>/dev/null; test "$$rc" -eq 0 || $(MAKE) _stop_faux_marcus; exit $$rc' INT HUP EXIT; \
 	vagrant box list | grep -q $(FAUX_MARCUS_MACHINE_NAME) || \
