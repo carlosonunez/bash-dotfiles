@@ -9,27 +9,31 @@ PACKER_PLUGIN_QEMU_REF_URL := locally.installed/plugins/qemu
 PERCENT := %
 
 .PHONY: \
-	view_flatcar_ignition_for_testing \
-	view_flatcar_ignition \
-	view_flatcar_config_for_testing \
-	view_flatcar_config \
-	update_flatcar_ignition \
-	test \
 	edit_flatcar_config \
-	_stop_faux_marcus \
-	_start_faux_marcus \
-	_marcus_system_user_details \
-	_marcus_system_user \
-	_marcus_local_private_key \
-	_get_prop_from_encrypted_file \
-	_faux_marcus_machine_env_vars \
-	_ensure_vagrant_qemu_installed \
-	_ensure_vagrant \
-	_ensure_packer \
-	_ensure_marcus_private_key_exists_locally \
-	_confirm_pgp_pubkey \
+	tests \
+	tests_no_poweroff \
+	update_flatcar_ignition \
+	view_flatcar_config \
+	view_flatcar_config_for_testing \
+	view_flatcar_ignition \
+	view_flatcar_ignition_for_testing \
+	_build_faux_marcus \
 	_build_forked_packer_plugin_qemu \
-	_build_faux_marcus
+	_confirm_pgp_pubkey \
+	_ensure_marcus_private_key_exists_locally \
+	_ensure_packer \
+	_ensure_vagrant \
+	_ensure_vagrant_qemu_installed \
+	_faux_marcus_machine_env_vars \
+	_get_prop_from_encrypted_file \
+	_marcus_local_private_key \
+	_marcus_system_user \
+	_marcus_system_user_details \
+	_start_faux_marcus \
+	_stop_faux_marcus \
+	_tests_setup \
+	_tests_teardown
+
 
 test: _ensure_marcus_private_key_exists_locally _build_forked_packer_plugin_qemu _build_faux_marcus _start_faux_marcus
 	export $$($(MAKE) _faux_marcus_machine_env_vars | xargs -0); \
