@@ -1,9 +1,9 @@
 run_in_faux_marcus() {
-  assert_success _ensure_running_in_docker
-  assert_success _ensure_env_configured
-  assert_success _ensure_private_key_present
+  _ensure_running_in_docker || exit 1
+  _ensure_env_configured || exit 1
+  _ensure_private_key_present || exit 1
 
-  ssh -i /secrets/faux_marcus_private_key \
+  ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /secrets/private_key \
     -p "$FAUX_MARCUS_SSH_PORT" \
     "${FAUX_MARCUS_SSH_USER}@host.docker.internal" \
     "$@"
@@ -20,7 +20,7 @@ _ensure_env_configured() {
 }
 
 _ensure_private_key_present() {
-  assert test -f /secrets/faux_marcus_private_key
+  assert test -f /secrets/private_key
 }
 
 _ensure_running_in_docker() {
