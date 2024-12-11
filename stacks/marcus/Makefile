@@ -195,3 +195,11 @@ _ensure_marcus_private_key_exists_locally:
 	test -n "$$($(MAKE) _marcus_local_private_key)" && exit 0; \
 	>&2 echo "ERROR: No local private keys found that match Marcus's public key in the Flatcar config."; \
 	exit 1; \
+
+_tests_setup:
+	mkdir -p /tmp/.nilcontext/include; \
+	cp "$$($(MAKE) _marcus_local_private_key)" /tmp/.nilcontext/faux_marcus_private_key; \
+	cp $(PWD)/tests/include/bats.Dockerfile /tmp/.nilcontext/include
+
+_tests_teardown:
+	rm -r /tmp/.nilcontext;
