@@ -38,6 +38,7 @@ PERCENT := %
 
 tests: _ensure_marcus_private_key_exists_locally _build_forked_packer_plugin_qemu _build_faux_marcus _start_faux_marcus _tests_setup
 	export $$($(MAKE) _faux_marcus_machine_env_vars | xargs -0); \
+	export FAUX_MARCUS_SSH_PORT=$$($(MAKE) _faux_marcus_ssh_port); \
 	export TESTS_DIR=$(PWD)/tests; \
 	$(DOCKER_COMPOSE_TEST) run --rm tests; \
 	rc=$$?; \
@@ -148,7 +149,14 @@ _stop_faux_marcus:
 	export $$($(MAKE) _faux_marcus_machine_env_vars | xargs -0); \
 	pushd $(PWD)/tests &>/dev/null; \
 	trap 'rc=$$?; popd &>/dev/null; exit $$rc' INT HUP EXIT; \
-		VAGRANT_VAGRANTFILE=$(PWD)/tests/include/Vagrantfile vagrant halt;
+	vagrant halt
+
+_faux_marcus_ssh_port:
+	export $$($(MAKE) _faux_marcus_machine_env_vars | xargs -0); \
+	pushd $(PWD)/tests &>/dev/null; \
+	trap 'rc=$$?; popd &>/dev/null; exit $$rc' INT HUP EXIT; \
+	vagrant ssh-config | grep Port | awk '{print $$NF}'
+
 
 _faux_marcus_machine_env_vars:
 	printf 'FAUX_MARCUS_SSH_USER=$(PERCENT)s\n'\
