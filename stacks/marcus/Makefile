@@ -110,7 +110,7 @@ _build_forked_packer_plugin_qemu:
 removed once it gets merged upstream)"; \
 	trap 'rc=$$?; rm -rf /tmp/repo; exit $$rc' INT HUP EXIT; \
 	git clone $(PACKER_PLUGIN_QEMU_FORK_URL) /tmp/repo && \
-		pushd /tmp/repo && \
+		&>/dev/null pushd /tmp/repo && \
 		gsed -i 's/Version = "1.1.1"/Version = "0.0.0"/g' version/version.go && \
 		make build && \
 		packer plugins install --path ./packer-plugin-qemu $(PACKER_PLUGIN_QEMU_REF_URL) && \
