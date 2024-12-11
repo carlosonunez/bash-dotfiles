@@ -118,7 +118,7 @@ removed once it gets merged upstream)"; \
 
 _build_faux_marcus: _ensure_packer
 _build_faux_marcus:
-	test -n "$(REBUILD_FAUX_MARCUS)" && rm -rf "$(FAUX_MARCUS_VAGRANT_BOX)"; \
+	test -n "$(REBUILD)" && rm -rf "$(FAUX_MARCUS_VAGRANT_BOX)"; \
 	test -f "$(FAUX_MARCUS_VAGRANT_BOX)" && exit 0; \
 	temp_ignition_file=$$(mktemp /tmp/.$(FAUX_MARCUS_MACHINE_NAME)-ignition-XXXXXX); \
 	trap 'rc=$$?; rm -f "$$temp_ignition_file"; exit $$rc' INT HUP EXIT; \
@@ -131,16 +131,16 @@ _build_faux_marcus:
 
 _start_faux_marcus: _ensure_vagrant _ensure_vagrant_qemu_installed
 	export $$($(MAKE) _faux_marcus_machine_env_vars | xargs -0); \
-	if test -n "$(REBUILD_FAUX_MARCUS)"; \
+	if test -n "$(REBUILD)"; \
 	then \
-		$(MAKE) _stop_faux_marcus || true; \
-		rm -rf $(PWD)/tests/.vagrant; \
+		NO_POWEROFF='' $(MAKE) _stop_faux_marcus || true; \
+		rm -rf $(PWD)/.vagrant \
+			$(HOME)/.vagrant.d/boxes/$(FAUX_MARCUS_MACHINE_NAME) \
+			$(HOME)/.vagrant.d/tmp/vagrant-qemu; \
 		vagrant box list | grep -q $(FAUX_MARCUS_MACHINE_NAME) && \
-		vagrant box remove "$(FAUX_MARCUS_MACHINE_NAME)"; \
+			vagrant box remove "$(FAUX_MARCUS_MACHINE_NAME)"; \
 	fi; \
 	vagrant global-status | grep 'running' | grep -q $(PWD)/tests && exit 0; \
-	pushd $(PWD)/tests &>/dev/null; \
-	trap 'rc=$$?; popd &>/dev/null; test "$$rc" -eq 0 || $(MAKE) _stop_faux_marcus; exit $$rc' INT HUP EXIT; \
 	vagrant box list | grep -q $(FAUX_MARCUS_MACHINE_NAME) || \
 		vagrant box add $(FAUX_MARCUS_VAGRANT_BOX) --name $(FAUX_MARCUS_MACHINE_NAME); \
 		vagrant up --provider qemu --no-provision
@@ -153,14 +153,20 @@ _stop_faux_marcus:
 		exit 0; \
 	fi; \
 	export $$($(MAKE) _faux_marcus_machine_env_vars | xargs -0); \
-	pushd $(PWD)/tests &>/dev/null; \
-	trap 'rc=$$?; popd &>/dev/null; exit $$rc' INT HUP EXIT; \
-	vagrant halt
+	vagrant halt; \
+	machine_id=$$(vagrant global-status --prune | \
+		grep 'running' | \
+		grep $(PWD)/tests | \
+		awk '{print $$1}'); \
+	test -n "$$machine_id" && vagrant destroy --force "$$machine_id"; \
+	ps -ef | \
+		grep $(PWD) | \
+		grep -v grep | \
+		awk '{print $$2}' | \
+		xargs kill
 
 _faux_marcus_ssh_port:
 	export $$($(MAKE) _faux_marcus_machine_env_vars | xargs -0); \
-	pushd $(PWD)/tests &>/dev/null; \
-	trap 'rc=$$?; popd &>/dev/null; exit $$rc' INT HUP EXIT; \
 	vagrant ssh-config | grep Port | awk '{print $$NF}'
 
 
