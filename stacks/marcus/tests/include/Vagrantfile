@@ -1,10 +1,12 @@
-raise "SSH private key not set in environment" if ENV["VAGRANT_SSH_PRIVATE_KEY_PATH"].to_s.empty?
-raise "SSH user not set in environment" if ENV["VAGRANT_SSH_USER"].to_s.empty?
+[ "SSH private key path", "SSH user", "box" ].each do |k|
+  var = "FAUX_MARCUS_#{k.gsub(' ','_').upcase}"
+  raise "#{k} not set in environment; export #{var} to set it" if ENV[var].to_s.empty?
+end
 Vagrant.configure("2") do |config|
   config.ssh.username = ENV["VAGRANT_SSH_USER"]
   config.ssh.private_key_path = ENV["VAGRANT_SSH_PRIVATE_KEY_PATH"]
   config.vm.allow_fstab_modification = false
-  config.vm.box = "faux-marcus"
+  config.vm.box = ENV["FAUX_MARCUS_BOX"]
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.provider "qemu" do |vm|
     vm.ssh_port = 65522
