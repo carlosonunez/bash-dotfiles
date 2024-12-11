@@ -34,6 +34,10 @@ services:
     volumes:
       - $TESTS_DIR:/tests
       - tests-vol:/modified-tests
+    environment:
+      - MARCUS_STACK_REMOTE_FILE_LOCATION
+      - MARCUS_STACK_REMOTE_FILE_HASH
+      - MARCUS_STACK_REMOTE_FILE_HASHFUNCTION
     command:
       - -c
       - |-
@@ -56,6 +60,18 @@ services:
 
         teardown() {
             [ -n "\$$BATS_TEST_COMPLETED" ] || touch \$${BATS_PARENT_TMPNAME}.skip
+        }
+
+        setup_file() {
+          export MARCUS_STACK_REMOTE_FILE_LOCATION="$$MARCUS_STACK_REMOTE_FILE_LOCATION"
+          export MARCUS_STACK_REMOTE_FILE_HASH="$$MARCUS_STACK_REMOTE_FILE_HASH"
+          export MARCUS_STACK_REMOTE_FILE_HASHFUNCTION="$${MARCUS_STACK_REMOTE_FILE_HASHFUNCTION}sum"
+
+          assert [ -n "\$$MARCUS_STACK_REMOTE_FILE_LOCATION" ]
+          assert [ -n "\$$MARCUS_STACK_REMOTE_FILE_HASH" ]
+          assert [ -n "\$$MARCUS_STACK_REMOTE_FILE_HASHFUNCTION" ]
+          run which "\$$MARCUS_STACK_REMOTE_FILE_HASHFUNCTION"
+          assert_success
         }
 
         $(grep -Ev '^#' "$$file")

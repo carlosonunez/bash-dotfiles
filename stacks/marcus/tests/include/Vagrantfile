@@ -17,6 +17,8 @@ Vagrant.configure("2") do |config|
     vm.extra_qemu_args = %w(
       -device virtio-gpu
       -bios /opt/homebrew/share/qemu/edk2-aarch64-code.fd
+      -device nec-usb-xhci
+      -device usb-kbd
     )
     vm.other_default = %w(-display cocoa)
     vm.firmware_format = nil
