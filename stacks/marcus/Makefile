@@ -136,7 +136,7 @@ _start_faux_marcus: _ensure_vagrant _ensure_vagrant_qemu_installed
 	trap 'rc=$$?; popd &>/dev/null; test "$$rc" -eq 0 || $(MAKE) _stop_faux_marcus; exit $$rc' INT HUP EXIT; \
 	vagrant box list | grep -q $(FAUX_MARCUS_MACHINE_NAME) || \
 		vagrant box add $(FAUX_MARCUS_VAGRANT_BOX) --name $(FAUX_MARCUS_MACHINE_NAME); \
-		VAGRANT_VAGRANTFILE=$(PWD)/tests/include/Vagrantfile vagrant up --provider qemu --no-provision
+		vagrant up --provider qemu --no-provision
 
 _stop_faux_marcus: _ensure_vagrant _ensure_vagrant_qemu_installed
 _stop_faux_marcus:
@@ -153,10 +153,12 @@ _stop_faux_marcus:
 _faux_marcus_machine_env_vars:
 	printf 'FAUX_MARCUS_SSH_USER=$(PERCENT)s\n'\
 	'FAUX_MARCUS_SSH_PRIVATE_KEY_PATH=$(PERCENT)s\n'\
-	'FAUX_MARCUS_BOX=$(PERCENT)s' \
-	$$($(MAKE) _marcus_system_user) \
-	$$($(MAKE) _marcus_local_private_key) \
-	$(FAUX_MARCUS_VAGRANT_BOX)
+	'FAUX_MARCUS_BOX=$(PERCENT)s\n'\
+	'VAGRANT_VAGRANTFILE=$(PERCENT)s\n' \
+	"$$($(MAKE) _marcus_system_user)" \
+	"$$($(MAKE) _marcus_local_private_key)" \
+	"$(FAUX_MARCUS_MACHINE_NAME)" \
+	"$(PWD)/tests/include/Vagrantfile"
 
 _ensure_packer:
 	&>/dev/null which packer && exit 0; \
