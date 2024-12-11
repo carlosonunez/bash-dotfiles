@@ -6,12 +6,30 @@ FAUX_MARCUS_VAGRANT_BOX := $(shell echo "$${TMPDIR:-/tmp}")/$(FAUX_MARCUS_MACHIN
 DOCKER_COMPOSE_TEST := docker-compose -f $(PWD)/tests/include/docker-compose.yaml
 PACKER_PLUGIN_QEMU_FORK_URL := https://github.com/carlosonunez/packer-plugin-qemu
 PACKER_PLUGIN_QEMU_REF_URL := locally.installed/plugins/qemu
+PERCENT := %
 
-.PHONY: edit_flatcar_config view_flatcar_config view_flatcar_ignition update_flatcar_ignition \
-	view_tests_config edit_tests_config \
+.PHONY: \
+	view_flatcar_ignition_for_testing \
+	view_flatcar_ignition \
+	view_flatcar_config_for_testing \
+	view_flatcar_config \
+	update_flatcar_ignition \
 	test \
-	_confirm_pgp_pubkey _confirm_pgp_pubkey_for_tests \
-	_get_prop_from_encrypted_file
+	edit_flatcar_config \
+	_stop_faux_marcus \
+	_start_faux_marcus \
+	_marcus_system_user_details \
+	_marcus_system_user \
+	_marcus_local_private_key \
+	_get_prop_from_encrypted_file \
+	_faux_marcus_machine_env_vars \
+	_ensure_vagrant_qemu_installed \
+	_ensure_vagrant \
+	_ensure_packer \
+	_ensure_marcus_private_key_exists_locally \
+	_confirm_pgp_pubkey \
+	_build_forked_packer_plugin_qemu \
+	_build_faux_marcus
 
 test: _ensure_marcus_private_key_exists_locally _build_forked_packer_plugin_qemu _build_faux_marcus _start_faux_marcus
 test:
