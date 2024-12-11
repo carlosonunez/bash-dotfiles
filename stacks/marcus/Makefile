@@ -35,12 +35,17 @@ PERCENT := %
 	_tests_teardown
 
 
-test: _ensure_marcus_private_key_exists_locally _build_forked_packer_plugin_qemu _build_faux_marcus _start_faux_marcus
+
+tests: _ensure_marcus_private_key_exists_locally _build_forked_packer_plugin_qemu _build_faux_marcus _start_faux_marcus _tests_setup
 	export $$($(MAKE) _faux_marcus_machine_env_vars | xargs -0); \
+	export TESTS_DIR=$(PWD)/tests; \
 	$(DOCKER_COMPOSE_TEST) run --rm tests; \
 	rc=$$?; \
-	$(MAKE) _stop_faux_marcus || true; \
+	$(MAKE) _stop_faux_marcus _tests_teardown || true; \
 	exit "$$rc";
+
+tests_no_poweroff:
+	NO_POWEROFF=1 $(MAKE) tests;
 
 edit_flatcar_config: _confirm_pgp_pubkey
 	sops $(PWD)/flatcar-config.yaml
