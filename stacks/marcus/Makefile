@@ -210,4 +210,5 @@ _tests_setup:
 	cp $(PWD)/tests/include/bats.Dockerfile /tmp/.nilcontext/include
 
 _tests_teardown:
+	$(DOCKER_COMPOSE_TEST) down --remove-orphans; \
 	rm -r /tmp/.nilcontext;
