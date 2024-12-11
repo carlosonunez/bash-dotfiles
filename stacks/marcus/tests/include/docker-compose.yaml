@@ -1,11 +1,65 @@
+volumes:
+  tests-vol: {}
+  test-secrets-vol: {}
 services:
   tests:
+    depends_on:
+      rewrite-tests:
+        condition: service_completed_successfully
+      add-test-secrets:
+        condition: service_completed_successfully
     build:
       dockerfile: include/bats.Dockerfile
       context: /tmp/.nilcontext
     volumes:
-      - $TESTS_DIR:/tests
-      - $TESTS_DIR/helpers:/helpers
+      - tests-vol:/tests
+      - test-secrets-vol:/secrets
+    environment:
+      - FAUX_MARCUS_SSH_USER
+      - FAUX_MARCUS_SSH_PORT
     command:
       - -p
-      - .
+      - /tests
+  add-test-secrets:
+    image: bash:5
+    volumes:
+      - $FAUX_MARCUS_SSH_PRIVATE_KEY_PATH:/private_key
+      - test-secrets-vol:/secrets
+    command:
+      - -c
+      - |-
+        cp /private_key /secrets/
+  rewrite-tests:
+    image: bash:5
+    volumes:
+      - $TESTS_DIR:/tests
+      - tests-vol:/modified-tests
+    command:
+      - -c
+      - |-
+        rm -r /modified-tests/*
+        cp -r /tests/* /modified-tests
+        pushd /modified-tests
+        rm -r include
+        find . -name '*.bats' |
+        while read -r file
+        do
+          modified_test=$(cat <<-EOF
+        #!bats
+        bats_load_library bats-support
+        bats_load_library bats-assert
+        load helpers/faux_marcus
+
+        setup() {
+            [ ! -f \$${BATS_PARENT_TMPNAME}.skip ] || skip "skip remaining tests"
+        }
+
+        teardown() {
+            [ -n "\$$BATS_TEST_COMPLETED" ] || touch \$${BATS_PARENT_TMPNAME}.skip
+        }
+
+        $(grep -Ev '^#' "$$file")
+        EOF
+        )
+          echo "$$modified_test" > /modified-tests/$(basename "$$file")
+        done
