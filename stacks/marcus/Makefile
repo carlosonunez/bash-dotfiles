@@ -32,7 +32,7 @@ PERCENT := %
 	_build_faux_marcus
 
 test: _ensure_marcus_private_key_exists_locally _build_forked_packer_plugin_qemu _build_faux_marcus _start_faux_marcus
-test:
+	export $$($(MAKE) _faux_marcus_machine_env_vars | xargs -0); \
 	$(DOCKER_COMPOSE_TEST) run --rm tests; \
 	rc=$$?; \
 	$(MAKE) _stop_faux_marcus || true; \
@@ -114,8 +114,7 @@ _build_faux_marcus:
 			test -f "$(FAUX_MARCUS_VAGRANT_BOX)"
 
 _start_faux_marcus: _ensure_vagrant _ensure_vagrant_qemu_installed
-	export VAGRANT_SSH_USER=$$($(MAKE) _marcus_system_user); \
-	export VAGRANT_SSH_PRIVATE_KEY_PATH=$$($(MAKE) _marcus_local_private_key); \
+	export $$($(MAKE) _faux_marcus_machine_env_vars | xargs -0); \
 	if test -n "$(REBUILD_FAUX_MARCUS)"; \
 	then \
 		$(MAKE) _stop_faux_marcus || true; \
@@ -131,11 +130,23 @@ _start_faux_marcus: _ensure_vagrant _ensure_vagrant_qemu_installed
 
 _stop_faux_marcus: _ensure_vagrant _ensure_vagrant_qemu_installed
 _stop_faux_marcus:
-	export VAGRANT_SSH_USER=$$($(MAKE) _marcus_system_user); \
-	export VAGRANT_SSH_PRIVATE_KEY_PATH=$$($(MAKE) _marcus_local_private_key); \
+	if test -n "$$NO_POWEROFF"; \
+	then \
+		>&2 echo "INFO: NO_POWEROFF set; keeping faux-marcus on."; \
+		exit 0; \
+	fi; \
+	export $$($(MAKE) _faux_marcus_machine_env_vars | xargs -0); \
 	pushd $(PWD)/tests &>/dev/null; \
 	trap 'rc=$$?; popd &>/dev/null; exit $$rc' INT HUP EXIT; \
 		VAGRANT_VAGRANTFILE=$(PWD)/tests/include/Vagrantfile vagrant halt;
+
+_faux_marcus_machine_env_vars:
+	printf 'FAUX_MARCUS_SSH_USER=$(PERCENT)s\n'\
+	'FAUX_MARCUS_SSH_PRIVATE_KEY_PATH=$(PERCENT)s\n'\
+	'FAUX_MARCUS_BOX=$(PERCENT)s' \
+	$$($(MAKE) _marcus_system_user) \
+	$$($(MAKE) _marcus_local_private_key) \
+	$(FAUX_MARCUS_VAGRANT_BOX)
 
 _ensure_packer:
 	&>/dev/null which packer && exit 0; \
@@ -166,7 +177,7 @@ _marcus_local_private_key:
 		if test "$$want_pubkey" == "$$got_pubkey" ; \
 		then echo "$$key_file" && exit 0; \
 		fi; \
-	done <<< "$$(grep -Elr 'BEGIN (OPENSSH|RSA) PRIVATE' $(HOME)/.ssh)";
+	done <<< "$$(grep -Elr 'BEGIN (OPENSSH|RSA) PRIVATE' $(HOME)/.ssh)";	
 
 _ensure_marcus_private_key_exists_locally:
 	test -n "$$($(MAKE) _marcus_local_private_key)" && exit 0; \
