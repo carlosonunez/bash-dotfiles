@@ -35,11 +35,17 @@ PERCENT := %
 	_tests_teardown
 
 
+faux_marcus_ssh: _start_faux_marcus
+	export $$($(MAKE) _faux_marcus_machine_env_vars | xargs -0); \
+	vagrant ssh
 
 tests: _ensure_marcus_private_key_exists_locally _build_forked_packer_plugin_qemu _build_faux_marcus _start_faux_marcus _tests_setup
 	export $$($(MAKE) _faux_marcus_machine_env_vars | xargs -0); \
 	export FAUX_MARCUS_SSH_PORT=$$($(MAKE) _faux_marcus_ssh_port); \
 	export TESTS_DIR=$(PWD)/tests; \
+	export MARCUS_STACK_REMOTE_FILE_LOCATION=$$($(MAKE) _marcus_stack_details | yq -r '.path'); \
+	export MARCUS_STACK_REMOTE_FILE_HASH=$$($(MAKE) _marcus_stack_details | yq -r '.contents.remote.verification.hash.sum'); \
+	export MARCUS_STACK_REMOTE_FILE_HASHFUNCTION=$$($(MAKE) _marcus_stack_details | yq -r '.contents.remote.verification.hash.function'); \
 	$(DOCKER_COMPOSE_TEST) run --rm tests; \
 	rc=$$?; \
 	$(MAKE) _stop_faux_marcus _tests_teardown || true; \
@@ -185,6 +191,10 @@ _ensure_vagrant_qemu_installed:
 _marcus_system_user_details:
 	$(MAKE) view_flatcar_config | \
 		yq -r '.passwd.users[] | select(.groups[0] == "marcus-admin")'
+
+_marcus_stack_details:
+	$(MAKE) view_flatcar_config | \
+		yq -r '.storage.files[] | select(.path | contains("docker-compose.yaml"))'
 
 _marcus_system_user:
 	$(MAKE) _marcus_system_user_details | yq -r '.name'
