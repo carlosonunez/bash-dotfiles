@@ -3,7 +3,6 @@ run_in_faux_marcus() {
   _ensure_env_configured || exit 1
   _ensure_private_key_present || exit 1
 
-  set -x
   ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /secrets/private_key \
     -p "$FAUX_MARCUS_SSH_PORT" \
     "${FAUX_MARCUS_SSH_USER}@host.docker.internal" \
