@@ -6,6 +6,7 @@ FAUX_MARCUS_VAGRANT_BOX := $(shell echo "$${TMPDIR:-/tmp}")/$(FAUX_MARCUS_MACHIN
 DOCKER_COMPOSE_TEST := docker --log-level INFO compose -f $(PWD)/tests/include/docker-compose.yaml --progress quiet
 PACKER_PLUGIN_QEMU_FORK_URL := https://github.com/carlosonunez/packer-plugin-qemu
 PACKER_PLUGIN_QEMU_REF_URL := locally.installed/plugins/qemu
+MARCUS_GIT_BRANCH := main
 PERCENT := %
 
 .PHONY: \
@@ -58,7 +59,8 @@ edit_flatcar_config: _confirm_pgp_pubkey
 	sops $(PWD)/flatcar-config.yaml
 
 view_flatcar_config: _confirm_pgp_pubkey
-	sops -d $(PWD)/flatcar-config.yaml
+	sops -d $(PWD)/flatcar-config.yaml | \
+		sed 's;$$GIT_BRANCH;$(GIT_BRANCH);g'
 
 view_flatcar_ignition: _confirm_pgp_pubkey
 	$(MAKE) view_flatcar_config | \
@@ -73,6 +75,7 @@ view_flatcar_ignition: _confirm_pgp_pubkey
 # This target modifies any static addresses and gateways found within the Flatcar config.
 # This way, the home network address space doesn't have to be hardcoded anywhere.
 view_flatcar_config_for_testing: _confirm_pgp_pubkey
+	export GIT_BRANCH=$$(git rev-parse --abbrev-ref HEAD); \
 	idx=15; \
 	conf=$$($(MAKE) view_flatcar_config | sed -E 's/Gateway=.*/Gateway=10.0.2.2/g'); \
 	while read -r line; \
