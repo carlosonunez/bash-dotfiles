@@ -38,6 +38,21 @@ services:
       - ./adguard-home/workdir:/opt/adguardhome/work
       - ./adguard-home/confdir:/opt/adguardhome/conf
     restart: unless-stopped
+  calibre-samba:
+    network_mode: host
+    image: dperson/samba
+    container_name: calibre-dropbox
+    volumes:
+      - "./calibre-config/Calibre Library:/books"
+      - "./calibre-config/calibre-bookdrop:/book-drop"
+    command:
+      - -p
+      - -u
+      - "admin;supersecret"
+      - -s
+      - "book-library;/books;yes;yes;yes;none;;Books managed by Calibre"
+      - -s
+      - "book-drop;/book-drop;yes;no;no;admin;admin;Books to be converted into ePUBs"
   calibre-server:
     network_mode: host
     image: linuxserver/calibre:7.18.0
@@ -49,6 +64,8 @@ services:
     environment:
       CUSTOM_PORT: "8089"
       CUSTOM_HTTPS_PORT: "8189"
+      PUID: "1000"
+      PGID: "1000"
       NO_DECOR: 1
       TITLE: Calibre
   calibre-web:
