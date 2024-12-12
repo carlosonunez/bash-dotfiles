@@ -130,8 +130,8 @@ services:
     depends_on:
       ensure-marcus-restored:
         condition: service_completed_successfully
-    depends_on:
-      - mqtt-broker
+      mqtt-broker:
+        condition: service_started
     container_name: ring-mqtt
     restart: unless-stopped
     image: tsightler/ring-mqtt

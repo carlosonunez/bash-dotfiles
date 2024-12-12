@@ -52,7 +52,7 @@ storage:
                 verification:
                     hash:
                         function: ENC[AES256_GCM,data:K9TFrSX2,iv:8BqET6ZwpiQHIRnBltRrm+oD7D1NJU75JoTFYZ8rOW4=,tag:iIVXwuz53g/TbPWEMjYUzg==,type:str]
-                        sum: ENC[AES256_GCM,data:duqkBnu1Kfl7RISyRvV9nm3P5KDCUI4OyyKt4OWpDJZ0bs744MNwp+u48wChW+Fe5ml1umJ963Wv2LVDyImexl6g8CPfXtE7SqXasemWLuCig/R6cvc7+2n5Qq5I1O1KwjA99Ug5Om6pXWmoZl4sbCQfwiqn5y6ZPdoMFEkif/4=,iv:oOi9Sstnhdso7qsWWJEk2sZrEbGEcJQWJNdAB548esU=,tag:jsuFulqB7BkwwE1kHIToYQ==,type:str]
+                        sum: ENC[AES256_GCM,data:zYkLuusdgYXB8oM34pQIFm6brhMZG+jjM7RLta8jPRUGwlYTccGuV9DyDuQpu+arWAVKBea5wmuVuHZzGNj6OOicrPfcq3m3Yxz8M9FXcwn/Dpel9bkcaKLSc87Gfz0LT8jmaUwAgMSTuFFCWUqo/kosZo2JXdHqa461TJ5E1LI=,iv:nyyPmL1J+hPsPWhqrmJ9IQwwCwRgQddrJX38IEtm86s=,tag:4HvcjoD3DACSTYnJW4RWVA==,type:str]
 passwd:
     groups:
         - name: ENC[AES256_GCM,data:m7pTuOG26xlwmsi/,iv:t+Lo2mYksKZmsrFal4QxJkPKnz5Nlo6Twpk9w/g4KPM=,tag:EtYjxl2AT8L/9FHcV5pzBg==,type:str]
@@ -82,8 +82,8 @@ sops:
     azure_kv: []
     hc_vault: []
     age: []
-    lastmodified: "2024-12-12T21:27:55Z"
-    mac: ENC[AES256_GCM,data:sXc3MvHG5rO5CrJu37+khvfzIIM92XFTUgAmSXEtLdSDMd9gmaEx6WS65vrDNypKZ2IspvbmCCSPLOxIu75DEBVKJq8Dpaj+8m4ohsjnlLKr+wXazoqMZBhE/4QOS6vSc7KCvzZqBYTzuBXV4G3VWPtrKXebAqLnPPooIcF/v3I=,iv:PRDFWrM41qiySPP3mUxOaks2vNdvRbWCyWoZ2pH3Xrc=,tag:Yrl2rdwyd1DMR6VA5XQ58g==,type:str]
+    lastmodified: "2024-12-12T21:40:53Z"
+    mac: ENC[AES256_GCM,data:tRLZEEuigi+T9x65DlWixTuTvW5Db7uafBHzPct8MKCZ66EdMuo2fTNInAIVVjkFy8Qcj7xOTXZKAIk5ZK/MGWB+tgUly5vGyKZObu1dfPBMUFiax7Z4rlb90C4u1UT8/F3+w8Pu4+wMpz0N8zgpookWAdOQWy6IGZgEkgqIbF4=,iv:qKMrICEQa9WzrOujyfOSofFEWfK6+ZPRVvLTY+W6Q+E=,tag:dK/dArfCjeIWbYnhUXW8yA==,type:str]
     pgp:
         - created_at: "2024-11-02T23:09:57Z"
           enc: |-
