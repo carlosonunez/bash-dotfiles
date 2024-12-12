@@ -1,4 +1,5 @@
-version: '3.9'
+volumes:
+  marcus-secrets: {}
 services:
   rclone:
     image: rclone/rclone:1.65.0
@@ -12,6 +13,23 @@ services:
       - "0.0.0.0:7000"
       - --rc-web-gui
       - --rc-web-gui-no-open-browser
+  lift-log-sftp-server:
+    depends_on:
+      lift-log-sftp-server-init:
+        condition: service_completed_successfully
+    image: rclone/rclone:1.65.0
+    volumes:
+      - marcus-secrets:/secrets
+      - ./rclone/conf:/config/rclone:ro
+      - $HOME/src/marcus-stack:/data:ro
+    network_mode: host
+    entrypoint: sh
+    command:
+      - -c
+      - |-
+        rclone serve sftp lift-log: --user "$$(cat /secrets/lift-log-sftp-username)" \
+          --pass "$$(cat /secrets/lift-log-sftp-password)" \
+          --addr 0.0.0.0:20000
   adguard-home:
     image: adguard/adguardhome:v0.107.43
     container_name: adguardhome
@@ -142,3 +160,16 @@ services:
       - bash
     command:
       - ./stack.start
+  lift-log-sftp-server-init:
+    image: bash:5
+    volumes:
+      - marcus-secrets:/secrets
+    command:
+      - -c
+      - |-
+        if ! { test -f /secrets/lift-log-sftp-username && test -f /secrets/lift-log-sftp-password; }
+        then
+          tr -dc 'a-z0-9' < /dev/urandom | head -c 8 > /secrets/lift-log-sftp-username
+          tr -dc 'a-z0-9' < /dev/urandom | head -c 8 > /secrets/lift-log-sftp-password
+        fi
+        >&2 echo "Username: $$(cat /secrets/lift-log-sftp-username), Password: $$(cat /secrets/lift-log-sftp-password)"
