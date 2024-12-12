@@ -1,6 +1,26 @@
 volumes:
   marcus-secrets: {}
 services:
+  mark-marcus-stack-started:
+    depends_on:
+      lift-log-sftp-server:
+        condition: service_started
+      adguard-home:
+        condition: service_started
+      calibre-server:
+        condition: service_started
+      calibre-web:
+        condition: service_started
+      home-assistant:
+        condition: service_started
+    image: bash:5
+    volumes:
+      - $PWD:/app
+    working_directory: /app
+    command:
+      - -c
+      - |-
+        touch .marcus_started
   rclone:
     image: rclone/rclone:1.65.0
     volumes:

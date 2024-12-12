@@ -6,7 +6,8 @@ FAUX_MARCUS_VAGRANT_BOX := $(shell echo "$${TMPDIR:-/tmp}")/$(FAUX_MARCUS_MACHIN
 DOCKER_COMPOSE_TEST := docker --log-level INFO compose -f $(PWD)/tests/include/docker-compose.yaml --progress quiet
 PACKER_PLUGIN_QEMU_FORK_URL := https://github.com/carlosonunez/packer-plugin-qemu
 PACKER_PLUGIN_QEMU_REF_URL := locally.installed/plugins/qemu
-MARCUS_GIT_BRANCH := main
+MARCUS_GIT_BRANCH ?= main
+MARCUS_STARTUP_WAIT_TIME_SECS ?= 600
 PERCENT := %
 
 .PHONY: \
@@ -40,7 +41,12 @@ faux_marcus_ssh: _start_faux_marcus
 	export $$($(MAKE) _faux_marcus_machine_env_vars | xargs -0); \
 	vagrant ssh
 
-tests: _ensure_marcus_private_key_exists_locally _build_forked_packer_plugin_qemu _build_faux_marcus _start_faux_marcus _tests_setup
+tests: _ensure_marcus_private_key_exists_locally \
+	_build_forked_packer_plugin_qemu \
+	_build_faux_marcus \
+	_start_faux_marcus \
+	_tests_setup \
+	_wait_for_faux_marcus_stack_started
 	export $$($(MAKE) _faux_marcus_machine_env_vars | xargs -0); \
 	export FAUX_MARCUS_SSH_PORT=$$($(MAKE) _faux_marcus_ssh_port); \
 	export TESTS_DIR=$(PWD)/tests; \
@@ -231,3 +237,26 @@ _tests_setup:
 _tests_teardown:
 	$(DOCKER_COMPOSE_TEST) down --remove-orphans; \
 	rm -r /tmp/.nilcontext;
+
+# It can take time for all of the container images in the stack
+# to pull. This target works in conjunction with a Docker Compose
+# service to wait for core Marcus services to start before
+# running tests.
+_wait_for_faux_marcus_stack_started:
+	set -x; \
+	script='attempts=0; max_attempts=$(MARCUS_STARTUP_WAIT_TIME_SECS); '\
+	'while test "$$attempts" -lt "$$max_attempts"; '\
+	'do test -f /marcus-stack/.marcus_started && exit 0; '\
+	'attempts=$$((attempts+1)); '\
+	'>&2 echo "INFO: Waiting for Marcus stack to start (attempt $$attempts of $$max_attempts)"; '\
+	'sleep 1; '\
+	'done; '\
+	'exit 1;'; \
+	ssh -o StrictHostKeyChecking=no \
+		-o UserKnownHostsFile=/dev/null \
+		-i $$($(MAKE) _marcus_local_private_key) \
+		-p $$($(MAKE) _faux_marcus_ssh_port) \
+		$$($(MAKE) _marcus_system_user)@localhost \
+		bash -s <<< "$$script" && exit 0; \
+	>&2 echo "ERROR: Marcus failed to start within $(MARCUS_STARTUP_WAIT_TIME_SECS) seconds."; \
+	exit 1
