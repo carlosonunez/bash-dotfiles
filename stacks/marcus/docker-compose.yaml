@@ -226,8 +226,8 @@ services:
             add-on* \
             calibre* \
             home-assistant
-          rclone sync /tmp/marcus-backup-$ts.tar.gz marcus-google-drive:Backups/marcus -L -v
-          rclone sync /tmp/marcus-backup-latest.tar.gz marcus-google-drive:Backups/marcus -L -v
+          rclone copy /tmp/marcus-backup-$ts.tar.gz marcus-google-drive:Backups/marcus -L -v
+          rclone backend shortcut marcus-google-drive: Backups/marcus/marcus-backup-$ts.tar.gz Backups/marcus/marcus-backup-latest.tar.gz
   restore-marcus-stack:
     image: bash:5
     volumes:
@@ -237,7 +237,7 @@ services:
       - -c
       - |-
         test -f .restored && exit 0
-        rclone sync marcus-google-drive:Backups/marcus -L -v /tmp/marcus-last-backup.tar.gz &&
+        rclone copy marcus-google-drive:Backups/marcus/marcus-backup-latest /tmp/marcus-last-backup.tar.gz
         tar -xvzf /tmp/marcus-last-backup.tar.gz -C . &&
         touch .restored
   ensure-marcus-restored:
