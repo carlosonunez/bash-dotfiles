@@ -16,7 +16,7 @@ services:
     image: bash:5
     volumes:
       - $PWD:/app
-    working_directory: /app
+    working_dir: /app
     command:
       - -c
       - |-
