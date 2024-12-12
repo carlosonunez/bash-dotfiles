@@ -3,6 +3,8 @@ volumes:
 services:
   mark-marcus-stack-started:
     depends_on:
+      rclone:
+        condition: service_started
       lift-log-sftp-server:
         condition: service_started
       adguard-home:
@@ -11,11 +13,13 @@ services:
         condition: service_started
       calibre-web:
         condition: service_started
+      calibre-samba:
+        condition: service_started
       home-assistant:
         condition: service_started
     image: bash:5
     volumes:
-      - $PWD:/app
+      - /marcus-stack:/app
     working_dir: /app
     command:
       - -c
@@ -24,8 +28,8 @@ services:
   rclone:
     image: rclone/rclone:1.65.0
     volumes:
-      - ./rclone/conf:/config/rclone
-      - $HOME/src/marcus-stack:/data:ro
+      - /marcus-stack/rclone/conf:/config/rclone
+      - /marcus-stack:/data:ro
     network_mode: host
     command:
       - rcd
@@ -43,7 +47,7 @@ services:
     volumes:
       - marcus-secrets:/secrets
       - ./rclone/conf:/config/rclone:ro
-      - $HOME/src/marcus-stack:/data:ro
+      - /marcus-stack:/data:ro
     network_mode: host
     entrypoint: sh
     command:
@@ -143,7 +147,7 @@ services:
     network_mode: host
     restart: unless-stopped
     volumes:
-      - $PWD/home-assistant/add-on-config/mosquitto:/mosquitto/config
+      - /marcus-stack/home-assistant/add-on-config/mosquitto:/mosquitto/config
   # Ring-MQTT exposes Ring Alarm devices to Home Assistant
   # via MQTT.
   ring-mqtt:
@@ -157,7 +161,7 @@ services:
     image: tsightler/ring-mqtt
     network_mode: host
     volumes:
-      - $PWD/home-assistant/add-on-config/ring-mqtt:/data
+      - /marcus-stack/home-assistant/add-on-config/ring-mqtt:/data
   scrypted-ring:
     depends_on:
       ensure-marcus-restored:
@@ -170,7 +174,7 @@ services:
       - SCRYPTED_WEBHOOK_UPDATE_AUTHORIZATION=Bearer foobar
       - SCRYPTED_WEBHOOK_UPDATE=https://localhost:10444/v1/update
     volumes:
-      - $PWD/home-assistant/.scrypted/volume:/server/volume
+      - /marcus-stack/home-assistant/.scrypted/volume:/server/volume
       - /var/run/dbus:/var/run/dbus
       - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
     logging:
@@ -215,7 +219,7 @@ services:
       HOME_ASSISTANT_FOLDER: /work
     working_dir: /work
     volumes:
-      - $PWD/home-assistant:/work
+      - /marcus-stack/home-assistant:/work
     entrypoint:
       - bash
     command:
@@ -234,36 +238,40 @@ services:
         fi
         >&2 echo "Username: $$(cat /secrets/lift-log-sftp-username), Password: $$(cat /secrets/lift-log-sftp-password)"
   backup-marcus-stack:
-    image: bash:5
+    image: rclone/rclone:1.65.0
     volumes:
-      - $PWD:/app
-    working_dir: /app
+      - /marcus-stack/rclone/conf:/config/rclone
+      - /marcus-stack:/data:ro
+    entrypoint: sh
     command:
       - -c
       - |
           ts=$(date +%s)
-          tar -cvzf /tmp/marcus-backup-$ts.tar.gz -C /data adguard* \
+          tar -cvzf /tmp/marcus-backup-$$ts.tar.gz -C /data adguard* \
             add-on* \
             calibre* \
             home-assistant
-          rclone copy /tmp/marcus-backup-$$ts.tar.gz marcus-google-drive:Backups/marcus -L -v
+          rclone copy /tmp/marcus-backup-$$ts.tar.gz marcus-google-drive:Backups/marcus --progress
           rclone backend shortcut marcus-google-drive: Backups/marcus/marcus-backup-$$ts.tar.gz Backups/marcus/marcus-backup-latest.tar.gz
   restore-marcus-stack:
-    image: bash:5
+    image: rclone/rclone:1.65.0
     volumes:
-      - $PWD:/app
-    working_dir: /app
+      - /marcus-stack/rclone/conf:/config/rclone
+      - /marcus-stack:/data:ro
+    working_dir: /data
+    entrypoint: sh
     command:
       - -c
       - |-
         test -f .restored && exit 0
-        rclone copy marcus-google-drive:Backups/marcus/marcus-backup-latest /tmp/marcus-last-backup.tar.gz
+        >&2 echo "INFO: Restoring Marcus. This will take a few minutes."
+        rclone copy marcus-google-drive:Backups/marcus/marcus-backup-latest.tar.gz /tmp/marcus-last-backup.tar.gz --progress &&
         tar -xvzf /tmp/marcus-last-backup.tar.gz -C . &&
         touch .restored
   ensure-marcus-restored:
     image: bash:5
     volumes:
-      - $PWD:/app
+      - /marcus-stack:/app
     working_dir: /app
     environment:
       - MARCUS_RESTORE_WAIT_TIME_SECS=600
