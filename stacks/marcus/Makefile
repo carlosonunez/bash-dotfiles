@@ -96,14 +96,17 @@ view_flatcar_ignition_for_testing: _confirm_pgp_pubkey
 		docker run --rm -i ghcr.io/flatcar/ct:latest
 
 update_flatcar_ignition: _confirm_pgp_pubkey
-	fp=$$($(MAKE) _get_pgp_pubkey) || exit 1; \
+	fp=$$($(MAKE) _get_pgp_pubkey_fp) || exit 1; \
 	$(MAKE) view_flatcar_ignition | \
 		sops --pgp "$$fp" --encrypt /dev/stdin --input-type=json --output-type=json > \
 			$(PWD)/flatcar-config.ignition.json
 
 _confirm_pgp_pubkey:
-	fp=$$(QUERY='.sops.pgp[0].fp' FILE=$$PWD/flatcar-config.yaml $(MAKE) _get_prop_from_encrypted_file) || exit 1; \
+	fp=$$($(MAKE) _get_pgp_pubkey_fp) || exit 1; \
 	gpg --list-public-keys "$$fp" &>/dev/null
+
+_get_pgp_pubkey_fp:
+	QUERY='.sops.pgp[0].fp' FILE=$$PWD/flatcar-config.yaml $(MAKE) _get_prop_from_encrypted_file;
 
 _get_prop_from_encrypted_file:
 	QUERY="$${QUERY?Please provide a yq query with QUERY}"; \
