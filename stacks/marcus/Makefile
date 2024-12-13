@@ -66,7 +66,7 @@ edit_flatcar_config: _confirm_pgp_pubkey
 
 view_flatcar_config: _confirm_pgp_pubkey
 	sops -d $(PWD)/flatcar-config.yaml | \
-		sed 's;$$GIT_BRANCH;$(GIT_BRANCH);g'
+		sed 's;$$GIT_BRANCH;$(MARCUS_GIT_BRANCH);g'
 
 view_flatcar_ignition: _confirm_pgp_pubkey
 	$(MAKE) view_flatcar_config | \
@@ -81,7 +81,7 @@ view_flatcar_ignition: _confirm_pgp_pubkey
 # This target modifies any static addresses and gateways found within the Flatcar config.
 # This way, the home network address space doesn't have to be hardcoded anywhere.
 view_flatcar_config_for_testing: _confirm_pgp_pubkey
-	export GIT_BRANCH=$$(git rev-parse --abbrev-ref HEAD); \
+	export MARCUS_GIT_BRANCH=$$(git rev-parse --abbrev-ref HEAD); \
 	idx=15; \
 	conf=$$($(MAKE) view_flatcar_config | sed -E 's/Gateway=.*/Gateway=10.0.2.2/g'); \
 	while read -r line; \
