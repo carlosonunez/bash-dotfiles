@@ -4,9 +4,24 @@
 <plist version="1.0">
   <dict>
     <key>bundleid</key>
-    <string></string>
+    <string>me.carlosnunez.bundles.lights</string>
+    <key>category</key>
+    <string>Productivity</string>
     <key>connections</key>
     <dict>
+      <key>45506E5F-36FA-4948-8414-6C092EAA8F70</key>
+      <array>
+        <dict>
+          <key>destinationuid</key>
+          <string>AD331DB3-26DE-4D7E-B88B-FC11471BEB56</string>
+          <key>modifiers</key>
+          <integer>0</integer>
+          <key>modifiersubtext</key>
+          <string></string>
+          <key>vitoclose</key>
+          <false />
+        </dict>
+      </array>
       <key>493E41C7-7202-4B29-B650-440BC471B49E</key>
       <array>
         <dict>
@@ -48,9 +63,9 @@
       </array>
     </dict>
     <key>createdby</key>
-    <string></string>
+    <string>Carlos Nunez</string>
     <key>description</key>
-    <string></string>
+    <string>Handy keyboard shortcuts for Elgato lights!</string>
     <key>disabled</key>
     <false />
     <key>name</key>
@@ -96,8 +111,8 @@
           <key>escaping</key>
           <integer>102</integer>
           <key>script</key>
-          <string>${ELGATO_BIN} brightness --level 40 0 ${ELGATO_BIN} brightness --level 29 1
-          ${ELGATO_BIN} color --level 5200 0 ${ELGATO_BIN} color --level 3700 1</string>
+          <string>${ELGATO_BIN} brightness --level 40 1 ${ELGATO_BIN} brightness --level 26 0
+          ${ELGATO_BIN} color --level 5000 0 ${ELGATO_BIN} color --level 3700 1</string>
           <key>scriptargtype</key>
           <integer>1</integer>
           <key>scriptfile</key>
@@ -109,6 +124,30 @@
         <string>alfred.workflow.action.script</string>
         <key>uid</key>
         <string>2AB10F01-495E-4CBC-8F8A-A01E9A87A2E4</string>
+        <key>version</key>
+        <integer>2</integer>
+      </dict>
+      <dict>
+        <key>config</key>
+        <dict>
+          <key>concurrently</key>
+          <false />
+          <key>escaping</key>
+          <integer>102</integer>
+          <key>script</key>
+          <string>${ELGATO_BIN} brightness --level 20 0 ${ELGATO_BIN} brightness --level 14 1
+          ${ELGATO_BIN} color --level 6000 0 ${ELGATO_BIN} color --level 6000 1</string>
+          <key>scriptargtype</key>
+          <integer>1</integer>
+          <key>scriptfile</key>
+          <string></string>
+          <key>type</key>
+          <integer>0</integer>
+        </dict>
+        <key>type</key>
+        <string>alfred.workflow.action.script</string>
+        <key>uid</key>
+        <string>DB46E60B-EDA5-48C6-BF78-CDC891D6012B</string>
         <key>version</key>
         <integer>2</integer>
       </dict>
@@ -151,10 +190,13 @@
           <key>escaping</key>
           <integer>102</integer>
           <key>script</key>
-          <string>${ELGATO_BIN} brightness --level 20 0 ${ELGATO_BIN} brightness --level 14 1
-          ${ELGATO_BIN} color --level 6000 0 ${ELGATO_BIN} color --level 6000 1</string>
+          <string>if test -z "{query}" then &gt;&amp;2 echo "ERROR: Please provide a light switch
+          operation (on, off, or toggle)." exit 1 fi if ! grep -Eq 'on|off|toggle' &lt;&lt;&lt;
+          "{query}" then &gt;&amp;2 echo "ERROR: Light switch operation [{query}] is not
+          supported." exit 1 fi ${ELGATO_BIN} lights | grep -E '^Light' | rev | cut -f1 -d ' ' |
+          xargs -L 1 ${ELGATO_BIN} {query}</string>
           <key>scriptargtype</key>
-          <integer>1</integer>
+          <integer>0</integer>
           <key>scriptfile</key>
           <string></string>
           <key>type</key>
@@ -163,9 +205,24 @@
         <key>type</key>
         <string>alfred.workflow.action.script</string>
         <key>uid</key>
-        <string>DB46E60B-EDA5-48C6-BF78-CDC891D6012B</string>
+        <string>AD331DB3-26DE-4D7E-B88B-FC11471BEB56</string>
         <key>version</key>
         <integer>2</integer>
+      </dict>
+      <dict>
+        <key>config</key>
+        <dict>
+          <key>availableviaurlhandler</key>
+          <true />
+          <key>triggerid</key>
+          <string>switch</string>
+        </dict>
+        <key>type</key>
+        <string>alfred.workflow.trigger.external</string>
+        <key>uid</key>
+        <string>45506E5F-36FA-4948-8414-6C092EAA8F70</string>
+        <key>version</key>
+        <integer>1</integer>
       </dict>
       <dict>
         <key>config</key>
@@ -173,7 +230,9 @@
           <key>action</key>
           <integer>0</integer>
           <key>argument</key>
-          <integer>0</integer>
+          <integer>3</integer>
+          <key>argumenttext</key>
+          <string>toggle</string>
           <key>focusedappvariable</key>
           <false />
           <key>focusedappvariablename</key>
@@ -198,29 +257,6 @@
         <key>version</key>
         <integer>2</integer>
       </dict>
-      <dict>
-        <key>config</key>
-        <dict>
-          <key>concurrently</key>
-          <false />
-          <key>escaping</key>
-          <integer>102</integer>
-          <key>script</key>
-          <string>${ELGATO_BIN} toggle 0 ${ELGATO_BIN} toggle 1</string>
-          <key>scriptargtype</key>
-          <integer>1</integer>
-          <key>scriptfile</key>
-          <string></string>
-          <key>type</key>
-          <integer>0</integer>
-        </dict>
-        <key>type</key>
-        <string>alfred.workflow.action.script</string>
-        <key>uid</key>
-        <string>AD331DB3-26DE-4D7E-B88B-FC11471BEB56</string>
-        <key>version</key>
-        <integer>2</integer>
-      </dict>
     </array>
     <key>readme</key>
     <string></string>
@@ -233,12 +269,19 @@
         <key>ypos</key>
         <real>70</real>
       </dict>
+      <key>45506E5F-36FA-4948-8414-6C092EAA8F70</key>
+      <dict>
+        <key>xpos</key>
+        <real>30</real>
+        <key>ypos</key>
+        <real>385</real>
+      </dict>
       <key>493E41C7-7202-4B29-B650-440BC471B49E</key>
       <dict>
         <key>xpos</key>
         <real>30</real>
         <key>ypos</key>
-        <real>390</real>
+        <real>535</real>
       </dict>
       <key>9C4A4BE4-3A71-4AEA-8EB9-D7D457324889</key>
       <dict>
@@ -252,7 +295,7 @@
         <key>xpos</key>
         <real>355</real>
         <key>ypos</key>
-        <real>390</real>
+        <real>385</real>
       </dict>
       <key>DB46E60B-EDA5-48C6-BF78-CDC891D6012B</key>
       <dict>
@@ -279,6 +322,6 @@
     <key>version</key>
     <string></string>
     <key>webaddress</key>
-    <string></string>
+    <string>https://github.com/carlosnunez</string>
   </dict>
 </plist>
