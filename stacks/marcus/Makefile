@@ -243,7 +243,6 @@ _tests_teardown:
 # service to wait for core Marcus services to start before
 # running tests.
 _wait_for_faux_marcus_stack_started:
-	set -x; \
 	script='attempts=0; max_attempts=$(MARCUS_STARTUP_WAIT_TIME_SECS); '\
 	'while test "$$attempts" -lt "$$max_attempts"; '\
 	'do test -f /marcus-stack/.marcus_started && exit 0; '\
