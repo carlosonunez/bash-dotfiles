@@ -6,3 +6,9 @@
 .DS_Store
 cscope.*
 tags
+*.bz2
+*.tar
+*.bin
+out
+stacks/marcus/tests/.vagrant
+.vagrant

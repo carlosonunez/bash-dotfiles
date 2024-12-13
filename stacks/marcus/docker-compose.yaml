@@ -1,11 +1,35 @@
 volumes:
   marcus-secrets: {}
 services:
+  mark-marcus-stack-started:
+    depends_on:
+      rclone:
+        condition: service_started
+      lift-log-sftp-server:
+        condition: service_started
+      adguard-home:
+        condition: service_started
+      calibre-server:
+        condition: service_started
+      calibre-web:
+        condition: service_started
+      calibre-samba:
+        condition: service_started
+      home-assistant:
+        condition: service_started
+    image: bash:5
+    volumes:
+      - /marcus-stack:/app
+    working_dir: /app
+    command:
+      - -c
+      - |-
+        touch .marcus_started
   rclone:
     image: rclone/rclone:1.65.0
     volumes:
-      - ./rclone/conf:/config/rclone
-      - $PWD:/data:ro
+      - /marcus-stack/rclone/conf:/config/rclone
+      - /marcus-stack:/data:ro
     network_mode: host
     command:
       - rcd
@@ -17,11 +41,13 @@ services:
     depends_on:
       lift-log-sftp-server-init:
         condition: service_completed_successfully
+      ensure-marcus-restored:
+        condition: service_completed_successfully
     image: rclone/rclone:1.65.0
     volumes:
       - marcus-secrets:/secrets
-      - ./rclone/conf:/config/rclone:ro
-      - $HOME/src/marcus-stack:/data:ro
+      - /marcus-stack/rclone/conf:/config/rclone:ro
+      - /marcus-stack:/data:ro
     network_mode: host
     entrypoint: sh
     command:
@@ -31,20 +57,26 @@ services:
           --pass "$$(cat /secrets/lift-log-sftp-password)" \
           --addr 0.0.0.0:20000
   adguard-home:
+    depends_on:
+      ensure-marcus-restored:
+        condition: service_completed_successfully
     image: adguard/adguardhome:v0.107.43
     container_name: adguardhome
     network_mode: host
     volumes:
-      - ./adguard-home/workdir:/opt/adguardhome/work
-      - ./adguard-home/confdir:/opt/adguardhome/conf
+      - /marcus-stack/adguard-home/workdir:/opt/adguardhome/work
+      - /marcus-stack/adguard-home/confdir:/opt/adguardhome/conf
     restart: unless-stopped
   calibre-samba:
+    depends_on:
+      ensure-marcus-restored:
+        condition: service_completed_successfully
     network_mode: host
     image: dperson/samba
     container_name: calibre-dropbox
     volumes:
-      - "./calibre-config/Calibre Library:/books"
-      - "./calibre-config/calibre-bookdrop:/book-drop"
+      - "/marcus-stack/calibre-config/Calibre Library:/books"
+      - "/marcus-stack/calibre-config/calibre-bookdrop:/book-drop"
     command:
       - -p
       - -u
@@ -54,13 +86,16 @@ services:
       - -s
       - "book-drop;/book-drop;yes;no;no;admin;admin;Books to be converted into ePUBs"
   calibre-server:
+    depends_on:
+      ensure-marcus-restored:
+        condition: service_completed_successfully
     network_mode: host
     image: linuxserver/calibre:7.18.0
     container_name: calibre
     security_opt:
       - seccomp=unconfined
     volumes:
-      - ./calibre-config:/config
+      - /marcus-stack/calibre-config:/config
     environment:
       CUSTOM_PORT: "8089"
       CUSTOM_HTTPS_PORT: "8189"
@@ -69,6 +104,9 @@ services:
       NO_DECOR: 1
       TITLE: Calibre
   calibre-web:
+    depends_on:
+      ensure-marcus-restored:
+        condition: service_completed_successfully
     network_mode: host
     image: lscr.io/linuxserver/calibre-web:0.6.23
     container_name: calibre-web
@@ -76,49 +114,58 @@ services:
       OAUTHLIB_RELAX_TOKEN_SCOPE: "1"
       DOCKER_MODS: "linuxserver/mods:universal-calibre"
     volumes:
-      - "./calibre-config/Calibre Library:/books"
-      - ./calibre-web-config:/config
+      - "/marcus-stack/calibre-config/Calibre Library:/books"
+      - /marcus-stack/calibre-web-config:/config
   home-assistant:
     depends_on:
+      ensure-marcus-restored:
+        condition: service_completed_successfully
       mqtt-broker:
         condition: service_started
       ring-mqtt:
         condition: service_started
       scrypted-ring:
         condition: service_started
-      ha-install-integrations:
-        condition: service_completed_successfully
     image: ghcr.io/home-assistant/home-assistant:stable
     privileged: true
     container_name: homeassistant
     restart: unless-stopped
     network_mode: host
     volumes:
-      - ./home-assistant/config:/config
+      - /marcus-stack/home-assistant/config:/config
       - /etc/localtime:/etc/localtime:ro
     environment:
       TZ: America/Chicago
   # Mosquitto is a simple MQTT broker that works well
   # within Docker.
   mqtt-broker:
+    depends_on:
+      ensure-marcus-restored:
+        condition: service_completed_successfully
     image: eclipse-mosquitto
     container_name: mqtt-broker
     network_mode: host
     restart: unless-stopped
     volumes:
-      - $PWD/home-assistant/add-on-config/mosquitto:/mosquitto/config
+      - /marcus-stack/home-assistant/add-on-config/mosquitto:/mosquitto/config
   # Ring-MQTT exposes Ring Alarm devices to Home Assistant
   # via MQTT.
   ring-mqtt:
     depends_on:
-      - mqtt-broker
+      ensure-marcus-restored:
+        condition: service_completed_successfully
+      mqtt-broker:
+        condition: service_started
     container_name: ring-mqtt
     restart: unless-stopped
     image: tsightler/ring-mqtt
     network_mode: host
     volumes:
-      - $PWD/home-assistant/add-on-config/ring-mqtt:/data
+      - /marcus-stack/home-assistant/add-on-config/ring-mqtt:/data
   scrypted-ring:
+    depends_on:
+      ensure-marcus-restored:
+        condition: service_completed_successfully
     image: koush/scrypted
     container_name: scrypted
     restart: unless-stopped
@@ -127,7 +174,7 @@ services:
       - SCRYPTED_WEBHOOK_UPDATE_AUTHORIZATION=Bearer foobar
       - SCRYPTED_WEBHOOK_UPDATE=https://localhost:10444/v1/update
     volumes:
-      - $PWD/home-assistant/.scrypted/volume:/server/volume
+      - /marcus-stack/home-assistant/.scrypted/volume:/server/volume
       - /var/run/dbus:/var/run/dbus
       - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
     logging:
@@ -172,11 +219,11 @@ services:
       HOME_ASSISTANT_FOLDER: /work
     working_dir: /work
     volumes:
-      - $PWD/home-assistant:/work
+      - /marcus-stack/home-assistant:/work
     entrypoint:
       - bash
     command:
-      - ./stack.start
+      - /marcus-stack/stack.start
   lift-log-sftp-server-init:
     image: bash:5
     volumes:
@@ -190,3 +237,55 @@ services:
           tr -dc 'a-z0-9' < /dev/urandom | head -c 8 > /secrets/lift-log-sftp-password
         fi
         >&2 echo "Username: $$(cat /secrets/lift-log-sftp-username), Password: $$(cat /secrets/lift-log-sftp-password)"
+  backup-marcus-stack:
+    image: rclone/rclone:1.65.0
+    volumes:
+      - /marcus-stack/rclone/conf:/config/rclone
+      - /marcus-stack:/data:ro
+    entrypoint: sh
+    command:
+      - -c
+      - |
+          ts=$(date +%s)
+          tar -cvzf /tmp/marcus-backup-$$ts.tar.gz -C /data adguard* \
+            add-on* \
+            calibre* \
+            home-assistant
+          rclone copy /tmp/marcus-backup-$$ts.tar.gz marcus-google-drive:Backups/marcus --progress
+          rclone backend shortcut marcus-google-drive: Backups/marcus/marcus-backup-$$ts.tar.gz Backups/marcus/marcus-backup-latest.tar.gz
+  restore-marcus-stack:
+    image: rclone/rclone:1.65.0
+    volumes:
+      - /marcus-stack/rclone/conf:/config/rclone:ro
+      - /marcus-stack:/data
+    working_dir: /data
+    entrypoint: sh
+    command:
+      - -c
+      - |-
+        test -f .restored && exit 0
+        >&2 echo "INFO: Restoring Marcus. This will take a few minutes."
+        rclone copy marcus-google-drive:Backups/marcus/marcus-backup-latest.tar.gz /tmp --progress &&
+        tar -xvzf /tmp/marcus-backup-latest.tar.gz -C . &&
+        touch .restored
+  ensure-marcus-restored:
+    image: bash:5
+    volumes:
+      - /marcus-stack:/app
+    working_dir: /app
+    environment:
+      - MARCUS_RESTORE_WAIT_TIME_SECS=600
+    command:
+      - -c
+      - |-
+        attempts=0
+        while test "$$attempts" -lt "$$MARCUS_RESTORE_WAIT_TIME_SECS"
+        do
+          test -f /app/.restored && break
+          >&2 echo "INFO: Waiting for Marcus restore to complete; attempt $$((attempts+1))/$$MARCUS_RESTORE_WAIT_TIME_SECS"
+          attempts=$$((attempts+1))
+          sleep 1
+        done
+        test -f /app/.restored && exit 0
+        >&2 echo "ERROR: Restore failed"
+        exit 1
