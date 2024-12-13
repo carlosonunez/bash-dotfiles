@@ -6,7 +6,6 @@ FAUX_MARCUS_VAGRANT_BOX := $(shell echo "$${TMPDIR:-/tmp}")/$(FAUX_MARCUS_MACHIN
 DOCKER_COMPOSE_TEST := docker --log-level INFO compose -f $(PWD)/tests/include/docker-compose.yaml --progress quiet
 PACKER_PLUGIN_QEMU_FORK_URL := https://github.com/carlosonunez/packer-plugin-qemu
 PACKER_PLUGIN_QEMU_REF_URL := locally.installed/plugins/qemu
-MARCUS_GIT_BRANCH ?= main
 MARCUS_STARTUP_WAIT_TIME_SECS ?= 600
 PERCENT := %
 
@@ -64,9 +63,28 @@ tests_no_poweroff:
 edit_flatcar_config: _confirm_pgp_pubkey
 	sops $(PWD)/flatcar-config.yaml
 
+# 2024-12-13: Flatcar doesn't configure networkd until Ignition completes. Consequently, it relies
+# on DHCP being available at boot time. Since marcus is a DHCP server, we can't rely on a DHCP
+# server being available in its network.
+#
+# The only workaround for this is modifying kernel parameters in GRUB, but that requires modifying
+# the Flatcar image, which is more work than I want to do right now.
+#
+# So, instead, we'll just load the file into the config dynamically.
+#
+# SEE ALSO:
+#
+# - https://github.com/flatcar/Flatcar/issues/255
+_view_marcus_stack_compose:
+	yq_query='del(.services.rpi-fan)'; \
+	test -n "$$ENABLE_RPI_SERVICES" && yq_query='.'; \
+	yq "$$yq_query" $(PWD)/docker-compose.yaml
+
 view_flatcar_config: _confirm_pgp_pubkey
+	trap 'rc=$$?; rm $${TMPDIR:-/tmp}/dc.yaml; exit $$rc' INT HUP EXIT; \
+	$(MAKE) _view_marcus_stack_compose > $${TMPDIR:-/tmp}/dc.yaml; \
 	sops -d $(PWD)/flatcar-config.yaml | \
-		sed 's;$$GIT_BRANCH;$(MARCUS_GIT_BRANCH);g'
+		yq '(.storage.files[] | select(.path | contains("docker-compose.yaml")) | .contents.inline) = (load_str("'$${TMPDIR:-/tmp}/dc.yaml'"))'
 
 view_flatcar_ignition: _confirm_pgp_pubkey
 	$(MAKE) view_flatcar_config | \
@@ -81,7 +99,6 @@ view_flatcar_ignition: _confirm_pgp_pubkey
 # This target modifies any static addresses and gateways found within the Flatcar config.
 # This way, the home network address space doesn't have to be hardcoded anywhere.
 view_flatcar_config_for_testing: _confirm_pgp_pubkey
-	export MARCUS_GIT_BRANCH=$$(git rev-parse --abbrev-ref HEAD); \
 	idx=15; \
 	conf=$$($(MAKE) view_flatcar_config | sed -E 's/Gateway=.*/Gateway=10.0.2.2/g'); \
 	while read -r line; \
