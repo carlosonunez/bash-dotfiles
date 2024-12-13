@@ -46,7 +46,7 @@ services:
     image: rclone/rclone:1.65.0
     volumes:
       - marcus-secrets:/secrets
-      - ./rclone/conf:/config/rclone:ro
+      - /marcus-stack/rclone/conf:/config/rclone:ro
       - /marcus-stack:/data:ro
     network_mode: host
     entrypoint: sh
@@ -64,8 +64,8 @@ services:
     container_name: adguardhome
     network_mode: host
     volumes:
-      - ./adguard-home/workdir:/opt/adguardhome/work
-      - ./adguard-home/confdir:/opt/adguardhome/conf
+      - /marcus-stack/adguard-home/workdir:/opt/adguardhome/work
+      - /marcus-stack/adguard-home/confdir:/opt/adguardhome/conf
     restart: unless-stopped
   calibre-samba:
     depends_on:
@@ -75,8 +75,8 @@ services:
     image: dperson/samba
     container_name: calibre-dropbox
     volumes:
-      - "./calibre-config/Calibre Library:/books"
-      - "./calibre-config/calibre-bookdrop:/book-drop"
+      - "/marcus-stack/calibre-config/Calibre Library:/books"
+      - "/marcus-stack/calibre-config/calibre-bookdrop:/book-drop"
     command:
       - -p
       - -u
@@ -95,7 +95,7 @@ services:
     security_opt:
       - seccomp=unconfined
     volumes:
-      - ./calibre-config:/config
+      - /marcus-stack/calibre-config:/config
     environment:
       CUSTOM_PORT: "8089"
       CUSTOM_HTTPS_PORT: "8189"
@@ -114,8 +114,8 @@ services:
       OAUTHLIB_RELAX_TOKEN_SCOPE: "1"
       DOCKER_MODS: "linuxserver/mods:universal-calibre"
     volumes:
-      - "./calibre-config/Calibre Library:/books"
-      - ./calibre-web-config:/config
+      - "/marcus-stack/calibre-config/Calibre Library:/books"
+      - /marcus-stack/calibre-web-config:/config
   home-assistant:
     depends_on:
       ensure-marcus-restored:
@@ -132,7 +132,7 @@ services:
     restart: unless-stopped
     network_mode: host
     volumes:
-      - ./home-assistant/config:/config
+      - /marcus-stack/home-assistant/config:/config
       - /etc/localtime:/etc/localtime:ro
     environment:
       TZ: America/Chicago
@@ -223,7 +223,7 @@ services:
     entrypoint:
       - bash
     command:
-      - ./stack.start
+      - /marcus-stack/stack.start
   lift-log-sftp-server-init:
     image: bash:5
     volumes:
@@ -256,8 +256,8 @@ services:
   restore-marcus-stack:
     image: rclone/rclone:1.65.0
     volumes:
-      - /marcus-stack/rclone/conf:/config/rclone
-      - /marcus-stack:/data:ro
+      - /marcus-stack/rclone/conf:/config/rclone:ro
+      - /marcus-stack:/data
     working_dir: /data
     entrypoint: sh
     command:
@@ -265,8 +265,8 @@ services:
       - |-
         test -f .restored && exit 0
         >&2 echo "INFO: Restoring Marcus. This will take a few minutes."
-        rclone copy marcus-google-drive:Backups/marcus/marcus-backup-latest.tar.gz /tmp/marcus-last-backup.tar.gz --progress &&
-        tar -xvzf /tmp/marcus-last-backup.tar.gz -C . &&
+        rclone copy marcus-google-drive:Backups/marcus/marcus-backup-latest.tar.gz /tmp --progress &&
+        tar -xvzf /tmp/marcus-backup-latest.tar.gz -C . &&
         touch .restored
   ensure-marcus-restored:
     image: bash:5
