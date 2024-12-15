@@ -3,12 +3,6 @@ ASDF_PLUGINS=$(cat <<-PLUGINS
 direnv
 PLUGINS
 )
-LANG_STACKS=$(cat <<-APPS
-golang
-python
-ruby
-APPS
-)
 PREREQS=$(cat <<-APPS
 asdf
 1password
@@ -502,6 +496,22 @@ set_bash_prompt() {
   fi
 }
 
+show_language_versions() {
+  versions=""
+  while read -r data; \
+  do
+    test -z "$data" && continue
+    lang="$(grep -Eo 'alternate-name: [A-Za-z]+' <<< "$data" | awk -F':' '{print $2}' | tr -d ' ')"
+    test -z "$lang" && lang=$(cut -f1 -d ' ' <<< "$data")
+    color=$(grep -Eo 'shell-color: [A-Za-z]+' <<< "$data" | awk -F':' '{print $2}' | tr -d ' ')
+    test -z "${!color}" && color="BWhite"
+    version=$(asdf which "$lang" 2>/dev/null | cut -f7 -d '/')
+    test -z "$version" && version="MISSING?"
+    versions="${versions}${!color}[${lang}-$version]${NC}"
+  done < "$HOME/.tool-versions"
+  echo -e "$versions"
+}
+
 set_full_bash_prompt() {
   if test "$1" -ne 0 && test "$1" -ne 130
   then
@@ -528,26 +538,6 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
     fmtd_username="\[$BGreen\]$USER\[$NC\]"
   fi
 
-  if ! test -z "$VIRTUAL_ENV"
-  then
-    python_version="$(grep -E "^version" "${VIRTUAL_ENV}/pyvenv.cfg" |
-      awk -F'=' '{print $2}' |
-      tr -d ' ')"
-    virtualenv="\[$BGreen\][python-${python_version}]\[$NC\]"
-  else
-    virtualenv=""
-  fi
-  ruby_version=""
-  if ! test -z "$ASDF_RUBY_VERSION"
-  then
-    ruby_version="\[$BRed\][ruby-$ASDF_RUBY_VERSION]\[$NC\]"
-  fi
-  # using grep to evaluate go version managed by asdf is faster
-  local_go_version="$(grep -oh -E '([0-9]{1,}\.[0-9]{1,}\.[0-9]{1,})' < <(which go))"
-  if test -z "$local_go_version"
-  then local_go_version="$(cut -f3 -d ' ' < <(2>/dev/null go version) | sed 's/go//')"
-  fi
-  local_go_version="\[$BGreen\][go-$local_go_version]\[$NC\]"
   print_dirstack_count() {
     count=$(dirstack_count)
     if test "$count" -ge 1
@@ -565,18 +555,18 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
   hostname_fmtd="\[$BBlue\]$hostname_name\[$NC\]"
   if ! test -d "$PWD/.git" || ! $(2>/dev/null git rev-parse --is-inside-work-tree)
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]${virtualenv}${ruby_version}${local_go_version}$(print_dirstack_count)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]$(show_language_versions)$(print_dirstack_count)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   elif [ "$(2>/dev/null git --no-pager branch --list)" == "" ]
   then
     git_branch="NO BRANCH?"
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] ${virtualenv}${ruby_version}${local_go_version}$(print_dirstack_count) \n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] $(show_language_versions)$(print_dirstack_count) \n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   elif ! $(2>/dev/null git diff-index --quiet HEAD)
   then
     git_branch="$(get_git_branch)"
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] ${virtualenv}${ruby_version}${local_go_version}$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] $(show_language_versions)$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   else
     git_branch="$(get_git_branch)"
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Green\]($git_branch)\[$NC\] ${virtualenv}${ruby_version}${local_go_version}$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Green\]($git_branch)\[$NC\] $(show_language_versions)$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   fi
 }
 
