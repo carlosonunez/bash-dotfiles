@@ -154,7 +154,7 @@ else
     configure_bash_session
     add_keys_to_ssh_agent
     start_gpg_agent
-    PROMPT_COMMAND='e=$?; history -a; history -c; history -r; trap - SIGINT SIGHUP EXIT; asdf_hook; cscope_hook; ctags_hook; aws_prompt_command_hook; set_bash_prompt $e'
+    PROMPT_COMMAND='e=$?; history -a; history -c; history -r; trap - SIGINT SIGHUP EXIT;  cscope_hook; ctags_hook; aws_prompt_command_hook; set_bash_prompt $e'
 fi
 
 [ -f "$HOME/src/setup/fzf.bash" ] && source "$HOME/src/setup/fzf.bash"
@@ -162,4 +162,6 @@ fi
 # We need to do this again becasue some scripts trample over the PATH and cause
 # duplicate/errant entries.
 export $(set_path | grep -E '^export' | xargs -0)
+source "$(brew --prefix asdf)/libexec/asdf.sh"
+source "$(brew --prefix asdf)/etc/bash_completion.d/asdf.bash"
 log_info "Shell ready; enjoy! 🎉"
