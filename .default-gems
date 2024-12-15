@@ -1,0 +1,5 @@
+pry
+rspec
+rspec-expectations
+rubocop
+rubocop-rspec

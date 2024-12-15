@@ -102,17 +102,24 @@ create_gpg_symlinks() {
   ln -s "${DEFAULT_SETUP_DIRECTORY}/gpg-agent.conf" "$HOME/.config/gnupg/gpg-agent.conf"
 }
 
+create_asdf_symlinks() {
+  ln -s "${DEFAULT_SETUP_DIRECTORY}/.tool-versions" "$HOME/.tool-versions"
+  for file in "${DEFAULT_SETUP_DIRECTORY}"/.default-*
+  do
+    fname=$(basename "$file")
+    ln -s "$file" "${HOME}/$fname"
+  done
+}
+
 if {
   clone_dotfiles &&
   set_context &&
   install_homebrew &&
   check_for_required_directories &&
   create_symlinks_for_config_files &&
-  create_symlinks_for_tuir &&
-  create_symlinks_for_rvm &&
   create_vim_directories &&
-  create_symlinks_for_w3m &&
   create_gpg_symlinks &&
+  create_asdf_symlinks &&
   leave_context
 }
 then
