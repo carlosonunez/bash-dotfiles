@@ -1,119 +1,4 @@
 #!/usr/bin/env bash
-disable_cscope_and_ctags() {
-  test "$(2>/dev/null git rev-parse --is-inside-work-tree)" == "true" || return 0
-  test -n "$(2>/dev/null git stash list)" && return 0
-  log_info "Disabling cscope and ctags"
-  toplevel=$(git rev-parse --show-toplevel)
-  touch .nocscope .noctags
-  rm -rf cscope.* tags
-  # NOTE: These exclusions will not be tracked by Git.
-  cat >>"$toplevel/.git/info/exclude" <<-EOF
-.nocscope
-.noctags
-EOF
-}
-
-enable_cscope_and_ctags() {
-  rm .nocscope .noctags
-}
-
-print_cscope_file_list() {
-  find . -name "*.bash" -o \
-    -name "*.bats" -o \
-    -name "*.sh" -o \
-    -name "*.go" -o \
-    -name "*.java" -o \
-    -name "*.rb" -o \
-    -name "*.py" -o \
-    -name "*.c" -o \
-    -name "*.h" -o  \
-    -name "*.cpp" -o \
-    -name "*.js" -o \
-    -name "*.ts" -o \
-    -name "*.rs"
-}
-
-cscope_hook() {
-  test "$(2>/dev/null git rev-parse --is-inside-work-tree)" == "true" || return 0
-  test -n "$(2>/dev/null git stash list)" && return 0
-  toplevel=$(git rev-parse --show-toplevel)
-  cscope_db_file="$toplevel/cscope.out"
-  cscope_filelist="$toplevel/cscope.files"
-  nocscope_file="$toplevel/.nocscope"
-  if test -e "$nocscope_file"
-  then
-    if test -e "$toplevel/cscope*"
-    then
-      log_info "Removing cscope files, as requested"
-      rm -rf "$toplevel/cscope*"
-    fi
-    return 0
-  fi
-
-  test -e "$cscope_db_file" && return 0
-  if ! test -e "$cscope_filelist"
-  then
-    log_info "Building cscope file list. Please wait."
-    print_cscope_file_list > "$cscope_filelist"
-  fi
-  log_info "Generating cscope database. Please wait."
-  cscope -R -b -q -k
-  if ! test -e "$toplevel/.gitignore" || ! grep -iq 'cscope.*' "$toplevel/.gitignore"
-  then
-    log_info "Adding cscope files to gitignore. Please wait."
-    echo 'cscope.*' >> "$toplevel/.gitignore"
-  fi
-}
-
-ctags_hook() {
-  test "$(2>/dev/null git rev-parse --is-inside-work-tree)" == "true" || return 0
-  test -n "$(2>/dev/null git stash list)" && return 0
-  toplevel=$(git rev-parse --show-toplevel)
-  ctags_prefs="$HOME/.ctags"
-  ctags_file="$toplevel/tags"
-  no_ctags_file="$toplevel/.noctags"
-  if test -e "$no_ctags_file"
-  then
-    if test -e "$ctags_file"
-    then
-      log_info "Removing ctags, as requested"
-      rm -rf "$ctags_file"
-    fi
-    return 0
-  fi
-  if ! test -e "$ctags_prefs"
-  then
-    log_info "Generating ctags prefs. Please wait."
-    cat >"$ctags_prefs" <<-EOF
---recurse=yes
---exclude=.git
---exclude=.github
---exclude=*.gpg
---exclude=.DS_Store
---exclude=node_packages
---exclude=gocache
---exclude=go.mod
---exclude=go.sum
---exclude=vendor
---langdef=Go
---langmap=Go:.go
---regex-Go=/func([ \t]+\([^)]+\))?[ \t]+([a-zA-Z0-9_]+)/\2/d,func/
---regex-Go=/var[ \t]+([a-zA-Z_][a-zA-Z0-9_]+)/\1/d,var/
---regex-Go=/type[ \t]+([a-zA-Z_][a-zA-Z0-9_]+)/\1/d,type/
-EOF
-  fi
-  if ! test -e "$ctags_file"
-  then
-    log_info "Generating ctags. Please wait."
-    ctags -R
-  fi
-  if ! test -e "$toplevel/.gitignore" || ! grep -Eiq '^tags$' "$toplevel/.gitignore"
-  then
-    log_info "Adding tags to gitignore. Please wait."
-    echo 'tags' >> "$toplevel/.gitignore"
-  fi
-}
-
 update_vim_bundles() {
   for bundle_repo in $VIM_BUNDLE_REPOS
   do
@@ -138,7 +23,6 @@ ctrlpvim/ctrlp.vim
 ctrlpvim/ctrlp.vim
 dense-analysis/ale
 dhruvasagar/vim-table-mode
-erig0/cscope_dynamic
 fatih/vim-go
 flazz/vim-colorschemes
 hashivim/vim-terraform
@@ -172,7 +56,6 @@ vim-scripts/groovy.vim
 vim-test/vim-test
 will133/vim-dirdiff
 willchao612/vim-diagon
-xolox/vim-easytags
 xolox/vim-misc
 yuratomo/w3m.vim
 zivyangll/git-blame.vim

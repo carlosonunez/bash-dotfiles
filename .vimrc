@@ -431,3 +431,23 @@ nnoremap <leader>z :windo lcl\|ccl<CR>
 
 " Credit: https://stackoverflow.com/a/8585343
 map <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
+
+" YouCompleteMe LSPs
+if executable('terraform-ls')
+    let g:ycm_language_server += [
+        \   {
+        \     'name': 'terraform',
+        \     'cmdline': [ 'terraform-ls', 'serve' ],
+        \     'filetypes': [ 'terraform' ],
+        \     'project_root_files': [ '*.tf', '*.tfvars' ],
+        \   },
+        \ ]
+endif
+let g:ycm_language_server =
+      \ [
+      \   {
+      \       'name': 'bash',
+      \       'cmdline': [ 'bash-language-server', 'start' ],
+      \       'filetypes': [ 'sh' ],
+      \   }
+      \ ] 

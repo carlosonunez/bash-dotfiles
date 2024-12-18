@@ -38,11 +38,13 @@ awscli
 azure-cli
 bash
 bash-completion@2
+bash-language-server
 cscope
 ctags
 contexts
 colordiff
 coreutils
+cmake
 curl
 direnv
 docker-compose
