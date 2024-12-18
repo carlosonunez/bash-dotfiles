@@ -36,6 +36,7 @@ lambdalisue/battery.vim
 leafgarland/typescript-vim
 markcornick/vim-bats
 martinda/Jenkinsfile-vim-syntax
+NoahTheDuke/vim-just
 othree/javascript-libraries-syntax.vim
 pangloss/vim-javascript
 plasticboy/vim-markdown
