@@ -556,17 +556,20 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
   if ! test -d "$PWD/.git" || ! $(2>/dev/null git rev-parse --is-inside-work-tree)
   then
     PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]$(show_language_versions)$(print_dirstack_count)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
-  elif [ "$(2>/dev/null git --no-pager branch --list)" == "" ]
-  then
-    git_branch="NO BRANCH?"
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] $(show_language_versions)$(print_dirstack_count) \n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
-  elif ! $(2>/dev/null git diff-index --quiet HEAD)
-  then
-    git_branch="$(get_git_branch)"
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Red\]($git_branch)\[$NC\] $(show_language_versions)$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   else
-    git_branch="$(get_git_branch)"
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$Green\]($git_branch)\[$NC\] $(show_language_versions)$(print_dirstack_count) $(summarize_commits_ahead_and_behind_of_upstream)\n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    bookmark_commit_info=$(2>/dev/null git log -1 --oneline --format='%h, %s' |
+      grep ', bookmark:' |
+      sed 's/ bookmark://')
+    test -n "$bookmark_commit_info" && bookmark_commit_info="${On_Purple}${BWhite}[📚 bookmark @ $bookmark_commit_info]${NC}\n"
+    git_branch="NO BRANCH?"
+    git_branch_color="${Yellow}"
+    if test -n "$(2>/dev/null git --no-pager branch --list)"
+    then
+      git_branch="$(get_git_branch)"
+      git_branch_color="${Green}"
+    fi
+    2>/dev/null git diff-index --quiet HEAD || git_branch_color="${Red}"
+      PS1="${bookmark_commit_info}${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$git_branch_color\]($git_branch)\[$NC\] $(show_language_versions)$(print_dirstack_count) \n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   fi
 }
 
