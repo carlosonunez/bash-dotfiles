@@ -143,7 +143,7 @@ then
   log_info "Installing Docker"
   if is_mac
   then
-    brew install docker
+    brew install docker docker-buildx
     &>/dev/null which limactl || brew install lima
   elif is_debian
   then
