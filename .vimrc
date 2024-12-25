@@ -432,7 +432,9 @@ nnoremap <leader>z :windo lcl\|ccl<CR>
 " Credit: https://stackoverflow.com/a/8585343
 map <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
 
-" YouCompleteMe LSPs
+" YouCompleteMe settings
+set completeopt+=popup
+" YCM LSPs
 if executable('terraform-ls')
     let g:ycm_language_server += [
         \   {
