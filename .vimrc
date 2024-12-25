@@ -456,6 +456,8 @@ let g:ycm_language_server =
 
 " Save/restore sessions automatically on Vim exit/start!!!
 " https://stackoverflow.com/a/31978241
+set ssop-=options    " do not store global and local values in a session
+set ssop-=folds      " do not store folds
 function! MakeSession()
   let b:sessiondir = $HOME . "/.vim/sessions" . getcwd()
   if (filewritable(b:sessiondir) != 2)
@@ -479,5 +481,7 @@ endfunction
 " Adding automatons for when entering or leaving Vim
 if (argc() == 0)
   au VimEnter * nested :call LoadSession()
+  au VimEnter * NERDTree
 endif
+au VimLeave * NERDTreeClose
 au VimLeave * :call MakeSession()
