@@ -17,6 +17,8 @@ services:
         condition: service_started
       home-assistant:
         condition: service_started
+      flight-summarizer:
+        condition: service_started
     image: bash:5
     volumes:
       - /marcus-stack:/app
@@ -25,6 +27,14 @@ services:
       - -c
       - |-
         touch .marcus_started
+  flight-summarizer:
+    image: ghcr.io/carlosonunez/flight-summarizer:v1.0.2
+    network_mode: host
+    environment:
+      SERVER_PORT: 9999
+      SERVER_HOST: "0.0.0.0"
+    command:
+      - serve
   rclone:
     image: rclone/rclone:1.65.0
     volumes:
