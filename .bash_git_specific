@@ -98,6 +98,7 @@ squash_commits_starting_from_root() {
 squash_outstanding_commits() {
   _squash_commits "$(get_number_of_commits_ahead_of_origin)"
 }
+alias reorder_commits='squash_outstanding_commits'
 
 squash_these_many_commits() {
   number_of_commits_to_squash="$1"
