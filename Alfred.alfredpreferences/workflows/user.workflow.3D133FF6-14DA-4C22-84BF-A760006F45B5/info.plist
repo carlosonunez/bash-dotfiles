@@ -10,7 +10,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>4530CBE3-8C46-4E58-AA8A-4DF398B48298</string>
+				<string>1018E49E-3A9C-4ED8-A334-BA391E597DEB</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -33,29 +33,19 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>68</integer>
-				<key>script</key>
-				<string>tell application "System Events"
-    tell appearance preferences 
-        set dark mode to not dark mode 
-    end tell
-end tell</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>6</integer>
+				<key>inputmode</key>
+				<integer>-1</integer>
+				<key>outputmode</key>
+				<integer>0</integer>
+				<key>shortcut</key>
+				<string>Toggle Dark Mode by Focus</string>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.action.script</string>
+			<string>alfred.workflow.automation.runshortcut</string>
 			<key>uid</key>
-			<string>4530CBE3-8C46-4E58-AA8A-4DF398B48298</string>
+			<string>1018E49E-3A9C-4ED8-A334-BA391E597DEB</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -93,10 +83,10 @@ end tell</string>
 	<string></string>
 	<key>uidata</key>
 	<dict>
-		<key>4530CBE3-8C46-4E58-AA8A-4DF398B48298</key>
+		<key>1018E49E-3A9C-4ED8-A334-BA391E597DEB</key>
 		<dict>
 			<key>xpos</key>
-			<real>385</real>
+			<real>350</real>
 			<key>ypos</key>
 			<real>100</real>
 		</dict>
