@@ -1,0 +1,3 @@
+[submodule "stacks/caranna-house-control-center"]
+	path = stacks/caranna-house-control-center
+	url = git@github.carlosnunez.me:carlosonunez/caranna-house-control-center
