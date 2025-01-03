@@ -569,7 +569,7 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
       git_branch_color="${Green}"
     fi
     2>/dev/null git diff-index --quiet HEAD || git_branch_color="${Red}"
-      PS1="${bookmark_commit_info}${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$git_branch_color\](${git_branch}$(git_author_info))\[$NC\] $(show_language_versions)$(print_dirstack_count) \n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+      PS1="${bookmark_commit_info}${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$git_branch_color\](${git_branch}$(git_author_info))\[$NC\] $(show_language_versions)$(print_dirstack_count)$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   fi
 }
 
