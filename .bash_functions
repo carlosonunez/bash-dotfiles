@@ -788,9 +788,15 @@ _update() {
   path="$3"
   title="$4"
   test -f "$zip_file" && rm "$zip_file"
-  op_cli document get "$title" --vault "$vault" --output "$zip_file" &&
-  zip -fjr "$zip_file" $path &&
-  op_cli document edit "$title" --vault "$vault" "$zip_file"
+  {
+    if test -n "${OVERWRITE}"
+    then
+      log_warning "Overwriting [$zip_file] with [$path]"
+      zip "$zip_file" $path
+    else
+      op_cli document get "$title" --vault "$vault" --output "$zip_file" && zip -fjr "$zip_file" $path
+    fi;
+  } && op_cli document edit "$title" --vault "$vault" "$zip_file"
 }
 
 update_secret_settings() {
@@ -802,7 +808,7 @@ update_secret_settings() {
 }
 
 update_ssh_and_aws_keys() {
-  export_gpg_keys &&
+  export_gpg_keys || return 1
     _update \
       "$HOME/Downloads/keys.zip" \
       "$OP_DEFAULT_VAULT" \
