@@ -591,7 +591,8 @@ run_asdf_first_time_install() {
   test -f "$HOME/.asdf_provisioned" && return 0
 
   log_info "Running asdf install; hang on"
-  asdf install && touch "$HOME/.asdf_provisioned"
+  cut -d' ' -f1 "$HOME/.tool-versions" | xargs -I {} asdf plugin add  {} &&
+     asdf install && touch "$HOME/.asdf_provisioned"
 }
 
 
@@ -637,6 +638,7 @@ fi
 stop_stealing_focus
 disable_the_dock_entirely
 install_mouse_toggle_size
+set_keyboard_repeat_rate
 configure_todos
 update_obs_prefs
 install_complete_alias
