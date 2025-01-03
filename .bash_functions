@@ -569,8 +569,35 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
       git_branch_color="${Green}"
     fi
     2>/dev/null git diff-index --quiet HEAD || git_branch_color="${Red}"
-      PS1="${bookmark_commit_info}${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$git_branch_color\]($git_branch)\[$NC\] $(show_language_versions)$(print_dirstack_count) \n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+      PS1="${bookmark_commit_info}${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$git_branch_color\](${git_branch}$(git_author_info))\[$NC\] $(show_language_versions)$(print_dirstack_count) \n$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
   fi
+}
+
+git_author_info() {
+  test -n "$GIT_HIDE_AUTHOR_INFO" && return 0
+
+  printf " "
+  user="$(2>/dev/null git config user.email)"
+  author="$(2>/dev/null git config author.email)"
+  signing_key_first_six="$(2>/dev/null git config user.signingKey | head -c 6)"
+  case "${user},${author},${signing_key_first_six}" in
+    *,,)
+      printf "[user: %s]" "$user"
+      ;;
+    *,*,)
+      printf "[user: %s, author: %s"] "$user" "$author"
+      ;;
+    *,,*)
+      printf "[user: %s, key: %s]" "$user" "$signing_key_first_six"
+      ;;
+    *,*,*)
+      printf "[user: %s, author: %s, key: %s]" "$user" "$author" "$signing_key_first_six"
+      ;;
+    *)
+      test -z "$GIT_HIDE_CONFIG_WARNING" && log_warning "[git-author-info] Git configuration might be invalid; ensure 'user' config key is set!"
+      printf "${BRed}[user: !!! invalid/missing !!!]${NC}"
+      ;;
+  esac
 }
 
 set_hidden_bash_prompt() {
