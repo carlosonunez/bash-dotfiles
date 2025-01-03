@@ -595,6 +595,15 @@ run_asdf_first_time_install() {
      asdf install && touch "$HOME/.asdf_provisioned"
 }
 
+set_keyboard_repeat_rate() {
+  test -f "$HOME/.config/setup/keyboard_setup" && return 0
+
+  defaults write -g InitialKeyRepeat -int 10
+  defaults write -g KeyRepeat -int 1
+  log_info "Keyboard repeat and delay set up. You'll need to log out and back in for the changes to take effect."
+  touch "$HOME/.config/setup/keyboard_setup"
+}
+
 
 remove_dead_install_locks
 if installation_is_locked
