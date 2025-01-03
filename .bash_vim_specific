@@ -12,6 +12,7 @@ VIM_BUNDLE_REPOS=$(cat <<GITHUB_URLS
 907th/vim-auto-save
 AndrewRadev/linediff.vim
 Chiel92/vim-autoformat
+NoahTheDuke/vim-just
 PProvost/vim-ps1
 Xuyuanp/nerdtree-git-plugin
 aliou/bats.vim
@@ -36,7 +37,6 @@ lambdalisue/battery.vim
 leafgarland/typescript-vim
 markcornick/vim-bats
 martinda/Jenkinsfile-vim-syntax
-NoahTheDuke/vim-just
 othree/javascript-libraries-syntax.vim
 pangloss/vim-javascript
 plasticboy/vim-markdown
@@ -48,6 +48,7 @@ ryanoasis/vim-devicons
 scrooloose/nerdtree
 skywind3000/asyncrun.vim
 thoughtbot/vim-rspec
+towolf/vim-helm
 tpope/vim-classpath
 tpope/vim-fugitive.git
 tpope/vim-unimpaired

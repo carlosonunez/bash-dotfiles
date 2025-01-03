@@ -435,6 +435,32 @@ map <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
 " YouCompleteMe settings
 set completeopt+=popup
 " YCM LSPs
+let g:ycm_language_server = [
+      \   {
+      \       'name': 'bash',
+      \       'cmdline': [ 'bash-language-server', 'start' ],
+      \       'filetypes': [ 'sh' ],
+      \   },
+      \   {
+      \       'name': 'helm',
+      \       'cmdline': [ 'helm_ls', 'serve' ],
+      \       'filetypes': [ 'helm', 'helmfile' ],
+      \       'project_root_files': [ 'Chart.yaml' ],
+      \   },
+      \   {
+      \     'name': 'yaml',
+      \     'cmdline': [ 'yaml-language-server',  '--stdio' ],
+      \     'filetypes': [ 'yaml' ],
+      \     'capabilities': {
+      \       'workspace': { 'configuration': v:true },
+      \       'textDocument': {
+      \         'completion': {
+      \           'completionItem': { 'snippetSupport': v:true },
+      \         }
+      \       }
+      \     },
+      \   }
+      \ ]
 if executable('terraform-ls')
     let g:ycm_language_server += [
         \   {
@@ -445,14 +471,6 @@ if executable('terraform-ls')
         \   },
         \ ]
 endif
-let g:ycm_language_server =
-      \ [
-      \   {
-      \       'name': 'bash',
-      \       'cmdline': [ 'bash-language-server', 'start' ],
-      \       'filetypes': [ 'sh' ],
-      \   }
-      \ ]
 
 " Save/restore sessions automatically on Vim exit/start!!!
 " https://stackoverflow.com/a/31978241
