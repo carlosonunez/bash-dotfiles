@@ -14,3 +14,7 @@
 [submodule "stacks/caranna-house-control-center"]
         url = git@github.carlosnunez.me:carlosonunez/caranna-house-control-center
         active = true
+[user]
+	name = Carlos Nunez
+	email = 13461447+carlosonunez@users.noreply.github.com
+	signingKey = D8630B5C2954B6091E8913EFE1FE98BBFDCADE05
