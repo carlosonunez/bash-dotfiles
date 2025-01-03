@@ -21,6 +21,33 @@ alias push="sq && git push"
 alias pushnosign="squash && git push"
 alias pull="git pull --rebase"
 
+git_config_hook() {
+  if ! test -e "$PWD/.gitconfig"
+  then
+    test -h "$PWD/.git/config" || return 0
+    log_info "[git-config-hook] Project-level gitconfig removed; restoring original"
+    mv "$PWD/.git/config.original" "$PWD/.git/config"
+    return 0
+  fi
+  test "$PWD" == "$HOME" && return 0
+  if ! is_current_directory_tracked_by_git
+  then
+    log_warning ".gitconfig file found, but this repo isn't being tracked by Git?"
+    return 0
+  fi
+  test "$(readlink "$PWD/.git/config")" == "$PWD/.gitconfig" && return 0
+  log_info "[git-config-hook] Linking Git config to project .gitconfig; hang on"
+  (
+    set -eo pipefail
+    trap 'rc=$?; set +eo pipefail; exit $rc' INT HUP
+    cat "$PWD/.git/config" >> "$PWD/.gitconfig"
+    mv "$PWD/.git/config" "$PWD/.git/config.original"
+    ln -s "$PWD/.gitconfig" "$PWD/.git/config"
+    log_info "[git-config-hook] Done. Original config located here: $PWD/.git/config.original"
+  )
+  return "$?"
+}
+
 branch() {
   git branch --show-current
 }
