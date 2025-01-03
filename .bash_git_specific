@@ -29,21 +29,6 @@ dont_use_master_for_default_branches() {
   git config --global init.defaultBranch main
 }
 
-set_global_git_configs() {
-  git config --global core.hooksPath='.githooks'
-  git config --global diff.tool vimdiff
-  git config --global --replace-all user.signingKey "$GITHUB_SIGNING_KEY"
-  git config --global --replace-all merge.tool vimdiff
-  git config --global commit.gpgsign true
-  git config --global --replace-all user.name "${GIT_OVERRIDE_AUTHOR_NAME:-$DEFAULT_GIT_AUTHOR_NAME}"
-  git config --global --replace-all user.email "${GIT_OVERRIDE_AUTHOR_EMAIL:-$DEFAULT_GIT_AUTHOR_EMAIL}"
-  git config --global format.signoff true
-  git config --global alias.c 'commit'
-  git config --global alias.cs 'commit --signoff'
-  git config --global alias.fs 'commit --fixup=HEAD'
-  git config --global rebase.autosquash true
-}
-
 view_unpushed_commits_across_branches() {
   # Thanks, StackOverflow!
   # https://stackoverflow.com/a/20499690/314212
@@ -132,5 +117,4 @@ remove_orig_files() {
   git status --porcelain | grep '.orig' | cut -f2 -d ' ' | xargs rm
 }
 
-set_global_git_configs
 dont_use_master_for_default_branches
