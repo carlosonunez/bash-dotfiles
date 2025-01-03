@@ -62,7 +62,7 @@ create_symlinks_for_config_files() {
     then
       >&2 echo "INFO: Symlink exists: $symlink_path"
     else
-      /usr/bin/env ln -s "$target_path" "$symlink_path" || true
+      /usr/bin/env ln -sf "$target_path" "$symlink_path" || true
     fi
   done
 }
@@ -83,31 +83,31 @@ create_vim_directories() {
 
 create_symlinks_for_tuir() {
   mkdir -p ~/.config/tuir &&
-    ln -s "${DEFAULT_SETUP_DIRECTORY}/tuir_configs/tuir.cfg" ~/.config/tuir/tuir.cfg || true &&
-    ln -s "${DEFAULT_SETUP_DIRECTORY}/tuir_configs/.mailcap" ~/.mailcap || true &&
-    ln -s "${DEFAULT_SETUP_DIRECTORY}/.x11run" ~/.x11run || true
+    ln -sf "${DEFAULT_SETUP_DIRECTORY}/tuir_configs/tuir.cfg" ~/.config/tuir/tuir.cfg || true &&
+    ln -sf "${DEFAULT_SETUP_DIRECTORY}/tuir_configs/.mailcap" ~/.mailcap || true &&
+    ln -sf "${DEFAULT_SETUP_DIRECTORY}/.x11run" ~/.x11run || true
 }
 
 create_symlinks_for_w3m() {
   mkdir -p ~/.w3m &&
-    ln -s "${DEFAULT_SETUP_DIRECTORY}/w3m.config" ~/.w3m/config || true
+    ln -sf "${DEFAULT_SETUP_DIRECTORY}/w3m.config" ~/.w3m/config || true
 }
 
 create_symlinks_for_rvm() {
-  ln -s "${DEFAULT_SETUP_DIRECTORY}/.rvmrc" "$HOME/.rvmrc" || true
+  ln -sf "${DEFAULT_SETUP_DIRECTORY}/.rvmrc" "$HOME/.rvmrc" || true
 }
 
 create_gpg_symlinks() {
   test -d "$HOME/.config/gnupg" || mkdir -p "$HOME/.config/gnupg"
-  ln -s "${DEFAULT_SETUP_DIRECTORY}/gpg-agent.conf" "$HOME/.config/gnupg/gpg-agent.conf"
+  ln -sf "${DEFAULT_SETUP_DIRECTORY}/gpg-agent.conf" "$HOME/.config/gnupg/gpg-agent.conf"
 }
 
 create_asdf_symlinks() {
-  ln -s "${DEFAULT_SETUP_DIRECTORY}/.tool-versions" "$HOME/.tool-versions"
+  ln -sf "${DEFAULT_SETUP_DIRECTORY}/.tool-versions" "$HOME/.tool-versions"
   for file in "${DEFAULT_SETUP_DIRECTORY}"/.default-*
   do
     fname=$(basename "$file")
-    ln -s "$file" "${HOME}/$fname"
+    ln -sf "$file" "${HOME}/$fname"
   done
 }
 
