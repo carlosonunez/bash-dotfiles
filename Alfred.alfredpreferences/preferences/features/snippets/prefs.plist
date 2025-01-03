@@ -5,13 +5,11 @@
 	<key>hotkey</key>
 	<dict>
 		<key>key</key>
-		<integer>8</integer>
+		<integer>-1</integer>
 		<key>mod</key>
-		<integer>1835008</integer>
+		<integer>-1</integer>
 		<key>string</key>
-		<string>C</string>
+		<string></string>
 	</dict>
-	<key>ignoreRemoteClipboardFileLists</key>
-	<false/>
 </dict>
 </plist>

@@ -2,16 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>hotkey</key>
+	<key>default</key>
 	<dict>
 		<key>key</key>
-		<integer>8</integer>
+		<integer>49</integer>
 		<key>mod</key>
-		<integer>1835008</integer>
+		<integer>1048576</integer>
 		<key>string</key>
-		<string>C</string>
+		<string> </string>
 	</dict>
-	<key>ignoreRemoteClipboardFileLists</key>
-	<false/>
 </dict>
 </plist>
