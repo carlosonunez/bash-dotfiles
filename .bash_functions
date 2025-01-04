@@ -540,22 +540,15 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
 
   print_dirstack_count() {
     count=$(dirstack_count)
-    if test "$count" -ge 1
-    then
-      dirs_deep="dir(s) deep"
-      if test "$count" -eq 1
-      then
-        dirs_deep="dir deep"
-      fi
-      printf "\[%s\] [%d %s] \[%s\]" "$BCyan" "$count" "$dirs_deep" "$NC"
-    fi
+    test "$count" -lt 1 && return 0
+    printf "$On_Purple$BWhite%d dir(s)$NC " "$count"
   }
 
   hostname_name=$(echo "$HOSTNAME" | sed 's/.local$//')
   hostname_fmtd="\[$BBlue\]$hostname_name\[$NC\]"
   if ! &>/dev/null git rev-parse --is-inside-work-tree
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]$(show_language_versions)$(print_dirstack_count)$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]$(get_csp_login_status)\n\$(show_language_versions)\n$(print_dirstack_count)[$Yellow\]$account_type_indicator\[$NC\]: "
   else
     bookmark_commit_info=$(2>/dev/null git log -1 --oneline --format='%h, %s' |
       grep ', bookmark:' |
@@ -569,7 +562,7 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
       git_branch_color="${Green}"
     fi
     2>/dev/null git diff-index --quiet HEAD || git_branch_color="${Red}"
-      PS1="${bookmark_commit_info}${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$git_branch_color\](${git_branch}$(git_author_info))\[$NC\] $(show_language_versions)$(print_dirstack_count)$(get_csp_login_status)\n\[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${bookmark_commit_info}${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\] \[$git_branch_color\](${git_branch}$(git_author_info))\[$NC\]$(get_csp_login_status)\n$(show_language_versions)\n$(print_dirstack_count)\[$Yellow\]$account_type_indicator\[$NC\]: "
   fi
 }
 
