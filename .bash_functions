@@ -849,6 +849,55 @@ export_gpg_keys() {
   gpg --export-ownertrust > "$HOME/.ssh/ownertrust"
 }
 
+remarkable_ssh_is_configured() {
+  &>/dev/null ssh -o NumberOfPasswordPrompts=0 remarkable whoami && return 0
+
+  log_error "Couldn't SSH into reMarkable. Add your public key into it and try again."
+  return 1
+}
+
+add_remarkable_templates() {
+  remarkable_ssh_is_configured || return 1
+
+  added=0
+  templates_json=$(ssh remarkable cat /usr/share/remarkable/templates/templates.json)
+  installed_templates=$(jq -r '.templates[].filename' <<< "$templates_json" | sort -u)
+  while read -r template_file
+  do
+    dest_filename=$(basename "$template_file" |
+      cut -f1 -d '.' |
+      tr '-' ' ' |
+      python3 -c "import sys; print(sys.stdin.read().title(), end='')")
+    { test -z "$OVERWRITE" && test -n "$(comm -12 <(echo "$dest_filename") <(echo "$installed_templates"))"; } && continue
+    log_info "[remarkable-templates] Converting and installing template: $dest_filename"
+    entry="$(cat <<-YAML
+		---
+		name: "$dest_filename"
+		filename: "$dest_filename"
+		iconCode: \ue9fe
+		categories:
+			- Custom
+		YAML
+    )"
+    entry_json="$(yq -I0 -ro json '.' <<< "$entry" | sed 's;\\\\;\\;g')" || return 1
+    dest_file="/usr/share/remarkable/templates/${dest_filename}.svg"
+    scp -q "$template_file" "root@remarkable:$dest_file" || return 1
+    templates_json=$(echo "$templates_json" |
+      jq --arg filename "$dest_filename" --argjson json "$entry_json" -r \
+        'del(.templates[] | select(.name == $filename)) | .templates |= . + [ $json ]')
+    added=$((added+1))
+  done <<< "$(find "$HOME/src/setup/stacks/remarkable-tablet/svg-templates" -type f -name '*.svg')"
+  test "$added" -eq 0 && return 0
+    (
+      set -eo pipefail
+      log_info "[remarkable-templates] Applying changes."
+      ssh remarkable cp /usr/share/remarkable/templates/templates.json \
+        /usr/share/remarkable/templates/templates.json.original
+      echo "$templates_json" | ssh remarkable sh -c 'cat - > /usr/share/remarkable/templates/templates.json'
+      ssh remarkable systemctl restart xochitl
+    )
+}
+
 if onepassword_ssh_agent_configuration_exists
 then
   killall ssh-agent;
