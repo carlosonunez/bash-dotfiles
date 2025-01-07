@@ -14,9 +14,10 @@ install_ycm() {
   test -d "$HOME/.config/vim" || mkdir -p "$HOME/.config/vim"
   case "$(uname)" in
     Darwin)
-      brew install cmake python go &&
+      brew install cmake &&
         pushd ~/.vim/bundle/YouCompleteMe &&
-          python3 install --clang-completer --go-completer --rust-completer --clangd-completer &&
+          git submodule update --init --recursive &&
+          python3 install.py --clang-completer --go-completer --rust-completer --clangd-completer &&
           touch "$HOME/.config/vim/.ycm_installed"
         rc=$?
         popd || return
