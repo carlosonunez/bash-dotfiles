@@ -548,7 +548,7 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
   hostname_fmtd="\[$BBlue\]$hostname_name\[$NC\]"
   if ! &>/dev/null git rev-parse --is-inside-work-tree
   then
-    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]$(get_csp_login_status)\n\$(show_language_versions)\n$(print_dirstack_count)[$Yellow\]$account_type_indicator\[$NC\]: "
+    PS1="${next_up_to_dos}$error_code_str\[$BCyan\][$(date "+%Y-%m-%d %H:%M:%S")\[$NC\] $fmtd_username@$hostname_fmtd \[$BCyan\]$(get_cwd)]\[$NC\]$(get_csp_login_status)\n\$(show_language_versions)\n$(print_dirstack_count)\[$Yellow\]$account_type_indicator\[$NC\]: "
   else
     bookmark_commit_info=$(2>/dev/null git log -1 --oneline --format='%h, %s' |
       grep ', bookmark:' |
