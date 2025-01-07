@@ -8,6 +8,27 @@ update_vim_bundles() {
   done
 }
 
+install_ycm() {
+  test -f "$HOME/.config/vim/.ycm_installed" && return 0
+
+  test -d "$HOME/.config/vim" || mkdir -p "$HOME/.config/vim"
+  case "$(uname)" in
+    Darwin)
+      brew install cmake python go &&
+        pushd ~/.vim/bundle/YouCompleteMe &&
+          python3 install --clang-completer --go-completer --rust-completer --clangd-completer &&
+          touch "$HOME/.config/vim/.ycm_installed"
+        rc=$?
+        popd || return
+        return "$rc"
+      ;;
+    *)
+      log_error "This operating system is not supported yet: $(uname)"
+      return 1
+      ;;
+  esac
+}
+
 VIM_BUNDLE_REPOS=$(cat <<GITHUB_URLS
 907th/vim-auto-save
 AndrewRadev/linediff.vim
@@ -59,6 +80,7 @@ vim-test/vim-test
 will133/vim-dirdiff
 willchao612/vim-diagon
 xolox/vim-misc
+ycm-core/YouCompleteMe
 yuratomo/w3m.vim
 zivyangll/git-blame.vim
 GITHUB_URLS
@@ -75,3 +97,4 @@ do
     git clone "https://github.com/$bundle_repo" "$HOME/.vim/bundle/$(basename "$bundle_repo")"
   fi
 done
+install_ycm
