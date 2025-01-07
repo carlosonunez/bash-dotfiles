@@ -51,6 +51,7 @@ direnv
 docker-compose
 feh
 findutils
+firefox
 font-dejavu-sans-mono-nerd-font
 fzf
 gawk
