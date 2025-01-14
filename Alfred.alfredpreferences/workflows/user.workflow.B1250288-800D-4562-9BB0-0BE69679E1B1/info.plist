@@ -116,52 +116,6 @@
 				<false/>
 			</dict>
 		</array>
-		<key>A148E479-237D-435D-9CC5-026391CD2D0F</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>4354276C-0F2A-4DEF-B718-B0D840A6B522</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
-				<string>57C00D48-FCB7-4D4D-8B32-BF41F60E2BB7</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
-		<key>A4BF5516-DCE4-457A-A1A4-8C1694BB3EAB</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>09A88435-5BFB-4095-8337-FD869F3A7BF4</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
-				<string>392E71F1-352B-4800-B067-CD963FEFE558</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
 		<key>B7232222-B2A1-48A1-8F15-E73E55FE733D</key>
 		<array>
 			<dict>
@@ -212,58 +166,6 @@
 	<string>Meeting Handler</string>
 	<key>objects</key>
 	<array>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>action</key>
-				<integer>0</integer>
-				<key>argument</key>
-				<integer>3</integer>
-				<key>argumenttext</key>
-				<string>off</string>
-				<key>focusedappvariable</key>
-				<false/>
-				<key>focusedappvariablename</key>
-				<string></string>
-				<key>hotkey</key>
-				<integer>13</integer>
-				<key>hotmod</key>
-				<integer>1835008</integer>
-				<key>hotstring</key>
-				<string>W</string>
-				<key>leftcursor</key>
-				<false/>
-				<key>modsmode</key>
-				<integer>0</integer>
-				<key>relatedAppsMode</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.hotkey</string>
-			<key>uid</key>
-			<string>A148E479-237D-435D-9CC5-026391CD2D0F</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>externaltriggerid</key>
-				<string>wiz</string>
-				<key>passinputasargument</key>
-				<true/>
-				<key>passvariables</key>
-				<false/>
-				<key>workflowbundleid</key>
-				<string>me.carlosnunez.bundles.demos.wiz</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.callexternaltrigger</string>
-			<key>uid</key>
-			<string>4354276C-0F2A-4DEF-B718-B0D840A6B522</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -397,58 +299,6 @@ done</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>externaltriggerid</key>
-				<string>wiz</string>
-				<key>passinputasargument</key>
-				<true/>
-				<key>passvariables</key>
-				<true/>
-				<key>workflowbundleid</key>
-				<string>me.carlosnunez.bundles.demos.wiz</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.callexternaltrigger</string>
-			<key>uid</key>
-			<string>09A88435-5BFB-4095-8337-FD869F3A7BF4</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>action</key>
-				<integer>0</integer>
-				<key>argument</key>
-				<integer>3</integer>
-				<key>argumenttext</key>
-				<string>on</string>
-				<key>focusedappvariable</key>
-				<false/>
-				<key>focusedappvariablename</key>
-				<string></string>
-				<key>hotkey</key>
-				<integer>13</integer>
-				<key>hotmod</key>
-				<integer>1572864</integer>
-				<key>hotstring</key>
-				<string>W</string>
-				<key>leftcursor</key>
-				<false/>
-				<key>modsmode</key>
-				<integer>0</integer>
-				<key>relatedAppsMode</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.hotkey</string>
-			<key>uid</key>
-			<string>A4BF5516-DCE4-457A-A1A4-8C1694BB3EAB</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>action</key>
 				<integer>0</integer>
 				<key>argument</key>
@@ -537,6 +387,23 @@ done</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>inputmode</key>
+				<integer>-1</integer>
+				<key>outputmode</key>
+				<integer>0</integer>
+				<key>shortcut</key>
+				<string>Do Not Disturb - On</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.automation.runshortcut</string>
+			<key>uid</key>
+			<string>B7232222-B2A1-48A1-8F15-E73E55FE733D</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>action</key>
 				<integer>0</integer>
 				<key>argument</key>
@@ -595,8 +462,7 @@ done</string>
 				<integer>102</integer>
 				<key>script</key>
 				<string>open ~/Applications/krisp.app
-open /Applications/zoom.us.app
-open "/Applications/Microsoft Teams.app"</string>
+open "/Applications/Firefox.app" https://meet.google.com</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -611,35 +477,11 @@ open "/Applications/Microsoft Teams.app"</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>inputmode</key>
-				<integer>-1</integer>
-				<key>outputmode</key>
-				<integer>0</integer>
-				<key>shortcut</key>
-				<string>Do Not Disturb - On</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.automation.runshortcut</string>
-			<key>uid</key>
-			<string>B7232222-B2A1-48A1-8F15-E73E55FE733D</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
 	</array>
 	<key>readme</key>
 	<string></string>
 	<key>uidata</key>
 	<dict>
-		<key>09A88435-5BFB-4095-8337-FD869F3A7BF4</key>
-		<dict>
-			<key>xpos</key>
-			<real>365</real>
-			<key>ypos</key>
-			<real>630</real>
-		</dict>
 		<key>188728F5-7DFC-4049-B6BB-C374180D79BB</key>
 		<dict>
 			<key>xpos</key>
@@ -671,13 +513,6 @@ open "/Applications/Microsoft Teams.app"</string>
 			<real>395</real>
 			<key>ypos</key>
 			<real>860</real>
-		</dict>
-		<key>4354276C-0F2A-4DEF-B718-B0D840A6B522</key>
-		<dict>
-			<key>xpos</key>
-			<real>365</real>
-			<key>ypos</key>
-			<real>105</real>
 		</dict>
 		<key>4B26DB85-8BD5-41D7-AD99-23C088B158CE</key>
 		<dict>
@@ -720,24 +555,6 @@ open "/Applications/Microsoft Teams.app"</string>
 			<real>700</real>
 			<key>ypos</key>
 			<real>325</real>
-		</dict>
-		<key>A148E479-237D-435D-9CC5-026391CD2D0F</key>
-		<dict>
-			<key>note</key>
-			<string>Turn down Wiz demo environment.</string>
-			<key>xpos</key>
-			<real>60</real>
-			<key>ypos</key>
-			<real>100</real>
-		</dict>
-		<key>A4BF5516-DCE4-457A-A1A4-8C1694BB3EAB</key>
-		<dict>
-			<key>note</key>
-			<string>Start up Wiz demo environment.</string>
-			<key>xpos</key>
-			<real>45</real>
-			<key>ypos</key>
-			<real>630</real>
 		</dict>
 		<key>B7232222-B2A1-48A1-8F15-E73E55FE733D</key>
 		<dict>
