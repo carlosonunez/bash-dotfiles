@@ -485,7 +485,7 @@ tap_casks() {
 }
 
 install_fermata(){ 
-  if test "$(get_os_type)" == "Darwin" && ! is_apple_m1_cpu && ! test -d "/Applications/Fermata.app"
+  if test "$(get_os_type)" == "Darwin" && ! test -d "/Applications/Fermata.app"
   then
     log_info_sudo "Installing Fermata"
     curl -Lso /tmp/fermata.zip "$FERMATA_URL" &&
