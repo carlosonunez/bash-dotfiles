@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<workflow>
-  <name>GrayScale Switch</name>
-  <version>1.0</version>
-  <bundle>com.wandering.moments.grayscale</bundle>
-  <updated>1569092681</updated>
-  <file>grayscale_switch.alfredworkflow</file>
-</workflow>
