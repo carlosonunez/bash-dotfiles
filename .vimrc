@@ -448,6 +448,11 @@ let g:ycm_language_server = [
       \       'project_root_files': [ 'Chart.yaml' ],
       \   },
       \   {
+      \       'name': 'marksman',
+      \       'cmdline': [ 'marksman', 'server' ],
+      \       'filetypes': [ 'markdown' ],
+      \   },
+      \   {
       \     'name': 'yaml',
       \     'cmdline': [ 'yaml-language-server',  '--stdio' ],
       \     'filetypes': [ 'yaml' ],
@@ -471,6 +476,20 @@ if executable('terraform-ls')
         \   },
         \ ]
 endif
+
+" Allow markdown LSP
+let g:ycm_filetype_blacklist = {
+      \   'tagbar': 1,
+      \   'notes': 1,
+      \   'netrw': 1,
+      \   'unite': 1,
+      \   'text': 1,
+      \   'vimwiki': 1,
+      \   'pandoc': 1,
+      \   'infolog': 1,
+      \   'leaderf': 1,
+      \   'mail': 1
+      \ }
 
 " Save/restore sessions automatically on Vim exit/start!!!
 " https://stackoverflow.com/a/31978241

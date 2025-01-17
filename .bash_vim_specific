@@ -38,6 +38,7 @@ NoahTheDuke/vim-just
 PProvost/vim-ps1
 Xuyuanp/nerdtree-git-plugin
 aliou/bats.vim
+artempyanykh/marksman
 cespare/vim-toml
 chaquotay/ftl-vim-syntax
 chr4/nginx.vim
