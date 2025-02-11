@@ -842,8 +842,12 @@ export_gpg_keys() {
   gpg --export-ownertrust > "$HOME/.ssh/ownertrust"
 }
 
+remarkable_host() {
+  echo "${REMARKABLE_HOST:-remarkable}"
+}
+
 remarkable_ssh_is_configured() {
-  &>/dev/null ssh -o NumberOfPasswordPrompts=0 remarkable whoami && return 0
+  &>/dev/null ssh -o NumberOfPasswordPrompts=0 "$(remarkable_host)" whoami && return 0
 
   log_error "Couldn't SSH into reMarkable. Add your public key into it and try again."
   return 1
@@ -853,7 +857,7 @@ add_remarkable_templates() {
   remarkable_ssh_is_configured || return 1
 
   added=0
-  templates_json=$(ssh remarkable cat /usr/share/remarkable/templates/templates.json)
+  templates_json=$(ssh "$(remarkable_host)" cat /usr/share/remarkable/templates/templates.json)
   installed_templates=$(jq -r '.templates[].filename' <<< "$templates_json" | sort -u)
   while read -r template_file
   do
@@ -874,7 +878,7 @@ add_remarkable_templates() {
     )"
     entry_json="$(yq -I0 -ro json '.' <<< "$entry" | sed 's;\\\\;\\;g')" || return 1
     dest_file="/usr/share/remarkable/templates/${dest_filename}.svg"
-    scp -q "$template_file" "root@remarkable:$dest_file" || return 1
+    scp -q "$template_file" "root@$(remarkable_host):$dest_file" || return 1
     templates_json=$(echo "$templates_json" |
       jq --arg filename "$dest_filename" --argjson json "$entry_json" -r \
         'del(.templates[] | select(.name == $filename)) | .templates |= . + [ $json ]')
@@ -884,11 +888,41 @@ add_remarkable_templates() {
     (
       set -eo pipefail
       log_info "[remarkable-templates] Applying changes."
-      ssh remarkable cp /usr/share/remarkable/templates/templates.json \
+      ssh "$(remarkable_host)" cp /usr/share/remarkable/templates/templates.json \
         /usr/share/remarkable/templates/templates.json.original
-      echo "$templates_json" | ssh remarkable sh -c 'cat - > /usr/share/remarkable/templates/templates.json'
-      ssh remarkable systemctl restart xochitl
+      echo "$templates_json" | ssh "$(remarkable_host)" sh -c 'cat - > /usr/share/remarkable/templates/templates.json'
+      ssh "$(remarkable_host)" systemctl restart xochitl
     )
+}
+
+send_pdf_to_remarkable() {
+  script_path="$HOME/.config/remarkable/pdf2remarkable.sh"
+  script_url="https://raw.githubusercontent.com/adaerr/reMarkableScripts/refs/heads/master/pdf2remarkable.sh"
+  if ! test -f "$script_path"
+  then
+    log_info "Downloading pdf2remarkable script; please wait."
+    test -d "$(dirname "$script_path")" || mkdir -p "$(dirname "$script_path")"
+    curl -sSLo "$script_path" "$script_url" || return 1
+    chmod +x "$script_path"
+  fi
+  "$script_path" "$@"
+}
+  
+_load_rectangle_config() {
+  config_type="${1:-}"
+  prefs_fp="$HOME/Library/Application Support/Rectangle Pro/RectangleConfig.json"
+  rm -f "$prefs_fp" &&
+    ln -s "$HOME/src/setup/RectangleProConfig${config_type}.json" "$prefs_fp" &&
+    { pkill -i 9 'rectangle pro' || true; } &&
+    open "/Applications/Rectangle Pro.app"
+}
+
+rectangle_vnc_shortcuts() {
+  _load_rectangle_config VNC
+}
+
+rectangle_regular_shortcuts() {
+  _load_rectangle_config
 }
 
 if onepassword_ssh_agent_configuration_exists
