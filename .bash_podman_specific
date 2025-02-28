@@ -1,0 +1,77 @@
+# vi: set ft=sh:
+LIMA_MACHINE_PATH_PODMAN="${LIMA_MACHINE_PATH_PODMAN:-$HOME/src/setup/lima-machines/podman.yaml}"
+LIMA_MACHINE_NAME_PODMAN="${LIMA_MACHINE_NAME_PODMAN:-podman-machine}"
+
+podman_disabled() {
+  test -n "$PODMAN_DISABLED"
+}
+
+podman_machine_created() {
+  test -e "$HOME/.config/podman_machine_created"
+}
+
+mark_podman_machine_created() {
+  touch "$HOME/.config/podman_machine_created"
+}
+
+podman_install_mutex_lock() {
+  printf $$ >> /tmp/podman_install_mutex
+}
+
+podman_install_mutex_unlock() {
+  rm -f /tmp/podman_install_mutex
+}
+
+podman_installation_locked() {
+  test -e /tmp/podman_install_mutex
+}
+
+create_lima_machine() {
+  limactl ls -q | grep "$LIMA_MACHINE_NAME_PODMAN"  | xargs limactl rm
+  sed "s;%TEMPDIR%;${TMPDIR:-/tmp};g" "$LIMA_MACHINE_PATH_PODMAN" |
+    limactl create --tty=false --name="$LIMA_MACHINE_NAME_PODMAN" -
+}
+
+start_lima_machine() {
+  limactl start "$LIMA_MACHINE_NAME_PODMAN"
+}
+
+add_lima_machine_as_podman_connection() {
+  podman system connection add "$LIMA_MACHINE_NAME_PODMAN" "unix://$HOME/.lima/podman.sock"
+  podman system connection use "$LIMA_MACHINE_NAME_PODMAN"
+}
+
+test_podman_connection() {
+  podman run --rm hello-world
+}
+
+start_podman_machine() {
+  if podman_installation_locked
+  then
+    log_info "podman is being installed in another pane."
+    return 0
+  fi
+  podman_install_mutex_lock
+  if ! (
+    set -eo pipefail
+    if ! podman_machine_created || test -n "$RECREATE_LIMA_MACHINE_PODMAN"
+    then
+      create_lima_machine 
+      add_lima_machine_as_podman_connection
+      mark_podman_machine_created
+    fi
+    start_lima_machine
+    test_podman_connection
+    podman_machine_created
+    podman_install_mutex_unlock
+  )
+  then podman_install_mutex_unlock && return 1
+  fi
+}
+
+if podman_disabled
+then
+  log_error "[podman] Podman is disabled on this system and will not be started; run FORCE=true start_podman_machine to override."
+  return 0
+fi
+start_podman_machine

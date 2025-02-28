@@ -48,6 +48,7 @@ cscope
 ctags
 curl
 direnv
+docker
 docker-compose
 feh
 findutils
@@ -76,6 +77,8 @@ make
 marksman
 mas
 obs
+podman
+podman-compose
 reattach-to-user-namespace
 rectangle-pro
 scrcpy

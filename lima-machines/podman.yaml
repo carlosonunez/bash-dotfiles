@@ -1,0 +1,107 @@
+# Example to use Docker instead of containerd & nerdctl
+# $ limactl start ./docker.yaml
+# $ limactl shell docker docker run -it -v $HOME:$HOME --rm alpine
+
+# To run `docker` on the host (assumes docker-cli is installed):
+# $ export DOCKER_HOST=$(limactl list docker --format 'unix://{{.Dir}}/sock/docker.sock')
+# $ docker ...
+
+# This example requires Lima v0.8.0 or later
+cpus: 4
+memory: 8GiB
+disk: 50GiB
+ssh:
+  localPort: 10000
+  loadDotSSHPubKeys: false
+  forwardAgent: false
+# I believe Podman Desktop uses Fedora CoreOS, which Lima is incompatible with because it doesn't
+# support sending an Ignition file to the VM via UEFI parameters.
+images:
+- location: "https://download.fedoraproject.org/pub/fedora/linux/releases/41/Cloud/x86_64/images/Fedora-Cloud-Base-Generic-41-1.4.x86_64.qcow2"
+  arch: "x86_64"
+  digest: "sha256:6205ae0c524b4d1816dbd3573ce29b5c44ed26c9fbc874fbe48c41c89dd0bac2"
+- location: "https://download.fedoraproject.org/pub/fedora/linux/releases/41/Cloud/aarch64/images/Fedora-Cloud-Base-Generic-41-1.4.aarch64.qcow2"
+  arch: "aarch64"
+  digest: "sha256:085883b42c7e3b980e366a1fe006cd0ff15877f7e6e984426f3c6c67c7cc2faa"
+mounts:
+  - location: "~/src"
+    writable: true
+  - location: "~/tmp"
+    writable: true
+
+  # NOTE: Replace %TEMPDIR% with your actual temporary directory as provided by
+  # the $TMPDIR environment variable.
+  - location: "%TEMPDIR%"
+    writable: true
+  - location: "/tmp/lima"
+    writable: true
+  - location: "~/.config"
+    writable: true
+  - location: "~/.docker"
+    writable: true
+  - location: "~/.lima"
+    writable: false
+  - location: "~/.kube"
+    writable: true
+  - location: "~/.ssh"
+    writable: false
+  - location: "~/.gnupg"
+    writable: false
+  - location: "~/.aws"
+    writable: true
+  - location: "~/.azure"
+    writable: true
+containerd:
+  system: false
+  user: false
+provision:
+# Enable SSH port forwarding for Lima.
+- mode: system
+  script: |
+    #!/bin/bash
+    sed -Ei 's/^#AllowTcpForwarding/AllowTcpForwarding/' /etc/ssh/sshd_config
+- mode: system
+  script: |
+    #!/bin/bash
+    set -xeuo pipefail
+    command -v podman &>/dev/null && test -e /etc/podman-installed && exit 0
+    yum -y install podman && touch /etc/podman-installed
+# Make Red Hat's registry authoritative so that we can be explicit when pulling images
+# from Docker Hub (i.e. these images will need to be prefixed with docker.io/.)
+- mode: user
+  script: |
+    cat >$HOME/.config/containers <<-EOF
+    unqualified-search-registries = ["registry.access.redhat.com"]
+    short-name-mode = "enforcing"
+    EOF
+- mode: user
+  script: |
+    #!/bin/bash
+    systemctl --user enable --now podman.socket
+    systemctl --user start podman.socket
+- mode: system
+  script: |
+    #!/bin/bash
+    # Increase inotify limits to prevent nested Kubernetes control planes
+    # from crash looping.
+    set -eux -o pipefail
+    grep -q  'fs.inotify.max_user_watches = 524288' /etc/sysctl.conf || echo 'fs.inotify.max_user_watches = 524288' >> /etc/sysctl.conf
+    grep -q 'fs.inotify.max_user_instances = 512' /etc/sysctl.conf || echo 'fs.inotify.max_user_instances = 512' >> /etc/sysctl.conf
+    sysctl --system
+- mode: user
+  script: |
+    podman run --rm --privileged docker.io/aptman/qus -s -- -p x86_64 || true
+probes:
+- script: |
+    #!/bin/bash
+    set -eux -o pipefail
+    if ! timeout 30s bash -c "until command -v podman >/dev/null 2>&1; do sleep 3; done"; then
+      echo >&2 "podman is not installed yet"
+      exit 1
+    fi
+  hint: See "/var/log/cloud-init-output.log". in the guest
+portForwards:
+- guestSocket: "/run/user/{{.UID}}/podman/podman.sock"
+  hostSocket: "{{.Home}}/.lima/podman.sock"
+mountTypesUnsupported:
+  - 9p

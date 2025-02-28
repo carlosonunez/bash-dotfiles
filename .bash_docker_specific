@@ -1,171 +1,106 @@
-#!/usr/bin/env bash
-DOCKER_CHECK_SENTINEL_FILE=/tmp/docker_installation_in_progress
-DOCKER_SOCK_PATH_DARWIN="unix://$HOME/.lima/docker.sock"
-DOCKER_SOCK_PATH_WINDOWS="tcp://0.0.0.0:2375"
-LIMA_MACHINE_SOURCE_PATH="${LIMA_MACHINE_PATH:-$HOME/src/setup/lima_machine.yaml}"
-LIMA_MACHINE_DESTINATION_PATH="$HOME/.config/lima/${LIMA_MACHINE_NAME:-docker-light.yaml}"
-export DOCKER_DEFAULT_PLATFORM="linux/$(uname -p)"
+# vi: set ft=sh:
+LIMA_MACHINE_PATH_DOCKER="${LIMA_MACHINE_PATH_DOCKER:-$HOME/src/setup/lima-machines/docker.yaml}"
+LIMA_MACHINE_NAME_DOCKER="${LIMA_MACHINE_NAME_DOCKER:-docker-machine}"
+DOCKER_DISABLED="${DOCKER_DISABLED:-false}"
 
-
-docker_machine_name() {
-  basename "$LIMA_MACHINE_DESTINATION_PATH" | sed 's/.yaml//' | sed 's/.yml//'
+docker_disabled() {
+  grep -Eiq '^true$' <<< "$DOCKER_DISABLED"
 }
 
-is_mac() {
-  test "$(get_os_type)" == "Darwin"
+force_create_docker_machine() {
+  test -n "$FORCE_CREATE_DOCKER_MACHINE"
 }
 
-is_windows_wsl() {
-  test -f /etc/lsb_release && grep -q 'Microsoft' /etc/lsb_release
+docker_aliased_to_podman() {
+  test -n "$DOCKER_ALIASED_TO_PODMAN"
 }
 
-is_debian() {
-  test -e /etc/debian_release
+docker_machine_created() {
+  test -e "$HOME/.config/docker_machine_created"
 }
 
-is_redhat() {
-  test -e /etc/redhat_release
+mark_docker_machine_created() {
+  touch "$HOME/.config/docker_machine_created"
 }
 
-docker_check_mutex_lock() {
-  printf $$ >> "$DOCKER_CHECK_SENTINEL_FILE"
+docker_install_mutex_lock() {
+  printf $$ >> /tmp/docker_install_mutex
 }
 
-docker_check_mutex_unlock() {
-  rm -f "$DOCKER_CHECK_SENTINEL_FILE"
+docker_install_mutex_unlock() {
+  rm -f /tmp/docker_install_mutex
 }
 
-installation_is_locked() {
-  random_wait_time=$(bc -l <<< "scale=4 ; ${RANDOM}/32767")
-  sleep "$random_wait_time" && test -e "$DOCKER_CHECK_SENTINEL_FILE"
+docker_installation_locked() {
+  test -e /tmp/docker_install_mutex
 }
 
-get_bash_process_holding_lock() {
-  cat "$DOCKER_CHECK_SENTINEL_FILE"
+create_lima_machine() {
+  stop_docker_machine
+  sed "s;%TEMPDIR%;${TMPDIR:-/tmp};g" "$LIMA_MACHINE_PATH_DOCKER" |
+    limactl create --tty=false --name="$LIMA_MACHINE_NAME_DOCKER" -
 }
 
-remove_dead_install_locks() {
-  bash_processes_holding_lock() {
-    ps -ef | grep bash | grep -q "$(get_bash_process_holding_lock)"
-  }
-  if installation_is_locked
+start_lima_machine() {
+  limactl start "$LIMA_MACHINE_NAME_DOCKER"
+}
+
+add_lima_machine_as_docker_connection() {
+  docker context create "lima-${LIMA_MACHINE_NAME_DOCKER}" \
+    --docker "host=unix://$HOME/.lima/${LIMA_MACHINE_NAME_DOCKER}-docker.sock"
+  docker context update "lima-${LIMA_MACHINE_NAME_DOCKER}"
+}
+
+test_docker_connection() {
+  docker run --rm hello-world
+}
+
+stop_docker_machine() {
+  limactl ls -q | grep "$LIMA_MACHINE_NAME_DOCKER"  | xargs limactl rm -f
+}
+
+start_docker_machine() {
+  if docker_disabled && ! force_create_docker_machine
   then
-    if ! bash_processes_holding_lock
-    then
-      docker_check_mutex_unlock
-    fi
-  fi
-}
-
-start_docker_vm_darwin() {
-  test "$(get_os_type)" == "Darwin" || return 0
-
-  if ! test -f "$LIMA_MACHINE_DESTINATION_PATH"
-  then
-    if ! test -d "$(dirname "$LIMA_MACHINE_DESTINATION_PATH")"
-    then
-      mkdir -p "$(dirname "$LIMA_MACHINE_DESTINATION_PATH")"
-    fi
-    ln -s "$LIMA_MACHINE_SOURCE_PATH" "$LIMA_MACHINE_DESTINATION_PATH"
-  fi
-  if ! test -d "$HOME/.lima/$(docker_machine_name)"
-  then
-    mkdir -p "$HOME/.lima/$(docker_machine_name)"
-  fi
-  cp "${LIMA_MACHINE_DESTINATION_PATH}" "$HOME/.lima/$(docker_machine_name)/lima.yaml"
-  gsed -i "s#%TEMPDIR%#${TMPDIR:-$(realpath /tmp)}#g" "$HOME/.lima/$(docker_machine_name)/lima.yaml"
-
-  if ! grep -Eq "$(docker_machine_name)[ \t]+Running" < <(limactl list 2>/dev/null)
-  then
-    if ! grep -Eq "$(docker_machine_name)" < <(limactl list 2>/dev/null)
-    then
-      log_info "Docker VM [$(docker_machine_name)] not created; creating now"
-      limactl start "$LIMA_MACHINE_DESTINATION_PATH" --tty=false
-    else
-      log_info "Docker VM [$(docker_machine_name)] not started; starting now"
-      limactl start "$(docker_machine_name)"
-    fi
-  fi
-}
-
-remove_dead_install_locks
-if installation_is_locked
-then
-  log_warning "Docker installation is in progress in another window."
-  return 0
-fi
-
-add_user_to_docker_group_if_linux() {
-  (is_debian || is_redhat) || return 0
-  
-  log_info "Adding your user to the 'docker' group. Password might be needed. Log out then back \
-in to apply these changes."
-  sudo usermod -aG docker "$USER"
-}
-
-install_docker_related_bash_completions_if_darwin() {
-  _docker_compose() {
-    brew link docker-compose-completion &>/dev/null || true
-    mkdir -p ~/.docker/cli-plugins && ln -s $(which docker-compose) ~/.docker/cli-plugins/docker-compose
-  }
-
-  _docker_cli() {
-    if ! test -e $(brew --prefix)/etc/bash_completion.d/docker
-    then
-      sudo curl -L https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker \
-        -o $(brew --prefix)/etc/bash_completion.d/docker
-    fi
-  }
-
-  _limactl() {
-    completion_file="$(brew --prefix)/etc/bash_completion.d/limactl"
-    ! test -e "$completion_file" && limactl completion bash > "$completion_file"
-  }
-
-  test "$(get_os_type)" == "Darwin" || return 0
-  _docker_cli && _docker_compose && _limactl
-
-}
-
-export LIMA_INSTANCE=$(docker_machine_name)
-if is_mac
-then
-  export DOCKER_HOST="$DOCKER_SOCK_PATH_DARWIN"
-  grep -Eiq 'arm' < <(uname -m) && export DOCKER_DEFAULT_PLATFORM="linux/arm64"
-fi
-is_mac && export DOCKER_HOST="$DOCKER_SOCK_PATH_DARWIN"
-is_windows_wsl && export DOCKER_HOST="$DOCKER_SOCK_PATH_WINDOWS"
-
-docker_check_mutex_lock
-trap 'rc=$?; docker_check_mutex_unlock; exit $rc' INT EXIT
-if ! which docker &>/dev/null
-then
-  log_info "Installing Docker"
-  if is_mac
-  then
-    brew install docker docker-buildx
-    &>/dev/null which limactl || brew install lima
-  elif is_debian
-  then
-    install_application "apt-transport-https ca-certificates curl"
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    sudo add-apt-repository \
-       "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-       $(lsb_release -cs) \
-       stable"
-    sudo apt-get update
-    install_application "linux-image-extra-$(uname -r) linux-image-extra-virtual"
-    install_application "docker-ce"
-  else
-    log_error "A Docker setup routine hasn't been written for this Linux."
+    log_warning "Docker is disabled on this machine (add FORCE_CREATE_DOCKER_MACHINE=true to override)"
     return 1
   fi
+  if docker_installation_locked
+  then
+    log_info "docker is being installed in another pane."
+    return 0
+  fi
+  docker_install_mutex_lock
+  if ! (
+    set -eo pipefail
+    if ! docker_machine_created || test -n "$RECREATE_LIMA_MACHINE_DOCKER"
+    then
+      create_lima_machine 
+      add_lima_machine_as_docker_connection
+      mark_docker_machine_created
+    fi
+    start_lima_machine
+    test_docker_connection
+    docker_machine_created
+    docker_install_mutex_unlock
+  )
+  then docker_install_mutex_unlock && return 1
+  fi
+}
+
+if docker_disabled && ! docker_aliased_to_podman
+then
+  message="Docker is disabled on this system and will not be started; run FORCE=true start_docker_machine to override."
+  stop_docker_machine
+  log_warning "[docker] $message"
+  alias docker="echo \$message; false"
+  return 0
 fi
-
-add_user_to_docker_group_if_linux
-start_docker_vm_darwin
-install_docker_related_bash_completions_if_darwin
-
-docker_check_mutex_unlock
-
-trap '-' INT EXIT
+if docker_aliased_to_podman
+then
+  stop_docker_machine
+  log_info "[docker] Aliasing to Podman (run FORCE_CREATE_DOCKER_MACHINE=true start_docker_machine to override)"
+  alias docker=podman
+  return 0
+fi
+start_docker_machine
