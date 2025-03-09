@@ -461,8 +461,7 @@ done</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>open ~/Applications/krisp.app
-open "/Applications/Firefox.app" https://meet.google.com</string>
+				<string>open "/Applications/Work Firefox.app" https://meet.google.com</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
