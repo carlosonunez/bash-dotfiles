@@ -47,7 +47,7 @@ start_lima_machine() {
 
 add_lima_machine_as_docker_connection() {
   docker context create "lima-${LIMA_MACHINE_NAME_DOCKER}" \
-    --docker "host=unix://$HOME/.lima/${LIMA_MACHINE_NAME_DOCKER}-docker.sock"
+    --docker "host=unix://$HOME/.lima/docker.sock"
   docker context update "lima-${LIMA_MACHINE_NAME_DOCKER}"
 }
 
