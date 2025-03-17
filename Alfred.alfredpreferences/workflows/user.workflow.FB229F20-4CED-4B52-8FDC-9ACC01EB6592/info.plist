@@ -1025,7 +1025,7 @@ fi</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>if ! output=$(2&gt;&amp;1 dayone2 new --tags work career --journal "Work Journal" -- $*)
+				<string>if ! output=$(2&gt;&amp;1 dayone2 new --tags work career brag --journal "Work Journal" -- $*)
 then echo "{\"alfredworkflow\":{\"variables\":{\"error\": \"$output\"}}}"
 fi</string>
 				<key>scriptargtype</key>
@@ -1255,7 +1255,7 @@ fi</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>while ! test -z "$(ps -ef | grep -E '.*/tmp/journal_entry$' | grep -v grep)"; do sleep 0.5; done</string>
+				<string></string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -1299,7 +1299,8 @@ fi</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>if ! output=$(2&gt;&amp;1 dayone2 new --tags work career --journal "Work Journal" &lt; /tmp/journal_entry)
+				<string>while test -n "$(ps -ef | grep -E '.*/tmp/journal_entry$' | grep -v grep)"; do sleep 0.5; done
+if ! output=$(2&gt;&amp;1 dayone2 new --tags work career brag --journal "Work Journal" &lt; /tmp/journal_entry)
 then echo "{\"alfredworkflow\":{\"variables\":{\"error\": \"$output\"}}}"
 fi</string>
 				<key>scriptargtype</key>
