@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 REDISCOVER="${REDISCOVER:-}"
+BASE64_BIN="${BASE64_BIN:-gbase64}"
 
 _elgato() {
   elgato_bin=$(cat "$HOME/.config/elgato/alfred_bin_path")
@@ -31,7 +32,7 @@ _wifi_network_encoded() {
     >&2 echo "ERROR: Current wi-fi network not found."
     exit 1
   fi
-  echo "$net" | base64 -w 0 | tr '[:upper:]' '[:lower:]'
+  echo "$net" | "$BASE64_BIN" -w 0 | tr '[:upper:]' '[:lower:]'
 }
 
 _discovered_file_for_this_wifi_network() {
