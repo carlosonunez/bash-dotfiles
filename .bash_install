@@ -47,6 +47,7 @@ docker
 docker-compose
 feh
 findutils
+firefox
 font-dejavu-sans-mono-nerd-font
 fzf
 gawk
@@ -87,7 +88,6 @@ vb-cable
 vim
 vlc
 w3m
-waterfox
 xquartz
 yaml-language-server
 zoom
