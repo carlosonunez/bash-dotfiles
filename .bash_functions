@@ -162,7 +162,7 @@ configure_bash_session() {
   do
     source_file "$HOME/.bash_$file"
   done
-  excludes_re='bash_(aliases|exports|functions|python|go|ruby|profile|install|custom_profile|company|history|sessions)'
+  excludes_re='bash_(aliases|exports|functions|python|go|ruby|profile|install|custom_profile|company|history|sessions|container_engine_)'
   for file in $(find $HOME -not -type d -maxdepth 1 -name "*.bash_*" | \
     egrep -v "$excludes_re" | \
     sort -u)
@@ -215,7 +215,7 @@ add_keys_to_ssh_agent() {
   add_keys() {
     local whitelisted_keys all_keys keys_to_load
     whitelisted_keys=$(pushd "$HOME/.ssh"; xargs grealpath -s < $PWD/whitelisted-keys | sort -u; popd)
-    all_keys=$(grep -ElR "BEGIN (RSA|OPENSSH)" $HOME/.ssh | sort -u)
+    all_keys=$(grep -SElR "BEGIN (RSA|OPENSSH)" $HOME/.ssh | sort -u)
     keys_to_load="$all_keys"
     if test -n "$whitelisted_keys"
     then
