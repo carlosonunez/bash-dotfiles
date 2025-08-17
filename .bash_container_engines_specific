@@ -1,0 +1,13 @@
+# vi: set ft=sh:
+# shellcheck shell=bash
+CONTAINER_ENGINES_ENABLED="${CONTAINER_ENGINES_ENABLED:-docker}"
+
+start_container_engines() {
+  for engine in $CONTAINER_ENGINES_ENABLED
+  do
+    source "$HOME/.bash_container_engine_${engine}_specific"
+    "start_${engine}_machine"
+  done
+}
+
+start_container_engines

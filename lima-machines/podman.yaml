@@ -65,12 +65,13 @@ provision:
     #!/bin/bash
     set -xeuo pipefail
     command -v podman &>/dev/null && test -e /etc/podman-installed && exit 0
-    yum -y install podman && touch /etc/podman-installed
+    yum -y update && yum -y install podman && touch /etc/podman-installed
 # Make Red Hat's registry authoritative so that we can be explicit when pulling images
 # from Docker Hub (i.e. these images will need to be prefixed with docker.io/.)
 - mode: user
   script: |
-    cat >$HOME/.config/containers <<-EOF
+    mkdir -p $HOME/.config/containers
+    cat >$HOME/.config/containers/registries.conf <<-EOF
     unqualified-search-registries = ["registry.access.redhat.com"]
     short-name-mode = "enforcing"
     EOF
@@ -102,6 +103,6 @@ probes:
   hint: See "/var/log/cloud-init-output.log". in the guest
 portForwards:
 - guestSocket: "/run/user/{{.UID}}/podman/podman.sock"
-  hostSocket: "{{.Home}}/.lima/podman.sock"
+  hostSocket: "{{.Home}}/.lima/podman-%MACHINE_NAME%.sock"
 mountTypesUnsupported:
   - 9p

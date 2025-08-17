@@ -35,20 +35,27 @@ docker_installation_locked() {
   test -e /tmp/docker_install_mutex
 }
 
-create_lima_machine() {
+create_docker_lima_machine() {
   stop_docker_machine
   sed "s;%TEMPDIR%;${TMPDIR:-/tmp};g" "$LIMA_MACHINE_PATH_DOCKER" |
+    sed "s;%MACHINE_NAME%;$LIMA_MACHINE_NAME_DOCKER;g" |
     limactl create --tty=false --name="$LIMA_MACHINE_NAME_DOCKER" -
 }
 
-start_lima_machine() {
+start_docker_lima_machine() {
+  if test "${FUNCNAME[1]}" != "start_docker_machine"
+  then
+    log_warn "${FUNCNAME[0]} shouldn't be called directly; call 'start_docker_machine' instead"
+    return 1
+  fi
   limactl start "$LIMA_MACHINE_NAME_DOCKER"
 }
 
 add_lima_machine_as_docker_connection() {
+  docker context rm -f "lima-${LIMA_MACHINE_NAME_DOCKER}" >/dev/null
   docker context create "lima-${LIMA_MACHINE_NAME_DOCKER}" \
-    --docker "host=unix://$HOME/.lima/docker.sock"
-  docker context update "lima-${LIMA_MACHINE_NAME_DOCKER}"
+    --docker "host=unix://$HOME/.lima/docker-${LIMA_MACHINE_NAME_DOCKER}.sock" >/dev/null
+  docker context use "lima-${LIMA_MACHINE_NAME_DOCKER}" >/dev/null
 }
 
 test_docker_connection() {
@@ -59,7 +66,7 @@ stop_docker_machine() {
   limactl ls -q | grep "$LIMA_MACHINE_NAME_DOCKER"  | xargs limactl rm -f
 }
 
-start_docker_machine() {
+_start() {
   if docker_disabled && ! force_create_docker_machine
   then
     log_warning "Docker is disabled on this machine (add FORCE_CREATE_DOCKER_MACHINE=true to override)"
@@ -73,13 +80,13 @@ start_docker_machine() {
   docker_install_mutex_lock
   if ! (
     set -eo pipefail
-    if ! docker_machine_created || test -n "$RECREATE_LIMA_MACHINE_DOCKER"
+    if ! docker_machine_created || test -n "$FORCE_CREATE_DOCKER_MACHINE"
     then
-      create_lima_machine 
+      create_docker_lima_machine 
       add_lima_machine_as_docker_connection
       mark_docker_machine_created
     fi
-    start_lima_machine
+    start_docker_lima_machine
     test_docker_connection
     docker_machine_created
     docker_install_mutex_unlock
@@ -88,19 +95,21 @@ start_docker_machine() {
   fi
 }
 
-if docker_disabled && ! docker_aliased_to_podman
-then
-  message="Docker is disabled on this system and will not be started; run FORCE=true start_docker_machine to override."
-  stop_docker_machine
-  log_warning "[docker] $message"
-  alias docker="echo \$message; false"
-  return 0
-fi
-if docker_aliased_to_podman
-then
-  stop_docker_machine
-  log_info "[docker] Aliasing to Podman (run FORCE_CREATE_DOCKER_MACHINE=true start_docker_machine to override)"
-  alias docker=podman
-  return 0
-fi
-start_docker_machine
+start_docker_machine() {
+  if docker_disabled && ! docker_aliased_to_podman
+  then
+    message="Docker is disabled on this system and will not be started; run FORCE=true start_docker_machine to override."
+    stop_docker_machine
+    log_warning "[docker] $message"
+    alias docker="echo \$message; false"
+    return 0
+  fi
+  if docker_aliased_to_podman
+  then
+    stop_docker_machine
+    log_info "[docker] Aliasing to Podman (run FORCE_CREATE_DOCKER_MACHINE=true start_docker_machine to override)"
+    alias docker=podman
+    return 0
+  fi
+  _start
+}

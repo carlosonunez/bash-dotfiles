@@ -1,6 +1,4 @@
-# Example to use Docker instead of containerd & nerdctl
-# $ limactl start ./docker.yaml
-# $ limactl shell docker docker run -it -v $HOME:$HOME --rm alpine
+# Carlos's Docker Machines!
 
 # To run `docker` on the host (assumes docker-cli is installed):
 # $ export DOCKER_HOST=$(limactl list docker --format 'unix://{{.Dir}}/sock/docker.sock')
@@ -109,8 +107,6 @@ probes:
       exit 1
     fi
   hint: See "/var/log/cloud-init-output.log". in the guest
-hostResolver:
-  enabled: false
 portForwards:
 - guestSocket: /var/run/docker.sock
-  hostSocket: "{{.Home}}/.lima/docker.sock"
+  hostSocket: "{{.Home}}/.lima/docker-%MACHINE_NAME%.sock"

@@ -26,26 +26,38 @@ podman_installation_locked() {
   test -e /tmp/podman_install_mutex
 }
 
-create_lima_machine() {
-  limactl ls -q | grep "$LIMA_MACHINE_NAME_PODMAN"  | xargs limactl rm
+render_lima_machine_configuration_podman() {
   sed "s;%TEMPDIR%;${TMPDIR:-/tmp};g" "$LIMA_MACHINE_PATH_PODMAN" |
+  sed "s;%MACHINE_NAME%;$LIMA_MACHINE_NAME_PODMAN;g"
+}
+
+podman_machine_socket() {
+  limactl list --all-fields -f yaml "$LIMA_MACHINE_NAME_PODMAN" |
+  grep hostSocket |
+  cut -f2 -d ':' | tr -d ' '
+}
+
+create_lima_machine_podman() {
+  limactl ls -q | grep "$LIMA_MACHINE_NAME_PODMAN"  | xargs limactl rm
+  render_lima_machine_configuration_podman |
     limactl create --tty=false --name="$LIMA_MACHINE_NAME_PODMAN" -
 }
 
-start_lima_machine() {
+start_lima_machine_podman() {
   limactl start "$LIMA_MACHINE_NAME_PODMAN"
 }
 
 add_lima_machine_as_podman_connection() {
-  podman system connection add "$LIMA_MACHINE_NAME_PODMAN" "unix://$HOME/.lima/podman.sock"
-  podman system connection use "$LIMA_MACHINE_NAME_PODMAN"
+  test -n "$RECREATE_LIMA_MACHINE_PODMAN" && podman system connection rm "$LIMA_MACHINE_NAME_PODMAN"
+  podman system connection add "$LIMA_MACHINE_NAME_PODMAN" "unix://$(podman_machine_socket)"
+  podman system connection default "$LIMA_MACHINE_NAME_PODMAN"
 }
 
 test_podman_connection() {
   podman run --rm hello-world
 }
 
-start_podman_machine() {
+_start() {
   if podman_installation_locked
   then
     log_info "podman is being installed in another pane."
@@ -56,11 +68,11 @@ start_podman_machine() {
     set -eo pipefail
     if ! podman_machine_created || test -n "$RECREATE_LIMA_MACHINE_PODMAN"
     then
-      create_lima_machine 
+      create_lima_machine_podman 
       add_lima_machine_as_podman_connection
       mark_podman_machine_created
     fi
-    start_lima_machine
+    start_lima_machine_podman
     test_podman_connection
     podman_machine_created
     podman_install_mutex_unlock
@@ -69,9 +81,11 @@ start_podman_machine() {
   fi
 }
 
-if podman_disabled
-then
-  log_error "[podman] Podman is disabled on this system and will not be started; run FORCE=true start_podman_machine to override."
-  return 0
-fi
-start_podman_machine
+start_podman_machine() {
+  if podman_disabled
+  then
+    log_error "[podman] Podman is disabled on this system and will not be started; run FORCE=true start_podman_machine to override."
+    return 0
+  fi
+  _start
+}
