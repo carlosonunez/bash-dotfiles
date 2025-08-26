@@ -439,7 +439,7 @@ let g:ycm_language_server = [
       \   {
       \       'name': 'bash',
       \       'cmdline': [ 'bash-language-server', 'start' ],
-      \       'filetypes': [ 'sh' ],
+      \       'filetypes': [ 'sh', 'bash' ],
       \   },
       \   {
       \       'name': 'helm',
