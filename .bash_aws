@@ -1,4 +1,5 @@
-# vi: set ft=bash:
+# vi: set ft=sh:
+# shellcheck shell=bash
 export DEFAULT_AWS_REGION=us-east-2
 AWS_OP_VAULT="${AWS_OP_VAULT:-$OP_DEFAULT_VAULT}"
 AWS_OP_RELOAD_ENTRIES="${AWS_OP_RELOAD_ENTRIES:-false}"
@@ -443,6 +444,10 @@ aws_op() {
 aws_op_with_profile() {
   _aws_login_internal "1password" &&
     _aws_cli "${@:2}" --profile="${1?Please provide a profile to use}"
+}
+
+exec_no_aws_creds() {
+  AWS_ACCESS_KEY_ID='' AWS_SECRET_ACCESS_KEY='' AWS_REGION='' AWS_SESSION_TOKEN='' "$@"
 }
 
 # These are the login functions that login you into AWS via plugins.
