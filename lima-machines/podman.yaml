@@ -72,8 +72,9 @@ provision:
   script: |
     mkdir -p $HOME/.config/containers
     cat >$HOME/.config/containers/registries.conf <<-EOF
-    unqualified-search-registries = ["registry.access.redhat.com"]
-    short-name-mode = "enforcing"
+    unqualified-search-registries = ["registry.access.redhat.com","registry.redhat.io","docker.io","quay.io"]
+    short-name-mode = "permissive"
+
     EOF
 - mode: user
   script: |
