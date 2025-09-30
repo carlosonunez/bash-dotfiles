@@ -186,7 +186,7 @@ _get_aws_credentials() {
 }
 
 _get_credential_value() {
-  val="$(get_password_field "$1" "$2" "$3")"
+  val="$(op_get_password_field "$1" "$2" "$3")"
   if test -z "$val" || test "$val" == 'no password found'
   then
     log_error "[AWS] Couldn't get '$2' for profile '$1'"

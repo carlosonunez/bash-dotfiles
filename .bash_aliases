@@ -119,8 +119,8 @@ case "$(get_os_type)" in
 esac
 
 alias e1p='eval $(configure_1password_cli)'
-alias lpm=list_password_titles_matching_regex
-alias gp=get_password_by_name
-alias gpr=get_password_by_name_regex
+alias lpm=op_list_password_titles_matching_regex
+alias gp=op_get_password_by_name
+alias gpr=op_get_password_by_name_regex
 alias date=gdate
 alias gyb=run_gyb
