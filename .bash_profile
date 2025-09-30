@@ -102,9 +102,21 @@ install_homebrew_if_on_mac_or_die() {
   soft_exit 1
 }
 
+invoked_by_ai() {
+  for env_var in CLAUDECODE
+  do test -n "${!env_var}" && return 0
+  done
+  return 1
+}
+
 export $(set_path | grep -E '^export' | xargs -0)
+if invoked_by_ai
+then
+  >&2 echo "[INFO] AI agent detected; skipping dotfile initialization"
+  return 0
+fi
 set HISTCONTROL="ignorespace"
-export LC_ALL="en_US.UTF-8"
+export_LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 export LANG="en_US.UTF-8"
 set_terminal_keybinding
