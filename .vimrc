@@ -488,7 +488,8 @@ let g:ycm_filetype_blacklist = {
       \   'pandoc': 1,
       \   'infolog': 1,
       \   'leaderf': 1,
-      \   'mail': 1
+      \   'mail': 1,
+      \   'markdown': 1,
       \ }
 
 " Save/restore sessions automatically on Vim exit/start!!!
