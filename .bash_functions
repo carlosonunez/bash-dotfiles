@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+DEFAULT_SSH_GPG_KEY_VAULT='Access Keys'
 ASDF_PLUGINS=$(cat <<-PLUGINS
 direnv
 PLUGINS
@@ -828,12 +829,41 @@ update_secret_settings() {
 }
 
 update_ssh_and_aws_keys() {
-  export_gpg_keys || return 1
-    _update \
-      "$HOME/Downloads/keys.zip" \
-      "$OP_DEFAULT_VAULT" \
-      "$HOME/.ssh/*" \
-      "SSH and AWS Keys"
+  vault="${SSH_GPG_KEY_VAULT:-$DEFAULT_SSH_GPG_KEY_VAULT}"
+  _update_ssh_keys() {
+    grep -ElR "BEGIN (RSA|OPENSSH)" "$HOME/.ssh" |
+      sort -u |
+      while read -r key_file
+      do
+        name="SSH Key: $(basename "$key_file" |
+          gsed 's/.*/\L&/; s/[a-z]*/\u&/g' |
+          tr -d '\n' |
+          tr -c '[:alnum:]' ' ')"
+        log_info "Uploading [$name] into vault [$vault]"
+        op_upload_file "$name" "$key_file" "ssh key" "$vault"
+      done
+  }
+  _update_gpg_keys() {
+    log_info "Exporting GPG keys (you'll be asked to enter the passphrase for each one)"
+    gpg --list-keys |
+      grep -E 'uid.*ultimate' |
+      awk -F ']' '{print $NF}' |
+      gsed -E 's/.*<(.*)>.*/\1/; s/^ //' |
+      while read -r identity
+      do
+        title="GPG Key: $identity"
+        key_matter=$(gpg --export-secret-key --armor "$identity")
+        if test -z "$key_matter"
+        then
+          log_warning "Failed to get key matter for GPG identity [$identity]; moving on"
+          continue
+        fi
+        log_info "Uploading [$title] into vault [$vault]"
+        op_upload_file_from_string "$title" "$key_matter" "gpg key" "$vault"
+      done
+  }
+
+  _update_ssh_keys && _update_gpg_keys
 }
 
 export_gpg_keys() {
