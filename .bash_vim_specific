@@ -39,6 +39,8 @@ PProvost/vim-ps1
 Xuyuanp/nerdtree-git-plugin
 aliou/bats.vim
 artempyanykh/marksman
+cappyzawa/starlark.vim
+carvel-dev/ytt.vim
 cespare/vim-toml
 chaquotay/ftl-vim-syntax
 chr4/nginx.vim
