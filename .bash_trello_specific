@@ -16,13 +16,13 @@ trello() {
   method="${3:-GET}"
   _first_time_setup() {
     test -d "$TRELLO_CONFIG_PATH" || mkdir -p "$TRELLO_CONFIG_PATH"
-    appKey=$(get_password "Trello API Key")
+    appKey=$(op_get_password "Trello API Key")
     if test -z "$appKey"
     then
       log_error "Unable to retrieve Trello API Key from 1Password"
       return 1
     fi
-    token=$(get_password "Trello API Token")
+    token=$(op_get_password "Trello API Token")
     if test -z "$token"
     then
       log_error "Unable to retrieve Trello token from 1Password"
