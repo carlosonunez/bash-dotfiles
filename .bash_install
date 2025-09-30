@@ -17,10 +17,6 @@ MAX_OBS_PREFS_STALENESS_DAYS=5 # How current should /etc/hosts be?
 # Sourced from firebog.net
 MAX_AD_FREE_STALENESS_DAYS=5 # How current should /etc/hosts be?
 HOMEBREW_APPS_EXCLUSION_FILE="$HOME/.skip_these_apps"
-HOMEBREW_TAPS=$(cat <<-TAPS
-homebrew/cask-fonts
-TAPS
-)
 HOMEBREW_FORMULA_URLS=$(cat <<-URLS
 URLS
 )
