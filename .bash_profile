@@ -174,6 +174,5 @@ fi
 # We need to do this again becasue some scripts trample over the PATH and cause
 # duplicate/errant entries.
 export $(set_path | grep -E '^export' | xargs -0)
-source "$(brew --prefix asdf)/libexec/asdf.sh"
 source "$(brew --prefix asdf)/etc/bash_completion.d/asdf.bash"
 log_info "Shell ready; enjoy! 🎉"
