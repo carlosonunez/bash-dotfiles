@@ -69,7 +69,6 @@ obs
 podman
 podman-compose
 reattach-to-user-namespace
-rectangle-pro
 scrcpy
 shellcheck
 sonos
