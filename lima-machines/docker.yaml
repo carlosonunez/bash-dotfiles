@@ -9,7 +9,7 @@ cpus: 4
 memory: 8GiB
 disk: 50GiB
 ssh:
-  localPort: 10000
+  localPort: 30000
   loadDotSSHPubKeys: true
   forwardAgent: false
 images:
