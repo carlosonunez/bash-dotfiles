@@ -43,7 +43,7 @@ create_docker_lima_machine() {
 }
 
 start_docker_lima_machine() {
-  if test "${FUNCNAME[1]}" != "start_docker_machine"
+  if test "${FUNCNAME[1]}" != "_start"
   then
     log_warn "${FUNCNAME[0]} shouldn't be called directly; call 'start_docker_machine' instead"
     return 1
