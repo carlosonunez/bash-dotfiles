@@ -10,6 +10,19 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
+				<string>BAB14CB8-01C4-483A-A413-378E2ED85D90</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>BAB14CB8-01C4-483A-A413-378E2ED85D90</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
 				<string>1018E49E-3A9C-4ED8-A334-BA391E597DEB</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -38,12 +51,29 @@
 				<key>outputmode</key>
 				<integer>0</integer>
 				<key>shortcut</key>
-				<string>Toggle Dark Mode by Focus</string>
+				<string>macOS Dark Mode Wallpaper Helper</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.automation.runshortcut</string>
 			<key>uid</key>
 			<string>1018E49E-3A9C-4ED8-A334-BA391E597DEB</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputmode</key>
+				<integer>-1</integer>
+				<key>outputmode</key>
+				<integer>0</integer>
+				<key>shortcut</key>
+				<string>Toggle Dark Mode by Focus</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.automation.runshortcut</string>
+			<key>uid</key>
+			<string>BAB14CB8-01C4-483A-A413-378E2ED85D90</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -86,7 +116,7 @@
 		<key>1018E49E-3A9C-4ED8-A334-BA391E597DEB</key>
 		<dict>
 			<key>xpos</key>
-			<real>350</real>
+			<real>450</real>
 			<key>ypos</key>
 			<real>100</real>
 		</dict>
@@ -94,6 +124,13 @@
 		<dict>
 			<key>xpos</key>
 			<real>75</real>
+			<key>ypos</key>
+			<real>100</real>
+		</dict>
+		<key>BAB14CB8-01C4-483A-A413-378E2ED85D90</key>
+		<dict>
+			<key>xpos</key>
+			<real>265</real>
 			<key>ypos</key>
 			<real>100</real>
 		</dict>
