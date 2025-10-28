@@ -111,6 +111,14 @@ create_asdf_symlinks() {
   done
 }
 
+create_container_engine_symlinks() {
+  for file in "${DEFAULT_SETUP_DIRECTORY}"/.bash_container_engine*
+  do
+    fname=$(basename "$file")
+    ln -sf "$file" "${HOME}/$fname"
+  done
+}
+
 if {
   clone_dotfiles &&
   set_context &&
@@ -120,6 +128,7 @@ if {
   create_vim_directories &&
   create_gpg_symlinks &&
   create_asdf_symlinks &&
+  create_container_engine_symlinks &&
   leave_context
 }
 then
