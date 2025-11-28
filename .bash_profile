@@ -40,6 +40,7 @@ ${ASDF_DATA_DIR:-$HOME/.asdf}/shims
 /usr/local/opt/curl/bin
 /usr/local/bin
 /opt/X11/bin
+/Users/cn/.asdf/installs/golang/1.21.1/bin
 /Users/$USER/src/go/bin
 /Users/$USER/bin/gyb
 /Users/$USER/.cargo/bin
