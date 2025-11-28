@@ -28,6 +28,7 @@ ensure_bash_profile_is_symlinked_or_die() {
 
 set_path() {
   path=$(cat <<-DIRECTORIES
+${ASDF_DATA_DIR:-$HOME/.asdf}/shims
 /opt/homebrew/opt/coreutils/libexec/gnubin
 /opt/homebrew/opt/make/libexec/gnubin
 /opt/homebrew/bin
@@ -174,5 +175,5 @@ fi
 # We need to do this again becasue some scripts trample over the PATH and cause
 # duplicate/errant entries.
 export $(set_path | grep -E '^export' | xargs -0)
-source "$(brew --prefix asdf)/etc/bash_completion.d/asdf.bash"
+source <(asdf completion bash)
 log_info "Shell ready; enjoy! 🎉"
