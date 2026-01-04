@@ -502,11 +502,12 @@ show_language_versions() {
   while read -r data; \
   do
     test -z "$data" && continue
-    lang="$(grep -Eo 'alternate-name: [A-Za-z]+' <<< "$data" | awk -F':' '{print $2}' | tr -d ' ')"
-    test -z "$lang" && lang=$(cut -f1 -d ' ' <<< "$data")
+    lang="$(cut -f1 -d ' ' <<< "$data")"
+    want_lang="$(grep -Eo 'alternate-name: [A-Za-z]+' <<< "$data" | awk -F':' '{print $2}' | tr -d ' ')"
+    test -z "$want_lang" && want_lang="$lang"
     color=$(grep -Eo 'shell-color: [A-Za-z]+' <<< "$data" | awk -F':' '{print $2}' | tr -d ' ')
     test -z "${!color}" && color="BWhite"
-    version=$(asdf which "$lang" 2>/dev/null | cut -f7 -d '/')
+    version=$(asdf which "$want_lang" 2>/dev/null | cut -f7 -d '/')
     test -z "$version" && version="MISSING?"
     versions="${versions}${!color}[${lang}-$version]${NC}"
   done < "$HOME/.tool-versions"
