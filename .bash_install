@@ -581,12 +581,15 @@ install_mouse_toggle_size() {
      sudo mv /tmp/pointer_size /usr/local/bin/pointer_size
 }
 
-run_asdf_first_time_install() {
-  test -f "$HOME/.asdf_provisioned" && return 0
-
+asdf_install_plugins() {
   log_info "Running asdf install; hang on"
   cut -d' ' -f1 "$HOME/.tool-versions" | xargs -I {} asdf plugin add  {} &&
-     asdf install && touch "$HOME/.asdf_provisioned"
+     asdf install
+}
+
+asdf_run_first_time_install() {
+  test -f "$HOME/.asdf_provisioned" && return 0
+  install_asdf_plugins && touch "$HOME/.asdf_provisioned"
 }
 
 set_keyboard_repeat_rate() {
@@ -647,6 +650,6 @@ update_obs_prefs
 install_complete_alias
 update_bash
 mark_first_time_setup_as_complete_if_needed
-run_asdf_first_time_install
+asdf_run_first_time_install
 
 test -f "$(bash_completion_location)" && source "$(bash_completion_location)"
