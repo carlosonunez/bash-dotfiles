@@ -1,3 +1,4 @@
 golang 1.21.1 # shell-color: BGreen alternate-name: go
 python 3.10.13 # shell-color: BRed
 ruby 3.2.2 # shell-color: BPurple
+rust 1.92.0 # shell-color: BWhite alternate-name: rustc
