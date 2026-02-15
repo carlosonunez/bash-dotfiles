@@ -1,17 +1,3 @@
-#!/usr/bin/env bash
-export FROM_BASH_INSTALL=true
-source "$HOME/.bash_onepassword_specific"
-
-GITCONFIG_PATH="${GITCONFIG_PATH:-$HOME/src/setup/.gitconfig}"
-POINTER_SIZE_URL=https://raw.githubusercontent.com/carlosonunez/macos-pointer-size/main/toggler.sh
-ONEPASSWORD_VAULT="${ONEPASSWORD_VAULT:-"Carlos's Personal Vault"}"
-INSTALL_LOCK_FILE="$HOME/.bash_install_lock"
-COMPLETE_ALIAS_URL=https://raw.githubusercontent.com/cykerway/complete-alias/master/complete_alias
-# Update our OBS settings.
-OBS_PREFS_OP_KEY="OBS Settings"
-OBS_PREFS_SENTINEL_FILE="$HOME/.config/setup/obs_has_been_setup"
-DISABLE_OBS_PREFS_CHECK="${DISABLE_OBS_PREFS_CHECK:-false}" # Should we disable updating /etc/hosts?
-FORCE_OBS_PREFS_UPDATE="${FORCE_OBS_PREFS_UPDATE:-false}" # Should we update our /etc/hosts anyway?
 OBS_PREFS_TIMESTAMP_FILE="$HOME/.config/obs-prefs-updater/timestamp"
 MAX_OBS_PREFS_STALENESS_DAYS=5 # How current should /etc/hosts be?
 # Update our local /etc/hosts file to disable tracking, telemetry, and ads.
@@ -26,12 +12,16 @@ HOMEBREW_BUILTINS=$(cat <<-APPS
 1password-cli
 alfred
 android-platform-tools
+asdf
+aws-console
 awscli
 azure-cli
 bash
 bash-completion@2
 bash-language-server
 brightness
+ca-certificates
+cloud-nuke
 cmake
 colordiff
 contexts
@@ -39,17 +29,23 @@ coreutils
 cscope
 ctags
 curl
+detect-secrets
 direnv
 docker
+docker-completion
 docker-compose
-feh
+ffmpeg
 findutils
 firefox
 font-dejavu-sans-mono-nerd-font
+fontconfig
 fzf
 gawk
 gh
+giflib
 git
+git-filter-repo
+gitleaks
 gnu-getopt
 gnu-indent
 gnu-sed
@@ -61,32 +57,50 @@ helm-ls
 htop
 imagemagick
 iterm2
+jq
 just
 keyboardcleantool
+kind
+kubernetes-cli
+kustomize
+lima
 make
 marksman
 mas
 obs
+openssl@3
+pinentry
 podman
 podman-compose
+readline
 reattach-to-user-namespace
+rsync
 scrcpy
 shellcheck
 sonos
 sops
+speex
+sqlite
+stern
 tailscale
+terraform-ls
+tesseract
+tflint
 the_silver_searcher
 tmux
 todo-txt
 tree
-vb-cable
+unbound
 vagrant
+vb-cable
 vim
 vlc
 w3m
-xquartz
+watch
 yaml-language-server
+yq
 zoom
+zstd
 APPS
 )
 FERMATA_URL="https://github.com/iccir/Fermata/releases/download/Fermata-136/Fermata-136.zip"
