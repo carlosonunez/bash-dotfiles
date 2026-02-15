@@ -84,6 +84,7 @@ vim-scripts/groovy.vim
 vim-test/vim-test
 will133/vim-dirdiff
 willchao612/vim-diagon
+xolox/vim-easytags
 xolox/vim-misc
 ycm-core/YouCompleteMe
 yuratomo/w3m.vim

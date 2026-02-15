@@ -53,6 +53,9 @@ augroup Golang
   au FileType go setlocal textwidth=80
   autocmd FileType go nmap <leader>x :GoInfo<CR>
 augroup end
+augroup Bash
+  au FileType sh let g:easytags_auto_highlight = 1
+augroup end
 
 function! RunTestGolang()
   if g:GoTestRunnerToggleOn
@@ -490,6 +493,7 @@ let g:ycm_filetype_blacklist = {
       \   'leaderf': 1,
       \   'mail': 1,
       \   'markdown': 1,
+      \   'gitcommit': 1,
       \ }
 
 " Save/restore sessions automatically on Vim exit/start!!!
@@ -523,3 +527,8 @@ if (argc() == 0)
 endif
 au VimLeave * NERDTreeClose
 au VimLeave * :call MakeSession()
+
+" easytags options
+let g:easytags_async = 1
+let g:easytags_resolve_links = 1
+let g:easytags_auto_highlight = 0
