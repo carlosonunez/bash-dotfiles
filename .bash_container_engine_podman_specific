@@ -57,7 +57,7 @@ test_podman_connection() {
   podman run --rm hello-world
 }
 
-_start() {
+_start_podman() {
   if podman_installation_locked
   then
     log_info "podman is being installed in another pane."
@@ -87,5 +87,5 @@ start_podman_machine() {
     log_error "[podman] Podman is disabled on this system and will not be started; run FORCE=true start_podman_machine to override."
     return 0
   fi
-  _start
+  _start_podman
 }

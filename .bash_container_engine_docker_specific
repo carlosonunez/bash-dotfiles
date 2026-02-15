@@ -43,7 +43,7 @@ create_docker_lima_machine() {
 }
 
 start_docker_lima_machine() {
-  if test "${FUNCNAME[1]}" != "_start"
+  if test "${FUNCNAME[1]}" != "_start_docker"
   then
     log_warn "${FUNCNAME[0]} shouldn't be called directly; call 'start_docker_machine' instead"
     return 1
@@ -52,21 +52,21 @@ start_docker_lima_machine() {
 }
 
 add_lima_machine_as_docker_connection() {
-  docker context rm -f "lima-${LIMA_MACHINE_NAME_DOCKER}" >/dev/null
-  docker context create "lima-${LIMA_MACHINE_NAME_DOCKER}" \
+  $(which docker) context rm -f "lima-${LIMA_MACHINE_NAME_DOCKER}" >/dev/null
+  $(which docker) context create "lima-${LIMA_MACHINE_NAME_DOCKER}" \
     --docker "host=unix://$HOME/.lima/docker-${LIMA_MACHINE_NAME_DOCKER}.sock" >/dev/null
-  docker context use "lima-${LIMA_MACHINE_NAME_DOCKER}" >/dev/null
+  $(which docker) context use "lima-${LIMA_MACHINE_NAME_DOCKER}" >/dev/null
 }
 
 test_docker_connection() {
-  docker run --rm hello-world
+  $(which docker) run --rm hello-world
 }
 
 stop_docker_machine() {
   limactl ls -q | grep "$LIMA_MACHINE_NAME_DOCKER"  | xargs limactl rm -f
 }
 
-_start() {
+_start_docker() {
   if docker_disabled && ! force_create_docker_machine
   then
     log_warning "Docker is disabled on this machine (add FORCE_CREATE_DOCKER_MACHINE=true to override)"
@@ -74,7 +74,7 @@ _start() {
   fi
   if docker_installation_locked
   then
-    log_info "docker is being installed in another pane."
+    log_info "Docker is being installed in another pane."
     return 0
   fi
   docker_install_mutex_lock
@@ -96,20 +96,5 @@ _start() {
 }
 
 start_docker_machine() {
-  if docker_disabled && ! docker_aliased_to_podman
-  then
-    message="Docker is disabled on this system and will not be started; run FORCE=true start_docker_machine to override."
-    stop_docker_machine
-    log_warning "[docker] $message"
-    alias docker="echo \$message; false"
-    return 0
-  fi
-  if docker_aliased_to_podman
-  then
-    stop_docker_machine
-    log_info "[docker] Aliasing to Podman (run FORCE_CREATE_DOCKER_MACHINE=true start_docker_machine to override)"
-    alias docker=podman
-    return 0
-  fi
-  _start
+  _start_docker
 }
