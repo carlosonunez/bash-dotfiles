@@ -1,6 +1,11 @@
 # vi: set ft=sh:
 LIMA_MACHINE_PATH_PODMAN="${LIMA_MACHINE_PATH_PODMAN:-$HOME/src/setup/lima-machines/podman.yaml}"
 LIMA_MACHINE_NAME_PODMAN="${LIMA_MACHINE_NAME_PODMAN:-podman-machine}"
+USE_PODMAN_MACHINE_INSTEAD_OF_LIMA="${USE_PODMAN_MACHINE_INSTEAD_OF_LIMA:-false}"
+
+_use_podman_machine_instead_of_lima() {
+  grep -Eiq '^true$' <<< "$USE_PODMAN_MACHINE_INSTEAD_OF_LIMA"
+}
 
 podman_disabled() {
   test -n "$PODMAN_DISABLED"
@@ -26,35 +31,53 @@ podman_installation_locked() {
   test -e /tmp/podman_install_mutex
 }
 
-render_lima_machine_configuration_podman() {
-  sed "s;%TEMPDIR%;${TMPDIR:-/tmp};g" "$LIMA_MACHINE_PATH_PODMAN" |
-  sed "s;%MACHINE_NAME%;$LIMA_MACHINE_NAME_PODMAN;g"
-}
-
-podman_machine_socket() {
-  limactl list --all-fields -f yaml "$LIMA_MACHINE_NAME_PODMAN" |
-  grep hostSocket |
-  cut -f2 -d ':' | tr -d ' '
-}
-
 create_lima_machine_podman() {
-  limactl ls -q | grep "$LIMA_MACHINE_NAME_PODMAN"  | xargs limactl rm
-  render_lima_machine_configuration_podman |
-    limactl create --tty=false --name="$LIMA_MACHINE_NAME_PODMAN" -
+  _render_lima_machine_configuration_podman() {
+    sed "s;%TEMPDIR%;${TMPDIR:-/tmp};g" "$LIMA_MACHINE_PATH_PODMAN" |
+    sed "s;%MACHINE_NAME%;$LIMA_MACHINE_NAME_PODMAN;g"
+  }
+
+  if _use_podman_machine_instead_of_lima
+  then podman machine init "$LIMA_MACHINE_NAME_PODMAN"
+  else
+    _render_lima_machine_configuration_podman |
+      limactl create --tty=false --name="$LIMA_MACHINE_NAME_PODMAN" -
+  fi
 }
 
 start_lima_machine_podman() {
-  limactl start "$LIMA_MACHINE_NAME_PODMAN"
+  if _use_podman_machine_instead_of_lima
+  then podman machine start "$LIMA_MACHINE_NAME_PODMAN"
+  else limactl start "$LIMA_MACHINE_NAME_PODMAN"
+  fi
 }
 
 add_lima_machine_as_podman_connection() {
-  test -n "$RECREATE_LIMA_MACHINE_PODMAN" && podman system connection rm "$LIMA_MACHINE_NAME_PODMAN"
-  podman system connection add "$LIMA_MACHINE_NAME_PODMAN" "unix://$(podman_machine_socket)"
+  _podman_machine_socket() {
+    limactl list --all-fields -f yaml "$LIMA_MACHINE_NAME_PODMAN" |
+    grep hostSocket |
+    cut -f2 -d ':' | tr -d ' '
+  }
+
+  # podman machine handles this automatically
+  _use_podman_machine_instead_of_lima && return 0
+  podman system connection add "$LIMA_MACHINE_NAME_PODMAN" "unix://$(_podman_machine_socket)"
   podman system connection default "$LIMA_MACHINE_NAME_PODMAN"
 }
 
 test_podman_connection() {
   podman run --rm hello-world
+}
+
+delete_lima_machine_podman_if_recreating() {
+  test -z "$RECREATE_LIMA_MACHINE_PODMAN" && return 0
+
+  if _use_podman_machine_instead_of_lima
+  then podman machine rm -f "$LIMA_MACHINE_NAME_PODMAN"
+  else
+    podman system connection rm "$LIMA_MACHINE_NAME_PODMAN" &&
+      limactl rm -f "$LIMA_MACHINE_NAME_PODMAN"
+  fi
 }
 
 _start_podman() {
@@ -68,6 +91,7 @@ _start_podman() {
     set -eo pipefail
     if ! podman_machine_created || test -n "$RECREATE_LIMA_MACHINE_PODMAN"
     then
+      delete_lima_machine_podman_if_recreating
       create_lima_machine_podman 
       add_lima_machine_as_podman_connection
       mark_podman_machine_created
