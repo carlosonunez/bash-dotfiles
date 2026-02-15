@@ -4,7 +4,7 @@ OAUTH2L_DOCKER_IMAGE=gcr.io/oauth2l/oauth2l
 
 exec_gcloud() {
   COMMAND="$(which docker) run --rm -i -v $HOME/.config/gke:/root/.kube -v /tmp:/tmp \
-   -v  $PWD:/app -w /app -v /tmp:/tmp -v  \
+   -e GOOGLE_APPLICATION_CREDENTIALS -v  $PWD:/app -w /app -v /tmp:/tmp -v  \
    $HOME/.config/gcloud:/root/.config/gcloud $GCP_DOCKER_IMAGE gcloud"
   update_any_new_kubeconfigs_to_use_dockerized_gcloud() {
     kubeconfig="$HOME/.config/gke/config"
