@@ -874,21 +874,37 @@ export_gpg_keys() {
 }
 
 remarkable_host() {
-  echo "${REMARKABLE_HOST:-remarkable}"
+  if test -n "$REMARKABLE_IS_LOCAL"
+  then
+    echo "${REMARKABLE_HOST_LOCAL:-10.11.99.1}"
+  else
+    echo "${REMARKABLE_HOST:-remarkable}"
+  fi
 }
 
+remarkable_set_up_ssh() {
+  remarkable_ssh_is_configured && return 0
+
+  log_info "Setting up reMarkbale for SSH. Type in password from About screen when prompted"
+  ssh-keygen -yf "$HOME/.ssh/personal-machines" |
+    ssh "root@$(remarkable_host)" 'cat - > ~/.ssh/authorized_keys'
+}
 remarkable_ssh_is_configured() {
-  &>/dev/null ssh -o NumberOfPasswordPrompts=0 "$(remarkable_host)" whoami && return 0
+  &>/dev/null ssh -o NumberOfPasswordPrompts=0 "root@$(remarkable_host)" whoami && return 0
 
   log_error "Couldn't SSH into reMarkable. Add your public key into it and try again."
   return 1
+}
+
+remarkable_set_up_ssh_local() {
+  REMARKABLE_IS_LOCAL=1 remarkable_set_up_ssh
 }
 
 add_remarkable_templates() {
   remarkable_ssh_is_configured || return 1
 
   added=0
-  templates_json=$(ssh "$(remarkable_host)" cat /usr/share/remarkable/templates/templates.json)
+  templates_json=$(ssh "root@$(remarkable_host)" cat /usr/share/remarkable/templates/templates.json)
   installed_templates=$(jq -r '.templates[].filename' <<< "$templates_json" | sort -u)
   while read -r template_file
   do
@@ -919,11 +935,15 @@ add_remarkable_templates() {
     (
       set -eo pipefail
       log_info "[remarkable-templates] Applying changes."
-      ssh "$(remarkable_host)" cp /usr/share/remarkable/templates/templates.json \
+      ssh "root@$(remarkable_host)" cp /usr/share/remarkable/templates/templates.json \
         /usr/share/remarkable/templates/templates.json.original
-      echo "$templates_json" | ssh "$(remarkable_host)" sh -c 'cat - > /usr/share/remarkable/templates/templates.json'
-      ssh "$(remarkable_host)" systemctl restart xochitl
+      echo "$templates_json" | ssh "root@$(remarkable_host)" sh -c 'cat - > /usr/share/remarkable/templates/templates.json'
+      ssh "root@$(remarkable_host)" 'systemctl daemon-reload && systemctl restart xochitl'
     )
+}
+
+add_remarkable_templates_local() {
+  REMARKABLE_IS_LOCAL=1 add_remarkable_templates
 }
 
 send_pdf_to_remarkable() {
@@ -937,6 +957,10 @@ send_pdf_to_remarkable() {
     chmod +x "$script_path"
   fi
   "$script_path" "$@"
+}
+
+send_pdf_to_remarkable_local() {
+  REMARKABLE_IS_LOCAL=1 send_pdf_to_remarkable "$@"
 }
   
 _load_rectangle_config() {
