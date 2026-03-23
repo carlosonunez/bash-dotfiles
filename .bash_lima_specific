@@ -1,0 +1,119 @@
+# vi: set ft=sh:
+# shellcheck shell=bash
+
+_lima_vm_exists() {
+  test -n "$(limactl ls --format='{{.Name}}' "$1")"
+}
+
+_lima_fetched_template() {
+  local f
+  f="$HOME/.config/lima/fetched_templates/${1}-$(lima --version | awk '{print $NF}').yaml"
+  test -d "$(dirname "$f")" || mkdir -p "$(dirname "$f")"
+  echo "$f"
+}
+
+_lima_template_file() {
+  while read -r p
+  do
+    if grep -Eq '^http' <<< "$p"
+    then
+      url=${p//%LIMA_VERSION%/$(lima --version | awk '{print $NF}')}
+      log_info "Trying to find template '$1' from URL '$url' (if Internet available); hang on"
+      check_for_internet_access || return 1
+      result=$(curl -w '\n%{http_code}' -sSL "$url")
+      code=$(tail -1 <<< "$result")
+      body=$(head -n -2 <<< "$result")
+      if test "$code" -ne 200
+      then
+        log_error "Couldn't retrieve Lima template from URL '$url': $body"
+        return 1
+      fi
+      echo "$body" > "$(_lima_fetched_template "$1")"
+      _lima_fetched_template "$1" && return 0
+    fi
+    test -e "$p" || continue
+    echo "$p"
+    return 0
+  done < <(cat <<-EOF
+$1
+$HOME/src/setup/lima-machines/${1}.yaml
+$(_lima_fetched_template "$1")
+https://raw.githubusercontent.com/lima-vm/lima/refs/tags/v%LIMA_VERSION%/templates/${1}.yaml
+EOF
+)
+  return 1
+}
+
+_lima_vm_started() {
+  limactl ls | grep 'Running' | grep -q "$1"
+}
+
+lima_render_template() {
+  local template_file vm_name template_vars resolved_template_file
+  template_file="$1"
+  vm_name="$2"
+  template_vars="$3"
+  resolved_template_file="$(_lima_template_file "$template_file")"
+  if test -n "$LIMA_REBUILD_VM"
+  then test -f "$(_lima_fetched_template "$vm_name")" && rm -f "$(_lima_fetched_template "$vm_name")"
+  fi
+  if test -z "$resolved_template_file"
+  then
+    log_error "Couldn't find Lima template: $template_file"
+    return 1
+  fi
+  sed "s;%TEMPDIR%;${TMPDIR:-/tmp};g" "$resolved_template_file" |
+    sed "s;%MACHINE_NAME%;$LIMA_MACHINE_NAME_DOCKER;g" |
+    if test -z "$template_vars"
+    then cat
+    else
+      for kvp in $template_vars
+      do
+        k="$(cut -f1 -d ';' <<< "$kvp")"
+        v="${kvp//%$k%;/}"
+        sed "s;$k;$v;g"
+      done
+    fi
+}
+
+lima_create_vm() {
+  local template_file vm_name template_vars
+  template_file="$1"
+  vm_name="$2"
+  template_vars="$3"
+  test -n "$LIMA_REBUILD_VM" && limactl delete --force "$vm_name"
+  if _lima_vm_exists "$vm_name"
+  then
+    test -z "$LIMA_NO_OUTPUT" && log_info "VM already exists: $vm_name (add LIMA_REBUILD_VM=1 to this command to rebuild it)"
+    return 0
+  fi
+  test -z "$LIMA_NO_OUTPUT" && log_info "Creating Lima VM [$vm_name] from template [$template_file]; this will take a few minutes"
+  lima_render_template "$template_file" "$vm_name" "$template_vars" | limactl create --tty=false --name="$vm_name" -
+}
+
+lima_create_vm_quiet(){ 
+  LIMA_NO_OUTPUT=1 lima_create_vm "$@"
+}
+
+lima_start_vm() {
+  local vm_name
+  vm_name="$1"
+  if ! _lima_vm_exists "$vm_name"
+  then
+    log_error "VM doesn't exist; run 'lima_create_vm' to create it: $vm_name"
+    return 1
+  fi
+  _lima_vm_started "$vm_name" || limactl start --yes "$vm_name"
+}
+
+lima_exec_in_vm() {
+  local vm_name
+  vm_name="$1"
+  if ! _lima_vm_exists "$vm_name"
+  then
+    log_error "VM doesn't exist; run 'lima_create_vm' to create it: $vm_name"
+    return 1
+  fi
+  shift
+  limactl shell "$vm_name" -- "$@"
+}
