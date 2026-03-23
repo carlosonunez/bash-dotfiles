@@ -1,3 +1,4 @@
+# vi: set ft=sh:
 OBS_PREFS_TIMESTAMP_FILE="$HOME/.config/obs-prefs-updater/timestamp"
 MAX_OBS_PREFS_STALENESS_DAYS=5 # How current should /etc/hosts be?
 # Update our local /etc/hosts file to disable tracking, telemetry, and ads.
@@ -6,6 +7,10 @@ MAX_AD_FREE_STALENESS_DAYS=5 # How current should /etc/hosts be?
 HOMEBREW_APPS_EXCLUSION_FILE="$HOME/.skip_these_apps"
 HOMEBREW_FORMULA_URLS=$(cat <<-URLS
 URLS
+)
+APPLE_APP_STORE_APPS=$(cat <<-APPS
+remarkable
+APPS
 )
 HOMEBREW_BUILTINS=$(cat <<-APPS
 1password
@@ -46,6 +51,7 @@ giflib
 git
 git-filter-repo
 gitleaks
+google-drive
 gnu-getopt
 gnu-indent
 gnu-sed
