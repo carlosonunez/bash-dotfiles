@@ -1,0 +1,73 @@
+# shellcheck shell=bash
+# vi: set ft=sh:
+source "$HOME/.bash_lima_specific"
+export CLAUDE_VM_NAME="${CLAUDE_VM_NAME:-claude-vm}"
+export CLAUDE_VM_TEMPLATE="${CLAUDE_VM_TEMPLATE:-$HOME/src/setup/lima-machines/claude.yaml}"
+# shellcheck disable=SC2155
+export CLAUDE_WHITELISTED_DIRECTORIES="$(cat <<-EOF
+$HOME/src
+EOF
+)"
+
+claude() {
+  _skip_whitelisting() {
+    grep -E '^true$' <<< "$CLAUDE_SKIP_WHITELISTING"
+  }
+
+  _pwd_is_whitelisted() {
+    for dir in $CLAUDE_WHITELISTED_DIRECTORIES
+    do
+      if test "$dir" == "$PWD"
+      then
+        log_warning "Directory '$PWD' is whitelisted but is not a sub-directory of this folder."
+        return 1
+      fi
+      grep -q "$dir" <<< "$PWD" && return 0
+    done
+    return 1
+  }
+
+  _create_and_start_claude_vm() {
+    lima_create_vm_quiet "$CLAUDE_VM_TEMPLATE" "$CLAUDE_VM_NAME" && lima_start_vm "$CLAUDE_VM_NAME"
+  }
+
+  _run_claude() {
+    if ! _pwd_is_whitelisted
+    then
+      if ! _skip_whitelisting
+      then
+        log_error "Directory '$PWD' hasn't been whitelisted; add it \
+to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
+        return 1
+      else log_error "Directory '$PWD' hasn't been whitelisted; proceed with caution! (Add it \
+  to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' if this directory is safe)."
+      fi
+    fi
+    limactl shell --workdir "$PWD" "${CLAUDE_VM_NAME}" -- claude --dangerously-skip-permissions "$@"
+  }
+
+  _sync_config_dir_from_claude_vm() {
+    limactl shell "$CLAUDE_VM_NAME" sh -c 'test -f ~/.claude/.credentials.json' || return 1
+    limactl cp -r "${CLAUDE_VM_NAME}:"'~/.claude.json' "$HOME/.config/claude/"
+    limactl cp -r "${CLAUDE_VM_NAME}:"'~/.claude/' "$HOME/.config/claude/"
+  }
+
+  _sync_config_dir_to_claude_vm() {
+    test -f "$HOME/.config/claude/.credentials.json" || return 1
+    limactl cp -r "$HOME/.config/claude/.claude.json" "${CLAUDE_VM_NAME}:"'~/.claude.json'
+    limactl cp -r "$HOME/.config/claude/" "${CLAUDE_VM_NAME}:"'~/.claude/'
+    limactl shell "$CLAUDE_VM_NAME" sh -c 'rm ~/.claude/.claude.json'
+  }
+
+  local rc
+  _create_and_start_claude_vm
+  _sync_config_dir_to_claude_vm
+  _run_claude "$@"
+  rc="$?"
+  _sync_config_dir_from_claude_vm
+  return "$rc"
+}
+
+claude_dangerously() {
+  CLAUDE_SKIP_WHITELISTING=true claude "$@"
+}

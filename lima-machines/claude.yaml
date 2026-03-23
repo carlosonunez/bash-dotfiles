@@ -1,0 +1,70 @@
+# Carlos's Docker Machines!
+
+# To run `docker` on the host (assumes docker-cli is installed):
+# $ export DOCKER_HOST=$(limactl list docker --format 'unix://{{.Dir}}/sock/docker.sock')
+# $ docker ...
+
+# This example requires Lima v0.8.0 or later
+cpus: 4
+memory: 8GiB
+disk: 50GiB
+ssh:
+  loadDotSSHPubKeys: true
+  forwardAgent: true
+images:
+# Try to use release-yyyyMMdd image if available. Note that release-yyyyMMdd will be removed after several months.
+- location: "https://cloud-images.ubuntu.com/releases/questing/release-20260320/ubuntu-25.10-server-cloudimg-amd64.img"
+  arch: "x86_64"
+  digest: "sha256:6d91bd33bee09ea9907914136a9ac73c789611059c3ccb8cec894ea6e2d4b245"
+- location: "https://cloud-images.ubuntu.com/releases/questing/release-20260320/ubuntu-25.10-server-cloudimg-arm64.img"
+  arch: "aarch64"
+  digest: "sha256:da39621c5c35fe2cdbf22bc8374bf11c344d9b70f373014239ab2be30fa63036"
+mounts:
+  - location: "~/src"
+    writable: true
+  - location: "~/tmp"
+    writable: false
+
+  # NOTE: Replace %TEMPDIR% with your actual temporary directory as provided by
+  # the $TMPDIR environment variable.
+  - location: "%TEMPDIR%"
+    writable: false
+  - location: "/tmp/lima"
+    writable: false
+  - location: "~/.config"
+    writable: false
+  - location: "~/.docker"
+    writable: false
+  - location: "~/.lima"
+    writable: false
+  - location: "~/.kube"
+    writable: false
+  - location: "~/.ssh"
+    writable: false
+  - location: "~/.gnupg"
+    writable: false
+  - location: "~/.aws"
+    writable: false
+  - location: "~/.azure"
+    writable: false
+# containerd is managed by Docker, not by Lima, so the values are set to false here.
+containerd:
+  system: false
+  user: false
+provision:
+- mode: system
+  script:
+    apt -y update && apt -y install git rsync ssh bash
+- mode: user
+  script: |
+    echo "export PATH="${PATH}:$HOME/.local/bin" >> ~/.bash_profile"
+- mode: user
+  script: |
+    curl -fsSL https://claude.ai/install.sh | bash -x
+probes:
+- script: |
+    #!/bin/bash
+    timeout 180s bash -c 'while true; do >/dev/null which $HOME/.local/bin/claude && exit 0; done; sleep 1'
+portForwards:
+- guestSocket: /var/run/docker.sock
+  hostSocket: "{{.Home}}/.lima/docker-%MACHINE_NAME%.sock"
