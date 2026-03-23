@@ -614,6 +614,24 @@ asdf_run_first_time_install() {
   install_asdf_plugins && touch "$HOME/.asdf_provisioned"
 }
 
+docker_run_first_time_install() {
+  _create_docker_config() {
+    test -f "$HOME/.docker/config.json" && return 0
+    touch "$HOME/.docker/config.json"
+  }
+
+  _link_homebrew_plugins() {
+    cat <<< \
+      $(jq -r ".cliPluginsExtraDirs += [\"$(brew --prefix)/lib/docker/cli-plugins\""] "$HOME/.docker/config.json") \
+      > "$HOME/.docker/config.json"
+  }
+
+  test -f "$HOME/.docker_provisioned" && return 0
+  log_info "Setting up Docker client; hang on"
+  _create_docker_config && _link_homebrew_plugins
+  touch "$HOME/.docker_provisioned"
+}
+
 set_keyboard_repeat_rate() {
   test -f "$HOME/.config/setup/keyboard_setup" && return 0
 
@@ -674,5 +692,6 @@ install_complete_alias
 update_bash
 mark_first_time_setup_as_complete_if_needed
 asdf_run_first_time_install
+docker_run_first_time_install
 
 test -f "$(bash_completion_location)" && source "$(bash_completion_location)"
