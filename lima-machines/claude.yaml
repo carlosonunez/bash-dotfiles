@@ -47,14 +47,14 @@ mounts:
     writable: false
   - location: "~/.azure"
     writable: false
-  - location: "$HOME/src/setup/ai/claude/skills"
-    mountPoint: "~/.claude/skills"
+  - location: "~/src/setup/ai/claude/skills"
+    mountPoint: "{{.Home}}/.claude/skills"
     writable: false
-  - location: "$HOME/src/setup/ai/claude/default_rules"
-    mountPoint: "~/.claude/rules"
+  - location: "~/src/setup/ai/claude/default_rules"
+    mountPoint: "{{.Home}}/.claude/rules"
     writable: false
-  - location: "$HOME/src/setup/ai/claude/CLAUDE.md"
-    mountPoint: "~/.claude/CLAUDE.md"
+  - location: "~/src/setup/ai/claude/markdowns"
+    mountPoint: "{{.Home}}/.claude/markdowns"
     writable: false
 # containerd is managed by Docker, not by Lima, so the values are set to false here.
 containerd:
@@ -70,6 +70,9 @@ provision:
 - mode: user
   script: |
     curl -fsSL https://claude.ai/install.sh | bash -x
+- mode: user
+  script: |
+    cp ~/.claude/markdowns/CLAUDE.md ~/.claude/CLAUDE.md
 probes:
 - script: |
     #!/bin/bash
