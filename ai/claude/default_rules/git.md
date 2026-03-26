@@ -1,6 +1,9 @@
 # General Rules
 
 - ALWAYS use the `/commit` command to GPG sign your commits.
+  Use either the email address defined by the `$GIT_AUTHOR_EMAIL` environment
+  variable or `13461447+carlosonunez@users.noreply.github.com` to sign these
+  commits. DO NOT USE ANY OTHER KEYS ON THE SYSTEM.
 - Always do a rebase whenever you pull in new changes from a remote.
 - Commits should be as atomic as possible.
 - Use feature branches for active work, then merge them into `main` through a
