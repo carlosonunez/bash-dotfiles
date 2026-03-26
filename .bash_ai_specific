@@ -59,9 +59,24 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
     limactl shell "$CLAUDE_VM_NAME" sh -c 'rm ~/.claude/.claude.json'
   }
 
+  _set_up_gpg_keys() {
+    limactl shell "$CLAUDE_VM_NAME" 'test -f ~/.claude/.gpg_keys_done' && return 0
+    log_info "Importing GPG keys on this system into the Claude VM. You'll be asked to enter your
+passphrases multiple times."
+    gpg --export-secret-keys --armor | limactl shell "$CLAUDE_VM_NAME" sh -c 'cat - > /tmp/gpg_keys' &&
+      limactl shell --tty "$CLAUDE_VM_NAME" 'gpg import < /tmp/gpg_keys' &&
+      limactl shell --tty "$CLAUDE_VM_NAME" 'rm /tmp/gpg_keys && touch ~/.claude/gpg_keys_done'
+  }
+
+  _mark_claude_ready() {
+    limactl shell --tty "$CLAUDE_VM_NAME" 'touch /ready_for_claude'
+  }
+
   local rc
   _create_and_start_claude_vm
   _sync_config_dir_to_claude_vm
+  _set_up_gpg_keys
+  _mark_claude_ready
   _run_claude "$@"
   rc="$?"
   _sync_config_dir_from_claude_vm
