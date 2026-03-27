@@ -61,3 +61,8 @@
 
 - Code should work across MacOS, Windows and Linux on `amd64` and `arm64`
   architectures.
+
+# Logging
+
+- Default to `sirupsen/logrus`. If you think there is a better logging library
+  for the mission at hand, tell me and ask me to confirm your decision.
