@@ -42,6 +42,23 @@ allow-preset-passphrase
 EOF
 }
 
+_gpg_enter_passphrases() {
+  if test "$#" -eq 1
+  then
+    echo 'foo' | >/dev/null gpg --clearsign --local-user "$1" --pinentry-mode loopback
+    rc="$?"
+    return "$rc"
+  fi
+  gpg --list-keys --with-colons |
+    grep uid |
+    grep -v uid:e |
+    cut -f10 -d : |
+    sort -u |
+    while read -r key
+    do echo 'foo' | >/dev/null gpg --clearsign --local-user "$key" --pinentry-mode loopback
+    done
+}
+
 # NOTE: It's assumed that the `User` and `Hostname` for "work-machine" is defined in your SSH
 # config somewhere
 wm() {
@@ -253,11 +270,13 @@ restart_ssh_agent() {
 restart_gpg_agent() {
   _add_gpg_conf_if_missing
   gpg-connect-agent reloadagent /bye
+  _gpg_enter_passphrases
 }
 
 start_gpg_agent() {
   _add_gpg_conf_if_missing
   pgrep -q gpg-agent || gpg-connect-agent /bye
+  _gpg_enter_passphrases
 }
 
 
