@@ -108,7 +108,11 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
   }
 
   _sync_config_dir_to_claude_vm_if_first_boot() {
-    test -f "$HOME/.config/claude/.credentials.json" || return 1
+    if test -f "$HOME/.config/claude/.credentials.json"
+    then
+      log_info "Claude not set up on this machine before; nothing to sync to the VM."
+      return 0
+    fi
     _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f /ready_for_claude' && return 0
     log_info "Syncing saved Claude preferences to VM"
     limactl cp -r "$HOME/.config/claude/" "${CLAUDE_VM_NAME}:"'~/.claude/'
