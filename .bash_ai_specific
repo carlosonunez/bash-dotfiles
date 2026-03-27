@@ -8,8 +8,71 @@ export CLAUDE_WHITELISTED_DIRECTORIES="$(cat <<-EOF
 $HOME/src
 EOF
 )"
+export CLAUDE_SSH_HOSTS_FROM_CONFIG="$(cat <<-EOF
+github.carlosnunez.me
+EOF
+)"
 
 claude() {
+  _claude_limactl_shell() {
+    if ! grep -Eq 'dangerously-skip-permissions' <<< "$@"
+    then
+      if ! test -t 0
+      then out=$(cat /dev/stdin | limactl shell "$@")
+      else out=$(limactl shell "$@")
+      fi
+      rc=$?
+      echo "$out" | grep -Ev '^OK$'
+      return "$rc"
+    fi
+    limactl shell "$@"
+  }
+
+  _generate_ssh_config_for_vm() {
+    local config
+    config=""
+    for host in $CLAUDE_SSH_HOSTS_FROM_CONFIG
+    do
+      test -z "$host" && continue
+      options=$(comm -13 <(ssh -G foo | sort) <(ssh -G "$host" | sort) | sed -E 's/^/  /')
+      if test -z "$options"
+      then
+        log_warning "No SSH options found for host '$host'! Skipping."
+        continue
+      fi
+      partial="$(cat <<-EOF
+Host $host
+$options
+EOF
+)"
+      config="$config\n$partial"
+    done
+    test -z "$config" && return 1
+    echo -e "$config"
+  }
+
+  _generate_ssh_keys_for_vm() {
+    local keys
+    keys=""
+    for host in $CLAUDE_SSH_HOSTS_FROM_CONFIG
+    do
+      test -z "$host" && continue
+      want_keyname="$(ssh -G "$host" |
+        grep -E '^identityfile' |
+        cut -f2 -d ' ' |
+        sed "s;~;$HOME;g")"
+      if test -z "$want_keyname" || ! test -e "$want_keyname"
+      then
+        log_warning "No SSH key found for host '$host'! Skipping."
+        continue
+      fi
+      this_key="${want_keyname};$(base64 -w 0 < "$want_keyname")"
+      keys="${keys}\n${this_key}"
+    done
+    test -z "$keys" && return 1
+    echo -e "$keys"
+  }
+
   _skip_whitelisting() {
     grep -E '^true$' <<< "$CLAUDE_SKIP_WHITELISTING"
   }
@@ -28,6 +91,7 @@ claude() {
   }
 
   _create_and_start_claude_vm() {
+    log_info "Creating and starting Claude VM"
     lima_create_vm_quiet "$CLAUDE_VM_TEMPLATE" "$CLAUDE_VM_NAME" && lima_start_vm "$CLAUDE_VM_NAME"
   }
 
@@ -43,44 +107,79 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
   to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' if this directory is safe)."
       fi
     fi
-    limactl shell --workdir "$PWD" "${CLAUDE_VM_NAME}" -- claude --dangerously-skip-permissions "$@"
+    _claude_limactl_shell --workdir "$PWD" "${CLAUDE_VM_NAME}" -- claude --dangerously-skip-permissions "$@"
   }
 
   _sync_config_dir_from_claude_vm() {
-    limactl shell "$CLAUDE_VM_NAME" sh -c 'test -f ~/.claude/.credentials.json' || return 1
-    limactl cp -r "${CLAUDE_VM_NAME}:"'~/.claude.json' "$HOME/.config/claude/"
+    log_info "Syncing Claude settings from Claude VM to local machine"
     limactl cp -r "${CLAUDE_VM_NAME}:"'~/.claude/' "$HOME/.config/claude/"
   }
 
-  _sync_config_dir_to_claude_vm() {
+  _sync_config_dir_to_claude_vm_if_first_boot() {
     test -f "$HOME/.config/claude/.credentials.json" || return 1
-    limactl cp -r "$HOME/.config/claude/.claude.json" "${CLAUDE_VM_NAME}:"'~/.claude.json'
+    _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f /ready_for_claude' && return 0
+    log_info "Syncing saved Claude preferences to VM"
     limactl cp -r "$HOME/.config/claude/" "${CLAUDE_VM_NAME}:"'~/.claude/'
-    limactl shell "$CLAUDE_VM_NAME" sh -c 'rm ~/.claude/.claude.json'
   }
 
   _set_up_gpg_keys() {
-    limactl shell "$CLAUDE_VM_NAME" 'test -f ~/.claude/.gpg_keys_done' && return 0
+    if test -z "$CLAUDE_REGENERATE_GPG_KEYS"
+    then _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f ~/.claude/.gpg_keys_done' && return 0
+    fi
     log_info "Importing GPG keys on this system into the Claude VM. You'll be asked to enter your
 passphrases multiple times."
-    gpg --export-secret-keys --armor | limactl shell "$CLAUDE_VM_NAME" sh -c 'cat - > /tmp/gpg_keys' &&
-      limactl shell --tty "$CLAUDE_VM_NAME" 'gpg import < /tmp/gpg_keys' &&
-      limactl shell --tty "$CLAUDE_VM_NAME" 'rm /tmp/gpg_keys && touch ~/.claude/gpg_keys_done'
+    gpg --export-secret-keys --armor | _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'cat - > /tmp/gpg_keys' &&
+      _claude_limactl_shell --tty "$CLAUDE_VM_NAME" sh -c 'gpg --import  < /tmp/gpg_keys' &&
+      _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'rm /tmp/gpg_keys && touch ~/.claude/.gpg_keys_done'
+  }
+
+  _set_up_ssh_config() {
+    log_info "Setting up SSH config in Claude VM"
+    if ! config=$(_generate_ssh_config_for_vm)
+    then
+      log_warning "Couldn't create an SSH config to upload into the VM. Pushing into remote Git \
+services and other operations won't work!"
+    fi
+    echo "$config" | _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'cat - > ~/.ssh/config'
+  }
+
+  _add_ssh_keys() {
+    log_info "Adding SSH keys to Claude VM"
+    if ! keys=$(_generate_ssh_keys_for_vm)
+    then
+      log_warning "Couldn't create SSH keys to upload into the VM. Pushing into remote Git \
+services and other operations won't work!"
+    fi
+    echo "$keys" |
+      while read -r kvp
+      do
+        key_name="$(cut -f1 -d ';' <<< "$kvp")"
+        test -z "$key_name" && continue
+        key_enc=$(cut -f2 -d ';' <<< "$kvp")
+        if test -z "$key_enc"
+        then
+          log_warning "Key '$key_name' is blank and cannot be added. Skipping."
+          continue
+        fi
+        base64 -d <<< "$key_enc" | _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'cat - > ~/.ssh/'"$(basename "$key_name")"
+      done
   }
 
   _mark_claude_ready() {
-    limactl shell --tty "$CLAUDE_VM_NAME" 'touch /ready_for_claude'
+    _claude_limactl_shell --tty "$CLAUDE_VM_NAME" sh -c 'sudo touch /ready_for_claude'
   }
 
   local rc
-  _create_and_start_claude_vm
-  _sync_config_dir_to_claude_vm
-  _set_up_gpg_keys
-  _mark_claude_ready
-  _run_claude "$@"
-  rc="$?"
-  _sync_config_dir_from_claude_vm
-  return "$rc"
+  _create_and_start_claude_vm &&
+    _sync_config_dir_to_claude_vm_if_first_boot &&
+    _set_up_gpg_keys &&
+    _set_up_ssh_config &&
+    _add_ssh_keys &&
+    _mark_claude_ready &&
+    _run_claude "$@" &&
+    rc="$?" &&
+    _sync_config_dir_from_claude_vm &&
+    return "$rc"
 }
 
 claude_dangerously() {
