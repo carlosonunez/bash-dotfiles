@@ -15,17 +15,7 @@ EOF
 
 claude() {
   _claude_limactl_shell() {
-    if ! grep -Eq 'dangerously-skip-permissions' <<< "$@"
-    then
-      if ! test -t 0
-      then out=$(cat /dev/stdin | limactl shell "$@")
-      else out=$(limactl shell "$@")
-      fi
-      rc=$?
-      echo "$out" | grep -Ev '^OK$'
-      return "$rc"
-    fi
-    limactl shell "$@"
+    limactl shell "$@" 2> >(grep -Ev "^OK$" >&2)
   }
 
   _generate_ssh_config_for_vm() {
@@ -123,9 +113,17 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
     fi
     log_info "Importing GPG keys on this system into the Claude VM. You'll be asked to enter your
 passphrases multiple times."
-    gpg --export-secret-keys --armor | _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'cat - > /tmp/gpg_keys' &&
-      _claude_limactl_shell --tty "$CLAUDE_VM_NAME" sh -c 'gpg --import  < /tmp/gpg_keys' &&
-      _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'rm /tmp/gpg_keys && touch ~/.claude/.gpg_keys_done'
+    keys="$CLAUDE_GPG_KEY_NAMES"
+    test -z "$keys" && keys=$(gpg --list-keys --with-colons |
+      grep 'uid' |
+      cut -f10 -d ':')
+    for key in $keys
+    do
+      # Looks like I can't open /dev/tty if limactl shell is called from within a function.
+      gpg --export-secret-keys --armor "$key" | _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'cat - > /tmp/gpg_key' &&
+        limactl shell --tty "$CLAUDE_VM_NAME" sh -c 'gpg --pinentry-mode loopback --import  < /tmp/gpg_key'
+    done || return 1
+    _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'rm /tmp/gpg_key && touch ~/.claude/.gpg_keys_done'
   }
 
   _set_up_ssh_config() {
