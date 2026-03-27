@@ -55,7 +55,9 @@ _gpg_enter_passphrases() {
     cut -f10 -d : |
     sort -u |
     while read -r key
-    do echo 'foo' | >/dev/null gpg --clearsign --local-user "$key" --pinentry-mode loopback
+    do
+      log_info "[gpg] Loading key: $key"
+      echo 'foo' | >/dev/null gpg --clearsign --local-user "$key" --pinentry-mode loopback
     done
 }
 
