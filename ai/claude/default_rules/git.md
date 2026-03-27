@@ -36,6 +36,23 @@ words) description of the feature being built separated by a slash.
 For example, if a new authentication mechanism is being added, its branch should
 be called `feat/new-auth-mechanism`.
 
+# Branch merging
+
+- NEVER MERGE INTO `main` WITHOUT MY CONSENT.
+- If **ANYTHING** requires a complete rewrite of the plan in `.claude/plan`,
+  **ALWAYS** ask me if I want to do that work in a separate branch.
+- **ALWAYS** merge non-`main` branches through a Pull Request or Merge Request
+  (depending on the remote's platform)
+  - **REMEMBER**: You are NOT allowed to use the `gh` tool unless the project's
+    rules say otherwise.
+- The commit message should follow the rules in "Commit message etiquette", with
+  the following modifications:
+  - The subject of the commit should start with "$BRANCH_NAME:" followed by a
+    short (less than 40 characters) description of the changes being merged in.
+  - The body of the commit should start with a short (less than three sentences)
+    paragraph of what was done in this branch followed by a summarized list of
+    changes.
+
 # Commit message etiquette
 
 - EVERY SINGLE COMMIT must ALWAYS be authored by Claude.
