@@ -107,6 +107,13 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
     limactl cp -r "${CLAUDE_VM_NAME}:"'~/.claude/' "$HOME/.config/claude/"
   }
 
+  _sync_config_dir_to_claude_vm_if_first_boot() {
+    test -f "$HOME/.config/claude/.credentials.json" || return 1
+    _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f /ready_for_claude' && return 0
+    log_info "Syncing saved Claude preferences to VM"
+    limactl cp -r "$HOME/.config/claude/" "${CLAUDE_VM_NAME}:"'~/.claude/'
+  }
+
   _set_up_gpg_keys() {
     if test -z "$CLAUDE_REGENERATE_GPG_KEYS"
     then _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f ~/.claude/.gpg_keys_done' && return 0
@@ -164,6 +171,7 @@ services and other operations won't work!"
 
   local rc
   _create_and_start_claude_vm &&
+    _sync_config_dir_to_claude_vm_if_first_boot &&
     _set_up_gpg_keys &&
     _set_up_ssh_config &&
     _add_ssh_keys &&
