@@ -34,7 +34,9 @@ claude() {
     for host in $CLAUDE_SSH_HOSTS_FROM_CONFIG
     do
       test -z "$host" && continue
-      options=$(comm -13 <(ssh -G foo | sort) <(ssh -G "$host" | sort) | sed -E 's/^/  /')
+      options=$(comm -13 <(ssh -G foo | sort) <(ssh -G "$host" | sort) |
+        grep -Ev '^host ' |
+        sed -E 's/^/  /')
       if test -z "$options"
       then
         log_warning "No SSH options found for host '$host'! Skipping."
