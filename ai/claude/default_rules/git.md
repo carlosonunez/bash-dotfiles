@@ -38,6 +38,8 @@ be called `feat/new-auth-mechanism`.
 
 # Commit message etiquette
 
+- EVERY SINGLE COMMIT must ALWAYS be authored by Claude.
+
 - The first line of ALL commits should start with one of the categories in the
   "Work Categories" section followed by a short description separated by a
   colon. It MUST not be longer than 50 characters.
