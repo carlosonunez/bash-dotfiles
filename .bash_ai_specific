@@ -169,6 +169,22 @@ services and other operations won't work!"
       done
   }
 
+  _set_up_github_token() {
+    if test -z "$GITHUB_TOKEN" && ! >/dev/null which gh
+    then
+      log_warning "Unable to find a GitHub token or the 'gh' utility on this system. GitHub interactions won't work from within the VM!"
+      return 0
+    fi
+    token=$(gh auth token 2>/dev/null)
+    if test -z "$token"
+    then
+      log_warning "Couldn't retrieve an active GitHub token. Make sure to run 'gh auth login' first."
+      return 0
+    fi
+    _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c "echo '$token' > ~/.tokens/github"
+
+  }
+
   _mark_claude_ready() {
     _claude_limactl_shell --tty "$CLAUDE_VM_NAME" sh -c 'sudo touch /ready_for_claude'
   }
@@ -179,6 +195,7 @@ services and other operations won't work!"
     _set_up_gpg_keys &&
     _set_up_ssh_config &&
     _add_ssh_keys &&
+    _set_up_github_token &&
     _mark_claude_ready &&
     _run_claude "$@" &&
     rc="$?" &&
