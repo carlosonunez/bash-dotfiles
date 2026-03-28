@@ -65,6 +65,8 @@ provision:
   script:
     apt -y update && apt -y install git rsync ssh bash
 - mode: user
+  script: mkdir -p {{.Home}}/.tokens
+- mode: user
   script: |
     cat >{{.Home}}/.bash_profile <<-EOF
     export PATH="$PATH:$HOME/.local/bin"
