@@ -104,18 +104,18 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
 
   _sync_config_dir_from_claude_vm() {
     log_info "Syncing Claude settings from Claude VM to local machine"
-    limactl cp -r "${CLAUDE_VM_NAME}:"'~/.claude/' "$HOME/.config/claude/"
+    limactl cp -r "${CLAUDE_VM_NAME}:"'~/.claude/' "$HOME/.config/claude/" &&
+      rm -rf "$HOME/.config/claude/{markdowns,rules,skills}"
   }
 
   _sync_config_dir_to_claude_vm_if_first_boot() {
-    if test -f "$HOME/.config/claude/.credentials.json"
-    then
-      log_info "Claude not set up on this machine before; nothing to sync to the VM."
-      return 0
-    fi
     _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f /ready_for_claude' && return 0
     log_info "Syncing saved Claude preferences to VM"
-    limactl cp -r "$HOME/.config/claude/" "${CLAUDE_VM_NAME}:"'~/.claude/'
+    tarball=$(mktemp "${TMPDIR:-/tmp}/claude-sync-XXXXX.tar.gz")
+    tar -czf "$tarball" -C "$HOME/.config/claude" . &&
+      limactl cp "$tarball" "${CLAUDE_VM_NAME}:/tmp/claude-data.tar.gz" &&
+      _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'tar -xf /tmp/claude-data.tar.gz -C ~/.claude' &&
+      rm -f "$tarball"
   }
 
   _set_up_gpg_keys() {
