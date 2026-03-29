@@ -188,17 +188,52 @@ services and other operations won't work!"
 
   }
 
+  _add_cc_token() {
+    local token
+    token="$(_claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f ~/.tokens/claude_code && \
+      cat ~/.tokens/claude_code')"
+    test -n "$token" && return 0
+
+    if test -z "$CLAUDE_1PASSWORD_NAME" || test -z "$CLAUDE_1PASSWORD_VAULT"
+    then
+      log_error "CLAUDE_1PASSWORD_NAME or CLAUDE_1PASSWORD_VAULT is not defined in the environment. \
+These are needed to retrieve your Claude Code OAuth token from 1Password.
+
+Define them in a dotfile somewhere and try again."
+      return 1
+    fi
+    log_info "Retrieving Claude Code API token from 1Password \
+[key: $CLAUDE_1PASSWORD_NAME, vault: $CLAUDE_1PASSWORD_VAULT]"
+    token="$(op_get_password_by_name "$CLAUDE_1PASSWORD_NAME" "$CLAUDE_1PASSWORD_VAULT")"
+    if test -z "$token" || test "${token,,}" == 'no password found'
+    then
+      log_error "Failed to get Claude token; see error messages above."
+      return 1
+    fi
+    _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c "echo '$token' > ~/.tokens/claude_code"
+  }
+
   _mark_claude_ready() {
     _claude_limactl_shell --tty "$CLAUDE_VM_NAME" sh -c 'sudo touch /ready_for_claude'
   }
 
+  _skip_cc_onboarding() {
+    _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f ~/.claude.json' && return 0
+
+    log_info "Skipping Claude Code onboarding"
+    _claude_limactl_shell "$CLAUDE_VM_NAME" \
+      sh -c 'echo "{\"hasCompletedOnboarding\": true}" > ~/.claude.json'
+  }
+
   local rc
-  _create_and_start_claude_vm &&
-    _sync_config_dir_to_claude_vm_if_first_boot &&
+    _create_and_start_claude_vm &&
+    _add_cc_token &&
+    _set_up_github_token &&
     _set_up_gpg_keys &&
     _set_up_ssh_config &&
     _add_ssh_keys &&
-    _set_up_github_token &&
+    _sync_config_dir_to_claude_vm_if_first_boot &&
+    _skip_cc_onboarding &&
     _mark_claude_ready &&
     _run_claude "$@" &&
     rc="$?" &&

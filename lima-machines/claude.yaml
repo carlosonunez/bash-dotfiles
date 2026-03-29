@@ -71,7 +71,8 @@ provision:
     cat >{{.Home}}/.bash_profile <<-EOF
     export PATH="$PATH:$HOME/.local/bin"
     export GPG_TTY=$(tty)
-    export GITHUB_TOKEN={{.Home}}/.tokens/github
+    export GITHUB_TOKEN="$(cat {{.Home}}/.tokens/github || echo 'none')"
+    export CLAUDE_CODE_OAUTH_TOKEN="$(cat {{.Home}}/.tokens/claude_code || echo 'none')"
     EOF
     gpg-connect-agent reloadagent /bye
 - mode: user
