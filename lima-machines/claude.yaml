@@ -68,9 +68,9 @@ provision:
   script: mkdir -p {{.Home}}/.tokens
 - mode: user
   script: |
+    cat >{{.Home}}/.bash_profile <<-EOF
     github_token() { cat {{.Home}}/.tokens/github; }
     cc_token() { cat {{.Home}}/.tokens/github; }
-    cat >{{.Home}}/.bash_profile <<-EOF
     export PATH="$PATH:$HOME/.local/bin"
     export GPG_TTY=$(tty)
     export GITHUB_TOKEN="$(_github_token)"
