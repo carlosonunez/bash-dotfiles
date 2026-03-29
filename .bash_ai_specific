@@ -125,12 +125,12 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
     if test -z "$CLAUDE_REGENERATE_GPG_KEYS"
     then _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f ~/.claude/.gpg_keys_done' && return 0
     fi
-    log_info "Importing GPG keys on this system into the Claude VM. You'll be asked to enter your
-passphrases multiple times."
-    keys="$CLAUDE_GPG_KEY_NAMES"
+    keys="$(tr ',' '\n' <<< "$CLAUDE_GPG_KEY_NAMES" | sed -E 's/,$//')"
     test -z "$keys" && keys=$(gpg --list-keys --with-colons |
       grep 'uid' |
       cut -f10 -d ':')
+    log_info "Importing GPG keys on this system into the Claude VM: $(tr '\n' ',' <<< "$keys") \
+(You'll be asked to enter your passphrases multiple times.)"
     for key in $keys
     do
       # Looks like I can't open /dev/tty if limactl shell is called from within a function.
