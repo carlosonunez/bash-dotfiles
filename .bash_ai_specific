@@ -105,6 +105,7 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
   _sync_config_dir_from_claude_vm() {
     log_info "Syncing Claude settings from Claude VM to local machine"
     limactl cp -r "${CLAUDE_VM_NAME}:"'~/.claude/' "$HOME/.config/claude/" &&
+      limactl cp -r "${CLAUDE_VM_NAME}:"'~/.claude.json' "$HOME/.config/claude/" &&
       rm -rf "$HOME/.config/claude/{markdowns,rules,skills}"
   }
 
@@ -112,9 +113,11 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
     _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f /ready_for_claude' && return 0
     log_info "Syncing saved Claude preferences to VM"
     tarball=$(mktemp "${TMPDIR:-/tmp}/claude-sync-XXXXX.tar.gz")
-    tar -czf "$tarball" -C "$HOME/.config/claude" . &&
+    tar --exclude './rules' --exclude './skills' --exclude './markdowns' \
+      -czf "$tarball" -C "$HOME/.config/claude" . &&
       limactl cp "$tarball" "${CLAUDE_VM_NAME}:/tmp/claude-data.tar.gz" &&
       _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'tar -xf /tmp/claude-data.tar.gz -C ~/.claude' &&
+      _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'mv ~/.claude/.claude.json ~/.claude.json' &&
       rm -f "$tarball"
   }
 
