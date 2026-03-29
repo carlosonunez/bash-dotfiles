@@ -825,73 +825,43 @@ terraform() {
     "$TERRAFORM_IMAGE" "$@"
 }
 
-_update() {
-  zip_file="$1"
-  vault="$2"
-  path="$3"
-  title="$4"
-  test -f "$zip_file" && rm "$zip_file"
-  {
-    if test -n "${OVERWRITE}"
-    then
-      log_warning "Overwriting [$zip_file] with [$path]"
-      zip "$zip_file" $path
-    else
-      op_cli document get "$title" --vault "$vault" --output "$zip_file" && zip -fjr "$zip_file" $path
-    fi;
-  } && op_cli document edit "$title" --vault "$vault" "$zip_file"
+update_all_secrets() {
+  update_secret_settings && update_ssh_and_aws_keys
 }
 
 update_secret_settings() {
-  _update \
-    "$HOME/Downloads/environment.zip" \
-    "$OP_DEFAULT_VAULT" \
-    "$HOME/.bash_secret_*" \
-    "Secret Environment Settings"
+  rm -r "$HOME/Downloads/environment.zip" >/dev/null
+  zip -jr "$HOME/Downloads/environment.zip" "$HOME/".bash_secret_* &&
+    op_cli document edit "Secret Environment Settings" --vault "Environment Passphrases" "$HOME/Downloads/environment.zip"
 }
 
 update_ssh_and_aws_keys() {
   vault="${SSH_GPG_KEY_VAULT:-$DEFAULT_SSH_GPG_KEY_VAULT}"
-  _update_ssh_keys() {
-    grep -ElR "BEGIN (RSA|OPENSSH)" "$HOME/.ssh" |
-      sort -u |
-      while read -r key_file
-      do
-        name="SSH Key: $(basename "$key_file" |
-          gsed 's/.*/\L&/; s/[a-z]*/\u&/g' |
-          tr -d '\n' |
-          tr -c '[:alnum:]' ' ')"
-        log_info "Uploading [$name] into vault [$vault]"
-        op_upload_file "$name" "$key_file" "ssh key" "$vault"
-      done
-  }
   _update_gpg_keys() {
-    log_info "Exporting GPG keys (you'll be asked to enter the passphrase for each one)"
-    gpg --list-keys |
-      grep -E 'uid.*ultimate' |
-      awk -F ']' '{print $NF}' |
-      gsed -E 's/.*<(.*)>.*/\1/; s/^ //' |
-      while read -r identity
+    rm -r "$HOME/.ssh/"{public,private}_keys
+    log_info "Updating GPG keys"
+    gpg --list-keys --with-colons | grep uid |
+      while read -r key
       do
-        title="GPG Key: $identity"
-        key_matter=$(gpg --export-secret-key --armor "$identity")
-        if test -z "$key_matter"
-        then
-          log_warning "Failed to get key matter for GPG identity [$identity]; moving on"
-          continue
-        fi
-        log_info "Uploading [$title] into vault [$vault]"
-        op_upload_file_from_string "$title" "$key_matter" "gpg key" "$vault"
+        name="$(cut -f10 -d : <<< "$key")"
+        status="$(cut -f2 -d : <<< "$key")"
+        test "$status" == 'e' &&
+          log_warning "[gpg] Key '$name' is expired! Renew it and run this command again if this isn't what you were expecting."
+        log_info "[gpg] Key '$name': exporting public key"
+        gpg --export --armor "$name" >> "$HOME/.ssh/public_keys" || return 1
+        log_info "[gpg] Key '$name': exporting private key (enter passphrase below if asked)"
+        gpg --export-secret-key --pinentry-mode loopback --armor "$name" >> "$HOME/.ssh/private_keys"
       done
   }
-
-  _update_ssh_keys && _update_gpg_keys
-}
-
-export_gpg_keys() {
-  gpg --export --armor > "$HOME/.ssh/public_keys"
-  gpg --export-secret-keys --armor >  "$HOME/.ssh/private_keys"
-  gpg --export-ownertrust > "$HOME/.ssh/ownertrust"
+  _get_ssh_keys() {
+    grep -ElR "BEGIN (RSA|OPENSSH)" "$HOME/.ssh"
+  }
+  rm -r "$HOME/Downloads/keys.zip" >/dev/null
+  _update_gpg_keys &&
+    zip -jr "$HOME/Downloads/keys.zip" \
+      "$HOME/.ssh/"{public,private}_keys \
+      $(_get_ssh_keys) &&
+      op_cli document edit "SSH and AWS Keys" --vault "Access Keys" "$HOME/Downloads/keys.zip"
 }
 
 remarkable_host() {
