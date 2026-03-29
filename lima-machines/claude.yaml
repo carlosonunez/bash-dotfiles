@@ -70,7 +70,7 @@ provision:
   script: |
     cat >{{.Home}}/.bash_profile <<-EOF
     github_token() { cat {{.Home}}/.tokens/github; }
-    cc_token() { cat {{.Home}}/.tokens/github; }
+    cc_token() { cat {{.Home}}/.tokens/claude_code; }
     export PATH="$PATH:$HOME/.local/bin"
     export GPG_TTY=\$(tty)
     export GITHUB_TOKEN="\$(github_token)"
