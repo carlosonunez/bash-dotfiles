@@ -68,11 +68,13 @@ provision:
   script: mkdir -p {{.Home}}/.tokens
 - mode: user
   script: |
+    github_token() { cat {{.Home}}/.tokens/github; }
+    cc_token() { cat {{.Home}}/.tokens/github; }
     cat >{{.Home}}/.bash_profile <<-EOF
     export PATH="$PATH:$HOME/.local/bin"
     export GPG_TTY=$(tty)
-    export GITHUB_TOKEN="$(cat {{.Home}}/.tokens/github || echo 'none')"
-    export CLAUDE_CODE_OAUTH_TOKEN="$(cat {{.Home}}/.tokens/claude_code || echo 'none')"
+    export GITHUB_TOKEN="$(_github_token)"
+    export CLAUDE_CODE_OAUTH_TOKEN="$(cc_token)"
     EOF
     gpg-connect-agent reloadagent /bye
 - mode: user
