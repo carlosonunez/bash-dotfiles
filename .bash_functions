@@ -36,7 +36,7 @@ _add_gpg_conf_if_missing() {
   test -f "$HOME/.gnupg/gpg-agent.conf" && return 0
 
   cat >"$HOME/.gnupg/gpg-agent.conf" <<-EOF
-default-cache-ttl 46000
+default-cache-ttl 86400
 pinentry-program $(which pinentry)
 allow-preset-passphrase
 EOF
