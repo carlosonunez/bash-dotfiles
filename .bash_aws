@@ -447,12 +447,18 @@ aws_op_with_profile() {
 }
 
 exec_no_aws_creds() {
-  AWS_ACCESS_KEY_ID='' AWS_SECRET_ACCESS_KEY='' AWS_REGION='' AWS_SESSION_TOKEN='' "$@"
+  AWS_ACCESS_KEY_ID='' AWS_SECRET_ACCESS_KEY='' AWS_REGION='' AWS_SESSION_TOKEN='' $(which aws) "$@"
+}
+
+exec_root_aws_creds() {
+  AWS_SESSION_TOKEN='' $(which aws) "$@"
 }
 
 # These are the login functions that login you into AWS via plugins.
 alias log_into_aws_with_op="_aws_login '1password'"
 alias aws='aws_op'
+alias awsb='exec_no_aws_creds'
+alias awsr='exec_root_aws_creds'
 
 alias awsp=aws_with_profile
 alias awsn=aws_next_profile
