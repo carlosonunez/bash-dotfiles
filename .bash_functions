@@ -880,6 +880,66 @@ remarkable_set_up_ssh() {
   ssh-keygen -yf "$HOME/.ssh/personal-machines" |
     ssh "root@$(remarkable_host)" 'cat - > ~/.ssh/authorized_keys'
 }
+remarkable_set_up_tools() {
+  _vellum() {
+    log_info "Setting up vellum"
+    script=$(cat <<-EOF
+test -f /home/root/.vellum/bin/vellum && exit 0
+wget --no-check-certificate \
+  -O /tmp/bootstrap.sh \
+  https://github.com/vellum-dev/vellum-cli/releases/latest/download/bootstrap.sh && \
+echo "4d649d0e4e380d0e77bf00f5dfd754047d696bb296c9424ca751b5e779ba0c26  /tmp/bootstrap.sh" | \
+  sha256sum -c && bash /tmp/bootstrap.sh;
+EOF
+  )
+    echo "$script" | ssh root@$(remarkable_host) sh -c 'cat - > /tmp/script.sh && chmod +x /tmp/script.sh' &&
+      ssh root@$(remarkable_host) /tmp/script.sh
+  }
+
+  _vellum_install() {
+    log_info "Installing Vellum package: $1"
+    ssh root@$(remarkable_host) bash --login -c "'vellum install $1'"
+  }
+
+  _xovi() {
+    _vellum_install xovi
+    test -n "$REMARKABLE_SKIP_XOVI_INIT" && return 0
+    log_info "Initializing Xovi..." &&
+      ssh root@$(remarkable_host) bash --login -c "'xovi/rebuild_hashtable'" &&
+      ssh root@$(remarkable_host) bash --login -c "'xovi/start'"
+  }
+
+  _xovi_tripletap() {
+    _vellum_install tripletap
+  }
+
+  _xovi_extensions() {
+    version=$(ssh root@$(remarkable_host) cat /etc/os-release |
+      grep IMG_VERSION |
+      sed -E 's/.*=//' |
+      tr -d '"' |
+      cut -f1-2 -d '.')
+    log_info "Installing Xovi extension for reMarkable OS $version..."
+    test -d /tmp/xovi-extensions && rm -rf /tmp/xovi-extensions
+    git clone https://github.com/FouzR/xovi-extensions /tmp/xovi-extensions &&
+      find "/tmp/xovi-extensions/$version/" -type f -name '*.qmd' |
+      while read -r f
+      do
+        log_info "---> $(basename "$f" | sed 's/.qmd//')"
+        scp "$f" "root@$(remarkable_host):/home/root/xovi/exthome/qt-resource-builder/$(basename "$f")"
+      done &&
+      ssh "root@$(remarkable_host)" systemctl restart xochitl &&
+      rm -rf /tmp/xovi-extensions
+  }
+
+  remarkable_ssh_is_configured || return 1
+  _vellum && _xovi && _xovi_extensions
+}
+
+remarkable_set_up_tools_local() {
+  REMARKABLE_IS_LOCAL=1 remarkable_set_up_tools
+}
+
 remarkable_ssh_is_configured() {
   &>/dev/null ssh -o NumberOfPasswordPrompts=0 "root@$(remarkable_host)" whoami && return 0
 
