@@ -63,6 +63,7 @@ leafgarland/typescript-vim
 markcornick/vim-bats
 martinda/Jenkinsfile-vim-syntax
 masukomi/vim-markdown-folding
+mzlogin/vim-markdown-toc
 othree/javascript-libraries-syntax.vim
 pangloss/vim-javascript
 plasticboy/vim-markdown
