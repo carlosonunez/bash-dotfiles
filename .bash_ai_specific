@@ -105,13 +105,18 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
   _sync_config_dir_from_claude_vm() {
     log_info "Syncing Claude settings from Claude VM to local machine"
     limactl cp -r "${CLAUDE_VM_NAME}:"'~/.claude/' "$HOME/.config/claude/" &&
-      limactl cp -r "${CLAUDE_VM_NAME}:"'~/.claude.json' "$HOME/.config/claude/" &&
+      limactl cp "${CLAUDE_VM_NAME}:"'~/.claude.json' "$HOME/.config/claude/" &&
       rm -rf "$HOME/.config/claude/{markdowns,rules,skills}"
   }
 
   _sync_config_dir_to_claude_vm_if_first_boot() {
     _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f /ready_for_claude' && return 0
     log_info "Syncing saved Claude preferences to VM"
+    if ! test -d "$HOME/.config/claude"
+    then
+      mkdir -p "$HOME/.config/claude"
+      return 0
+    fi
     tarball=$(mktemp "${TMPDIR:-/tmp}/claude-sync-XXXXX.tar.gz")
     tar --exclude './rules' --exclude './skills' --exclude './markdowns' \
       -czf "$tarball" -C "$HOME/.config/claude" . &&
@@ -193,6 +198,20 @@ services and other operations won't work!"
     token="$(_claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f ~/.tokens/claude_code && \
       cat ~/.tokens/claude_code')"
     test -n "$token" && return 0
+
+    if test -n "$CLAUDE_USE_VERTEX"
+    then
+      if ! test -f "$HOME/.config/gcloud/application_default_credentials.json"
+      then
+        log_error "Claude via GCP Vertex is enabled, but you are not logged in. Log in \
+with the 'gcloud' application and try again."
+        return 1
+      fi
+      _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c  "mkdir -p ~/.config/gcloud"
+      limactl cp -r "$HOME/.config/gcloud" "$CLAUDE_VM_NAME":'~/.config/'
+      return 0
+    fi
+
 
     if test -z "$CLAUDE_1PASSWORD_NAME" || test -z "$CLAUDE_1PASSWORD_VAULT"
     then

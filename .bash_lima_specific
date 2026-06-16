@@ -12,6 +12,18 @@ _lima_fetched_template() {
   echo "$f"
 }
 
+_lima_dns_servers() {
+  local servers
+  servers="${LIMA_DNS_SERVERS}"
+  test -z "$servers" && servers="94.140.14.14,94.140.15.15,1.1.1.1"
+  printf "[%s]" "$(echo "$servers" |
+    tr '\n' ',' |
+    tr ',' '\n' |
+    sed -E 's/^(.*)$/"\1"/g' |
+    tr '\n' ',' |
+    sed 's/,$//')"
+}
+
 _lima_template_file() {
   while read -r p
   do
@@ -49,7 +61,7 @@ _lima_vm_started() {
 }
 
 lima_render_template() {
-  local template_file vm_name template_vars resolved_template_file
+  local template_file vm_name template_vars resolved_template_file template
   template_file="$1"
   vm_name="$2"
   template_vars="$3"
@@ -62,7 +74,7 @@ lima_render_template() {
     log_error "Couldn't find Lima template: $template_file"
     return 1
   fi
-  sed "s;%TEMPDIR%;${TMPDIR:-/tmp};g" "$resolved_template_file" |
+  template=$(sed "s;%TEMPDIR%;${TMPDIR:-/tmp};g" "$resolved_template_file" |
     sed "s;%MACHINE_NAME%;$LIMA_MACHINE_NAME_DOCKER;g" |
     if test -z "$template_vars"
     then cat
@@ -74,6 +86,10 @@ lima_render_template() {
         sed "s;$k;$v;g"
       done
     fi
+  )
+  echo "$template" |
+    yq -r '.hostResolver.enabled = false' |
+    yq -r '.dns += '"$(_lima_dns_servers)"
 }
 
 lima_create_vm() {
