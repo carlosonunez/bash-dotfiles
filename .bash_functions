@@ -1031,6 +1031,125 @@ rectangle_regular_shortcuts() {
   _load_rectangle_config
 }
 
+backup_imessage() {
+  _usage() {
+    cat <<-EOF
+backup_imessage [START_DATE]
+Backs up iMessages from a given start date.
+
+NOTES
+
+- iMessage backups will be saved into '$HOME/Downloads/imessage-backup/$START_DATE'.
+- iMessage media are broken up into four categories:
+
+  - Text messages ('./text')
+  - Pictures ('./pictures')
+  - Video ('./movies')
+  - Other attachments ('./other)
+EOF
+  }
+
+  _backup_folder() {
+    test -f /tmp/.imessage_backup_folder && cat /tmp/.imessage_backup_folder
+  }
+
+  _backup_folder_name_from_start_date() {
+    echo "$HOME/Downloads/imessage-backup/$1"
+  }
+
+  _start_date_from_backup_folder() {
+    awk -F '/' '{print $NF}' <<< "$(_backup_folder)"
+  }
+
+  _create_backup_folder() {
+    $(_backup_folder_name_from_start_date "$1") > /tmp/.imessage_backup_folder
+    mkdir -p "$(_backup_folder)"/{pictures,texts,movies,other}
+  }
+
+  _take_imessage_backup() {
+    log_info "---> Performing iMessage backup (folder: $(_backup_folder))"
+    $(which imessage-exporter) -f txt -c full -o "$(_backup_folder)" -s "$(_start_date_from_backup_folder)"
+  }
+
+  _clean() {
+    rm -rf /tmp/.imessage*
+  }
+
+  _move_text() {
+    log_info "---> Moving text"
+    find "$(_backup_folder)" -mindepth 1 \
+      -type f \
+      -name '*.txt' \
+      -exec mv -v {} "$(_backup_folder)/texts/" \;
+  }
+
+  _move_photos() {
+    log_info "---> Moving photos/pictures"
+    find "$(_backup_folder)/attachments" -mindepth 1 \
+      -type f \
+      \( -name '*.jpeg' -o -name '*.jpg' -o -name '*.png' \) \
+      -exec mv -v {} "$(_backup_folder)/pictures/" \;
+  }
+
+  _move_movies() {
+    log_info "---> Moving videos/movies"
+    find "$(_backup_folder)/attachments" -mindepth 1 \
+      -type f \
+      \( -name '*.mp4' \) \
+      -exec mv -v {} "$(_backup_folder)/movies/" \;
+  }
+
+  _move_other() {
+    log_info "---> Moving everything else"
+    find "$(_backup_folder)/attachments" -mindepth 1 \
+      -type f \
+      \( -not -name '*.txt' \) \
+      -exec mv -v {} "$(_backup_folder)/other/" \;
+  }
+
+  _imessage_exporter_installed() {
+     &>/dev/null which imessage-exporter
+   }
+
+  _backup_folder_exists() {
+    test -d "$(_backup_folder_name_from_start_date "$1")"
+  }
+
+  local start_date
+  if ! _imessage_exporter_installed
+  then
+    log_error "imessage-exporter is not installed; run 'install_package imessage-exporter' to install it."
+    return 1
+  fi
+  start_date="$1"
+  if test -z "$start_date"
+  then
+    _usage
+    log_error "Please provide a start date."
+    return 1
+  fi
+  start_date_fmtd=$(date -d "$start_date" +%Y-%m-%d 2>/dev/null)
+  if test -z "$start_date_fmtd"
+  then
+    log_error "Invalid start date: $start_date"
+    return 1
+  fi
+  if _backup_folder_exists "$start_date_fmtd"
+  then
+    log_error "Backup already exists for date '$start_date'. Delete '$(_backup_folder_name_from_start_date "$start_date_fmtd")' and try again."
+    return 1
+  fi
+  _clean || true
+  _create_backup_folder "$start_date_fmtd" &&
+    _take_imessage_backup &&
+    _move_text &&
+    _move_photos &&
+    _move_movies &&
+    _move_other &&
+    log_info "Backup complete."
+  _clean || true
+}
+
 if onepassword_ssh_agent_configuration_exists
 then
   killall ssh-agent;
