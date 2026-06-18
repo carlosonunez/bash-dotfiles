@@ -52,6 +52,7 @@ git
 git-filter-repo
 gitleaks
 google-drive
+googleworkspace-cli
 gnu-getopt
 gnu-indent
 gnu-sed
