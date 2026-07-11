@@ -1035,7 +1035,7 @@ backup_imessage() {
   _usage() {
     cat <<-EOF
 backup_imessage [START_DATE]
-Backs up iMessages from a given start date.
+Backs up iMessages from a given start date up to today.
 
 NOTES
 
@@ -1049,12 +1049,23 @@ NOTES
 EOF
   }
 
+  _format_date() {
+    if test -n "$1"
+    then date -d "$1" +%Y-%m-%d 2>/dev/null
+    else date +%Y-%m-%d 2>/dev/null
+    fi
+  }
+
+  _today() {
+    _format_date
+  }
+
   _backup_folder() {
     test -f /tmp/.imessage_backup_folder && cat /tmp/.imessage_backup_folder
   }
 
   _backup_folder_name_from_start_date() {
-    echo "$HOME/Downloads/imessage-backup/$1"
+    echo "$HOME/Downloads/imessage-backup/$1_$(_today)"
   }
 
   _start_date_from_backup_folder() {
@@ -1062,8 +1073,8 @@ EOF
   }
 
   _create_backup_folder() {
-    $(_backup_folder_name_from_start_date "$1") > /tmp/.imessage_backup_folder
-    mkdir -p "$(_backup_folder)"/{pictures,texts,movies,other}
+    "$(_backup_folder_name_from_start_date "$1")" > /tmp/.imessage_backup_folder
+    mkdir -p "$(_backup_folder_name_from_start_date "$1")"/{pictures,texts,movies,other}
   }
 
   _take_imessage_backup() {
@@ -1128,7 +1139,7 @@ EOF
     log_error "Please provide a start date."
     return 1
   fi
-  start_date_fmtd=$(date -d "$start_date" +%Y-%m-%d 2>/dev/null)
+  start_date_fmtd=$(_format_date "$1")
   if test -z "$start_date_fmtd"
   then
     log_error "Invalid start date: $start_date"
