@@ -41,7 +41,6 @@ docker-completion
 docker-compose
 ffmpeg
 findutils
-firefox
 font-dejavu-sans-mono-nerd-font
 fontconfig
 fzf
@@ -76,6 +75,7 @@ marksman
 mas
 obs
 openssl@3
+orion
 pinentry
 podman
 podman-compose
