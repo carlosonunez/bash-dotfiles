@@ -1,4 +1,18 @@
+#!/usr/bin/env bash
 # vi: set ft=sh:
+export FROM_BASH_INSTALL=true
+source "$HOME/.bash_onepassword_specific"
+
+GITCONFIG_PATH="${GITCONFIG_PATH:-$HOME/src/setup/.gitconfig}"
+POINTER_SIZE_URL=https://raw.githubusercontent.com/carlosonunez/macos-pointer-size/main/toggler.sh
+ONEPASSWORD_VAULT="${ONEPASSWORD_VAULT:-"Carlos's Personal Vault"}"
+INSTALL_LOCK_FILE="$HOME/.bash_install_lock"
+COMPLETE_ALIAS_URL=https://raw.githubusercontent.com/cykerway/complete-alias/master/complete_alias
+# Update our OBS settings.
+OBS_PREFS_OP_KEY="OBS Settings"
+OBS_PREFS_SENTINEL_FILE="$HOME/.config/setup/obs_has_been_setup"
+DISABLE_OBS_PREFS_CHECK="${DISABLE_OBS_PREFS_CHECK:-false}" # Should we disable updating /etc/hosts?
+FORCE_OBS_PREFS_UPDATE="${FORCE_OBS_PREFS_UPDATE:-false}" # Should we update our /etc/hosts anyway?
 OBS_PREFS_TIMESTAMP_FILE="$HOME/.config/obs-prefs-updater/timestamp"
 MAX_OBS_PREFS_STALENESS_DAYS=5 # How current should /etc/hosts be?
 # Update our local /etc/hosts file to disable tracking, telemetry, and ads.
@@ -92,7 +106,6 @@ stern
 tailscale
 terraform-ls
 tesseract
-tflint
 the_silver_searcher
 tmux
 todo-txt
@@ -612,7 +625,7 @@ asdf_install_plugins() {
 
 asdf_run_first_time_install() {
   test -f "$HOME/.asdf_provisioned" && return 0
-  install_asdf_plugins && touch "$HOME/.asdf_provisioned"
+  asdf_install_plugins && touch "$HOME/.asdf_provisioned"
 }
 
 docker_run_first_time_install() {
