@@ -655,6 +655,13 @@ set_keyboard_repeat_rate() {
   touch "$HOME/.config/setup/keyboard_setup"
 }
 
+macos_turn_off_spellcheck() {
+  test "$(get_os_type)" != Darwin && return 0
+  test "$(defaults read -g NSAllowContinuousSpellCheckin)" -eq 0 && return 0
+
+  log_info "MacOS: Turning off spell check"
+  defaults write -g NSAllowContinuousSpellChecking -bool false
+}
 
 remove_dead_install_locks
 if installation_is_locked
@@ -707,5 +714,6 @@ update_bash
 mark_first_time_setup_as_complete_if_needed
 asdf_run_first_time_install
 docker_run_first_time_install
+macos_turn_off_spellcheck
 
 test -f "$(bash_completion_location)" && source "$(bash_completion_location)"
