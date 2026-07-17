@@ -13,5 +13,11 @@
 	</dict>
 	<key>ignoreRemoteClipboardFileLists</key>
 	<false/>
+	<key>persistFor</key>
+	<integer>2</integer>
+	<key>persistForImages</key>
+	<integer>2</integer>
+	<key>viewerKeyword</key>
+	<string>clip</string>
 </dict>
 </plist>
