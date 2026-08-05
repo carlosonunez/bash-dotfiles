@@ -191,7 +191,7 @@ exit 1</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>&amp;&gt;/dev/null nslookup dns; echo "$?" | tr -d '\n'</string>
+				<string>&amp;&gt;/dev/null nslookup {var:host}.caranna.haus; echo "$?" | tr -d '\n'</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -218,7 +218,7 @@ exit 1</string>
 				<key>spaces</key>
 				<string></string>
 				<key>url</key>
-				<string>vnc://{var:host}</string>
+				<string>vnc://{var:host}.caranna.haus</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.action.openurl</string>
