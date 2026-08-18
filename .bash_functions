@@ -1069,11 +1069,11 @@ EOF
   }
 
   _start_date_from_backup_folder() {
-    awk -F '/' '{print $NF}' <<< "$(_backup_folder)"
+    awk -F '/' '{print $NF}' <<< "$(_backup_folder)" | cut -f1 -d '_'
   }
 
   _create_backup_folder() {
-    "$(_backup_folder_name_from_start_date "$1")" > /tmp/.imessage_backup_folder
+    echo "$(_backup_folder_name_from_start_date "$1")" > /tmp/.imessage_backup_folder
     mkdir -p "$(_backup_folder_name_from_start_date "$1")"/{pictures,texts,movies,other}
   }
 
