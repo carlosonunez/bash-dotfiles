@@ -55,6 +55,7 @@ docker-completion
 docker-compose
 ffmpeg
 findutils
+firefox
 font-dejavu-sans-mono-nerd-font
 fontconfig
 fzf
@@ -123,6 +124,11 @@ zstd
 APPS
 )
 FERMATA_URL="https://github.com/iccir/Fermata/releases/download/Fermata-136/Fermata-136.zip"
+FIREFOXEN=$(cat <<-EOF
+work;Work Firefox
+personal;Personal Firefox
+EOF
+)
 
 _wait_for_file_to_be_manually_downloaded_from_op() {
   local key="$1"
@@ -662,6 +668,49 @@ macos_turn_off_spellcheck() {
   defaults write -g NSAllowContinuousSpellChecking -bool false
 }
 
+_set_up_firefox_darwin() {
+  _create_firefoxen() {
+    while read -r fx_kvp
+    do
+      fx="$(cut -f1 -d ';' <<< "$fx_kvp")"
+      fx_fp="/Applications/Firefoxen/ff-${fx}.app"
+      test -d "${fx_fp}/Contents/MacOS/firefox" && continue
+      log_info "Creating Firefox instance '$fx'"
+      test -d "$fx_fp" && rm -rf "$fx_fp"
+      mkdir -p "$fx_fp"
+      cp -r /Applications/Firefox.app/* "$fx_fp/"
+    done <<< "$FIREFOXEN"
+  }
+
+  _symlink_firefox_instances() {
+    while read -r fx_kvp
+    do
+      fx="$(cut -f1 -d ';' <<< "$fx_kvp")"
+      fx_name=$(cut -f2 -d ';' <<< "$fx_kvp")
+      fx_src="$HOME/src/setup/firefox/instances/darwin/${fx_name}.app"
+      fx_link="/Applications/${fx_name}.app"
+      test -e "$fx_link/Contents/MacOS/Automator Application Stub" && continue
+      test -d "$fx_link" && rm -rf "$fx_link"
+      log_info "Linking '$fx_link' to '$fx_src'"
+      ln -s "$fx_src" "$fx_link"
+    done <<< "$FIREFOXEN"
+  }
+
+  _create_firefoxen && _symlink_firefox_instances
+}
+
+set_up_firefox() {
+  fn="_set_up_firefox_$(uname | downcase)"
+  done_file="$HOME/.config/setup/.firefox_configured_$(uname | downcase)"
+  test -f "$done_file" && return 0
+  if ! grep -Eq "^$fn" "$HOME/.bash_install"
+  then
+    log_error "A Firefox setup routine hasn't been created for '$(uname)'"
+    return 0
+  fi
+  "$fn" && touch "$done_file"
+}
+
 remove_dead_install_locks
 if installation_is_locked
 then
@@ -714,5 +763,6 @@ mark_first_time_setup_as_complete_if_needed
 asdf_run_first_time_install
 docker_run_first_time_install
 macos_turn_off_spellcheck
+set_up_firefox
 
 test -f "$(bash_completion_location)" && source "$(bash_completion_location)"
