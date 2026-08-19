@@ -878,7 +878,7 @@ remarkable_set_up_ssh() {
 
   log_info "Setting up reMarkbale for SSH. Type in password from About screen when prompted"
   ssh-keygen -yf "$HOME/.ssh/personal-machines" |
-    ssh "root@$(remarkable_host)" 'cat - > ~/.ssh/authorized_keys'
+    ssh "root@$(remarkable_host)" 'mkdir -p ~/.ssh; cat - > ~/.ssh/authorized_keys'
 }
 remarkable_set_up_tools() {
   _vellum() {
