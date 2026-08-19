@@ -888,7 +888,7 @@ test -f /home/root/.vellum/bin/vellum && exit 0
 wget --no-check-certificate \
   -O /tmp/bootstrap.sh \
   https://github.com/vellum-dev/vellum-cli/releases/latest/download/bootstrap.sh && \
-echo "4d649d0e4e380d0e77bf00f5dfd754047d696bb296c9424ca751b5e779ba0c26  /tmp/bootstrap.sh" | \
+echo "7b0deebc81b28a7d74d95c85e99a4a0a0f6ecaa5b9edb6b858ac61405978ebb9 /tmp/bootstrap.sh" | \
   sha256sum -c && bash /tmp/bootstrap.sh;
 EOF
   )
