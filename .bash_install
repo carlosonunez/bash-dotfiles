@@ -51,6 +51,7 @@ curl
 detect-secrets
 direnv
 docker
+docker-buildx
 docker-completion
 docker-compose
 ffmpeg
