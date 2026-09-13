@@ -1161,6 +1161,10 @@ EOF
   _clean || true
 }
 
+mkcd() {
+  mkdir -p "$1" && cd "$1"
+}
+
 if onepassword_ssh_agent_configuration_exists
 then
   killall ssh-agent;
