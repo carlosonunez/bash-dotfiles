@@ -145,6 +145,19 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
     _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'rm /tmp/gpg_key && touch ~/.claude/.gpg_keys_done'
   }
 
+  _unlock_gpg_keys() {
+    log_info "Unlocking GPG keys..."
+    _claude_limactl_shell \
+      "$CLAUDE_VM_NAME" \
+      sh -c 'gpg --list-keys --with-colons | grep fpr  | rev | cut -f2 -d : | rev | xargs -I {} gpg -u {} --sign --armor -o /dev/null'
+  }
+
+  _set_up_gpg_agent() {
+    _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f ~/.gnupg/gpg-agent.conf' && return 0
+
+    cat "$HOME/.gnupg/gpg-agent.conf" | _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c "mkdir -p ~/.gnupg; cat - > ~/.gnupg/gpg-agent.conf"
+  }
+
   _set_up_ssh_config() {
     log_info "Setting up SSH config in Claude VM"
     if ! config=$(_generate_ssh_config_for_vm)
@@ -244,14 +257,25 @@ Define them in a dotfile somewhere and try again."
       sh -c 'echo "{\"hasCompletedOnboarding\": true}" > ~/.claude.json'
   }
 
+  _add_ready_sessionstart_hook_if_not_found() {
+    _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c '2>/dev/null grep -q "I am starting up" ~/.claude/settings.json' && return 0
+
+    log_info "Adding start-up SessionStart hook"
+    _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c \
+      'jq -r '"'"'. + {"hooks":{"SessionStart":[{"hooks":[{"type":"command","command":"echo I am starting up"}]}]}}'"'"' ~/.claude/settings.json > /tmp/claude.json && mv /tmp/claude.json ~/.claude/settings.json'
+  }
+
   local rc
     _create_and_start_claude_vm &&
     _add_cc_token &&
     _set_up_github_token &&
+    _set_up_gpg_agent &&
     _set_up_gpg_keys &&
+    _unlock_gpg_keys &&
     _set_up_ssh_config &&
     _add_ssh_keys &&
     _sync_config_dir_to_claude_vm_if_first_boot &&
+    _add_ready_sessionstart_hook_if_not_found &&
     _skip_cc_onboarding &&
     _mark_claude_ready &&
     _run_claude "$@" &&
