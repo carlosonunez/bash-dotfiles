@@ -55,7 +55,23 @@ be called `feat/new-auth-mechanism`.
 
 # Commit message etiquette
 
-- EVERY SINGLE COMMIT must ALWAYS be authored by Claude.
+- Use these headers when authoring commits:
+
+  ```gitcommit
+  Author: Carlos Nunez <$EMAIL_ADDRESS>
+  Signed-off-by: Carlos Nunez <$EMAIL_ADDRESS>
+  Co-authored-by: Claude
+  ```
+
+  Replace `$EMAIL_ADDRESS` with whichever of these comes first:
+
+  - The `user.email` property in `$PWD/.gitconfig`
+  - The `user.email` property in `~/.gitconfig`
+  - The `$GIT_AUTHOR_EMAIL` environment variable
+  - The `$DEFAULT_GIT_AUTHOR_EMAIL` environment variable
+  - `13461447+carlosonunez@users.noreply.github.com`
+
+  **DO NOT CONTINUE IF YOU CANNOT FIND A VALID EMAIL ADDRESS TO USE.**
 
 - The first line of ALL commits should start with one of the categories in the
   "Work Categories" section followed by a short description separated by a
@@ -70,13 +86,3 @@ be called `feat/new-auth-mechanism`.
   ```
   Co-authored-by: Carlos Nunez <$EMAIL_ADDRESS>
   ```
-
-  Replace `$EMAIL_ADDRESS` with whichever of these comes first:
-
-  - The `user.email` property in `$PWD/.gitconfig`
-  - The `user.email` property in `~/.gitconfig`
-  - The `$GIT_EMAIL_ADDRESS` environment variable
-  - The `$DEFAULT_GIT_EMAIL_ADDRESS` environment variable
-  - `13461447+carlosonunez@users.noreply.github.com`
-
-  **DO NOT CONTINUE IF YOU CANNOT FIND A VALID EMAIL ADDRESS TO USE.**
