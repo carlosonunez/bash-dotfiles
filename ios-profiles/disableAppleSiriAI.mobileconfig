@@ -21,9 +21,9 @@
         <key>ForceReduceSensitiveContent</key>
         <true />
         <key>PayloadIdentifier</key>
-        <string>settings.8136C9D2-FFF3-49BF-8E1B-037CDAAD1216</string>
+        <string>com.apple.configuration.siri.settings.8136C9D2-FFF3-49BF-8E1B-037CDAAD1216</string>
         <key>PayloadType</key>
-        <string>settings</string>
+        <string>com.apple.configuration.siri.settings</string>
         <key>PayloadUUID</key>
         <string>8136C9D2-FFF3-49BF-8E1B-037CDAAD1216</string>
         <key>PayloadVersion</key>
@@ -34,6 +34,8 @@
         <string>com.apple.configuration.siri.settings</string>
       </dict>
       <dict>
+        <key>PayloadDisplayName</key>
+        <string>Intelligence Settings</string>
         <key>Identifier</key>
         <string>A1B2C3D4-E5F6-4A5B-9C8D-7E6F5A4B3C2D</string>
         <key>AllowAppleIntelligenceReport</key>
@@ -77,9 +79,10 @@
         <key>ForceOnDeviceOnlyTranslation</key>
         <true />
         <key>PayloadIdentifier</key>
-        <string>settings.BCFAB438-3974-4742-848E-1F82C0E6F95D</string>
+        <string>
+        com.apple.configuration.intelligence.settings.BCFAB438-3974-4742-848E-1F82C0E6F95D</string>
         <key>PayloadType</key>
-        <string>settings</string>
+        <string>com.apple.configuration.intelligence.settings</string>
         <key>PayloadUUID</key>
         <string>BCFAB438-3974-4742-848E-1F82C0E6F95D</string>
         <key>PayloadVersion</key>
