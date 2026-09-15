@@ -30,6 +30,11 @@ gcp_ps1_hook_enabled() {
 
 gcp_ps1_hook() {
   config_dir="$HOME/.config/gcloud"
+  if ! test -f "${config_dir}/active_config"
+  then
+    printf ""
+    return 0
+  fi
   active_config=$(cat "${config_dir}/active_config")
   active_project="$(grep -hr 'project =' "${config_dir}/configurations/config_${active_config}" | sed -E 's/^project =//' | tr -d ' ')"
   test -z "$active_project" && active_project="None"
