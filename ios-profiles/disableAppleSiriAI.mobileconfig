@@ -1,151 +1,146 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+   "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>PayloadContent</key>
-	<array>
-		<dict>
-			<key>Identifier</key>
-			<string>A1B2C3D4-E5F6-4A5B-9C8D-7E6F5A4B3C2D</string>
-			<key>Payload</key>
-			<dict>
-				<key>AllowSiriAI</key>
-				<false/>
-				<key>AllowUserGeneratedContent</key>
-				<false/>
-				<key>AllowWhileLocked</key>
-				<true/>
-				<key>Enabled</key>
-				<true/>
-				<key>ForceProfanityFilter</key>
-				<true/>
-				<key>ForceReduceSensitiveContent</key>
-				<true/>
-			</dict>
-			<key>PayloadIdentifier</key>
-			<string>settings.8136C9D2-FFF3-49BF-8E1B-037CDAAD1216</string>
-			<key>PayloadType</key>
-			<string>settings</string>
-			<key>PayloadUUID</key>
-			<string>8136C9D2-FFF3-49BF-8E1B-037CDAAD1216</string>
-			<key>PayloadVersion</key>
-			<integer>1</integer>
-			<key>ServerToken</key>
-			<string>F1E2D3C4-B5A6-4D5E-8F9A-0B1C2D3E4F5A</string>
-			<key>Type</key>
-			<string>com.apple.configuration.siri.settings</string>
-		</dict>
-		<dict>
-			<key>Identifier</key>
-			<string>A1B2C3D4-E5F6-4A5B-9C8D-7E6F5A4B3C2D</string>
-			<key>Payload</key>
-			<dict>
-				<key>AllowAppleIntelligenceReport</key>
-				<false/>
-				<key>AllowGenmoji</key>
-				<false/>
-				<key>AllowImagePlayground</key>
-				<false/>
-				<key>AllowImageWand</key>
-				<false/>
-				<key>AllowPersonalizedHandwritingResults</key>
-				<false/>
-				<key>AllowVisualIntelligenceSummary</key>
-				<false/>
-				<key>AllowWritingTools</key>
-				<false/>
-				<key>Apps</key>
-				<dict>
-					<key>Mail</key>
-					<dict>
-						<key>AllowSmartReplies</key>
-						<false/>
-						<key>AllowSummary</key>
-						<false/>
-					</dict>
-					<key>Notes</key>
-					<dict>
-						<key>AllowTranscription</key>
-						<false/>
-						<key>AllowTranscriptionSummary</key>
-						<false/>
-					</dict>
-					<key>Safari</key>
-					<dict>
-						<key>AllowSummary</key>
-						<false/>
-					</dict>
-				</dict>
-				<key>ForceOnDeviceOnlyDictation</key>
-				<true/>
-				<key>ForceOnDeviceOnlyTranslation</key>
-				<true/>
-			</dict>
-			<key>PayloadIdentifier</key>
-			<string>settings.BCFAB438-3974-4742-848E-1F82C0E6F95D</string>
-			<key>PayloadType</key>
-			<string>settings</string>
-			<key>PayloadUUID</key>
-			<string>BCFAB438-3974-4742-848E-1F82C0E6F95D</string>
-			<key>PayloadVersion</key>
-			<integer>1</integer>
-			<key>ServerToken</key>
-			<string>F1E2D3C4-B5A6-4D5E-8F9A-0B1C2D3E4F5A</string>
-			<key>Type</key>
-			<string>com.apple.configuration.intelligence.settings</string>
-		</dict>
-		<dict>
-			<key>PayloadDisplayName</key>
-			<string>Restrictions</string>
-			<key>PayloadIdentifier</key>
-			<string>com.apple.applicationaccess.A95ED378-F106-4413-A291-6A5E580C03AF</string>
-			<key>PayloadType</key>
-			<string>com.apple.applicationaccess</string>
-			<key>PayloadUUID</key>
-			<string>A95ED378-F106-4413-A291-6A5E580C03AF</string>
-			<key>PayloadVersion</key>
-			<integer>1</integer>
-			<key>allowAppleIntelligenceReport</key>
-			<false/>
-			<key>allowExternalIntelligenceIntegrations</key>
-			<false/>
-			<key>allowExternalIntelligenceIntegrationsSignIn</key>
-			<false/>
-			<key>allowGenmoji</key>
-			<false/>
-			<key>allowImagePlayground</key>
-			<false/>
-			<key>allowImageWand</key>
-			<false/>
-			<key>allowMailSmartReplies</key>
-			<false/>
-			<key>allowMailSummary</key>
-			<false/>
-			<key>allowNotesTranscription</key>
-			<false/>
-			<key>allowNotesTranscriptionSummary</key>
-			<false/>
-			<key>allowPersonalizedHandwritingResults</key>
-			<false/>
-			<key>allowSafariSummary</key>
-			<false/>
-			<key>allowSiriAI</key>
-			<false/>
-			<key>allowVisualIntelligenceSummary</key>
-			<false/>
-			<key>allowWritingTools</key>
-			<false/>
-		</dict>
-	</array>
-	<key>PayloadDisplayName</key>
-	<string>Disable Apple Intelligence Features</string>
-	<key>PayloadIdentifier</key>
-	<string>me.carlosnunez.configs.disableaifeatures</string>
-	<key>PayloadType</key>
-	<string>Configuration</string>
-	<key>PayloadUUID</key>
-	<string>6D2DC021-6FAD-4D99-B239-F192AB3DD71B</string>
-	<key>PayloadVersion</key>
-	<integer>1</integer>
-</dict>
+  <dict>
+    <key>PayloadContent</key>
+    <array>
+      <dict>
+        <key>Identifier</key>
+        <string>A1B2C3D4-E5F6-4A5B-9C8D-7E6F5A4B3C2D</string>
+        <key>AllowSiriAI</key>
+        <false />
+        <key>AllowUserGeneratedContent</key>
+        <false />
+        <key>AllowWhileLocked</key>
+        <true />
+        <key>Enabled</key>
+        <true />
+        <key>ForceProfanityFilter</key>
+        <true />
+        <key>ForceReduceSensitiveContent</key>
+        <true />
+        <key>PayloadIdentifier</key>
+        <string>settings.8136C9D2-FFF3-49BF-8E1B-037CDAAD1216</string>
+        <key>PayloadType</key>
+        <string>settings</string>
+        <key>PayloadUUID</key>
+        <string>8136C9D2-FFF3-49BF-8E1B-037CDAAD1216</string>
+        <key>PayloadVersion</key>
+        <integer>1</integer>
+        <key>ServerToken</key>
+        <string>F1E2D3C4-B5A6-4D5E-8F9A-0B1C2D3E4F5A</string>
+        <key>Type</key>
+        <string>com.apple.configuration.siri.settings</string>
+      </dict>
+      <dict>
+        <key>Identifier</key>
+        <string>A1B2C3D4-E5F6-4A5B-9C8D-7E6F5A4B3C2D</string>
+        <key>AllowAppleIntelligenceReport</key>
+        <false />
+        <key>AllowGenmoji</key>
+        <false />
+        <key>AllowImagePlayground</key>
+        <false />
+        <key>AllowImageWand</key>
+        <false />
+        <key>AllowPersonalizedHandwritingResults</key>
+        <false />
+        <key>AllowVisualIntelligenceSummary</key>
+        <false />
+        <key>AllowWritingTools</key>
+        <false />
+        <key>Apps</key>
+        <dict>
+          <key>Mail</key>
+          <dict>
+            <key>AllowSmartReplies</key>
+            <false />
+            <key>AllowSummary</key>
+            <false />
+          </dict>
+          <key>Notes</key>
+          <dict>
+            <key>AllowTranscription</key>
+            <false />
+            <key>AllowTranscriptionSummary</key>
+            <false />
+          </dict>
+          <key>Safari</key>
+          <dict>
+            <key>AllowSummary</key>
+            <false />
+          </dict>
+        </dict>
+        <key>ForceOnDeviceOnlyDictation</key>
+        <true />
+        <key>ForceOnDeviceOnlyTranslation</key>
+        <true />
+        <key>PayloadIdentifier</key>
+        <string>settings.BCFAB438-3974-4742-848E-1F82C0E6F95D</string>
+        <key>PayloadType</key>
+        <string>settings</string>
+        <key>PayloadUUID</key>
+        <string>BCFAB438-3974-4742-848E-1F82C0E6F95D</string>
+        <key>PayloadVersion</key>
+        <integer>1</integer>
+        <key>ServerToken</key>
+        <string>F1E2D3C4-B5A6-4D5E-8F9A-0B1C2D3E4F5A</string>
+        <key>Type</key>
+        <string>com.apple.configuration.intelligence.settings</string>
+      </dict>
+      <dict>
+        <key>PayloadDisplayName</key>
+        <string>Restrictions</string>
+        <key>PayloadIdentifier</key>
+        <string>com.apple.applicationaccess.A95ED378-F106-4413-A291-6A5E580C03AF</string>
+        <key>PayloadType</key>
+        <string>com.apple.applicationaccess</string>
+        <key>PayloadUUID</key>
+        <string>A95ED378-F106-4413-A291-6A5E580C03AF</string>
+        <key>PayloadVersion</key>
+        <integer>1</integer>
+        <key>allowAppleIntelligenceReport</key>
+        <false />
+        <key>allowExternalIntelligenceIntegrations</key>
+        <false />
+        <key>allowExternalIntelligenceIntegrationsSignIn</key>
+        <false />
+        <key>allowGenmoji</key>
+        <false />
+        <key>allowImagePlayground</key>
+        <false />
+        <key>allowImageWand</key>
+        <false />
+        <key>allowMailSmartReplies</key>
+        <false />
+        <key>allowMailSummary</key>
+        <false />
+        <key>allowNotesTranscription</key>
+        <false />
+        <key>allowNotesTranscriptionSummary</key>
+        <false />
+        <key>allowPersonalizedHandwritingResults</key>
+        <false />
+        <key>allowSafariSummary</key>
+        <false />
+        <key>allowSiriAI</key>
+        <false />
+        <key>allowVisualIntelligenceSummary</key>
+        <false />
+        <key>allowWritingTools</key>
+        <false />
+      </dict>
+    </array>
+    <key>PayloadDisplayName</key>
+    <string>Disable Apple Intelligence Features</string>
+    <key>PayloadIdentifier</key>
+    <string>me.carlosnunez.configs.disableaifeatures</string>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadUUID</key>
+    <string>6D2DC021-6FAD-4D99-B239-F192AB3DD71B</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+  </dict>
 </plist>
