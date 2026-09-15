@@ -8,9 +8,20 @@ AWS_OP_CACHE="$HOME/.aws/cache_op"
 AWS_PROFILE_LOCATION="$HOME/.aws/config"
 AWS_CREDENTIALS_LOCATION="$HOME/.aws/credentials"
 AWS_ONEPASSWORD_TAG_TO_LOOK_FOR="aws profile"
+AWS_CONTAINER_ENGINE="${AWS_CONTAINER_ENGINE:-docker}"
+AWS_DOCKER_IMAGE="${AWS_DOCKER_IMAGE:-public.ecr.aws/aws-cli/aws-cli:2.36.40}"
 
 _aws_cli() {
-  $(which aws) "$@"
+  $(which "$AWS_CONTAINER_ENGINE") run --rm \
+    -e AWS_ACCESS_KEY_ID \
+    -e AWS_SECRET_ACCESS_KEY \
+    -e DEFAULT_AWS_REGION \
+    -e AWS_DEFAULT_REGION \
+    -e AWS_SESSION_TOKEN \
+    -v "${AWS_PROFILE_LOCATION}:/root/.aws/config" \
+    -v "${AWS_CREDENTIALS_LOCATION}:/root/.aws/credentials" \
+    -v "$HOME/.kube:/root/.kube" \
+    "$AWS_DOCKER_IMAGE" "$@"
 }
 
 _profile_id_from_profile() {
