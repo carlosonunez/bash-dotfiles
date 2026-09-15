@@ -859,6 +859,7 @@ update_ssh_and_aws_keys() {
   rm -r "$HOME/Downloads/keys.zip" >/dev/null
   _update_gpg_keys &&
     zip -jr "$HOME/Downloads/keys.zip" \
+      "$HOME/.ssh/config" \
       "$HOME/.ssh/"{public,private}_keys \
       $(_get_ssh_keys) &&
       op_cli document edit "SSH and AWS Keys" --vault "Access Keys" "$HOME/Downloads/keys.zip"
