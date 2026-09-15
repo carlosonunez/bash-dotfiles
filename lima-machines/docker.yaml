@@ -42,8 +42,6 @@ mounts:
     writable: true
   - location: "~/.docker"
     writable: true
-  - location: "~/.lima"
-    writable: false
   - location: "~/.kube"
     writable: true
   - location: "~/.ssh"
