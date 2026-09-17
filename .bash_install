@@ -712,6 +712,13 @@ set_up_firefox() {
   "$fn" && touch "$done_file"
 }
 
+install_op_pinentry() {
+  test -f /usr/local/bin/pinentry-1password.sh && return 0
+
+  log_info_sudo "Installing 1Password pinentry helper"
+  sudo ln -s "$HOME/src/setup/scripts/pinentry-1password.sh" /usr/local/bin/pinentry-1password.sh
+}
+
 remove_dead_install_locks
 if installation_is_locked
 then
@@ -765,5 +772,6 @@ asdf_run_first_time_install
 docker_run_first_time_install
 macos_turn_off_spellcheck
 set_up_firefox
+install_op_pinentry
 
 test -f "$(bash_completion_location)" && source "$(bash_completion_location)"

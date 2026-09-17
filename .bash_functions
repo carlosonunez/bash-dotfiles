@@ -54,10 +54,14 @@ _gpg_enter_passphrases() {
     grep -v uid:e |
     cut -f10 -d : |
     sort -u |
+    grep -v 1password-creds-cache-key |
     while read -r key
     do
       log_info "[gpg] Loading key: $key"
-      echo 'foo' | >/dev/null gpg --clearsign --local-user "$key" --pinentry-mode loopback
+      if test -n "$OP_DISABLE_PINENTRY"
+      then echo 'foo' | >/dev/null gpg --clearsign --local-user "$key"  --pinentry-mode=loopback
+      else echo 'foo' | >/dev/null gpg --clearsign --local-user "$key"
+      fi
     done
 }
 
