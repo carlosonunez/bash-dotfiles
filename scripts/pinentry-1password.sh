@@ -23,23 +23,29 @@ _get_password_from_1password() {
     >&2 echo "key: $key, value(s): $value"
     case "${key^^}" in
       SETDESC*)
-        email=$(sed -E 's/.*<(.*)>.*/\1/g' <<< "$value" |
-          tr -d '<>' |
-          sed 's/%2B/+/g')
-        if test -z "$email"
-        then echo "ERR 118"
+        # You're asked twice to confirm deletion before pinentry gets to it; move on
+        if grep -q "permanently delete" <<< "$value"
+        then
+          echo "OK"
         else
-          fpr="$(gpg --list-keys --with-keygrip --with-colons "$email" |
-            grep fpr |
-            cut -f10 -d ':' |
-            tr '\n' ',' |
-            sed -E 's/,$//')"
-          >&2 echo "debug: email: $email, fpr(s): $fpr"
-          if test -z "$fpr"
-          then
-            >&2 echo "ERROR: Couldn't obtain fingerprint for email '$email'"
-            echo "ERR 239"
-          else echo "OK"
+          email=$(sed -E 's/.*<(.*)>.*/\1/g' <<< "$value" |
+            tr -d '<>' |
+            sed 's/%2B/+/g')
+          if test -z "$email"
+          then echo "ERR 118"
+          else
+            fpr="$(gpg --list-keys --with-keygrip --with-colons "$email" |
+              grep fpr |
+              cut -f10 -d ':' |
+              tr '\n' ',' |
+              sed -E 's/,$//')"
+            >&2 echo "debug: email: $email, fpr(s): $fpr"
+            if test -z "$fpr"
+            then
+              >&2 echo "ERROR: Couldn't obtain fingerprint for email '$email'"
+              echo "ERR 239"
+            else echo "OK"
+            fi
           fi
         fi
         ;;
