@@ -59,7 +59,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>open /Applications/Firefoxen/ff-work.app --args -P work</string>
+					<string>open /Applications/Firefoxen/ff-work.app --args -P work -allow-downgrade</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>
