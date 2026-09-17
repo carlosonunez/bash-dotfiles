@@ -568,7 +568,7 @@ $(get_next_thing_to_do "$PWD/.todos" "project")"
   print_dirstack_count() {
     count=$(dirstack_count)
     test "$count" -lt 1 && return 0
-    printf "$On_Purple$BWhite%d dir(s)$NC " "$count"
+    printf "$On_Purple$BWhite%d dir deep$NC " "$count"
   }
 
   hostname_name=$(echo "$HOSTNAME" | sed 's/.local$//')
