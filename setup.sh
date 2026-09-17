@@ -99,7 +99,7 @@ create_symlinks_for_rvm() {
 
 create_gpg_symlinks() {
   test -d "$HOME/.config/gnupg" || mkdir -p "$HOME/.config/gnupg"
-  ln -sf "${DEFAULT_SETUP_DIRECTORY}/gpg-agent.conf" "$HOME/.config/gnupg/gpg-agent.conf"
+  ln -sf "${DEFAULT_SETUP_DIRECTORY}/gpg-agent.conf" "$HOME/.gnupg/gpg-agent.conf"
 }
 
 create_asdf_symlinks() {
