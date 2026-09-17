@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 DEFAULT_SSH_GPG_KEY_VAULT='Access Keys'
+DEFAULT_ENV_SETTINGS_VAULT='Environment Passphrases'
 ASDF_PLUGINS=$(cat <<-PLUGINS
 direnv
 PLUGINS
@@ -829,17 +830,53 @@ terraform() {
     "$TERRAFORM_IMAGE" "$@"
 }
 
+_confirm_update() {
+  _check() {
+    default_k="DEFAULT_${1}_VAULT"
+    curr_k="${1}_VAULT"
+    default_v="${!default_k}"
+    curr_v="${!curr_k}"
+    test -z "$curr_v" && curr_v="$default_v"
+    if test -n "$company_specific_dotfiles_found" &&
+      test "$curr_v" == "$default_v"
+    then
+      read -p \
+        "You're asking to update secrets, but your $curr_k is set to the default $curr_k, which is currently '${!default_k}'. Proceed? (Yes/[No]): " \
+        choice
+      test "$choice" == "Yes"
+      rc="$?"
+      test "$rc" == 0 && return "$rc"
+      log_info "Secrets update cancelled."
+      return "$rc"
+    fi
+  }
+  company_specific_dotfiles_found=$(find "$HOME" -type l -maxdepth 1 -name '*company*specific')
+  if test "$#" -eq 1
+  then
+    _check "$1" || return 1
+    return 0
+  fi
+  for vault in ENV_SETTINGS SSH_GPG_KEY
+  do _check "$vault" || return 1
+  done
+}
+
 update_all_secrets() {
   update_secret_settings && update_ssh_and_aws_keys
 }
 
 update_secret_settings() {
+  _confirm_update ENV_SETTINGS || return 1
+
+  vault="${ENV_SETTINGS_VAULT:-$DEFAULT_ENV_SETTINGS_VAULT}"
   rm -r "$HOME/Downloads/environment.zip" >/dev/null
   zip -jr "$HOME/Downloads/environment.zip" "$HOME/".bash_secret_* &&
-    op_cli document edit "Secret Environment Settings" --vault "Environment Passphrases" "$HOME/Downloads/environment.zip"
+    op_cli document edit "Secret Environment Settings" --vault "$vault" "$HOME/Downloads/environment.zip"
 }
 
 update_ssh_and_aws_keys() {
+  _confirm_update SSH_GPG_KEY || return 1
+
   vault="${SSH_GPG_KEY_VAULT:-$DEFAULT_SSH_GPG_KEY_VAULT}"
   _update_gpg_keys() {
     rm -r "$HOME/.ssh/"{public,private}_keys
@@ -866,7 +903,7 @@ update_ssh_and_aws_keys() {
       "$HOME/.ssh/config" \
       "$HOME/.ssh/"{public,private}_keys \
       $(_get_ssh_keys) &&
-      op_cli document edit "SSH and AWS Keys" --vault "Access Keys" "$HOME/Downloads/keys.zip"
+      op_cli document edit "SSH and AWS Keys" --vault "$vault" "$HOME/Downloads/keys.zip"
 }
 
 remarkable_host() {
