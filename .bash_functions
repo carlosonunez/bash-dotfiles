@@ -891,7 +891,7 @@ update_ssh_and_aws_keys() {
         log_info "[gpg] Key '$name': exporting public key"
         gpg --export --armor "$name" >> "$HOME/.ssh/public_keys" || return 1
         log_info "[gpg] Key '$name': exporting private key (enter passphrase below if asked)"
-        gpg --export-secret-key --pinentry-mode loopback --armor "$name" >> "$HOME/.ssh/private_keys"
+        gpg --export-secret-key --armor "$name" >> "$HOME/.ssh/private_keys"
       done
   }
   _get_ssh_keys() {
