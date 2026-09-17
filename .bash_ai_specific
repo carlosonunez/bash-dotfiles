@@ -155,7 +155,9 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
   _set_up_gpg_agent() {
     _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f ~/.gnupg/gpg-agent.conf' && return 0
 
-    cat "$HOME/.gnupg/gpg-agent.conf" | _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c "mkdir -p ~/.gnupg; cat - > ~/.gnupg/gpg-agent.conf"
+    cat "$HOME/.gnupg/gpg-agent.conf" |
+      sed -E 's;pinentry-program.*;pinentry-program /usr/bin/pinentry;g' |
+      _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c "mkdir -p ~/.gnupg; cat - > ~/.gnupg/gpg-agent.conf"
   }
 
   _set_up_ssh_config() {
