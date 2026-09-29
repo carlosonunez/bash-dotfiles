@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 source "$HOME/src/setup/.bash_functions"
 source "$HOME/src/setup/.bash_onepassword_specific"
-source "$HOME/src/setup/.bash_secret_exports"
+source "$HOME/.bash_secret_exports"
 LOG_FILE="${OP_CONFIG_DIR}/pinentry.log"
 
 _keygrip_cached() {
@@ -61,7 +61,11 @@ _get_password_from_1password() {
           echo 'ERR 153'
         else
           >&2 echo "sending request to op_cli now"
-          pw="$(2>>"$LOG_FILE" op_cli item get "GPG Key: $email" --fields=password --reveal)"
+          cmd=(item get "GPG Key: $email" --fields=password --reveal)
+          test -n "$OP_PINENTRY_VAULT" && cmd+=(--vault="$OP_PINENTRY_VAULT")
+          test -z "$OP_PINENTRY_VAULT" && >&2 echo "WARNING: OP_PINENTRY_VAULT not specified; \
+this will fail if 'GPG Key: $email' item in multiple vaults"
+          pw="$(2>>"$LOG_FILE" op_cli "${cmd[@]}")"
           if test -z "$pw"
           then
             >&2 echo "op_cli call failed"
