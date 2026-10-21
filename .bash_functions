@@ -968,7 +968,7 @@ EOF
       while read -r f
       do
         log_info "---> $(basename "$f" | sed 's/.qmd//')"
-        scp "$f" "root@$(remarkable_host):/home/root/xovi/exthome/qt-resource-builder/$(basename "$f")"
+        scp "$f" "root@$(remarkable_host):/home/root/xovi/exthome/qt-resource-rebuilder/$(basename "$f")"
       done &&
       ssh "root@$(remarkable_host)" systemctl restart xochitl &&
       rm -rf /tmp/xovi-extensions
