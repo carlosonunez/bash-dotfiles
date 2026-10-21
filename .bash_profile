@@ -177,4 +177,5 @@ fi
 # duplicate/errant entries.
 export $(set_path | grep -E '^export' | xargs -0)
 source <(asdf completion bash)
+source "${ASDF_DATA_DIR:-$HOME/.asdf}/plugins/golang/set-env.bash"
 log_info "Shell ready; enjoy! 🎉"
