@@ -58,9 +58,9 @@ be called `feat/new-auth-mechanism`.
 - Use these headers when authoring commits:
 
   ```gitcommit
-  Author: Carlos Nunez <$EMAIL_ADDRESS>
+  Author: Claude <noreply@anthropic.co
   Signed-off-by: Carlos Nunez <$EMAIL_ADDRESS>
-  Co-authored-by: Claude
+  Co-authored-by: Carlos Nunez <$EMAIL_ADDRESS>
   ```
 
   Replace `$EMAIL_ADDRESS` with whichever of these comes first:
