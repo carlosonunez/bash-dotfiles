@@ -1,0 +1,22 @@
+[diff]
+	tool = vimdiff
+[user]
+	signingKey = D8630B5C2954B6091E8913EFE1FE98BBFDCADE05
+	name = Carlos Nunez
+	email = 13461447+carlosonunez@users.noreply.github.com
+[commit]
+	gpgsign = true
+[format]
+	signoff = true
+[alias]
+	c = commit
+	cs = commit --signoff
+	fs = commit --fixup=HEAD
+[rebase]
+	autosquash = true
+[init]
+	defaultBranch = main
+[merge]
+	tool = vimdiff
+[core]
+	hooksPath = .githooks

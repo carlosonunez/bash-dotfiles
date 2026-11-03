@@ -119,6 +119,10 @@ create_container_engine_symlinks() {
   done
 }
 
+create_git_symlinks() {
+  ln -sf "$HOME/src/setup/gitconfig" "$HOME/.gitconfig"
+}
+
 if {
   clone_dotfiles &&
   set_context &&
@@ -128,6 +132,7 @@ if {
   create_vim_directories &&
   create_gpg_symlinks &&
   create_asdf_symlinks &&
+  create_git_symlinks &&
   create_container_engine_symlinks &&
   leave_context
 }
