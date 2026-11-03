@@ -130,6 +130,11 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
     if test -z "$CLAUDE_REGENERATE_GPG_KEYS"
     then _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f ~/.claude/.gpg_keys_done' && return 0
     fi
+    if test -z "$CLAUDE_GPG_KEY_NAMES"
+    then
+      log_error "No GPG keys exposed to Claude. Define CLAUDE_GPG_KEY_NAMES to expose them"
+      return 1
+    fi
     keys="$(tr ',' '\n' <<< "$CLAUDE_GPG_KEY_NAMES" | sed -E 's/,$//')"
     test -z "$keys" && keys=$(gpg --list-keys --with-colons |
       grep 'uid' |
@@ -259,14 +264,6 @@ Define them in a dotfile somewhere and try again."
       sh -c 'echo "{\"hasCompletedOnboarding\": true}" > ~/.claude.json'
   }
 
-  _add_ready_sessionstart_hook_if_not_found() {
-    _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c '2>/dev/null grep -q "I am starting up" ~/.claude/settings.json' && return 0
-
-    log_info "Adding start-up SessionStart hook"
-    _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c \
-      'jq -r '"'"'. + {"hooks":{"SessionStart":[{"hooks":[{"type":"command","command":"echo I am starting up"}]}]}}'"'"' ~/.claude/settings.json > /tmp/claude.json && mv /tmp/claude.json ~/.claude/settings.json'
-  }
-
   local rc
     _create_and_start_claude_vm &&
     _add_cc_token &&
@@ -277,7 +274,6 @@ Define them in a dotfile somewhere and try again."
     _set_up_ssh_config &&
     _add_ssh_keys &&
     _sync_config_dir_to_claude_vm_if_first_boot &&
-    _add_ready_sessionstart_hook_if_not_found &&
     _skip_cc_onboarding &&
     _mark_claude_ready &&
     _run_claude "$@" &&
