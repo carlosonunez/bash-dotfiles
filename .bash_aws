@@ -7,11 +7,35 @@ AWS_FORCE_REFRESH="${AWS_FORCE_REFRESH:-false}"
 AWS_OP_CACHE="$HOME/.aws/cache_op"
 AWS_PROFILE_LOCATION="$HOME/.aws/config"
 AWS_CREDENTIALS_LOCATION="$HOME/.aws/credentials"
+AWS_SSO_TOKEN_CACHE_LOCATION="$HOME/.aws/sso"
 AWS_ONEPASSWORD_TAG_TO_LOOK_FOR="aws profile"
 AWS_CONTAINER_ENGINE="${AWS_CONTAINER_ENGINE:-docker}"
 AWS_DOCKER_IMAGE="${AWS_DOCKER_IMAGE:-public.ecr.aws/aws-cli/aws-cli:2.36.40}"
 
+_link_awscli_completion() {
+  realpath /usr/local/bin/aws_completer | grep -Eq '/opt/homebrew/.*/bin/aws_completer' && return 0
+  log_info_sudo "Linking awscli completer (asking for 'sudo' first)"
+  if ! >/dev/null sudo whoami
+  then
+    log_error "Unable to sudo; aws autocomplete won't work"
+    return 1
+  fi
+  sudo sh -c 'test -f /usr/local/bin/aws_completer && rm /usr/local/bin/aws_completer;
+    ln -s /opt/homebrew/bin/aws_completer /usr/local/bin/aws_completer'
+}
+
+_init_aws_cli() {
+  dir="$(dirname "$AWS_PROFILE_LOCATION")"
+  if ! test -d "$dir"
+  then
+    mkdir -p "$dir"
+    log_info "AWS config directory created. Restart your '$AWS_CONTAINER_ENGINE' VM before running \
+any 'aws' commands."
+    return 0
+  fi
+}
 _aws_cli() {
+  test -f "$AWS_PROFILE_LOCATION" || touch "$AWS_PROFILE_LOCATION"
   $(which "$AWS_CONTAINER_ENGINE") run --rm \
     -e AWS_ACCESS_KEY_ID \
     -e AWS_SECRET_ACCESS_KEY \
@@ -19,6 +43,7 @@ _aws_cli() {
     -e AWS_DEFAULT_REGION \
     -e AWS_SESSION_TOKEN \
     -v "${AWS_PROFILE_LOCATION}:/root/.aws/config" \
+    -v "${AWS_SSO_TOKEN_CACHE_LOCATION}:/root/.aws/sso" \
     -v "${AWS_CREDENTIALS_LOCATION}:/root/.aws/credentials" \
     -v "$HOME/.kube:/root/.kube" \
     "$AWS_DOCKER_IMAGE" "$@"
@@ -126,6 +151,24 @@ _set_credential_expiry() {
   date -d "$exp" '+%s' > "$profile_exp_time_fp"
 }
 
+_set_credential_expiry_sso() {
+  profile_id="$(_profile_id_from_profile "$1")"
+  start_url="$(_aws_cli configure get sso_start_url --profile "$profile_id")"
+  cached_token_file="$(grep -lr "$start_url" "$HOME/.aws/sso/cache")"
+  if test -z "$cached_token_file"
+  then
+    log_error "[AWS] couldn't find a token from start url '$start_url'"
+    return 1
+  fi
+  exp_dt="$(jq -r .expiresAt "$cached_token_file")"
+  if test -z "$exp_dt"
+  then
+    log_error "[AWS] token for start url '$start_url' missing expiration datetime"
+    return 1
+  fi
+  date -d "$exp_dt" '+%s' > "$(_expiration_file_from_profile "$1")"
+}
+
 _write_aws_profile() {
   local profile region assumed_credentials
   profile="$1"
@@ -145,6 +188,19 @@ _write_aws_profile() {
   test "$done" -ne 0 && return 1
 
   _set_credential_expiry "$profile" "$exp"
+}
+
+_write_aws_profile_sso() {
+  local profile_id
+  profile_id="$(_profile_id_from_profile "$1")"
+  shift
+  for v in start_url region account_id role_name
+  do
+    _aws_cli configure set "sso_$v" "$1" --profile "$profile_id" || return 1
+    shift
+  done
+  _aws_cli configure set sts_regional_endpoints regional --profile "$profile_id" &&
+  _aws_cli configure set region "$1" --profile "$profile_id"
 }
 
 _get_aws_credentials_from_1password() {
@@ -197,6 +253,7 @@ _get_aws_credentials() {
 }
 
 _get_credential_value() {
+  log_info "Fetching '$2' for profile '$1'"
   val="$(op_get_password_field "$1" "$2" "$3")"
   if test -z "$val" || test "$val" == 'no password found'
   then
@@ -204,6 +261,11 @@ _get_credential_value() {
     return 1
   fi
   echo "$val"
+}
+
+_get_credential_value_quiet() {
+  log_info "Fetching '$2' for profile '$1'"
+  2>/dev/null _get_credential_value "$1" "$2" "$3"
 }
 
 _get_active_aws_profile() {
@@ -240,6 +302,16 @@ _get_credential_expiration_minutes() {
 
 _aws_creds_expired() {
   test "$(_get_credential_expiration_minutes "$profile")" -le 0
+}
+
+_profile_uses_sso() {
+  test -n "$(_get_key_from_profile \
+    "$(_profile_id_from_profile "$1")" \
+    sso_start_url)"
+}
+
+_do_aws_sso_login() {
+  _aws_cli sso login --profile "$(_profile_id_from_profile "$1")"
 }
 
 _aws_login() {
@@ -279,17 +351,46 @@ _aws_login() {
     then default_profile="$profile"
     fi
     # TODO: Fix hard dependency on 1Password.
-    access_key="$(_get_credential_value "$profile_entry_name" 'access_key' "$vault")" || return 1
-    secret_key="$(_get_credential_value "$profile_entry_name" 'secret_key' "$vault")" || return 1
-    role_arn="$(_get_credential_value "$profile_entry_name" 'arn' "$vault")" || return 1
-    role_external_id="$(_get_credential_value "$profile_entry_name" 'external_id' "$vault")" || return 1
-    region="$(_get_credential_value "$profile_entry_name" 'region' "$vault")"
-    test -z "$region" && region="$DEFAULT_AWS_REGION"
-    assumed_credentials=$(_assume_role "$profile" "$access_key" "$secret_key" \
-      "$region" "$role_arn" "$role_external_id") || return 1
-    _write_aws_profile "$profile" "$region" "$assumed_credentials" || return 1
-    idx=$((idx+1))
-    profile_set=0
+    sso_start_url="$(_get_credential_value_quiet "$profile_entry_name" 'sso_start_url' "$vault")"
+    if test -n "$sso_start_url"
+    then
+      for var in region account_id role_name
+      do
+        k="sso_${var}"
+        v="$(_get_credential_value_quiet "$profile_entry_name" "$k" "$vault")"
+        if test -z "$v"
+        then
+          log_error "AWS profile '$profile_entry_name' is configured for SSO but is missing '$k' in 1Password"
+          return 1
+        fi
+        declare "${k}=${v}"
+      done
+      default_region="$(_get_credential_value_quiet "$profile_entry_name" 'default_region' "$vault")"
+      # shellcheck disable=SC2154
+      test -z "$default_region" && default_region="$sso_region"
+      # shellcheck disable=SC2154
+      _write_aws_profile_sso "$profile" \
+        "$sso_start_url" \
+        "$sso_region" \
+        "$sso_account_id" \
+        "$sso_role_name" \
+        "$default_region" &&
+        _do_aws_sso_login "$profile" && \
+        _set_credential_expiry_sso "$profile" &&
+        profile_set=0
+    else
+      access_key="$(_get_credential_value "$profile_entry_name" 'access_key' "$vault")" || return 1
+      secret_key="$(_get_credential_value "$profile_entry_name" 'secret_key' "$vault")" || return 1
+      role_arn="$(_get_credential_value "$profile_entry_name" 'arn' "$vault")" || return 1
+      role_external_id="$(_get_credential_value "$profile_entry_name" 'external_id' "$vault")" || return 1
+      region="$(_get_credential_value "$profile_entry_name" 'region' "$vault")"
+      test -z "$region" && region="$DEFAULT_AWS_REGION"
+      assumed_credentials=$(_assume_role "$profile" "$access_key" "$secret_key" \
+        "$region" "$role_arn" "$role_external_id") || return 1
+      _write_aws_profile "$profile" "$region" "$assumed_credentials" || return 1
+      idx=$((idx+1))
+      profile_set=0
+    fi
   done <<< "$profiles"
 
   test "$profile_set" -eq 0 && _aws_set_profile "$default_profile"
@@ -464,6 +565,9 @@ exec_no_aws_creds() {
 exec_root_aws_creds() {
   AWS_SESSION_TOKEN='' $(which aws) "$@"
 }
+
+_init_aws_cli
+_link_awscli_completion
 
 # These are the login functions that login you into AWS via plugins.
 alias log_into_aws_with_op="_aws_login '1password'"
