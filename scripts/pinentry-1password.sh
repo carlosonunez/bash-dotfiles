@@ -24,6 +24,7 @@ _get_password_from_1password() {
     case "${key^^}" in
       SETDESC*)
         # You're asked twice to confirm deletion before pinentry gets to it; move on
+        value=$(sed 's/%0A%22/</g ; s/%22%0A/>/g' <<< "$value")
         if grep -q "permanently delete" <<< "$value"
         then
           echo "OK"
