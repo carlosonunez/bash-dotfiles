@@ -23,6 +23,10 @@ mark_docker_machine_created() {
   touch "$HOME/.config/docker_machine_created"
 }
 
+unmark_docker_machine_created() {
+  rm -f "$HOME/.config/docker_machine_created"
+}
+
 docker_install_mutex_lock() {
   printf $$ >> /tmp/docker_install_mutex
 }
@@ -35,9 +39,27 @@ docker_installation_locked() {
   test -e /tmp/docker_install_mutex
 }
 
+_docker_tmpdir() {
+  for var in LIMA_TMPDIR_DOCKER TMPDIR
+  do
+    if test -n "${!var}"
+    then
+      echo "${!var}"
+      return 0
+    fi
+  done
+  p="$HOME/.config/lima/tmpdirs/$LIMA_MACHINE_NAME_DOCKER"
+  if ! test -d "$p"
+  then
+    log_info "Creating temp dir for Docker machine '$LIMA_MACHINE_NAME_DOCKER'"
+    mkdir -p "$p"
+  fi
+  echo "$p"
+}
+
 create_docker_lima_machine() {
   stop_docker_machine
-  sed "s;%TEMPDIR%;${TMPDIR:-/tmp};g" "$LIMA_MACHINE_PATH_DOCKER" |
+  sed "s;%TEMPDIR%;$(_docker_tmpdir);g" "$LIMA_MACHINE_PATH_DOCKER" |
     sed "s;%MACHINE_NAME%;$LIMA_MACHINE_NAME_DOCKER;g" |
     limactl create --tty=false --name="$LIMA_MACHINE_NAME_DOCKER" -
 }
@@ -67,6 +89,7 @@ stop_docker_machine() {
 }
 
 _start_docker() {
+  test -n "$DOCKER_FORCE_RETRY" && { docker_install_mutex_unlock && unmark_docker_machine_created; }
   if docker_disabled && ! force_create_docker_machine
   then
     log_warning "Docker is disabled on this machine (add FORCE_CREATE_DOCKER_MACHINE=true to override)"
