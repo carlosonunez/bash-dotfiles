@@ -3,6 +3,7 @@
 source "$HOME/.bash_lima_specific"
 export CLAUDE_VM_NAME="${CLAUDE_VM_NAME:-claude-vm}"
 export CLAUDE_VM_TEMPLATE="${CLAUDE_VM_TEMPLATE:-$HOME/src/setup/lima-machines/claude.yaml}"
+export CLAUDE_SETTINGS_DIR="${CLAUDE_SETTINGS_DIR:-$HOME/.config/claude}"
 # shellcheck disable=SC2155
 export CLAUDE_WHITELISTED_DIRECTORIES="$(cat <<-EOF
 $HOME/src
@@ -88,38 +89,44 @@ EOF
   }
 
   _run_claude() {
-    if ! _pwd_is_whitelisted
+    if test -n "$CLAUDE_WORKDIR"
     then
-      if ! _skip_whitelisting
+      log_warning "Working directory for Claude overridden to '$CLAUDE_WORKDIR'"
+      _claude_limactl_shell "$CLAUDE_VM_NAME" sudo sh -c "test -d '$CLAUDE_WORKDIR' || mkdir -p '$CLAUDE_WORKDIR' && chown -R 502 '$CLAUDE_WORKDIR'"
+    else 
+      if ! _pwd_is_whitelisted
       then
-        log_error "Directory '$PWD' hasn't been whitelisted; add it \
-to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
-        return 1
-      else log_error "Directory '$PWD' hasn't been whitelisted; proceed with caution! (Add it \
-  to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' if this directory is safe)."
+        if ! _skip_whitelisting
+        then
+          log_error "Directory '$PWD' hasn't been whitelisted; add it \
+  to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
+          return 1
+        else log_error "Directory '$PWD' hasn't been whitelisted; proceed with caution! (Add it \
+    to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' if this directory is safe)."
+        fi
       fi
     fi
-    _claude_limactl_shell --workdir "$PWD" "${CLAUDE_VM_NAME}" -- claude --dangerously-skip-permissions "$@"
+    _claude_limactl_shell --workdir "${CLAUDE_WORKDIR:-$PWD}" "${CLAUDE_VM_NAME}" -- claude --dangerously-skip-permissions "$@"
   }
 
   _sync_config_dir_from_claude_vm() {
     log_info "Syncing Claude settings from Claude VM to local machine"
-    limactl cp -r "${CLAUDE_VM_NAME}:"'~/.claude/' "$HOME/.config/claude/" &&
-      limactl cp "${CLAUDE_VM_NAME}:"'~/.claude.json' "$HOME/.config/claude/" &&
-      rm -rf "$HOME/.config/claude/{markdowns,rules,skills}"
+    limactl cp -r "${CLAUDE_VM_NAME}:"'~/.claude/' "$CLAUDE_SETTINGS_DIR/" &&
+      limactl cp "${CLAUDE_VM_NAME}:"'~/.claude.json' "$CLAUDE_SETTINGS_DIR/" &&
+      rm -rf "$CLAUDE_SETTINGS_DIR/{markdowns,rules,skills}"
   }
 
   _sync_config_dir_to_claude_vm_if_first_boot() {
     _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f /ready_for_claude' && return 0
     log_info "Syncing saved Claude preferences to VM"
-    if ! test -d "$HOME/.config/claude"
+    if ! test -d "$CLAUDE_SETTINGS_DIR"
     then
-      mkdir -p "$HOME/.config/claude"
+      mkdir -p "$CLAUDE_SETTINGS_DIR"
       return 0
     fi
     tarball=$(mktemp "${TMPDIR:-/tmp}/claude-sync-XXXXX.tar.gz")
     tar --exclude './rules' --exclude './skills' --exclude './markdowns' \
-      -czf "$tarball" -C "$HOME/.config/claude" . &&
+      -czf "$tarball" -C "$CLAUDE_SETTINGS_DIR" . &&
       limactl cp "$tarball" "${CLAUDE_VM_NAME}:/tmp/claude-data.tar.gz" &&
       _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'tar -xf /tmp/claude-data.tar.gz -C ~/.claude' &&
       _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'mv ~/.claude/.claude.json ~/.claude.json' &&
@@ -127,6 +134,7 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
   }
 
   _set_up_gpg_keys() {
+    test -n "$CLAUDE_SKIP_GPG_SETUP" && return 0
     if test -z "$CLAUDE_REGENERATE_GPG_KEYS"
     then _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f ~/.claude/.gpg_keys_done' && return 0
     fi
@@ -151,6 +159,7 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
   }
 
   _unlock_gpg_keys() {
+    test -n "$CLAUDE_SKIP_GPG_SETUP" && return 0
     log_info "Unlocking GPG keys..."
     _claude_limactl_shell \
       "$CLAUDE_VM_NAME" \
@@ -158,6 +167,7 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
   }
 
   _set_up_gpg_agent() {
+    test -n "$CLAUDE_SKIP_GPG_SETUP" && return 0
     _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f ~/.gnupg/gpg-agent.conf' && return 0
 
     cat "$HOME/.gnupg/gpg-agent.conf" |
@@ -166,6 +176,7 @@ to $CLAUDE_WHITELISTED_DIRECTORIES in '$HOME/.bash_ai_specific' and try again."
   }
 
   _set_up_ssh_config() {
+    test -n "$CLAUDE_SKIP_SSH_KEY_PROVISIONING" && return 0
     log_info "Setting up SSH config in Claude VM"
     if ! config=$(_generate_ssh_config_for_vm)
     then
@@ -176,6 +187,7 @@ services and other operations won't work!"
   }
 
   _add_ssh_keys() {
+    test -n "$CLAUDE_SKIP_SSH_KEY_PROVISIONING" && return 0
     log_info "Adding SSH keys to Claude VM"
     if ! keys=$(_generate_ssh_keys_for_vm)
     then
@@ -198,6 +210,7 @@ services and other operations won't work!"
   }
 
   _set_up_github_token() {
+    test -n "$CLAUDE_SKIP_GH_TOKEN_PROVISIONING" && return 0
     if test -z "$GITHUB_TOKEN" && ! >/dev/null which gh
     then
       log_warning "Unable to find a GitHub token or the 'gh' utility on this system. GitHub interactions won't work from within the VM!"
@@ -214,7 +227,10 @@ services and other operations won't work!"
   }
 
   _add_cc_token() {
+    test -n "$CLAUDE_SKIP_CC_TOKEN_PROVISIONING" && return 0
     local token
+    test -n "$CLAUDE_REDO_CC_TOKEN_PROVISIONING" &&
+      _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'rm ~/.tokens/claude_code'
     token="$(_claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f ~/.tokens/claude_code && \
       cat ~/.tokens/claude_code')"
     test -n "$token" && return 0
@@ -246,7 +262,16 @@ Define them in a dotfile somewhere and try again."
     token="$(op_get_password_by_name "$CLAUDE_1PASSWORD_NAME" "$CLAUDE_1PASSWORD_VAULT")"
     if test -z "$token" || test "${token,,}" == 'no password found'
     then
-      log_error "Failed to get Claude token; see error messages above."
+      log_error "Claude Code token not found in 1Password within item name \
+'$CLAUDE_1PASSWORD_NAME' and vault '$CLAUDE_1PASSWORD_VAULT'.
+
+If you haven't created a token already, you can do so by following the steps below:
+
+- Download Claude Code (brew install claude-code),
+- Run '$(which claude) setup-token' to authenticate into Claude from a browser, then
+- Copy the token that appears; it'll start with 'sk-'
+- Run \`op_cli item create --category=password --title='$CLAUDE_1PASSWORD_NAME' \
+  --vault='$CLAUDE_1PASSWORD_VAULT' password='sk-...'\`"
       return 1
     fi
     _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c "echo '$token' > ~/.tokens/claude_code"
@@ -257,14 +282,36 @@ Define them in a dotfile somewhere and try again."
   }
 
   _skip_cc_onboarding() {
-    _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f ~/.claude.json' && return 0
+    _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'test -f /ready_for_claude' && return 0
 
     log_info "Skipping Claude Code onboarding"
     _claude_limactl_shell "$CLAUDE_VM_NAME" \
       sh -c 'echo "{\"hasCompletedOnboarding\": true}" > ~/.claude.json'
   }
+  
+  _print_skipped_steps() {
+    skips=""
+    for kv in "GitHub Token Provisioning:CLAUDE_SKIP_GH_TOKEN_PROVISIONING" \
+      "Claude Code Token Provisioning:CLAUDE_SKIP_CC_TOKEN_PROVISIONING" \
+      "GPG Setup:CLAUDE_SKIP_GPG_SETUP" \
+      "Directory whitelisting (dangerous!!!!):CLAUDE_SKIP_WHITELISTING" \
+      "SSH Key Provisioning:CLAUDE_SKIP_SSH_KEY_PROVISIONING"
+    do
+      k=$(cut -f1 -d ':' <<< "$kv")
+      v="${kv//${k}:/}"
+      test -z "${!v}" && continue
+      skips="${skips}- $k (env var: '$v');"
+    done
+    test -z "$skips" && return 0
+    log_warning "The following steps have been skipped by way of environment variables:
+
+$(sed 's/;$//' <<< "$skips" | tr ';' '\n')
+
+Some things might not work!"
+  }
 
   local rc
+    _print_skipped_steps &&
     _create_and_start_claude_vm &&
     _add_cc_token &&
     _set_up_github_token &&
@@ -284,4 +331,8 @@ Define them in a dotfile somewhere and try again."
 
 claude_dangerously() {
   CLAUDE_SKIP_WHITELISTING=true claude "$@"
+}
+
+claude_system() {
+  $(which claude) "$@"
 }
