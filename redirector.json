@@ -1,0 +1,57 @@
+{
+    "createdBy": "Redirector v3.5.3",
+    "createdAt": "2026-11-16T00:51:52.020Z",
+    "redirects": [
+        {
+            "description": "All Reddit -> Reddit Redirect",
+            "exampleUrl": "https://reddit.com/r/funny",
+            "exampleResult": "https://reddit.caranna.haus/r/funny",
+            "error": null,
+            "includePattern": "http(s?)://(?!kagi.com).*reddit.com(.*)",
+            "excludePattern": "",
+            "patternDesc": "Redirects all stray reddit.com links to a local Reddit redirect URL that extensions will handle.",
+            "redirectUrl": "https://reddit.caranna.haus$2",
+            "patternType": "R",
+            "processMatches": "noProcessing",
+            "disabled": false,
+            "grouped": false,
+            "appliesTo": [
+                "main_frame"
+            ]
+        },
+        {
+            "description": "Twitter/X",
+            "exampleUrl": "https://x.com/mrcrassic",
+            "exampleResult": "https://0.0.0.0x",
+            "error": null,
+            "includePattern": "http(s?)://(.*((x|twitter|twimg)\\.com)|t.co)(.*)",
+            "excludePattern": "",
+            "patternDesc": "Disable all x.com links.",
+            "redirectUrl": "https://0.0.0.0$4",
+            "patternType": "R",
+            "processMatches": "noProcessing",
+            "disabled": false,
+            "grouped": false,
+            "appliesTo": [
+                "main_frame"
+            ]
+        },
+        {
+            "description": "Main Reddit Redirect URL handler",
+            "exampleUrl": "https://reddit.caranna.haus/r/funny",
+            "exampleResult": "https://redlib.cow.rip/r/funny",
+            "error": null,
+            "includePattern": "https://reddit.caranna.haus(.*)",
+            "excludePattern": "",
+            "patternDesc": "",
+            "redirectUrl": "https://redlib.cow.rip$1",
+            "patternType": "R",
+            "processMatches": "noProcessing",
+            "disabled": false,
+            "grouped": false,
+            "appliesTo": [
+                "main_frame"
+            ]
+        }
+    ]
+}
