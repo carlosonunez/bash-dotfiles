@@ -9,6 +9,7 @@ update_vim_bundles() {
 }
 
 install_ycm() {
+  test -n "$VIM_REINSTALL_YCM" && rm -f "$HOME/.config/vim/.ycm_installed"
   test -f "$HOME/.config/vim/.ycm_installed" && return 0
 
   test -d "$HOME/.config/vim" || mkdir -p "$HOME/.config/vim"
