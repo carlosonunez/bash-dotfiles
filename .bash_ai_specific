@@ -124,13 +124,21 @@ EOF
       mkdir -p "$CLAUDE_SETTINGS_DIR"
       return 0
     fi
-    tarball=$(mktemp "${TMPDIR:-/tmp}/claude-sync-XXXXX.tar.gz")
+    tmpdir="$TMPDIR"
+    delete_tmpdir=0
+    if test -z "$tmpdir"
+    then
+      tmpdir="$HOME/.tmp"
+      test -d "$tmpdir" || mkdir -d "$tmpdir"
+      delete_tmpdir=1
+    fi
+    tarball=$(mktemp "$tmpdir/claude-sync-XXXXX.tar.gz")
     tar --exclude './rules' --exclude './skills' --exclude './markdowns' \
       -czf "$tarball" -C "$CLAUDE_SETTINGS_DIR" . &&
       limactl cp "$tarball" "${CLAUDE_VM_NAME}:/tmp/claude-data.tar.gz" &&
       _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'tar -xf /tmp/claude-data.tar.gz -C ~/.claude' &&
       _claude_limactl_shell "$CLAUDE_VM_NAME" sh -c 'mv ~/.claude/.claude.json ~/.claude.json' &&
-      rm -f "$tarball"
+      rm -f "$tarball" && { test "$delete_tmpdir" == 1 && rm -r "$tmpdir"; }
   }
 
   _set_up_gpg_keys() {

@@ -1,6 +1,26 @@
 # vi: set ft=sh:
 # shellcheck shell=bash
 
+_lima_tmpdir() {
+  local vm_name
+  vm_name="$1"
+  for var in LIMA_TMPDIR TMPDIR
+  do
+    if test -n "${!var}"
+    then
+      echo "${!var}"
+      return 0
+    fi
+  done
+  p="$HOME/.config/lima/tmpdirs/$vm_name"
+  if ! test -d "$p"
+  then
+    log_info "Creating temp dir for Lima machine '$vm_name'"
+    mkdir -p "$p"
+  fi
+  echo "$p"
+}
+
 _lima_vm_exists() {
   test -n "$(limactl ls --format='{{.Name}}' "$1")"
 }
@@ -74,8 +94,9 @@ lima_render_template() {
     log_error "Couldn't find Lima template: $template_file"
     return 1
   fi
-  template=$(sed "s;%TEMPDIR%;${TMPDIR:-/tmp};g" "$resolved_template_file" |
-    sed "s;%MACHINE_NAME%;$LIMA_MACHINE_NAME_DOCKER;g" |
+  tmpdir="$(_lima_tmpdir "$vm_name")"
+  template=$(sed "s;%TEMPDIR%;$tmpdir;g" "$resolved_template_file" |
+    sed "s;%MACHINE_NAME%;$vm_name;g" |
     if test -z "$template_vars"
     then cat
     else
